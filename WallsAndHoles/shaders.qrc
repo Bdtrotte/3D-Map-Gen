@@ -1,0 +1,9 @@
+<RCC>
+    <qresource prefix="/shaders">
+        <file>basic.vsh</file>
+        <file>basic.fsh</file>
+    </qresource>
+    <qresource prefix="/assets">
+        <file>cube.obj</file>
+    </qresource>
+</RCC>
