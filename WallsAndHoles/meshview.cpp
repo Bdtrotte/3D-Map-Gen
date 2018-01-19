@@ -6,11 +6,11 @@
 
 
 
-MeshView::MeshView(std::shared_ptr<Scene> scene, QWidget *parent) :
+MeshView::MeshView(QSharedPointer<Scene> scene, QWidget *parent) :
     QOpenGLWidget(parent),
-    mScene(scene),
     mVertexPositions(QOpenGLBuffer::VertexBuffer),
     mTriangleIndices(QOpenGLBuffer::IndexBuffer),
+    mScene(scene),
     ui(new Ui::MeshView)
 {
     ui->setupUi(this);
@@ -45,15 +45,15 @@ void MeshView::loadVAO() {
     QVector<GLuint> indices;
 
     for (auto obj : mScene->getAllObjects()) {
-        const std::vector<QVector3D>& vdata = obj->getVertexData();
-        for (size_t i = 0; i < vdata.size(); ++i) {
+        const QVector<QVector3D>& vdata = obj->getVertexData();
+        for (int i = 0; i < vdata.size(); ++i) {
             vertices.append(vdata[i][0]);
             vertices.append(vdata[i][1]);
             vertices.append(vdata[i][2]);
         }
 
-        const std::vector<unsigned int>& triangleIndices = obj->getTriangleIndices();
-        for (size_t i = 0; i < triangleIndices.size(); ++i)
+        const QVector<unsigned int>& triangleIndices = obj->getTriangleIndices();
+        for (int i = 0; i < triangleIndices.size(); ++i)
             indices.append(triangleIndices[i]);
     }
 

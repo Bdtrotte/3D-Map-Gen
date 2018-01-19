@@ -9,7 +9,7 @@ void Scene::addObject(RenderableObjectP object) {
 }
 
 
-const std::vector<Scene::RenderableObjectP>& Scene::getAllObjects() const {
+const QVector<Scene::RenderableObjectP>& Scene::getAllObjects() const {
     return objects;
 }
 

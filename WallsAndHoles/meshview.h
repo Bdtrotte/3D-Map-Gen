@@ -22,7 +22,7 @@ class MeshView : public QOpenGLWidget, protected QOpenGLFunctions
     Q_OBJECT
 
 public:
-    explicit MeshView(std::shared_ptr<Scene> scene, QWidget *parent = 0);
+    explicit MeshView(QSharedPointer<Scene> scene, QWidget *parent = 0);
     ~MeshView();
 
 protected:
@@ -47,7 +47,7 @@ protected:
     QOpenGLBuffer mTriangleIndices;
 
     // Scene object that is rendered.
-    std::shared_ptr<Scene> mScene;
+    QSharedPointer<Scene> mScene;
 
     // The Projection*View matrix.
     QMatrix4x4 mProjectionMatrix;

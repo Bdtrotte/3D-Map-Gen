@@ -1,11 +1,14 @@
 #ifndef SCENE_H
 #define SCENE_H
 
+#include <QVector>
+#include <QSharedPointer>
+
 #include "renderableobject.h"
 
 
 class Scene {
-    using RenderableObjectP = std::shared_ptr<RenderableObject>;
+    using RenderableObjectP = QSharedPointer<RenderableObject>;
 
 public:
     Scene();
@@ -17,12 +20,11 @@ public:
     // in each object. This does not consider whether vertices are reused.
     size_t getNumVertices() const;
 
-    const std::vector<RenderableObjectP>& getAllObjects() const;
+    const QVector<RenderableObjectP>& getAllObjects() const;
 
 protected:
 
-    // shared_ptr is very useful here
-    std::vector<RenderableObjectP> objects;
+    QVector<RenderableObjectP> objects;
 };
 
 #endif // SCENE_H
