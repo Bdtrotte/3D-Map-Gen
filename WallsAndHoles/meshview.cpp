@@ -3,7 +3,7 @@
 #include "meshview.h"
 #include "ui_meshview.h"
 
-
+#include "meshviewcameralikeblender.h"
 
 
 MeshView::MeshView(QSharedPointer<Scene> scene, QWidget *parent) :
@@ -14,6 +14,8 @@ MeshView::MeshView(QSharedPointer<Scene> scene, QWidget *parent) :
     ui(new Ui::MeshView)
 {
     ui->setupUi(this);
+
+    mCamera = new MeshViewCameraLikeBlender();
 }
 
 MeshView::~MeshView()
@@ -24,16 +26,11 @@ MeshView::~MeshView()
 
 
 void MeshView::mousePressEvent(QMouseEvent *event) {
-    mMouseLast = event->pos();
+    mCamera->mousePressEvent(event);
 }
 
 void MeshView::mouseMoveEvent(QMouseEvent *event) {
-    QVector2D posDelta( (event->pos() - mMouseLast) );
-    mMouseLast = event->pos(); // update mouse start position
-
-    posDelta *= 0.01;
-
-    mTranslation -= posDelta;
+    mCamera->mouseMoveEvent(event);
 }
 
 
@@ -104,8 +101,7 @@ void MeshView::paintGL() {
     mBasicProgram.bind();
 
     // Set the matrix.
-    QMatrix4x4 mvp;
-    mvp.translate(-mTranslation);
+    QMatrix4x4 mvp = mCamera->getTransformationMatrix();
     mvp = mProjectionMatrix * mvp;
     mBasicProgram.setUniformValue(SHADER_MVP, mvp);
 
@@ -133,7 +129,8 @@ void MeshView::resizeGL(int w, int h) {
 
     // TODO: For now, the projection matrix is always a simple orthogonal projection.
     mProjectionMatrix.setToIdentity();
-    mProjectionMatrix.ortho(-1, 1, 1, -1, 0.1, 100);
+//    mProjectionMatrix.ortho(-1, 1, 1, -1, 0.1, 100);
+    mProjectionMatrix.perspective(90, ((float) w) / h, 0.1, 30);
 }
 
 

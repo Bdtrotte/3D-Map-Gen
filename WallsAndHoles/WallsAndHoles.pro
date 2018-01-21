@@ -31,13 +31,16 @@ SOURCES += \
         mainwindow.cpp \
     scene.cpp \
     meshview.cpp \
-    renderableobject.cpp
+    renderableobject.cpp \
+    meshviewcameralikeblender.cpp
 
 HEADERS += \
         mainwindow.h \
     renderableobject.h \
     scene.h \
-    meshview.h
+    meshview.h \
+    meshviewcamera.h \
+    meshviewcameralikeblender.h
 
 FORMS += \
         mainwindow.ui \

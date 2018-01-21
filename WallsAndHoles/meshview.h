@@ -8,7 +8,9 @@
 #include <QOpenGLShaderProgram>
 #include <QMouseEvent>
 
-#include <scene.h>
+#include "scene.h"
+#include "meshviewcamera.h"
+
 
 #define SHADER_VERTEX_POS "qt_Vertex"
 #define SHADER_MVP "qt_ModelViewProjectionMatrix"
@@ -32,6 +34,7 @@ protected:
 
     void mousePressEvent(QMouseEvent *event) override;
     void mouseMoveEvent(QMouseEvent *event) override;
+    // TODO: send mouseReleaseEvent() to mCamera
 
     // Loads the vertex data for the scene onto the GPU. Assumes mScene is not nullptr.
     // After this, it is safe to call paintGL().
@@ -52,12 +55,8 @@ protected:
     // The Projection*View matrix.
     QMatrix4x4 mProjectionMatrix;
 
-    // The translation that should be applied to the MVP.
-    QVector3D mTranslation;
 
-
-    // The position the mouse was at the last time.
-    QPoint mMouseLast;
+    MeshViewCamera *mCamera;
 
 
 private:

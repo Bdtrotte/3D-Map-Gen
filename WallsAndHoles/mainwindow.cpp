@@ -24,9 +24,9 @@ void MainWindow::openMeshView() {
         QSharedPointer<Scene> scene = QSharedPointer<Scene>::create();
         scene->addObject(QSharedPointer<RenderableObject>::create((QVector<QVector3D>)
         {
-           QVector3D(0, 0, -1),
-           QVector3D(0, 1, -1),
-           QVector3D(1, 1, -1)
+           QVector3D(0, 0, 0),
+           QVector3D(0, 1, 0),
+           QVector3D(1, 1, 0)
         }));
         /* TESTING */
 
