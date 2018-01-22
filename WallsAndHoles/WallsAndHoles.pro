@@ -40,7 +40,8 @@ HEADERS += \
     scene.h \
     meshview.h \
     meshviewcamera.h \
-    meshviewcameralikeblender.h
+    meshviewcameralikeblender.h \
+    objtools.h
 
 FORMS += \
         mainwindow.ui \
