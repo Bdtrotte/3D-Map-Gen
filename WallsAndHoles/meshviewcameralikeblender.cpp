@@ -1,3 +1,5 @@
+#include <QApplication>
+
 #include "meshviewcameralikeblender.h"
 
 MeshViewCameraLikeBlender::MeshViewCameraLikeBlender()
@@ -30,6 +32,8 @@ void MeshViewCameraLikeBlender::mousePressEvent(QMouseEvent *event) {
         mRotationYawStart = mRotationYaw;
         mCursorStart = event->pos();
         mStartTime = event->timestamp();
+        mCenterStart = mCenterOfRotation;
+        mRotating = (QApplication::keyboardModifiers() & Qt::ShiftModifier) == 0;
         event->accept();
     }
 }
@@ -38,9 +42,18 @@ void MeshViewCameraLikeBlender::mousePressEvent(QMouseEvent *event) {
 void MeshViewCameraLikeBlender::mouseMoveEvent(QMouseEvent *event) {
     if (event->timestamp() > mStartTime) {
         QPoint deltaPos = event->pos() - mCursorStart;
+        if (mRotating) {
+            mRotationYaw = mRotationYawStart + deltaPos.x();
+            mRotationPitch = mRotationPitchStart + deltaPos.y();
+        } else {
+            QQuaternion rotation = QQuaternion::fromAxisAndAngle(0, 1, 0, -mRotationYaw);
+            rotation = QQuaternion::fromAxisAndAngle(1, 0, 0, -mRotationPitch) * rotation;
 
-        mRotationYaw = mRotationYawStart + deltaPos.x();
-        mRotationPitch = mRotationPitchStart + deltaPos.y();
+            QVector3D up = rotation.rotatedVector(QVector3D(0, 1, 0));
+            QVector3D right = rotation.rotatedVector(QVector3D(-1, 0, 0));
+
+            mCenterOfRotation = mCenterStart + 0.01 * up * deltaPos.y() + 0.01 * right * deltaPos.x();
+        }
 
         event->accept();
     }

@@ -26,7 +26,9 @@ protected:
     float mRotationPitchStart;
     float mRotationYawStart;
     QPoint mCursorStart;
+    QVector3D mCenterStart;
     ulong mStartTime; // the timestamp of the most recent mouse-press event
+    bool mRotating; // true means rotate, false means pan
 };
 
 #endif // MESHVIEWCAMERALIKEBLENDER_H
