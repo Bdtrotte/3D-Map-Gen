@@ -10,7 +10,7 @@ RenderableObject::RenderableObject() {
 
 RenderableObject::RenderableObject(QVector<QVector3D> vertices)
     : mVertexPositions(vertices),
-        mTriangleIndices(vertices.size(), 0) {
+      mTriangleIndices(vertices.size(), 0) {
 
     assert( vertices.size() % 3 == 0 );
 

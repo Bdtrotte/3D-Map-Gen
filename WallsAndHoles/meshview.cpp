@@ -50,29 +50,31 @@ void MeshView::loadVAO() {
         }
 
         const QVector<unsigned int>& triangleIndices = obj->getTriangleIndices();
+        GLuint index = indices.size(); //Can't render multiple object without this
         for (int i = 0; i < triangleIndices.size(); ++i)
-            indices.append(triangleIndices[i]);
+            indices.append(index+triangleIndices[i]);
     }
-
 
     mVertexPositions.create();
     mVertexPositions.setUsagePattern(QOpenGLBuffer::DynamicDraw); // may be updated in real-time in the future
     mVertexPositions.bind();
     mVertexPositions.allocate(vertices.data(), vertices.size() * sizeof(GLfloat));
+    //mVertexPositions.release();
 
     mTriangleIndices.create();
     mTriangleIndices.setUsagePattern(QOpenGLBuffer::DynamicDraw);
     mTriangleIndices.bind();
     mTriangleIndices.allocate(indices.data(), indices.size() * sizeof(GLuint));
+    //mTriangleIndices.release();
 
     mVAO.create();
     mVAO.bind();
 
-    mVertexPositions.bind();
     mBasicProgram.setAttributeBuffer(SHADER_VERTEX_POS, GL_FLOAT, 0, 3);
-    mVertexPositions.release();
 
     mVAO.release();
+    mVertexPositions.release();
+    mTriangleIndices.release();
 }
 
 void MeshView::initializeGL() {
@@ -113,7 +115,7 @@ void MeshView::paintGL() {
 
     // Draw.
     mBasicProgram.enableAttributeArray(SHADER_VERTEX_POS);
-    glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, 0);
+    glDrawElements(GL_TRIANGLES, mTriangleIndices.size()/sizeof(unsigned int), GL_UNSIGNED_INT, 0);
     mBasicProgram.disableAttributeArray(SHADER_VERTEX_POS);
 
     // Unset arrays.
