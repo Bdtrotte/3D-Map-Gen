@@ -21,6 +21,9 @@ public:
 public slots:
     void resizeEvent(QResizeEvent *q);
 
+private slots:
+    void on_horizontalSlider_sliderMoved(int position);
+
 private:
     Ui::MapView *ui;
 };

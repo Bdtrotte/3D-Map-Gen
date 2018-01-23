@@ -4,6 +4,7 @@
 #include <QDebug>
 #include <QGraphicsScene>
 #include <QResizeEvent>
+#include <QMatrix>
 
 MapView::MapView(QWidget *parent) :
     QWidget(parent),
@@ -32,8 +33,11 @@ void MapView::resizeEvent(QResizeEvent *q)
 }
 
 
+void MapView::on_horizontalSlider_sliderMoved(int position)
+{
+    float scale = position*position/100;
+    QMatrix mat;
+    mat.scale(scale,scale);
+    ui->graphicsView->setMatrix(mat);
 
-
-
-
-
+}
