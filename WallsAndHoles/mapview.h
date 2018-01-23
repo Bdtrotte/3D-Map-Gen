@@ -1,6 +1,7 @@
 #ifndef MAPVIEW_H
 #define MAPVIEW_H
 
+#include <QResizeEvent>
 #include <QWidget>
 
 namespace Ui {
@@ -16,13 +17,9 @@ public:
 
     ~MapView();
 
-    void setupGrid();
 
-    void clear();
-
-    void addTile();
-
-    void paintEvent(QPaintEvent *painter);
+public slots:
+    void resizeEvent(QResizeEvent *q);
 
 private:
     Ui::MapView *ui;

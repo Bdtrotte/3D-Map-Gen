@@ -1,9 +1,24 @@
 #include "rectcell.h"
+#include <QPainter>
+#include <QBrush>
+#include <QStyleOptionGraphicsItem>
+#include <QWidget>
+#include <QDebug>
+#include <QGraphicsSceneHoverEvent>
+#include <QGraphicsSceneMouseEvent>
 
-rectCell::rectCell(int x,int y,int w, int h)
+rectCell::rectCell(qreal x,qreal y,qreal w, qreal h)
 { 
-    this->setX(x);
-    this->setY(y);
-    this->setHeight(h);
-    this->setWidth(w);
+   this->setRect(x,y,w,h);
+   this->setAcceptHoverEvents(true);
+   this->setAcceptedMouseButtons(Qt::MouseButton(1));
+}
+
+
+void rectCell::mousePressEvent(QGraphicsSceneMouseEvent *e){
+    qDebug() << "click";
+}
+
+void rectCell::hoverEnterEvent(QGraphicsSceneHoverEvent *e){
+   qDebug() << "hover";
 }
