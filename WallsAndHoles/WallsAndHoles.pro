@@ -11,6 +11,9 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = WallsAndHoles
 TEMPLATE = app
 
+CONFIG += c++14
+
+
 # The following define makes your compiler emit warnings if you use
 # any feature of Qt which as been marked as deprecated (the exact warnings
 # depend on your compiler). Please consult the documentation of the
@@ -25,10 +28,28 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
         main.cpp \
-        mainwindow.cpp
+        mainwindow.cpp \
+    scene.cpp \
+    meshview.cpp \
+    renderableobject.cpp \
+    meshviewcameralikeblender.cpp
 
 HEADERS += \
-        mainwindow.h
+        mainwindow.h \
+    renderableobject.h \
+    scene.h \
+    meshview.h \
+    meshviewcamera.h \
+    meshviewcameralikeblender.h \
+    objtools.h
 
 FORMS += \
-        mainwindow.ui
+        mainwindow.ui \
+    meshview.ui
+
+DISTFILES += \
+    basic.fsh \
+    basic.vsh
+
+RESOURCES += \
+    shaders.qrc

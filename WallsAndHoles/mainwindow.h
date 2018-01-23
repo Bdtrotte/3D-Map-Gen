@@ -3,6 +3,9 @@
 
 #include <QMainWindow>
 
+#include "meshview.h"
+#include "objtools.h"
+
 namespace Ui {
 class MainWindow;
 }
@@ -15,8 +18,16 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
+public slots:
+    void openMeshView();
+
+private slots:
+    void on_pushButton_clicked();
+
 private:
     Ui::MainWindow *ui;
+
+    MeshView *meshView;
 };
 
 #endif // MAINWINDOW_H
