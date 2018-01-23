@@ -1,20 +1,20 @@
-#ifndef EDITOR_H
-#define EDITOR_H
+#ifndef MAPVIEW_H
+#define MAPVIEW_H
 
 #include <QWidget>
 
 namespace Ui {
-class Editor;
+class MapView;
 }
 
-class Editor : public QWidget
+class MapView : public QWidget
 {
     Q_OBJECT
 
 public:
-    explicit Editor(QWidget *parent = 0);
+    explicit MapView(QWidget *parent = 0);
 
-    ~Editor();
+    ~MapView();
 
     void setupGrid();
 
@@ -25,7 +25,7 @@ public:
     void paintEvent(QPaintEvent *painter);
 
 private:
-    Ui::Editor *ui;
+    Ui::MapView *ui;
 };
 
-#endif // EDITOR_H
+#endif // MAPVIEW_H

@@ -26,14 +26,14 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
         main.cpp \
         mainwindow.cpp \
-    editor.cpp \
-    rectcell.cpp
+    rectcell.cpp \
+    mapview.cpp
 
 HEADERS += \
         mainwindow.h \
-    editor.h \
-    rectcell.h
+    rectcell.h \
+    mapview.h
 
 FORMS += \
         mainwindow.ui \
-    editor.ui
+    mapview.ui

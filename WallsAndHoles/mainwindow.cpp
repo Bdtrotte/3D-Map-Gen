@@ -1,7 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-#include "editor.h"
-#include "ui_editor.h"
+#include "mapview.h"
+#include "ui_mapview.h"
 #include "QDebug"
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -18,7 +18,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_btn0_clicked()
 {
-    Editor *edit = new Editor;
+    MapView *edit = new MapView;
     edit->show();
     hide();
 }

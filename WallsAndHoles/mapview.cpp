@@ -1,23 +1,23 @@
-#include "editor.h"
-#include "ui_editor.h"
+#include "mapview.h"
+#include "ui_mapview.h"
 #include "rectcell.h"
 #include <QDebug>
 #include <QGraphicsScene>
-Editor::Editor(QWidget *parent) :
+MapView::MapView(QWidget *parent) :
     QWidget(parent),
-    ui(new Ui::Editor)
+    ui(new Ui::MapView)
 {
     ui->setupUi(this);
     rectCell *r = new rectCell(0,0,0,0);
     qDebug() << r->x();
 }
 
-Editor::~Editor()
+MapView::~MapView()
 {
     delete ui;
 }
 
-void Editor::paintEvent(QPaintEvent *painter)
+void MapView::paintEvent(QPaintEvent *painter)
 {
     QGraphicsScene *scene = new QGraphicsScene;
     ui->graphicsView->setScene(scene);
@@ -28,12 +28,12 @@ void Editor::paintEvent(QPaintEvent *painter)
     }
 }
 
-void Editor::clear()
+void MapView::clear()
 {
 
 }
 
-void Editor::addTile()
+void MapView::addTile()
 {
 
 }
