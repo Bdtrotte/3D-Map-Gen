@@ -12,7 +12,6 @@
  */
 class DrawableGLObject {
 public:
-    DrawableGLObject() {}
     virtual ~DrawableGLObject() {}
     
     /**
