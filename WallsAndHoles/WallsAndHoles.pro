@@ -27,24 +27,32 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 
 SOURCES += \
-        main.cpp \
-        mainwindow.cpp \
-    scene.cpp \
+    main.cpp \
+    mainwindow.cpp \
     meshview.cpp \
+    meshviewcameralikeblender.cpp \
     renderableobject.cpp \
-    meshviewcameralikeblender.cpp
+    scene.cpp \
+    tile.cpp \
+    tilemap.cpp \
+    tiletemplate.cpp \
+    tiletemplateset.cpp
 
 HEADERS += \
-        mainwindow.h \
-    renderableobject.h \
-    scene.h \
+    mainwindow.h \
     meshview.h \
     meshviewcamera.h \
     meshviewcameralikeblender.h \
-    objtools.h
+    objtools.h \
+    renderableobject.h \
+    scene.h \
+    tile.h \
+    tilemap.h \
+    tiletemplate.h \
+    tiletemplateset.h
 
 FORMS += \
-        mainwindow.ui \
+    mainwindow.ui \
     meshview.ui
 
 DISTFILES += \
