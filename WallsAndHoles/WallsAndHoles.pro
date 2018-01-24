@@ -33,7 +33,8 @@ SOURCES += \
     meshview.cpp \
     renderableobject.cpp \
     meshviewcameralikeblender.cpp \
-    drawableaxes.cpp
+    drawableaxes.cpp \
+    toolmanager.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -44,7 +45,9 @@ HEADERS += \
     meshviewcameralikeblender.h \
     objtools.h \
     drawableaxes.h \
-    drawableglobject.h
+    drawableglobject.h \
+    tool.h \
+    toolmanager.h
 
 FORMS += \
         mainwindow.ui \
