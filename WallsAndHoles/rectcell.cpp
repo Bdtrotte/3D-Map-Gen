@@ -7,7 +7,10 @@
 #include <QGraphicsSceneHoverEvent>
 #include <QGraphicsSceneMouseEvent>
 
-rectCell::rectCell(qreal x,qreal y,qreal w, qreal h)
+QBrush tempBrushColor;
+
+rectCell::rectCell(qreal x,qreal y,qreal w, qreal h) :
+    edited(false)
 { 
    this->setRect(x,y,w,h);
    this->setAcceptHoverEvents(true);
@@ -19,9 +22,27 @@ rectCell::rectCell(qreal x,qreal y,qreal w, qreal h)
 
 
 void rectCell::mousePressEvent(QGraphicsSceneMouseEvent *e){
-    qDebug() << "click";
+
+    if(e->button() == Qt::LeftButton){
+        this->setBrush(QColor(108,147,209,255));
+        tempBrushColor = this->brush();
+        this->update();
+    }
+    //Right click to erase the color
+    if(e->button() == Qt::RightButton){
+        this->setBrush(Qt::white);
+        tempBrushColor = this->brush();
+        this->update();
+    }
 }
 
 void rectCell::hoverEnterEvent(QGraphicsSceneHoverEvent *e){
-   qDebug() << "hover";
+      tempBrushColor = this->brush();
+      this->setBrush(Qt::gray);
+      this->update();
+}
+
+void rectCell::hoverLeaveEvent(QGraphicsSceneHoverEvent *e){
+       this->setBrush(tempBrushColor);
+       this->update();
 }

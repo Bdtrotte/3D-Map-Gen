@@ -3,7 +3,6 @@
 
 #include <QResizeEvent>
 #include <QWidget>
-#include "tilemap.h"
 
 namespace Ui {
 class MapView;
@@ -18,16 +17,15 @@ public:
 
     ~MapView();
 
-
-public slots:
-    void resizeEvent(QResizeEvent *q);
-
 private slots:
     void on_horizontalSlider_sliderMoved(int position);
+    void resizeEvent(QResizeEvent *event);
 
 private:
     Ui::MapView *ui;
-    TileMap *map;
+    bool mouseDown;
+    int initX;
+    int initY;
 
 };
 

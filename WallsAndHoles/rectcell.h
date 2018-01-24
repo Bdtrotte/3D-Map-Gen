@@ -8,18 +8,13 @@ class rectCell : public QGraphicsRectItem
 {
 public:
     rectCell(qreal x, qreal y, qreal w, qreal h);
-    //link
-
-    //mouseover
-
-    //onclick
-
-    //rightclick
-
 
 public slots:
+    void hoverLeaveEvent(QGraphicsSceneHoverEvent *e);
     void hoverEnterEvent(QGraphicsSceneHoverEvent *e);
     void mousePressEvent(QGraphicsSceneMouseEvent *e);
+ private:
+    bool edited;
 };
 
 #endif // RECTCELL_H

@@ -1,6 +1,7 @@
 #include "mapview.h"
 #include "ui_mapview.h"
 #include "rectcell.h"
+#include "grid.h"
 #include <QDebug>
 #include <QGraphicsScene>
 #include <QResizeEvent>
@@ -9,7 +10,10 @@
 
 MapView::MapView(QWidget *parent) :
     QWidget(parent),
-    ui(new Ui::MapView)
+    ui(new Ui::MapView),
+    mouseDown(false),
+    initX(0),
+    initY(0)
 {
     ui->setupUi(this);
 
@@ -30,11 +34,10 @@ MapView::~MapView()
     delete ui;
 }
 
-void MapView::resizeEvent(QResizeEvent *q)
+void MapView::resizeEvent(QResizeEvent *event)
 {
 
 }
-
 
 void MapView::on_horizontalSlider_sliderMoved(int position)
 {
