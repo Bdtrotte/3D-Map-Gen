@@ -56,36 +56,37 @@ void MeshView::loadVAO() {
     }
 
     mVertexPositions.create();
-    mVertexPositions.setUsagePattern(QOpenGLBuffer::DynamicDraw); // may be updated in real-time in the future
     mVertexPositions.bind();
+    mVertexPositions.setUsagePattern(QOpenGLBuffer::DynamicDraw); // may be updated in real-time in the future
     mVertexPositions.allocate(vertices.data(), vertices.size() * sizeof(GLfloat));
-    //mVertexPositions.release();
+    mVertexPositions.release();
 
     mTriangleIndices.create();
-    mTriangleIndices.setUsagePattern(QOpenGLBuffer::DynamicDraw);
     mTriangleIndices.bind();
+    mTriangleIndices.setUsagePattern(QOpenGLBuffer::DynamicDraw);
     mTriangleIndices.allocate(indices.data(), indices.size() * sizeof(GLuint));
-    //mTriangleIndices.release();
+    mTriangleIndices.release();
 
     mVAO.create();
     mVAO.bind();
 
+    mVertexPositions.bind();
     mBasicProgram.setAttributeBuffer(SHADER_VERTEX_POS, GL_FLOAT, 0, 3);
+    mVertexPositions.release();
 
     mVAO.release();
-    mVertexPositions.release();
-    mTriangleIndices.release();
 }
 
 void MeshView::initializeGL() {
     initializeOpenGLFunctions();
+
+    glEnable(GL_DEPTH_TEST);
 
     // Create the shader program.
     mBasicProgram.create();
     mBasicProgram.addShaderFromSourceFile(QOpenGLShader::Vertex, ":/shaders/basic.vsh");
     mBasicProgram.addShaderFromSourceFile(QOpenGLShader::Fragment, ":/shaders/basic.fsh");
     mBasicProgram.link();
-    mBasicProgram.bind();
 
     loadVAO();
 
@@ -97,14 +98,15 @@ void MeshView::initializeGL() {
 
 void MeshView::paintGL() {
 
-    glClear(GL_COLOR_BUFFER_BIT);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+    /******* Draw meshes. *******/
     // Set program.
     mBasicProgram.bind();
 
     // Set the matrix.
-    QMatrix4x4 mvp = mCamera->getTransformationMatrix();
-    mvp = mProjectionMatrix * mvp;
+    QMatrix4x4 transform = mCamera->getTransformationMatrix();
+    QMatrix4x4 mvp = mProjectionMatrix * transform;
     mBasicProgram.setUniformValue(SHADER_MVP, mvp);
 
 
@@ -124,6 +126,10 @@ void MeshView::paintGL() {
 
     // Unset program.
     mBasicProgram.release();
+
+    /******* Draw widgets. *******/
+    for (QSharedPointer<DrawableGLObject> drawable : mScene->getAllDrawables())
+        drawable->draw(mProjectionMatrix, transform);
 }
 
 void MeshView::resizeGL(int w, int h) {
