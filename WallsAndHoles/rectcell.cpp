@@ -9,19 +9,25 @@
 
 QBrush tempBrushColor;
 
-rectCell::rectCell(qreal x,qreal y,qreal w, qreal h) :
+RectCell::RectCell(qreal x,qreal y,qreal w, qreal h) :
     edited(false)
 { 
    this->setRect(x,y,w,h);
    this->setAcceptHoverEvents(true);
    this->setAcceptedMouseButtons(Qt::MouseButton(3));
    this->setBrush(Qt::white);
-   QPen pen(Qt::black, 0, Qt::DashDotLine);
+   QPen pen(Qt::black, 0, Qt::DashLine);
    this->setPen(pen);
 }
 
+void RectCell::applyTool(QString temptoolname)
+{
+    this->edited = !this->edited;
+    emit toolSignal();
+}
 
-void rectCell::mousePressEvent(QGraphicsSceneMouseEvent *e){
+
+void RectCell::mousePressEvent(QGraphicsSceneMouseEvent *e){
 
     if(e->button() == Qt::LeftButton){
         this->setBrush(QColor(108,147,209,255));
@@ -36,13 +42,17 @@ void rectCell::mousePressEvent(QGraphicsSceneMouseEvent *e){
     }
 }
 
-void rectCell::hoverEnterEvent(QGraphicsSceneHoverEvent *e){
+void RectCell::hoverEnterEvent(QGraphicsSceneHoverEvent *e){
       tempBrushColor = this->brush();
       this->setBrush(Qt::gray);
       this->update();
 }
 
-void rectCell::hoverLeaveEvent(QGraphicsSceneHoverEvent *e){
+void RectCell::hoverLeaveEvent(QGraphicsSceneHoverEvent *e){
        this->setBrush(tempBrushColor);
        this->update();
+}
+
+void RectCell::toolSignal(){
+
 }

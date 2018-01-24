@@ -1,32 +1,21 @@
 #ifndef MAPVIEW_H
 #define MAPVIEW_H
 
-#include <QResizeEvent>
+#include <QGraphicsView>
 #include <QWidget>
 
-namespace Ui {
-class MapView;
-}
 
-class MapView : public QWidget
+class MapView : public QGraphicsView
 {
-    Q_OBJECT
-
 public:
-    explicit MapView(QWidget *parent = 0);
-
-    ~MapView();
-
-private slots:
-    void on_horizontalSlider_sliderMoved(int position);
-    void resizeEvent(QResizeEvent *event);
-
+    MapView(QWidget *parent);
+protected slots:
+    void wheelEvent(QWheelEvent *event) override;
+    void mouseMoveEvent(QMouseEvent *event) override;
 private:
-    Ui::MapView *ui;
-    bool mouseDown;
-    int initX;
-    int initY;
-
+    float scale;
+    int oldX;
+    int oldY;
 };
 
 #endif // MAPVIEW_H

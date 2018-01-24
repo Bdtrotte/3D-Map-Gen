@@ -1,6 +1,10 @@
 #include "grid.h"
 #include <QDebug>
+#include <QEvent>
 #include <QMouseEvent>
+#include <QGraphicsItem>
+#include <QGraphicsSceneEvent>
+#include <QApplication>
 #include "stdlib.h"
 
 Grid::Grid(QWidget *parent):
@@ -12,32 +16,36 @@ Grid::Grid(QWidget *parent):
     this->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 }
 
-//void Grid::mouseMoveEvent(QMouseEvent *e)
+//void Grid::mousePressEvent(QMouseEvent *e)
 //{
-////    if(mouseDown && e->button() == 4){
-////        qDebug() << e->pos();
-////        int dx = abs(prevX - e->x());
-////        int dy = abs(prevY - e->y());
-////        QMatrix mat;
-////        mat.translate(dx,dy);
-////        this->setMatrix(mat);
-////        this->prevX = e->x();
-////        this->prevY = e->y();
-////    }
+
+// QGraphicsSceneMouseEvent *q;
+// qDebug() << e->pos();
+
+//}
+
+//void Grid::wheelEvent(QWheelEvent *event)
+//{
+
 //}
 
 //void Grid::mouseReleaseEvent(QMouseEvent *e)
 //{
-//   this->mouseDown = false;
+//    e->ignore();
+////    if(this->mouseDown){
+////        qDebug() << "test";
+////    }else{
+////        e->ignore();
+////    }
+
+
 //}
 
-//void Grid::mousePressEvent(QMouseEvent *e)
-//{
-//    this->mouseDown = true;
-//    if(this->prevX == 0 && this->prevY == 0){
-//        this->prevX = e->x();
-//        this->prevY = e->y();
+//void Grid::mouseMoveEvent(QMouseEvent *e){
+//    e->ignore();
+//    if(this->mouseDown){
+//        qDebug() << "move event";
+////    }else{
+////        e->ignore();
 //    }
-//    qDebug() << this->prevX;
 //}
-

@@ -4,10 +4,11 @@
 #include <QGraphicsItem>
 #include <QHoverEvent>
 
-class rectCell : public QGraphicsRectItem
+class RectCell : public QGraphicsRectItem
 {
 public:
-    rectCell(qreal x, qreal y, qreal w, qreal h);
+    RectCell(qreal x, qreal y, qreal w, qreal h);
+    void applyTool(QString temptoolname);
 
 public slots:
     void hoverLeaveEvent(QGraphicsSceneHoverEvent *e);
@@ -15,6 +16,9 @@ public slots:
     void mousePressEvent(QGraphicsSceneMouseEvent *e);
  private:
     bool edited;
+
+signals:
+    void toolSignal();
 };
 
 #endif // RECTCELL_H
