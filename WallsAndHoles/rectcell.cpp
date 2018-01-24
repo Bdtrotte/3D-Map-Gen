@@ -11,7 +11,10 @@ rectCell::rectCell(qreal x,qreal y,qreal w, qreal h)
 { 
    this->setRect(x,y,w,h);
    this->setAcceptHoverEvents(true);
-   this->setAcceptedMouseButtons(Qt::MouseButton(1));
+   this->setAcceptedMouseButtons(Qt::MouseButton(3));
+   this->setBrush(Qt::white);
+   QPen pen(Qt::black, 0, Qt::DashDotLine);
+   this->setPen(pen);
 }
 
 

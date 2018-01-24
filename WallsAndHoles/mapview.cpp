@@ -6,13 +6,16 @@
 #include <QResizeEvent>
 #include <QMatrix>
 
+
 MapView::MapView(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::MapView)
 {
     ui->setupUi(this);
 
+
     QGraphicsScene *scene = new QGraphicsScene;
+    scene->setBackgroundBrush(Qt::gray);
     ui->graphicsView->setScene(scene);
     for(qreal i = 0; i < ui->graphicsView->height()-50; i+=30){
         for(qreal j= 0; j < ui->graphicsView->width()-50; j+=30){

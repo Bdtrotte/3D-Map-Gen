@@ -3,6 +3,7 @@
 
 #include <QResizeEvent>
 #include <QWidget>
+#include "tilemap.h"
 
 namespace Ui {
 class MapView;
@@ -26,6 +27,8 @@ private slots:
 
 private:
     Ui::MapView *ui;
+    TileMap *map;
+
 };
 
 #endif // MAPVIEW_H

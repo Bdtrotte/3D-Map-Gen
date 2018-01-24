@@ -27,12 +27,18 @@ SOURCES += \
         main.cpp \
         mainwindow.cpp \
     rectcell.cpp \
-    mapview.cpp
+    mapview.cpp \
+    tile.cpp \
+    tilemap.cpp \
+    tiletemplate.cpp
 
 HEADERS += \
         mainwindow.h \
     rectcell.h \
-    mapview.h
+    mapview.h \
+    tile.h \
+    tilemap.h \
+    tiletemplate.h
 
 FORMS += \
         mainwindow.ui \
