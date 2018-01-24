@@ -46,8 +46,8 @@ void MeshViewCameraLikeBlender::mouseMoveEvent(QMouseEvent *event) {
             mRotationYaw = mRotationYawStart + deltaPos.x();
             mRotationPitch = mRotationPitchStart + deltaPos.y();
         } else {
-            QQuaternion rotation = QQuaternion::fromAxisAndAngle(0, 1, 0, -mRotationYaw);
-            rotation = QQuaternion::fromAxisAndAngle(1, 0, 0, -mRotationPitch) * rotation;
+            QQuaternion rotation = QQuaternion::fromAxisAndAngle(1, 0, 0, -mRotationPitch);
+            rotation = QQuaternion::fromAxisAndAngle(0, 1, 0, -mRotationYaw) * rotation;
 
             QVector3D up = rotation.rotatedVector(QVector3D(0, 1, 0));
             QVector3D right = rotation.rotatedVector(QVector3D(-1, 0, 0));
