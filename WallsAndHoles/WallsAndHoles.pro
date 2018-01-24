@@ -36,14 +36,23 @@ SOURCES += \
     tile.cpp \
     tilemap.cpp \
     tiletemplate.cpp \
-    tiletemplateset.cpp
+    tiletemplateset.cpp \
+    drawableaxes.cpp \
+    toolmanager.cpp
+
 
 HEADERS += \
     mainwindow.h \
+    renderableobject.h \
+    scene.h \
     meshview.h \
     meshviewcamera.h \
     meshviewcameralikeblender.h \
     objtools.h \
+    drawableaxes.h \
+    drawableglobject.h \
+    tool.h \
+    toolmanager.h \
     renderableobject.h \
     scene.h \
     tile.h \
