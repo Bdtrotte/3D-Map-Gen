@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MeshViewContainer</class>
+ <widget class="QWidget" name="MeshViewContainer">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>640</width>
+    <height>480</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <widget class="MeshView" name="openGLWidget">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>40</y>
+     <width>421</width>
+     <height>301</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QComboBox" name="toolSelection">
+   <property name="geometry">
+    <rect>
+     <x>450</x>
+     <y>80</y>
+     <width>161</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="currentText">
+    <string>No Tool (Example)</string>
+   </property>
+   <item>
+    <property name="text">
+     <string>No Tool (Example)</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>Camera Tool</string>
+    </property>
+   </item>
+  </widget>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>MeshView</class>
+   <extends>QOpenGLWidget</extends>
+   <header>meshview.h</header>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>

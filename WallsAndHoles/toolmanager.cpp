@@ -10,14 +10,22 @@ void ToolManager::registerTool(AbstractToolP tool, QString name) {
 }
 
 void ToolManager::activateTool(QString name) {
-    AbstractToolP tool = mTools[name];
 
-    if (mActiveTool != nullptr)
+    // Deactivate any active tool.
+    if (mActiveTool != nullptr) {
         mActiveTool->deactivate();
-    mActiveTool = tool;
-    mActiveTool->activate();
+        mActiveTool = nullptr;
+    }
 
-    emit toolWasActivated(tool, name);
+    // Activate a tool if a name matches.
+    if (mTools.contains(name)) {
+        AbstractToolP tool = mTools[name];
+
+        mActiveTool = tool;
+        mActiveTool->activate();
+
+        emit toolWasActivated(tool, name);
+    }
 }
 
 
@@ -31,7 +39,13 @@ void ToolManager::mouseReleaseEvent(QMouseEvent *event) {
     if (mActiveTool != nullptr)
         mActiveTool->mouseReleaseEvent(event);
 }
+
 void ToolManager::mouseMoveEvent(QMouseEvent *event) {
     if (mActiveTool != nullptr)
         mActiveTool->mouseMoveEvent(event);
+}
+
+void ToolManager::wheelEvent(QWheelEvent *event) {
+    if (mActiveTool != nullptr)
+        mActiveTool->wheelEvent(event);
 }

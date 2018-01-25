@@ -6,46 +6,59 @@
 #include "meshviewcameralikeblender.h"
 
 
-MeshView::MeshView(QSharedPointer<Scene> scene, QWidget *parent) :
+MeshView::MeshView(QWidget *parent) :
     QOpenGLWidget(parent),
     mVertexPositions(QOpenGLBuffer::VertexBuffer),
     mTriangleIndices(QOpenGLBuffer::IndexBuffer),
-    mScene(scene),
+    mShouldReloadBuffers(false),
     ui(new Ui::MeshView)
 {
     ui->setupUi(this);
 
-    mCamera = new MeshViewCameraLikeBlender();
+    mCamera = QSharedPointer<MeshViewCameraLikeBlender>::create();
+
+    mTools = ToolManagerP::create();
+    mTools->registerTool(mCamera, "camera");
 }
 
 MeshView::~MeshView()
 {
     delete ui;
+
+    // TODO: Make sure OpenGL related objects are freed.
 }
 
+
+void MeshView::setScene(QSharedPointer<Scene> scene) {
+    mScene = scene;
+    mShouldReloadBuffers = true;
+}
 
 
 void MeshView::mousePressEvent(QMouseEvent *event) {
-    mCamera->mousePressEvent(event);
+    mTools->mousePressEvent(event);
 }
 
 void MeshView::mouseMoveEvent(QMouseEvent *event) {
-    mCamera->mouseMoveEvent(event);
+    mTools->mouseMoveEvent(event);
 }
 
 void MeshView::mouseReleaseEvent(QMouseEvent *event) {
-    mCamera->mouseReleaseEvent(event);
+    mTools->mouseReleaseEvent(event);
 }
 
 void MeshView::wheelEvent(QWheelEvent *event) {
-    mCamera->wheelEvent(event);
+    mTools->wheelEvent(event);
 }
 
 
+void MeshView::activateTool(QString name) {
+    mTools->activateTool(name);
+}
 
 
+// Assumes an OpenGL context is bound, mBasicProgram is set up, and mScene != nullptr.
 void MeshView::loadVAO() {
-
     QVector<GLfloat> vertices;
     QVector<GLuint> indices;
 
@@ -83,6 +96,8 @@ void MeshView::loadVAO() {
     mVertexPositions.release();
 
     mVAO.release();
+
+    mShouldReloadBuffers = false;
 }
 
 void MeshView::initializeGL() {
@@ -96,8 +111,6 @@ void MeshView::initializeGL() {
     mBasicProgram.addShaderFromSourceFile(QOpenGLShader::Fragment, ":/shaders/basic.fsh");
     mBasicProgram.link();
 
-    loadVAO();
-
     // Start outputting frame updates.
     QTimer *timer = new QTimer(this);
     connect(timer, SIGNAL(timeout()), this, SLOT(update()));
@@ -106,46 +119,49 @@ void MeshView::initializeGL() {
 
 void MeshView::paintGL() {
 
+    if (mShouldReloadBuffers)
+        loadVAO();
+
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    /******* Draw meshes. *******/
-    // Set program.
-    mBasicProgram.bind();
+    if (mScene != nullptr) {
+        /******* Draw meshes. *******/
+        // Set program.
+        mBasicProgram.bind();
 
-    // Set the matrix.
-    QMatrix4x4 transform = mCamera->getTransformationMatrix();
-    QMatrix4x4 mvp = mProjectionMatrix * transform;
-    mBasicProgram.setUniformValue(SHADER_MVP, mvp);
+        // Set the matrix.
+        QMatrix4x4 transform = mCamera->getTransformationMatrix();
+        QMatrix4x4 mvp = mProjectionMatrix * transform;
+        mBasicProgram.setUniformValue(SHADER_MVP, mvp);
 
 
 
-    // Set arrays.
-    mVAO.bind();
-    mTriangleIndices.bind();
+        // Set arrays.
+        mVAO.bind();
+        mTriangleIndices.bind();
 
-    // Draw.
-    mBasicProgram.enableAttributeArray(SHADER_VERTEX_POS);
-    glDrawElements(GL_TRIANGLES, mTriangleIndices.size()/sizeof(unsigned int), GL_UNSIGNED_INT, 0);
-    mBasicProgram.disableAttributeArray(SHADER_VERTEX_POS);
+        // Draw.
+        mBasicProgram.enableAttributeArray(SHADER_VERTEX_POS);
+        glDrawElements(GL_TRIANGLES, mTriangleIndices.size()/sizeof(unsigned int), GL_UNSIGNED_INT, 0);
+        mBasicProgram.disableAttributeArray(SHADER_VERTEX_POS);
 
-    // Unset arrays.
-    mTriangleIndices.release();
-    mVAO.release();
+        // Unset arrays.
+        mTriangleIndices.release();
+        mVAO.release();
 
-    // Unset program.
-    mBasicProgram.release();
+        // Unset program.
+        mBasicProgram.release();
 
-    /******* Draw widgets. *******/
-    for (QSharedPointer<DrawableGLObject> drawable : mScene->getAllDrawables())
-        drawable->draw(mProjectionMatrix, transform);
+        /******* Draw widgets. *******/
+        for (QSharedPointer<AbstractDrawableGLObject> drawable : mScene->getAllDrawables())
+            drawable->draw(mProjectionMatrix, transform);
+    }
 }
 
 void MeshView::resizeGL(int w, int h) {
     glViewport(0, 0, w, h);
 
-    // TODO: For now, the projection matrix is always a simple orthogonal projection.
     mProjectionMatrix.setToIdentity();
-//    mProjectionMatrix.ortho(-1, 1, 1, -1, 0.1, 100);
     mProjectionMatrix.perspective(90, ((float) w) / h, 0.1, 30);
 }
 

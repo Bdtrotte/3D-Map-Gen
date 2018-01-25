@@ -5,6 +5,7 @@
 #include <QMap>
 #include <QObject>
 #include <QMouseEvent>
+#include <QWheelEvent>
 #include <QSharedPointer>
 #include <QAction>
 #include "abstracttool.h"
@@ -12,6 +13,12 @@
 /**
  * @brief The ToolManager class represents a group of mutually exclusive tools
  * out of which only one can be active at a time.
+ *
+ * The object that owns the ToolManager (and therefore sends its events to the ToolManager)
+ * must be the object in which the tools are used. For example, one window may contain
+ * several different kind of views, including a map view. The map view should own the
+ * ToolManager for rectangle / line / point brush tools because these tools only
+ * make sense within the map view.
  *
  * A UI element which desires to use the ToolManager should forward mouse
  * events to the ToolManager so that they can reach the active tool.
@@ -47,6 +54,7 @@ public slots:
     void mousePressEvent(QMouseEvent *event);
     void mouseReleaseEvent(QMouseEvent *event);
     void mouseMoveEvent(QMouseEvent *event);
+    void wheelEvent(QWheelEvent *event);
 
 signals:
 

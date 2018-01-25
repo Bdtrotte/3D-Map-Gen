@@ -2,6 +2,7 @@
 #define TOOL_H
 
 #include <QMouseEvent>
+#include <QWheelEvent>
 
 /**
  * @brief The AbstractTool class represents a UI tool. A UI tool can be activated or
@@ -38,6 +39,7 @@ public:
     virtual void mousePressEvent(QMouseEvent *) {}
     virtual void mouseReleaseEvent(QMouseEvent *) {}
     virtual void mouseMoveEvent(QMouseEvent *) {}
+    virtual void wheelEvent(QWheelEvent *) {}
 
 };
 

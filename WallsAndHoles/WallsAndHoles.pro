@@ -38,7 +38,8 @@ SOURCES += \
     tiletemplate.cpp \
     tiletemplateset.cpp \
     drawableaxes.cpp \
-    toolmanager.cpp
+    toolmanager.cpp \
+    meshviewcontainer.cpp
 
 
 HEADERS += \
@@ -58,11 +59,13 @@ HEADERS += \
     tiletemplateset.h \
     abstracttool.h \
     abstractmeshviewcamera.h \
-    abstractdrawableglobject.h
+    abstractdrawableglobject.h \
+    meshviewcontainer.h
 
 FORMS += \
     mainwindow.ui \
-    meshview.ui
+    meshview.ui \
+    meshviewcontainer.ui
 
 DISTFILES += \
     basic.fsh \
