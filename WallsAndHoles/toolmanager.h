@@ -37,10 +37,16 @@ public:
      * @brief Registers the tool with the given identifier.
      * @param tool The tool to be registered.
      * @param name The identifier to be given to the tool.
-     * @return A QAction that, when triggered, will call activateTool(name).
+     * @return A QAction that, when toggled, will call either activateTool(name) or deactivateTool(name).
      */
     QAction *registerTool(AbstractToolP tool, QString name);
 
+    /**
+     * @brief Finds the action associated with the name.
+     * @param name The tool name.
+     * @return The action associated, or nullptr if name does not match anything.
+     */
+    QAction *getAction(QString name);
 
 public slots:
     /**
@@ -50,6 +56,14 @@ public slots:
      * This slot can be activated directly from a UI element to enable a tool.
      */
     void activateTool(QString name);
+
+    /**
+     * @brief Deactivates the tool if it is active. NOTE: A ToolManager is exclusive,
+     * so activateTool() automatically deactivates the previous tool.
+     *
+     * @param name The name of the tool.
+     */
+    void deactivateTool(QString name);
 
 
     void mousePressEvent(QMouseEvent *event);
@@ -67,9 +81,13 @@ signals:
     void toolWasActivated(AbstractToolP tool, QString name);
 
 protected:
-    QMap<QString, AbstractToolP> mTools;
+    QMap<QString, AbstractToolP> mTools;  /// A map from tool names to tool objects.
+    QMap<QString, QAction*> mToolActions; /// The actions associated to each tool. All pointers delete selves when the ToolManager is destructed.
 
-    AbstractToolP mActiveTool;
+    QActionGroup *mActionGroup; /// The action group containing all of the ToolManager's actions.
+
+    AbstractToolP mActiveTool; /// The active tool.
+    QAction *mActiveAction;    /// The QAction of the active tool.
 };
 
 typedef QSharedPointer<ToolManager> ToolManagerP;
