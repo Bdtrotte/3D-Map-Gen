@@ -33,15 +33,16 @@ public:
     ToolManager();
 
 
-
-public slots:
     /**
      * @brief Registers the tool with the given identifier.
      * @param tool The tool to be registered.
      * @param name The identifier to be given to the tool.
+     * @return A QAction that, when triggered, will call activateTool(name).
      */
-    void registerTool(AbstractToolP tool, QString name);
+    QAction *registerTool(AbstractToolP tool, QString name);
 
+
+public slots:
     /**
      * @brief Activates the desired tool.
      * @param name The name of the tool.

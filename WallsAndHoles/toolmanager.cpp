@@ -1,3 +1,4 @@
+
 #include "toolmanager.h"
 
 ToolManager::ToolManager() {
@@ -5,8 +6,13 @@ ToolManager::ToolManager() {
 }
 
 
-void ToolManager::registerTool(AbstractToolP tool, QString name) {
+QAction *ToolManager::registerTool(AbstractToolP tool, QString name) {
     mTools.insert(name, tool);
+
+    QAction *action = new QAction("Activate tool: " + name);
+    connect(action, &QAction::triggered, this, [this, name]{ activateTool(name); });
+
+    return action;
 }
 
 void ToolManager::activateTool(QString name) {
