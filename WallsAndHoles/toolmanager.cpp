@@ -60,10 +60,10 @@ void ToolManager::activateTool(QString name) {
             // Check the corresponding action. This will invoke activateTool() which will not do anything
             // since the tool is already active.
             mActiveAction = mToolActions[name];
-            if (!action->isChecked())
-                action->setChecked(true);
+            if (!mActiveAction->isChecked())
+                mActiveAction->setChecked(true);
 
-            emit toolWasActivated(tool, name);
+            emit toolWasActivated(mActiveTool, name);
         }
     }
 }
