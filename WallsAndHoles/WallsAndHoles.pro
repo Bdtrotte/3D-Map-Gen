@@ -36,7 +36,9 @@ SOURCES += \
     tile.cpp \
     tilemap.cpp \
     tiletemplate.cpp \
-    tiletemplateset.cpp
+    tiletemplateset.cpp \
+    rectcell.cpp \
+    mapview.cpp
 
 HEADERS += \
     mainwindow.h \
@@ -49,7 +51,9 @@ HEADERS += \
     tile.h \
     tilemap.h \
     tiletemplate.h \
-    tiletemplateset.h
+    tiletemplateset.h \
+    rectcell.h \
+    mapview.h
 
 FORMS += \
     mainwindow.ui \
