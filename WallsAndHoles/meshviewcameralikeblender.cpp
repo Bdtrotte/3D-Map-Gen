@@ -53,7 +53,7 @@ void MeshViewCameraLikeBlender::mouseMoveEvent(QMouseEvent *event) {
             QVector3D up = rotation.rotatedVector(QVector3D(0, 1, 0));
             QVector3D right = rotation.rotatedVector(QVector3D(-1, 0, 0));
 
-            mCenterOfRotation = mCenterStart + 0.01 * up * deltaPos.y() + 0.01 * right * deltaPos.x();
+            mCenterOfRotation = mCenterStart + 0.005 * mDistanceFromCenter * (up * deltaPos.y() + right * deltaPos.x());
         }
 
         event->accept();
