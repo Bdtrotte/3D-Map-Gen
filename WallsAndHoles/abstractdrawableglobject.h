@@ -10,9 +10,9 @@
  * The purpose of this class is to allow a scene to contain non-mesh widgets (like a
  * widget for visualizing the axes).
  */
-class DrawableGLObject {
+class AbstractDrawableGLObject {
 public:
-    virtual ~DrawableGLObject() {}
+    virtual ~AbstractDrawableGLObject() {}
     
     /**
      * @brief Performs OpenGL calls to draw the object, assuming a context is bound.
