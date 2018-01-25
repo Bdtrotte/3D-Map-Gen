@@ -3,6 +3,7 @@
 
 #include <QMatrix4x4>
 #include <QMouseEvent>
+#include <QWheelEvent>
 
 
 /**
@@ -23,6 +24,7 @@ public:
     virtual void mousePressEvent(QMouseEvent *) {}
     virtual void mouseReleaseEvent(QMouseEvent *) {}
     virtual void mouseMoveEvent(QMouseEvent *) {}
+    virtual void wheelEvent(QWheelEvent *) {}
 };
 
 #endif // MESHVIEWCAMERA_H

@@ -7,6 +7,7 @@
 #include <QOpenGLVertexArrayObject>
 #include <QOpenGLShaderProgram>
 #include <QMouseEvent>
+#include <QWheelEvent>
 
 #include "scene.h"
 #include "meshviewcamera.h"
@@ -34,7 +35,8 @@ protected:
 
     void mousePressEvent(QMouseEvent *event) override;
     void mouseMoveEvent(QMouseEvent *event) override;
-    // TODO: send mouseReleaseEvent() to mCamera
+    void mouseReleaseEvent(QMouseEvent *event) override;
+    void wheelEvent(QWheelEvent *event) override;
 
     // Loads the vertex data for the scene onto the GPU. Assumes mScene is not nullptr.
     // After this, it is safe to call paintGL().

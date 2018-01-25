@@ -33,6 +33,14 @@ void MeshView::mouseMoveEvent(QMouseEvent *event) {
     mCamera->mouseMoveEvent(event);
 }
 
+void MeshView::mouseReleaseEvent(QMouseEvent *event) {
+    mCamera->mouseReleaseEvent(event);
+}
+
+void MeshView::wheelEvent(QWheelEvent *event) {
+    mCamera->wheelEvent(event);
+}
+
 
 
 

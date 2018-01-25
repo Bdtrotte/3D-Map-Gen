@@ -1,4 +1,5 @@
 #include <QApplication>
+#include <QtMath>
 
 #include "meshviewcameralikeblender.h"
 
@@ -57,4 +58,10 @@ void MeshViewCameraLikeBlender::mouseMoveEvent(QMouseEvent *event) {
 
         event->accept();
     }
+}
+
+
+void MeshViewCameraLikeBlender::wheelEvent(QWheelEvent *event) {
+    mDistanceFromCenter *= pow(1.02, event->delta());
+    event->accept();
 }
