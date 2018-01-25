@@ -2,35 +2,86 @@
 #include "toolmanager.h"
 
 ToolManager::ToolManager() {
-
+    mActionGroup = new QActionGroup(this);
 }
 
 
 QAction *ToolManager::registerTool(AbstractToolP tool, QString name) {
-    mTools.insert(name, tool);
 
-    QAction *action = new QAction("Activate tool: " + name);
-    connect(action, &QAction::triggered, this, [this, name]{ activateTool(name); });
+    // This automatically adds action to mActionGroup.
+    QAction *action = new QAction("Activate tool: " + name, mActionGroup);
+    action->setCheckable(true);
+
+
+    connect(action, &QAction::toggled, this, [this, name] (bool checked) {
+        if (checked)
+            activateTool(name);
+        else
+            deactivateTool(name);
+    });
+
+
+    mTools.insert(name, tool);
+    mToolActions.insert(name, action);
 
     return action;
 }
 
+QAction *ToolManager::getAction(QString name) {
+    if (!mToolActions.contains(name))
+        return nullptr;
+    else
+        return mToolActions[name];
+}
+
 void ToolManager::activateTool(QString name) {
 
-    // Deactivate any active tool.
-    if (mActiveTool != nullptr) {
-        mActiveTool->deactivate();
-        mActiveTool = nullptr;
+    // Do nothing if the tool is already active.
+    if (!(mTools.contains(name) && mTools[name] == mActiveTool)) {
+
+        // Deactivate any active tool.
+        if (mActiveTool != nullptr) {
+            mActiveTool->deactivate();
+            mActiveTool = nullptr;
+
+            // This will invoke deactivateTool() for the corresponding tool, but deactivateTool() will not do anything.
+            mActiveAction->setChecked(false);
+            mActiveAction = nullptr;
+        }
+
+        // Activate a tool if a name matches.
+        if (mTools.contains(name)) {
+
+            // Activate the tool.
+            mActiveTool = mTools[name];
+            mActiveTool->activate();
+
+
+            // Check the corresponding action. This will invoke activateTool() which will not do anything
+            // since the tool is already active.
+            mActiveAction = mToolActions[name];
+            if (!mActiveAction->isChecked())
+                mActiveAction->setChecked(true);
+
+            emit toolWasActivated(mActiveTool, name);
+        }
     }
+}
 
-    // Activate a tool if a name matches.
+void ToolManager::deactivateTool(QString name) {
     if (mTools.contains(name)) {
-        AbstractToolP tool = mTools[name];
+        if (mActiveTool == mTools[name]) {
+            // Deactivate the tool.
+            mActiveTool->deactivate();
+            mActiveTool = nullptr;
 
-        mActiveTool = tool;
-        mActiveTool->activate();
+            // Uncheck the action. NOTE: This will cause another deactivateTool() call with the same name,
+            // but this is not a problem since the tool will not be active.
+            if (mActiveAction->isChecked())
+                mActiveAction->setChecked(false);
 
-        emit toolWasActivated(tool, name);
+            mActiveAction = nullptr;
+        }
     }
 }
 
