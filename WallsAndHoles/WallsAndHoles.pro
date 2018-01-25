@@ -46,19 +46,19 @@ HEADERS += \
     renderableobject.h \
     scene.h \
     meshview.h \
-    meshviewcamera.h \
     meshviewcameralikeblender.h \
     objtools.h \
     drawableaxes.h \
-    drawableglobject.h \
-    tool.h \
     toolmanager.h \
     renderableobject.h \
     scene.h \
     tile.h \
     tilemap.h \
     tiletemplate.h \
-    tiletemplateset.h
+    tiletemplateset.h \
+    abstracttool.h \
+    abstractmeshviewcamera.h \
+    abstractdrawableglobject.h
 
 FORMS += \
     mainwindow.ui \

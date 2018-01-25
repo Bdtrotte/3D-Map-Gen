@@ -6,7 +6,8 @@
 #include <QObject>
 #include <QMouseEvent>
 #include <QSharedPointer>
-#include "tool.h"
+#include <QAction>
+#include "abstracttool.h"
 
 /**
  * @brief The ToolManager class represents a group of mutually exclusive tools
@@ -20,7 +21,7 @@ class ToolManager : public QObject {
     Q_OBJECT
 
 public:
-    using ToolP = QSharedPointer<Tool>;
+    using AbstractToolP = QSharedPointer<AbstractTool>;
 
     ToolManager();
 
@@ -32,7 +33,7 @@ public slots:
      * @param tool The tool to be registered.
      * @param name The identifier to be given to the tool.
      */
-    void registerTool(ToolP tool, QString name);
+    void registerTool(AbstractToolP tool, QString name);
 
     /**
      * @brief Activates the desired tool.
@@ -54,12 +55,14 @@ signals:
      * @param tool The tool that was activated.
      * @param name The name of the tool.
      */
-    void toolWasActivated(ToolP tool, QString name);
+    void toolWasActivated(AbstractToolP tool, QString name);
 
 protected:
-    QMap<QString, ToolP> mTools;
+    QMap<QString, AbstractToolP> mTools;
 
-    ToolP mActiveTool;
+    AbstractToolP mActiveTool;
 };
+
+typedef QSharedPointer<ToolManager> ToolManagerP;
 
 #endif // TOOLMANAGER_H

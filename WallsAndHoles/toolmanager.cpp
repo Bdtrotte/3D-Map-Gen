@@ -5,12 +5,12 @@ ToolManager::ToolManager() {
 }
 
 
-void ToolManager::registerTool(ToolP tool, QString name) {
+void ToolManager::registerTool(AbstractToolP tool, QString name) {
     mTools.insert(name, tool);
 }
 
 void ToolManager::activateTool(QString name) {
-    ToolP tool = mTools[name];
+    AbstractToolP tool = mTools[name];
 
     if (mActiveTool != nullptr)
         mActiveTool->deactivate();

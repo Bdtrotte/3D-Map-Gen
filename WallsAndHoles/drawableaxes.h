@@ -6,7 +6,7 @@
 #include <QOpenGLVertexArrayObject>
 #include <QOpenGLBuffer>
 
-#include "drawableglobject.h"
+#include "abstractdrawableglobject.h"
 
 /**
  * @brief An object that may be added to a Scene to display the XYZ axes.
@@ -14,7 +14,7 @@
  * DrawableAxes always draws itself at (0, 0, 0). It does not disable depth
  * testing, so the axes could be completely covered up by a large object.
  */
-class DrawableAxes : public DrawableGLObject, public QOpenGLFunctions {
+class DrawableAxes : public AbstractDrawableGLObject, public QOpenGLFunctions {
 public:
     DrawableAxes();
     ~DrawableAxes();

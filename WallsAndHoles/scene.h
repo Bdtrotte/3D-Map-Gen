@@ -5,11 +5,11 @@
 #include <QSharedPointer>
 
 #include "renderableobject.h"
-#include "drawableglobject.h"
+#include "abstractdrawableglobject.h"
 
 class Scene {
     using RenderableObjectP = QSharedPointer<RenderableObject>;
-    using DrawableObjectP = QSharedPointer<DrawableGLObject>;
+    using DrawableObjectP = QSharedPointer<AbstractDrawableGLObject>;
 
 public:
     Scene();

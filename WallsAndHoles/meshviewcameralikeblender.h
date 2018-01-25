@@ -3,9 +3,9 @@
 
 #include <QVector3D>
 
-#include "meshviewcamera.h"
+#include "abstractmeshviewcamera.h"
 
-class MeshViewCameraLikeBlender : public MeshViewCamera {
+class MeshViewCameraLikeBlender : public AbstractMeshViewCamera {
 public:
     MeshViewCameraLikeBlender();
     ~MeshViewCameraLikeBlender() {}
