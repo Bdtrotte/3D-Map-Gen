@@ -2,7 +2,8 @@
 
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-
+#include "mapview.h"
+#include "QDebug"
 #include "meshviewcontainer.h"
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -30,3 +31,7 @@ void MainWindow::openMeshView() {
 void MainWindow::on_pushButton_clicked() {
     openMeshView();
 }
+
+
+
+

@@ -39,8 +39,9 @@ SOURCES += \
     tiletemplateset.cpp \
     drawableaxes.cpp \
     toolmanager.cpp \
-    meshviewcontainer.cpp
-
+    meshviewcontainer.cpp \
+    rectcell.cpp \
+    mapview.cpp
 
 HEADERS += \
     mainwindow.h \
@@ -60,7 +61,9 @@ HEADERS += \
     abstracttool.h \
     abstractmeshviewcamera.h \
     abstractdrawableglobject.h \
-    meshviewcontainer.h
+    meshviewcontainer.h \
+    rectcell.h \
+    mapview.h
 
 FORMS += \
     mainwindow.ui \
