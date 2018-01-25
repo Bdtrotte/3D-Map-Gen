@@ -1,4 +1,5 @@
 #include <QApplication>
+#include <QtMath>
 
 #include "meshviewcameralikeblender.h"
 
@@ -46,15 +47,21 @@ void MeshViewCameraLikeBlender::mouseMoveEvent(QMouseEvent *event) {
             mRotationYaw = mRotationYawStart + deltaPos.x();
             mRotationPitch = mRotationPitchStart + deltaPos.y();
         } else {
-            QQuaternion rotation = QQuaternion::fromAxisAndAngle(0, 1, 0, -mRotationYaw);
-            rotation = QQuaternion::fromAxisAndAngle(1, 0, 0, -mRotationPitch) * rotation;
+            QQuaternion rotation = QQuaternion::fromAxisAndAngle(1, 0, 0, -mRotationPitch);
+            rotation = QQuaternion::fromAxisAndAngle(0, 1, 0, -mRotationYaw) * rotation;
 
             QVector3D up = rotation.rotatedVector(QVector3D(0, 1, 0));
             QVector3D right = rotation.rotatedVector(QVector3D(-1, 0, 0));
 
-            mCenterOfRotation = mCenterStart + 0.01 * up * deltaPos.y() + 0.01 * right * deltaPos.x();
+            mCenterOfRotation = mCenterStart + 0.005 * mDistanceFromCenter * (up * deltaPos.y() + right * deltaPos.x());
         }
 
         event->accept();
     }
+}
+
+
+void MeshViewCameraLikeBlender::wheelEvent(QWheelEvent *event) {
+    mDistanceFromCenter *= pow(1.02, event->delta());
+    event->accept();
 }

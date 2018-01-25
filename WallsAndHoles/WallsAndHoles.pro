@@ -37,27 +37,38 @@ SOURCES += \
     tilemap.cpp \
     tiletemplate.cpp \
     tiletemplateset.cpp \
+    drawableaxes.cpp \
+    toolmanager.cpp \
+    meshviewcontainer.cpp \
     rectcell.cpp \
     mapview.cpp
 
 HEADERS += \
     mainwindow.h \
+    renderableobject.h \
+    scene.h \
     meshview.h \
-    meshviewcamera.h \
     meshviewcameralikeblender.h \
     objtools.h \
+    drawableaxes.h \
+    toolmanager.h \
     renderableobject.h \
     scene.h \
     tile.h \
     tilemap.h \
     tiletemplate.h \
     tiletemplateset.h \
+    abstracttool.h \
+    abstractmeshviewcamera.h \
+    abstractdrawableglobject.h \
+    meshviewcontainer.h \
     rectcell.h \
     mapview.h
 
 FORMS += \
     mainwindow.ui \
-    meshview.ui
+    meshview.ui \
+    meshviewcontainer.ui
 
 DISTFILES += \
     basic.fsh \

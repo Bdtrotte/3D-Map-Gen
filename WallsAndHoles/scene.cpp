@@ -1,16 +1,25 @@
 #include "scene.h"
+#include "drawableaxes.h"
 
 Scene::Scene() {
-
+    drawables.append(QSharedPointer<DrawableAxes>::create());
 }
 
 void Scene::addObject(RenderableObjectP object) {
-    objects.push_back(object);
+    objects.append(object);
+}
+
+void Scene::addObject(DrawableObjectP object) {
+    drawables.append(object);
 }
 
 
 const QVector<Scene::RenderableObjectP>& Scene::getAllObjects() const {
     return objects;
+}
+
+const QVector<Scene::DrawableObjectP>& Scene::getAllDrawables() const {
+    return drawables;
 }
 
 size_t Scene::getNumVertices() const {

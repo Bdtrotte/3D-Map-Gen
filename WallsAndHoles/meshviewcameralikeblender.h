@@ -3,9 +3,9 @@
 
 #include <QVector3D>
 
-#include "meshviewcamera.h"
+#include "abstractmeshviewcamera.h"
 
-class MeshViewCameraLikeBlender : public MeshViewCamera {
+class MeshViewCameraLikeBlender : public AbstractMeshViewCamera {
 public:
     MeshViewCameraLikeBlender();
     ~MeshViewCameraLikeBlender() {}
@@ -14,6 +14,7 @@ public:
 
     void mousePressEvent(QMouseEvent *event) override;
     void mouseMoveEvent(QMouseEvent *event) override;
+    void wheelEvent(QWheelEvent *event) override;
 
 protected:
     QVector3D mCenterOfRotation;

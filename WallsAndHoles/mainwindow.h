@@ -3,8 +3,8 @@
 
 #include <QMainWindow>
 
-#include "meshview.h"
-#include "objtools.h"
+#include "meshviewcontainer.h"
+
 
 namespace Ui {
 class MainWindow;
@@ -27,7 +27,7 @@ private slots:
 private:
     Ui::MainWindow *ui;
 
-    MeshView *meshView;
+    MeshViewContainer *mMeshViewContainer;
 };
 
 #endif // MAINWINDOW_H
