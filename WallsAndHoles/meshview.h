@@ -54,12 +54,12 @@ protected:
 
 
     // Shader program.
-    QOpenGLShaderProgram mBasicProgram;
+    QSharedPointer<QOpenGLShaderProgram> mBasicProgram;
 
     // VAO and buffers for rendering.
-    QOpenGLVertexArrayObject mVAO;
-    QOpenGLBuffer mVertexPositions;
-    QOpenGLBuffer mTriangleIndices;
+    QSharedPointer<QOpenGLVertexArrayObject> mVAO;
+    QSharedPointer<QOpenGLBuffer> mVertexPositions;
+    QSharedPointer<QOpenGLBuffer> mTriangleIndices;
 
     // Scene object that is rendered.
     QSharedPointer<Scene> mScene;

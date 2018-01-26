@@ -8,8 +8,6 @@
 
 MeshView::MeshView(QWidget *parent) :
     QOpenGLWidget(parent),
-    mVertexPositions(QOpenGLBuffer::VertexBuffer),
-    mTriangleIndices(QOpenGLBuffer::IndexBuffer),
     mShouldReloadBuffers(false),
     ui(new Ui::MeshView)
 {
@@ -19,18 +17,24 @@ MeshView::MeshView(QWidget *parent) :
 
     mTools = ToolManagerP::create();
     mTools->registerTool(mCamera, "camera");
+
+
+    // Start outputting frame updates.
+    QTimer *timer = new QTimer(this);
+    connect(timer, SIGNAL(timeout()), this, SLOT(update()));
+    timer->start(16);
 }
 
-MeshView::~MeshView()
-{
+MeshView::~MeshView() {
     delete ui;
-
-    // TODO: Make sure OpenGL related objects are freed.
 }
 
 
 void MeshView::setScene(QSharedPointer<Scene> scene) {
     mScene = scene;
+
+    // The reason loadVAO() is not called here is because the appropriate
+    // OpenGL context may not be bound.
     mShouldReloadBuffers = true;
 }
 
@@ -59,6 +63,8 @@ void MeshView::activateTool(QString name) {
 
 // Assumes an OpenGL context is bound, mBasicProgram is set up, and mScene != nullptr.
 void MeshView::loadVAO() {
+    mShouldReloadBuffers = false;
+
     QVector<GLfloat> vertices;
     QVector<GLuint> indices;
 
@@ -76,45 +82,49 @@ void MeshView::loadVAO() {
             indices.append(index+triangleIndices[i]);
     }
 
-    mVertexPositions.create();
-    mVertexPositions.bind();
-    mVertexPositions.setUsagePattern(QOpenGLBuffer::DynamicDraw); // may be updated in real-time in the future
-    mVertexPositions.allocate(vertices.data(), vertices.size() * sizeof(GLfloat));
-    mVertexPositions.release();
+    mVertexPositions = QSharedPointer<QOpenGLBuffer>::create(QOpenGLBuffer::VertexBuffer);
+    mVertexPositions->create();
+    mVertexPositions->bind();
+    mVertexPositions->setUsagePattern(QOpenGLBuffer::DynamicDraw); // may be updated in real-time in the future
+    mVertexPositions->allocate(vertices.data(), vertices.size() * sizeof(GLfloat));
+    mVertexPositions->release();
 
-    mTriangleIndices.create();
-    mTriangleIndices.bind();
-    mTriangleIndices.setUsagePattern(QOpenGLBuffer::DynamicDraw);
-    mTriangleIndices.allocate(indices.data(), indices.size() * sizeof(GLuint));
-    mTriangleIndices.release();
+    mTriangleIndices = QSharedPointer<QOpenGLBuffer>::create(QOpenGLBuffer::IndexBuffer);
+    mTriangleIndices->create();
+    mTriangleIndices->bind();
+    mTriangleIndices->setUsagePattern(QOpenGLBuffer::DynamicDraw);
+    mTriangleIndices->allocate(indices.data(), indices.size() * sizeof(GLuint));
+    mTriangleIndices->release();
 
-    mVAO.create();
-    mVAO.bind();
+    mVAO = QSharedPointer<QOpenGLVertexArrayObject>::create(nullptr);
+    mVAO->create();
+    mVAO->bind();
 
-    mVertexPositions.bind();
-    mBasicProgram.setAttributeBuffer(SHADER_VERTEX_POS, GL_FLOAT, 0, 3);
-    mVertexPositions.release();
+    mVertexPositions->bind();
+    mBasicProgram->setAttributeBuffer(SHADER_VERTEX_POS, GL_FLOAT, 0, 3);
+    mVertexPositions->release();
 
-    mVAO.release();
-
-    mShouldReloadBuffers = false;
+    mVAO->release();
 }
 
+// This is called WHENEVER THERE IS A NEW CONTEXT.
+// A new context can be created if the meshview is undocked. This is important!
 void MeshView::initializeGL() {
     initializeOpenGLFunctions();
 
-    glEnable(GL_DEPTH_TEST);
+    // Create the shader program. This will free the previous program, if any.
+    mBasicProgram = QSharedPointer<QOpenGLShaderProgram>::create(nullptr);
+    mBasicProgram->create();
+    mBasicProgram->addCacheableShaderFromSourceFile(QOpenGLShader::Vertex, ":/shaders/basic.vsh");
+    mBasicProgram->addCacheableShaderFromSourceFile(QOpenGLShader::Fragment, ":/shaders/basic.fsh");
+    mBasicProgram->link();
 
-    // Create the shader program.
-    mBasicProgram.create();
-    mBasicProgram.addShaderFromSourceFile(QOpenGLShader::Vertex, ":/shaders/basic.vsh");
-    mBasicProgram.addShaderFromSourceFile(QOpenGLShader::Fragment, ":/shaders/basic.fsh");
-    mBasicProgram.link();
+    // If mScene exists, the buffers should be reloaded now.
+    mShouldReloadBuffers = mScene != nullptr;
 
-    // Start outputting frame updates.
-    QTimer *timer = new QTimer(this);
-    connect(timer, SIGNAL(timeout()), this, SLOT(update()));
-    timer->start(16);
+    // Initialize GL for all objects in the scene.
+    if (mScene != nullptr)
+        mScene->initializeGL();
 }
 
 void MeshView::paintGL() {
@@ -122,40 +132,45 @@ void MeshView::paintGL() {
     if (mShouldReloadBuffers)
         loadVAO();
 
+
+    glEnable(GL_DEPTH_TEST);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     if (mScene != nullptr) {
         /******* Draw meshes. *******/
         // Set program.
-        mBasicProgram.bind();
+        mBasicProgram->bind();
 
         // Set the matrix.
         QMatrix4x4 transform = mCamera->getTransformationMatrix();
         QMatrix4x4 mvp = mProjectionMatrix * transform;
-        mBasicProgram.setUniformValue(SHADER_MVP, mvp);
+        mBasicProgram->setUniformValue(SHADER_MVP, mvp);
 
 
 
         // Set arrays.
-        mVAO.bind();
-        mTriangleIndices.bind();
+        mVAO->bind();
+        mTriangleIndices->bind();
 
         // Draw.
-        mBasicProgram.enableAttributeArray(SHADER_VERTEX_POS);
-        glDrawElements(GL_TRIANGLES, mTriangleIndices.size()/sizeof(unsigned int), GL_UNSIGNED_INT, 0);
-        mBasicProgram.disableAttributeArray(SHADER_VERTEX_POS);
+        mBasicProgram->enableAttributeArray(SHADER_VERTEX_POS);
+        glDrawElements(GL_TRIANGLES, mTriangleIndices->size()/sizeof(unsigned int), GL_UNSIGNED_INT, 0);
+        mBasicProgram->disableAttributeArray(SHADER_VERTEX_POS);
 
         // Unset arrays.
-        mTriangleIndices.release();
-        mVAO.release();
+        mTriangleIndices->release();
+        mVAO->release();
 
         // Unset program.
-        mBasicProgram.release();
+        mBasicProgram->release();
 
         /******* Draw widgets. *******/
         for (QSharedPointer<AbstractDrawableGLObject> drawable : mScene->getAllDrawables())
             drawable->draw(mProjectionMatrix, transform);
     }
+
+    // Clean up for anything else using the same context.
+    glDisable(GL_DEPTH_TEST);
 }
 
 void MeshView::resizeGL(int w, int h) {

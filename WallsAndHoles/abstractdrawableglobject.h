@@ -15,6 +15,12 @@ public:
     virtual ~AbstractDrawableGLObject() {}
     
     /**
+     * @brief Called when this object is to be used with a new OpenGL context.
+     * Must be called before the first draw() call in the context.
+     */
+    virtual void initializeGL() = 0;
+
+    /**
      * @brief Performs OpenGL calls to draw the object, assuming a context is bound.
      * @param projection        The projection matrix used for the meshes.
      * @param transformation    The transformation matrix used for the meshes. The
