@@ -19,13 +19,10 @@ protected slots:
     //pan to be on middleMouse click and drag
 
     void wheelEvent(QWheelEvent *event) override;
-    void keyPressEvent(QKeyEvent *event) override;
-    void keyReleaseEvent(QKeyEvent *event) override;
 private:
     float mScale;
     int mMapWidth;
     int mMapHeight;
-    Qt::KeyboardModifiers mKeyDown;
 };
 
 #endif // MAPVIEW_H
