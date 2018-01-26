@@ -17,26 +17,17 @@
 class DrawableAxes : public AbstractDrawableGLObject, public QOpenGLFunctions {
 public:
     DrawableAxes();
-    ~DrawableAxes();
 
+    void initializeGL() override;
     void draw(QMatrix4x4 projection, QMatrix4x4 transformation) override;
 
 protected:
 
-    QOpenGLVertexArrayObject *mVAO;
-    QOpenGLBuffer *mPos;
-    QOpenGLBuffer *mColor;
+    QSharedPointer<QOpenGLVertexArrayObject> mVAO;
+    QSharedPointer<QOpenGLBuffer> mPos;
+    QSharedPointer<QOpenGLBuffer> mColor;
 
     QSharedPointer<QOpenGLShaderProgram> mProgram;
-
-
-    // Whether initialize() has been called yet.
-    bool initialized;
-
-    /**
-     * @brief Called during first draw() call to initialize buffers and shaders.
-     */
-    void initialize();
 };
 
 #endif // DRAWABLEAXES_H

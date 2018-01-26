@@ -4,23 +4,16 @@
 #include "drawableaxes.h"
 
 DrawableAxes::DrawableAxes()
-    : initialized(false)
 {
 
 }
 
-DrawableAxes::~DrawableAxes() {
-    delete mVAO;
-    delete mPos;
-    delete mColor;
-}
-
-void DrawableAxes::initialize() {
+void DrawableAxes::initializeGL() {
     initializeOpenGLFunctions();
 
-    mProgram = QSharedPointer<QOpenGLShaderProgram>::create();
-    mProgram->addShaderFromSourceFile(QOpenGLShader::Vertex, ":/shaders/colors.vsh");
-    mProgram->addShaderFromSourceFile(QOpenGLShader::Fragment, ":/shaders/colors.fsh");
+    mProgram = QSharedPointer<QOpenGLShaderProgram>::create(nullptr);
+    mProgram->addCacheableShaderFromSourceFile(QOpenGLShader::Vertex, ":/shaders/colors.vsh");
+    mProgram->addCacheableShaderFromSourceFile(QOpenGLShader::Fragment, ":/shaders/colors.fsh");
     mProgram->link();
 
     float length = 10;
@@ -39,21 +32,21 @@ void DrawableAxes::initialize() {
                    0, 0, 1, 1,
                    0, 0, 1, 1};
 
-    mPos = new QOpenGLBuffer(QOpenGLBuffer::VertexBuffer);
+    mPos = QSharedPointer<QOpenGLBuffer>::create(QOpenGLBuffer::VertexBuffer);
     mPos->create();
     mPos->bind();
     mPos->setUsagePattern(QOpenGLBuffer::StaticDraw);
     mPos->allocate(pos, 3 * 6 * sizeof(float));
     mPos->release();
 
-    mColor = new QOpenGLBuffer(QOpenGLBuffer::VertexBuffer);
+    mColor = QSharedPointer<QOpenGLBuffer>::create(QOpenGLBuffer::VertexBuffer);
     mColor->create();
     mColor->bind();
     mColor->setUsagePattern(QOpenGLBuffer::StaticDraw);
     mColor->allocate(col, 4 * 6 * sizeof(float));
     mColor->release();
 
-    mVAO = new QOpenGLVertexArrayObject();
+    mVAO = QSharedPointer<QOpenGLVertexArrayObject>::create(nullptr);
     mVAO->create();
     mVAO->bind();
 
@@ -69,18 +62,10 @@ void DrawableAxes::initialize() {
 
     mVAO->release();
 
-
-    initialized = true;
 }
 
 
 void DrawableAxes::draw(QMatrix4x4 projection, QMatrix4x4 transformation) {
-
-    // Initialize on the first call. This sets up shaders and buffers.
-    if (!initialized)
-        initialize();
-
-
     mProgram->bind();
     mProgram->setUniformValue("mvp", projection * transformation);
 

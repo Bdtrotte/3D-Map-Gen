@@ -22,6 +22,7 @@ const QVector<Scene::DrawableObjectP>& Scene::getAllDrawables() const {
     return drawables;
 }
 
+
 size_t Scene::getNumVertices() const {
     size_t total = 0;
 
@@ -29,4 +30,10 @@ size_t Scene::getNumVertices() const {
         total += obj->getNumVertices();
 
     return total;
+}
+
+
+void Scene::initializeGL() {
+    for (DrawableObjectP drawable : drawables)
+        drawable->initializeGL();
 }

@@ -31,6 +31,12 @@ public:
     size_t getNumVertices() const;
 
 
+    /**
+     * @brief Calls initialzeGL() on all drawables.
+     */
+    void initializeGL();
+
+
     const QVector<DrawableObjectP>& getAllDrawables() const;
     const QVector<RenderableObjectP>& getAllObjects() const;
 
