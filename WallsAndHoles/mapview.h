@@ -22,10 +22,10 @@ protected slots:
     void keyPressEvent(QKeyEvent *event) override;
     void keyReleaseEvent(QKeyEvent *event) override;
 private:
-    float scale;
-    int MapWidth;
-    int MapHeight;
-    int KeyDown;
+    float mScale;
+    int mMapWidth;
+    int mMapHeight;
+    Qt::KeyboardModifiers mKeyDown;
 };
 
 #endif // MAPVIEW_H
