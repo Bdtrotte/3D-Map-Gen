@@ -31,10 +31,12 @@ MapView::MapView(QWidget *parent)
 
 void MapView::keyPressEvent(QKeyEvent *event){
     KeyDown = event->key();
+    QGraphicsView::keyPressEvent(event);
 }
 
 void MapView::keyReleaseEvent(QKeyEvent *event){
      KeyDown = -1;
+     QGraphicsView::keyReleaseEvent(event);
 }
 
 void MapView::wheelEvent(QWheelEvent *event)
@@ -47,13 +49,14 @@ void MapView::wheelEvent(QWheelEvent *event)
   if(KeyDown==16777251) {QGraphicsView::wheelEvent(event);};
 
   if(KeyDown==16777250) {scale += (d/1000);};
+
    if(scale < 0.2){
        scale = 0.2;
    }else if(scale > 5){
        scale = 5;
    }
    QMatrix mat;
-   mat.scale(this->scale,this->scale);
+   mat.scale(scale,scale);
    setMatrix(mat);
 
 }
