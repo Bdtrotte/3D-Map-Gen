@@ -47,4 +47,6 @@ private:
     const SharedTileTemplate mDefaultTileTemplate;
 };
 
+typedef QSharedPointer<TileMap> SharedTileMap;
+
 #endif // TILEMAP_H

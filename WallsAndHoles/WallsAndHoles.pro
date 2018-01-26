@@ -41,7 +41,9 @@ SOURCES += \
     toolmanager.cpp \
     meshviewcontainer.cpp \
     rectcell.cpp \
-    mapview.cpp
+    mapview.cpp \
+    editor.cpp \
+    newmapdialog.cpp
 
 HEADERS += \
     mainwindow.h \
@@ -63,12 +65,15 @@ HEADERS += \
     abstractdrawableglobject.h \
     meshviewcontainer.h \
     rectcell.h \
-    mapview.h
+    mapview.h \
+    editor.h \
+    newmapdialog.h
 
 FORMS += \
     mainwindow.ui \
     meshview.ui \
-    meshviewcontainer.ui
+    meshviewcontainer.ui \
+    newmapdialog.ui
 
 DISTFILES += \
     basic.fsh \
