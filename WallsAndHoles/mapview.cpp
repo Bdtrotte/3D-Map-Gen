@@ -13,10 +13,10 @@ MapView::MapView(QWidget *parent)
 {
     QGraphicsScene *scene = new QGraphicsScene;
     scene->setBackgroundBrush(Qt::gray);
-    this->setScene(scene);
+    setScene(scene);
 
-    for(qreal i = 0; i < this->mMapHeight*30; i+=30){
-        for(qreal j = 0; j < this->mMapWidth*30; j+=30){
+    for(qreal i = 0; i < mMapHeight*30; i+=30){
+        for(qreal j = 0; j < mMapWidth*30; j+=30){
             RectCell *temp = new RectCell(j+100,i+100,30,30);
             scene->addItem(temp);
         }
@@ -57,10 +57,10 @@ void MapView::clear()
 {
     QGraphicsScene *scene = new QGraphicsScene;
     scene->setBackgroundBrush(Qt::gray);
-    this->setScene(scene);
+    setScene(scene);
 
-    for(qreal i = 0; i < this->mMapHeight*30; i+=30){
-        for(qreal j = 0; j < this->mMapWidth*30; j+=30){
+    for (qreal i = 0; i < mMapHeight*30; i+=30) {
+        for (qreal j = 0; j < mMapWidth*30; j+=30) {
             RectCell *temp = new RectCell(j+100,i+100,30,30);
             scene->addItem(temp);
         }
@@ -71,10 +71,10 @@ void MapView::createMap(int tx, int ty)
 {
     QGraphicsScene *scene = new QGraphicsScene;
     scene->setBackgroundBrush(Qt::gray);
-    this->setScene(scene);
+    setScene(scene);
 
-    for(qreal i = 0; i < tx*30; i+=30){
-        for(qreal j = 0; j < ty*30; j+=30){
+    for(qreal i = 0; i < tx*30; i+=30) {
+        for(qreal j = 0; j < ty*30; j+=30) {
             RectCell *temp = new RectCell(j+100,i+100,30,30);
             scene->addItem(temp);
         }
@@ -82,4 +82,20 @@ void MapView::createMap(int tx, int ty)
 }
 
 
-
+void MapView::mouseMoveEvent(QMouseEvent *event)
+{
+    if (event->buttons() == Qt::MiddleButton) {
+        int dx = mOldX - event->x();
+        int dy = mOldY - event->y();
+        mOldX = event->x();
+        mOldY = event->y();
+        QScrollBar* const hsb = horizontalScrollBar();
+        hsb->setValue(hsb->value() + dx);
+        QScrollBar* const vsb = verticalScrollBar();
+        vsb->setValue(vsb->value() + dy);
+    } else {
+        QGraphicsView::mouseMoveEvent(event);
+        mOldX = event->x();
+        mOldY = event->y();
+    }
+}

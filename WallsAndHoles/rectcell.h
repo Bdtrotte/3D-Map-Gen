@@ -14,8 +14,9 @@ public slots:
     void hoverLeaveEvent(QGraphicsSceneHoverEvent *e);
     void hoverEnterEvent(QGraphicsSceneHoverEvent *e);
     void mousePressEvent(QGraphicsSceneMouseEvent *e);
+
  private:
-    bool edited;
+    bool mEdited;
 
 signals:
     void toolSignal();

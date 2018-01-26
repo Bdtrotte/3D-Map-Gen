@@ -19,10 +19,13 @@ protected slots:
     //pan to be on middleMouse click and drag
 
     void wheelEvent(QWheelEvent *event) override;
+    void mouseMoveEvent(QMouseEvent *event);
 private:
     float mScale;
     int mMapWidth;
     int mMapHeight;
+    int mOldX;
+    int mOldY;
 };
 
 #endif // MAPVIEW_H
