@@ -2,21 +2,19 @@
 #include <QGraphicsView>
 #include <rectcell.h>
 #include <QDebug>
+#include <QKeyEvent>
 #include <QScrollBar>
 
 MapView::MapView(QWidget *parent)
 : QGraphicsView(parent),
   scale(0.5),
-  oldX(0),
-  oldY(0),
   MapWidth(20),
-  MapHeight(20)
+  MapHeight(20),
+  KeyDown(-1)
 {
     QGraphicsScene *scene = new QGraphicsScene;
     scene->setBackgroundBrush(Qt::gray);
     this->setScene(scene);
-    this->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    this->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
     for(qreal i = 0; i < this->MapHeight*30; i+=30){
         for(qreal j = 0; j < this->MapWidth*30; j+=30){
@@ -31,18 +29,32 @@ MapView::MapView(QWidget *parent)
 }
 
 
+void MapView::keyPressEvent(QKeyEvent *event){
+    KeyDown = event->key();
+}
+
+void MapView::keyReleaseEvent(QKeyEvent *event){
+     KeyDown = -1;
+}
+
 void MapView::wheelEvent(QWheelEvent *event)
 {
+    //for future: make this tied to
+    //the MapHeight and MapWidth numbers
+
    float d = event->delta();
-   this->scale += (d/1000);
-   if(this->scale < 0.2){
-       this->scale = 0.2;
-   }else if(this->scale > 5){
-       this->scale = 5;
+
+  if(KeyDown==16777251) {QGraphicsView::wheelEvent(event);};
+
+  if(KeyDown==16777250) {scale += (d/1000);};
+   if(scale < 0.2){
+       scale = 0.2;
+   }else if(scale > 5){
+       scale = 5;
    }
    QMatrix mat;
    mat.scale(this->scale,this->scale);
-   this->setMatrix(mat);
+   setMatrix(mat);
 
 }
 
@@ -50,10 +62,6 @@ void MapView::clear(){
     QGraphicsScene *scene = new QGraphicsScene;
     scene->setBackgroundBrush(Qt::gray);
     this->setScene(scene);
-    this->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    this->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-
-
         for(qreal i = 0; i < this->MapHeight*30; i+=30){
             for(qreal j = 0; j < this->MapWidth*30; j+=30){
                 RectCell *temp = new RectCell(j+100,i+100,30,30);
@@ -66,8 +74,6 @@ void MapView::createMap(int tx, int ty){
     QGraphicsScene *scene = new QGraphicsScene;
     scene->setBackgroundBrush(Qt::gray);
     this->setScene(scene);
-    this->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    this->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
         for(qreal i = 0; i < tx*30; i+=30){
             for(qreal j = 0; j < ty*30; j+=30){
@@ -77,24 +83,5 @@ void MapView::createMap(int tx, int ty){
         }
 }
 
-void MapView::mouseMoveEvent(QMouseEvent *event)
-{
 
-    if( event->buttons() == Qt::MiddleButton){
-       int dx = this->oldX - event->x();
-       int dy = this->oldY - event->y();
-       this->oldX = event->x();
-       this->oldY = event->y();
-       QScrollBar* const hsb = this->horizontalScrollBar();
-       hsb->setRange(0, 1000);
-       hsb->setValue(hsb->value() + dx);
-       QScrollBar* const vsb = this->verticalScrollBar();
-       vsb->setRange(0, 1000);
-       vsb->setValue(vsb->value() + dy);
-    }else{
-    QGraphicsView::mouseMoveEvent(event);
-     this->oldX = event->x();
-     this->oldY = event->y();
-    }
-}
 
