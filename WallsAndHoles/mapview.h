@@ -2,6 +2,7 @@
 #define MAPVIEW_H
 
 #include <QGraphicsView>
+#include <QKeyEvent>
 #include <QWidget>
 
 
@@ -18,13 +19,13 @@ protected slots:
     //pan to be on middleMouse click and drag
 
     void wheelEvent(QWheelEvent *event) override;
-    void mouseMoveEvent(QMouseEvent *event) override;
+    void mouseMoveEvent(QMouseEvent *event);
 private:
-    float scale;
-    int oldX;
-    int oldY;
-    int MapWidth;
-    int MapHeight;
+    float mScale;
+    int mMapWidth;
+    int mMapHeight;
+    int mOldX;
+    int mOldY;
 };
 
 #endif // MAPVIEW_H

@@ -10,19 +10,19 @@
 QBrush tempBrushColor;
 
 RectCell::RectCell(qreal x,qreal y,qreal w, qreal h) :
-    edited(false)
+    mEdited(false)
 { 
-   this->setRect(x,y,w,h);
-   this->setAcceptHoverEvents(true);
-   this->setAcceptedMouseButtons(Qt::MouseButton(3));
-   this->setBrush(Qt::white);
+   setRect(x,y,w,h);
+   setAcceptHoverEvents(true);
+   setAcceptedMouseButtons(Qt::MouseButton(3));
+   setBrush(Qt::white);
    QPen pen(Qt::black, 0, Qt::DashLine);
-   this->setPen(pen);
+   setPen(pen);
 }
 
 void RectCell::applyTool(QString temptoolname)
 {
-    this->edited = !this->edited;
+    mEdited = !mEdited;
     emit toolSignal();
 }
 
@@ -30,27 +30,27 @@ void RectCell::applyTool(QString temptoolname)
 void RectCell::mousePressEvent(QGraphicsSceneMouseEvent *e){
 
     if(e->button() == Qt::LeftButton){
-        this->setBrush(QColor(108,147,209,255));
-        tempBrushColor = this->brush();
-        this->update();
+        setBrush(QColor(108,147,209,255));
+        tempBrushColor = brush();
+        update();
     }
     //Right click to erase the color
     if(e->button() == Qt::RightButton){
-        this->setBrush(Qt::white);
-        tempBrushColor = this->brush();
-        this->update();
+        setBrush(Qt::white);
+        tempBrushColor = brush();
+        update();
     }
 }
 
 void RectCell::hoverEnterEvent(QGraphicsSceneHoverEvent *e){
-      tempBrushColor = this->brush();
-      this->setBrush(Qt::gray);
-      this->update();
+      tempBrushColor = brush();
+      setBrush(Qt::gray);
+      update();
 }
 
 void RectCell::hoverLeaveEvent(QGraphicsSceneHoverEvent *e){
-       this->setBrush(tempBrushColor);
-       this->update();
+       setBrush(tempBrushColor);
+       update();
 }
 
 void RectCell::toolSignal(){
