@@ -14,7 +14,6 @@ class TileMap : public QObject
 
 public:
     TileMap(QSize mapSize,
-            const SharedTileTemplate defaultTileTemplate,
             QObject *parent = nullptr);
 
     ~TileMap();
@@ -22,10 +21,10 @@ public:
     Tile &tileAt(int x, int y);
     const Tile &cTileAt(int x, int y) const;
 
-    void setTile(int x, int y, QSharedPointer<Tile> tile);
+    void setTile(int x, int y, SharedTileTemplate tileTemplate);
 
     //sets this tile to the default
-    void clearTile(int x, int y);
+    void clearTile(int x, int y) { setTile(x, y, nullptr); }
 
     //sets the whole map to the default
     void clear();
@@ -37,14 +36,13 @@ public:
 
 signals:
     void tileChanged(int x, int y);
-    void sizeChanged();
+    void resized();
 
 private:
-    QSharedPointer<Tile> **mMap;
+    //2D array of Tile*. If mMap[x][y]->isEmpty() then ground is shown
+    Tile ***mMap;
 
     QSize mMapSize;
-
-    const SharedTileTemplate mDefaultTileTemplate;
 };
 
 typedef QSharedPointer<TileMap> SharedTileMap;

@@ -14,12 +14,14 @@ class Tile : public QObject
     Q_OBJECT
 
 public:
-    explicit Tile(const SharedTileTemplate tileTemplate,
+    explicit Tile(SharedTileTemplate tileTemplate,
                   int xPos = -1,
                   int yPos = -1,
                   QObject *parent = nullptr);
 
-    const SharedTileTemplate tileTemplate() const { return mTileTemplate; }
+    ~Tile();
+
+    SharedTileTemplate tileTemplate() const { return mTileTemplate; }
 
     float relativeThickness() const { return mRelativeThickness; }
     float relativeHeight() const { return mRelativeHeight; }
@@ -32,11 +34,25 @@ public:
     //will be clipped so that walls don't leave tilebounds
     void setRelativePosition(QVector2D relavtivePosition);
 
+    /**
+     * Sets all relative values to zero,
+     * and changes the tileTemplate to newTileTemplate
+     */
+    void resetTile(SharedTileTemplate newTileTemplate);
+
+    bool isEmpty() const { return mTileTemplate.isNull(); }
+
 signals:
     void tileChanged(int x, int y);
 
+public slots:
+    //by calling the respective set functions, it is ensured that the tile wont go out of bounds.
+    //the signal tileChanged is also emited as expected
+    void templateThicknessChanged() { setRelativePosition(mRelativePosition); }
+    void templatePositionChanged() { setRelativeThickness(mRelativeThickness); }
+
 private:
-    const SharedTileTemplate mTileTemplate;
+    SharedTileTemplate mTileTemplate;
 
     const int mXPos;
     const int mYPos;
@@ -51,10 +67,10 @@ private:
     //As with above, this is added to the base tileHeights height
     float mRelativeHeight;
 
-    //let x = (1 - mSize) / 2;
-    //then both x and y are between -x and x (inclusive)
+    //let w = (1 - mSize) / 2;
+    //then both x and y are between -w and w (inclusive)
     //This is the offset of the tile relative to the center of it's grid position
-    //(0,0 would be the centered regardless of the tiles coordinates)
+    //(0.5,0.5 would be the centered regardless of the tiles coordinates)
     QVector2D mRelativePosition;
 
     //other properties to come as we develop further
