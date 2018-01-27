@@ -67,6 +67,10 @@ protected:
     // Scene object that is rendered.
     QSharedPointer<Scene> mScene;
 
+    // This variable is just used for synchronization. mScene should not be changed
+    // in parallel with the paint loop.
+    QSharedPointer<Scene> mNextScene;
+
     // The Projection*View matrix.
     QMatrix4x4 mProjectionMatrix;
 
@@ -78,7 +82,7 @@ protected:
     ToolManagerP mTools;
 
     // True when Scene related buffers need to be reloaded.
-    bool mShouldReloadBuffers;
+    bool mShouldReloadScene;
 
 private:
     Ui::MeshView *ui;

@@ -8,7 +8,7 @@
 
 MeshView::MeshView(QWidget *parent) :
     QOpenGLWidget(parent),
-    mShouldReloadBuffers(false),
+    mShouldReloadScene(false),
     ui(new Ui::MeshView)
 {
     ui->setupUi(this);
@@ -31,11 +31,11 @@ MeshView::~MeshView() {
 
 
 void MeshView::setScene(QSharedPointer<Scene> scene) {
-    mScene = scene;
+    mNextScene = scene;
 
     // The reason loadVAO() is not called here is because the appropriate
     // OpenGL context may not be bound.
-    mShouldReloadBuffers = true;
+    mShouldReloadScene = true;
 }
 
 
@@ -63,7 +63,7 @@ void MeshView::activateTool(QString name) {
 
 // Assumes an OpenGL context is bound, mBasicProgram is set up, and mScene != nullptr.
 void MeshView::loadVAO() {
-    mShouldReloadBuffers = false;
+    mShouldReloadScene = false;
 
     QVector<GLfloat> vertices;
     QVector<GLuint> indices;
@@ -120,7 +120,7 @@ void MeshView::initializeGL() {
     mBasicProgram->link();
 
     // If mScene exists, the buffers should be reloaded now.
-    mShouldReloadBuffers = mScene != nullptr;
+    mShouldReloadScene = mScene != nullptr;
 
     // Initialize GL for all objects in the scene.
     if (mScene != nullptr)
@@ -129,14 +129,19 @@ void MeshView::initializeGL() {
 
 void MeshView::paintGL() {
 
-    if (mShouldReloadBuffers)
-        loadVAO();
+    if (mShouldReloadScene) {
+        mScene = mNextScene;
+
+        mScene->initializeGL();
+        if (!mScene.isNull())
+            loadVAO();
+    }
 
 
     glEnable(GL_DEPTH_TEST);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    if (mScene != nullptr) {
+    if (!mScene.isNull()) {
         /******* Draw meshes. *******/
         // Set program.
         mBasicProgram->bind();
