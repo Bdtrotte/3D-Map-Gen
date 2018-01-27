@@ -21,7 +21,9 @@ inline RenderableObjectP loadOBJ(QString path){
     QVector<unsigned int> normalIndices;
     while (!in.atEnd()) {
         QString line = in.readLine();
-        QStringList list = line.split(" ");
+        if(line.size()<1) continue;
+        QStringList list = line.split(" ", QString::SkipEmptyParts);
+
         if(list[0]=="v"){
             assert(list.size()==4);
             vertices.push_back(QVector3D{
@@ -30,6 +32,7 @@ inline RenderableObjectP loadOBJ(QString path){
                 list[3].toFloat()
             });
         }
+
         if(list[0]=="vt"){
             assert(list.size()==3);
             uvs.push_back(QVector2D{
@@ -45,6 +48,7 @@ inline RenderableObjectP loadOBJ(QString path){
                 list[3].toFloat()
             });
         }
+
         if(list[0]=="f"){
             assert(list.size()==4);
             for(int i=1; i<list.size(); i++){

@@ -67,7 +67,8 @@ HEADERS += \
     rectcell.h \
     mapview.h \
     editor.h \
-    newmapdialog.h
+    newmapdialog.h \
+    array2d.h
 
 FORMS += \
     mainwindow.ui \

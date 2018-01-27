@@ -36,8 +36,6 @@ private slots:
 
 private:
     Ui::MainWindow *ui;
-
-    MeshViewContainer *mMeshViewContainer;
 };
 
 #endif // MAINWINDOW_H
