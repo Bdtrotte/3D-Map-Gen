@@ -3,12 +3,9 @@
 TileTemplateSet::TileTemplateSet(QObject *parent)
     : QObject(parent) {}
 
-void TileTemplateSet::addTileTemplate(TileTemplate *tileTemplate)
+void TileTemplateSet::addTileTemplate(SharedTileTemplate tileTemplate)
 {
-    tileTemplate->setTileId(mTileTemplates.size());
-    mTileTemplates.append(SharedTileTemplate(tileTemplate));
-    connect(tileTemplate, &TileTemplate::propertyChanged,
-            this, &TileTemplateSet::tileTemplateChanged);
+    mTileTemplates.append(tileTemplate);
 
     emit tileTemplateAdded(mTileTemplates.size() - 1);
 }
@@ -18,11 +15,6 @@ void TileTemplateSet::removeTileTemplate(int index)
     Q_ASSERT(index >= 0 && index < mTileTemplates.size());
 
     mTileTemplates.removeAt(index);
-
-    //updates the tileId of all templates
-    for (auto it = mTileTemplates.begin() + index; it != mTileTemplates.end(); ++it) {
-        (*it)->setTileId(index++);
-    }
 
     emit tileTemplateRemoved(index);
 }

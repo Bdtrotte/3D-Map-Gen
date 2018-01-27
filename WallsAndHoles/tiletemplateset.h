@@ -15,7 +15,7 @@ public:
 
     //Adds the given tileTemplate to the end of the tileList
     //should pass new TileTemplate(...) to this
-    void addTileTemplate(TileTemplate *tileTemplate);
+    void addTileTemplate(SharedTileTemplate tileTemplate);
 
     //removes the tiletemplate at the specified index
     void removeTileTemplate(int index);
@@ -29,7 +29,6 @@ public:
 
 signals:
     void tileTemplateAdded(int tileId);
-    void tileTemplateChanged(int tileId);
     void tileTemplateRemoved(int tileId);
 
 public slots:

@@ -2,19 +2,19 @@
 
 TileTemplate::TileTemplate(float height,
                            float thickness,
-                           QVector2D position,
+                           QVector2D position, QColor color,
                            QObject *parent)
     : QObject(parent)
-    , mTileId(-1)
     , mHeight(height)
     , mThickness(thickness)
-    , mPosition(position) {}
+    , mPosition(position)
+    , mColor(color) {}
 
 void TileTemplate::setHeight(float height)
 {
     mHeight = height;
 
-    emit propertyChanged(mTileId);
+    emit exclusivePropertyChanged();
 }
 
 void TileTemplate::setThickness(float thickness)
@@ -23,7 +23,7 @@ void TileTemplate::setThickness(float thickness)
 
     mThickness = thickness;
 
-    emit propertyChanged(mTileId);
+    emit thicknessChanged();
 }
 
 void TileTemplate::setPosition(QVector2D position)
@@ -35,5 +35,12 @@ void TileTemplate::setPosition(QVector2D position)
 
     mPosition = position;
 
-    emit propertyChanged(mTileId);
+    emit positionChanged();
+}
+
+void TileTemplate::setColor(QColor color)
+{
+    mColor = color;
+
+    emit exclusivePropertyChanged();
 }
