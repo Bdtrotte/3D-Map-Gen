@@ -180,5 +180,19 @@ void MeshView::resizeGL(int w, int h) {
     mProjectionMatrix.perspective(90, ((float) w) / h, 0.1, 30);
 }
 
+void MeshView::load(QString path){
+    QSharedPointer<Scene> scene = QSharedPointer<Scene>::create();
+    scene->addObject(loadOBJ(path));
+    qDebug() << "new scene created...now set it";
+    setScene(scene);
+}
+
+void MeshView::save(QString path){
+    QVector<RenderableObjectP> object = mScene->getAllObjects();
+    if(object.size()<1){
+        qDebug() << "Fail to save mesh: scene is empty";
+    }
+    saveOBJ(path, object[0]);
+}
 
 

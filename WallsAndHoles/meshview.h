@@ -12,6 +12,7 @@
 #include "scene.h"
 #include "abstractmeshviewcamera.h"
 #include "toolmanager.h"
+#include "objtools.h"
 
 
 #define SHADER_VERTEX_POS "qt_Vertex"
@@ -37,6 +38,8 @@ public slots:
      * @param name The name of the tool.
      */
     void activateTool(QString name);
+    void load(QString path);
+    void save(QString path);
 
 protected:
     void initializeGL() override;
