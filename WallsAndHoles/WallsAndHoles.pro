@@ -43,7 +43,8 @@ SOURCES += \
     rectcell.cpp \
     mapview.cpp \
     editor.cpp \
-    newmapdialog.cpp
+    newmapdialog.cpp \
+    meshmaterial.cpp
 
 HEADERS += \
     mainwindow.h \
@@ -68,7 +69,8 @@ HEADERS += \
     mapview.h \
     editor.h \
     newmapdialog.h \
-    array2d.h
+    array2d.h \
+    meshmaterial.h
 
 FORMS += \
     mainwindow.ui \
@@ -78,7 +80,9 @@ FORMS += \
 
 DISTFILES += \
     basic.fsh \
-    basic.vsh
+    basic.vsh \
+    onelight.vsh \
+    onelight.fsh
 
 RESOURCES += \
     shaders.qrc
