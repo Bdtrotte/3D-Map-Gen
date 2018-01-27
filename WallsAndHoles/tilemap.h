@@ -1,6 +1,7 @@
 #ifndef TILEMAP_H
 #define TILEMAP_H
 
+#include "array2d.h"
 #include "tile.h"
 #include "tiletemplate.h"
 
@@ -16,8 +17,6 @@ public:
     TileMap(QSize mapSize,
             QObject *parent = nullptr);
 
-    ~TileMap();
-
     Tile &tileAt(int x, int y);
     const Tile &cTileAt(int x, int y) const;
 
@@ -29,7 +28,7 @@ public:
     //sets the whole map to the default
     void clear();
 
-    QSize mapSize() const { return mMapSize; }
+    QSize mapSize() const { return mMap.size(); }
 
     //changes the size of the map. If the size is reduced, tiles will be lost (resizes around top left corner)
     void resizeMap(QSize newSize);
@@ -40,9 +39,7 @@ signals:
 
 private:
     //2D array of Tile*. If mMap[x][y]->isEmpty() then ground is shown
-    Tile ***mMap;
-
-    QSize mMapSize;
+    Array2D<QSharedPointer<Tile>> mMap;
 };
 
 typedef QSharedPointer<TileMap> SharedTileMap;

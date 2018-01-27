@@ -14,7 +14,7 @@ class Tile : public QObject
     Q_OBJECT
 
 public:
-    explicit Tile(SharedTileTemplate tileTemplate,
+    explicit Tile(SharedTileTemplate tileTemplate = nullptr,
                   int xPos = -1,
                   int yPos = -1,
                   QObject *parent = nullptr);

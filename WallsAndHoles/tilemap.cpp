@@ -3,61 +3,50 @@
 TileMap::TileMap(QSize mapSize,
                  QObject *parent)
     : QObject(parent)
-    , mMapSize(mapSize)
+    , mMap(mapSize.width(), mapSize.height())
 {
-    mMap = (Tile ***)malloc(sizeof(Tile **) * mMapSize.width());
-    for (int x = 0; x < mMapSize.width(); ++x) {
-        mMap[x] = (Tile **)malloc(sizeof(Tile *) * mMapSize.height());
-
-        for (int y = 0; y < mMapSize.height(); ++y) {
-            mMap[x][y] = new Tile(nullptr, x, y);
-            connect(mMap[x][y], &Tile::tileChanged,
+    for (int x = 0; x < mMap.size().width(); ++x) {
+        for (int y = 0; y < mMap.size().height(); ++y) {
+            connect(mMap(x, y).data(), &Tile::tileChanged,
                     this, &TileMap::tileChanged);
         }
     }
-}
-
-TileMap::~TileMap()
-{
-    for (int x = 0; x < mMapSize.width(); ++x)
-        free(mMap[x]);
-    free(mMap);
 }
 
 Tile &TileMap::tileAt(int x, int y)
 {
     Q_ASSERT(x >= 0);
     Q_ASSERT(y >= 0);
-    Q_ASSERT(x < mMapSize.width());
-    Q_ASSERT(y < mMapSize.height());
+    Q_ASSERT(x < mMap.size().width());
+    Q_ASSERT(y < mMap.size().height());
 
-    return *mMap[x][y];
+    return *mMap(x, y);
 }
 
 const Tile &TileMap::cTileAt(int x, int y) const
 {
     Q_ASSERT(x >= 0);
     Q_ASSERT(y >= 0);
-    Q_ASSERT(x < mMapSize.width());
-    Q_ASSERT(y < mMapSize.height());
+    Q_ASSERT(x < mMap.size().width());
+    Q_ASSERT(y < mMap.size().height());
 
-    return *mMap[x][y];
+    return *mMap(x, y);
 }
 
 void TileMap::setTile(int x, int y, SharedTileTemplate tileTemplate)
 {
     Q_ASSERT(x >= 0);
     Q_ASSERT(y >= 0);
-    Q_ASSERT(x < mMapSize.width());
-    Q_ASSERT(y < mMapSize.height());
+    Q_ASSERT(x < mMap.size().width());
+    Q_ASSERT(y < mMap.size().height());
 
-    mMap[x][y]->resetTile(tileTemplate);
+    mMap(x, y)->resetTile(tileTemplate);
 }
 
 void TileMap::clear()
 {
-    for (int x = 0; x < mMapSize.width(); ++x)
-        for (int y = 0; y < mMapSize.height(); ++y)
+    for (int x = 0; x < mMap.size().width(); ++x)
+        for (int y = 0; y < mMap.size().height(); ++y)
             clearTile(x, y);
 }
 
@@ -66,46 +55,23 @@ void TileMap::resizeMap(QSize newSize)
     Q_ASSERT(newSize.width() >= 1);
     Q_ASSERT(newSize.height() >= 1);
 
-    if (newSize.height() != mMapSize.height()) {
-        for (int x = 0; x < mMapSize.width(); ++x) {
-            if (newSize.height() < mMapSize.height())
-                for (int y = newSize.height(); y < mMapSize.height(); ++y)
-                    delete mMap[x][y];
+    QSize oldSize = mMap.size();
+    mMap.resize(newSize.width(), newSize.height());
 
-            mMap[x] = (Tile **)realloc(mMap[x], sizeof(Tile *) * newSize.height());
-
-            if (newSize.height() > mMapSize.height()) {
-                for (int y = mMapSize.height(); y < newSize.height(); ++y) {
-                    mMap[x][y] = new Tile(nullptr, x, y);
-                    connect(mMap[x][y], &Tile::tileChanged,
-                            this, &TileMap::tileChanged);
-                }
-            }
-        }
+    int maxX = newSize.width();
+    if (oldSize.width() < newSize.width()) {
+        maxX = oldSize.width();
+        for (int x = oldSize.width(); x < newSize.width(); ++x)
+            for (int y = 0; y < newSize.height(); ++y)
+                connect(mMap(x, y).data(), &Tile::tileChanged,
+                        this, &TileMap::tileChanged);
     }
 
-    if (newSize.width() != mMapSize.width()) {
-        if (newSize.width() < mMapSize.width()) {
-            for (int x = newSize.width(); x < mMapSize.width(); ++x) {
-                for (int y = 0; y < newSize.height(); ++y)
-                    delete mMap[x][y];
-                free(mMap[x]);
-            }
-        }
-
-        mMap = (Tile ***)realloc(mMap, sizeof(Tile **) * newSize.width());
-
-        if (newSize.width() > mMapSize.width()) {
-            for (int x = mMapSize.width(); x < newSize.width(); ++x) {
-                mMap[x] = (Tile **)malloc(sizeof(Tile *) * newSize.height());
-                for (int y = 0; y < mMapSize.width(); ++y) {
-                    mMap[x][y] = new Tile(nullptr, x, y);
-                    connect(mMap[x][y], &Tile::tileChanged,
-                            this, &TileMap::tileChanged);
-                }
-            }
-        }
-    }
+    if (oldSize.height() < newSize.height())
+        for (int x = 0; x < maxX; ++x)
+            for (int y = oldSize.height(); y < newSize.height(); ++y)
+                connect(mMap(x, y).data(), &Tile::tileChanged,
+                        this, &TileMap::tileChanged);
 
     emit resized();
 }
