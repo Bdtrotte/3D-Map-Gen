@@ -12,7 +12,11 @@
 #include "scene.h"
 #include "abstractmeshviewcamera.h"
 #include "toolmanager.h"
+<<<<<<< HEAD
 #include "shaderprogramonelight.h"
+=======
+#include "objtools.h"
+>>>>>>> master
 
 
 namespace Ui {

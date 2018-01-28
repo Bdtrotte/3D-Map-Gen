@@ -2,13 +2,14 @@
 
 #include "meshview.h"
 #include "ui_meshview.h"
+#include "objtools.h"
 
 #include "meshviewcameralikeblender.h"
 
 
 MeshView::MeshView(QWidget *parent) :
     QOpenGLWidget(parent),
-    mShouldReloadBuffers(false),
+    mShouldReloadScene(false),
     ui(new Ui::MeshView)
 {
     ui->setupUi(this);
@@ -31,11 +32,11 @@ MeshView::~MeshView() {
 
 
 void MeshView::setScene(QSharedPointer<Scene> scene) {
-    mScene = scene;
+    mNextScene = scene;
 
     // The reason loadVAO() is not called here is because the appropriate
     // OpenGL context may not be bound.
-    mShouldReloadBuffers = true;
+    mShouldReloadScene = true;
 }
 
 
@@ -63,8 +64,6 @@ void MeshView::activateTool(QString name) {
 
 // Assumes an OpenGL context is bound, mShaderProgram is set up, and mScene != nullptr.
 void MeshView::loadVAO() {
-    mShouldReloadBuffers = false;
-
     QVector<GLfloat> vertices;
     QVector<GLfloat> normals;
     QVector<GLfloat> materials;
@@ -156,7 +155,8 @@ void MeshView::initializeGL() {
     mShaderProgram.create();
 
     // If mScene exists, the buffers should be reloaded now.
-    mShouldReloadBuffers = mScene != nullptr;
+    // If mShouldReloadScene is true, keep it true.
+    mShouldReloadScene |= mScene != nullptr;
 
     // Initialize GL for all objects in the scene.
     if (mScene != nullptr)
@@ -165,14 +165,20 @@ void MeshView::initializeGL() {
 
 void MeshView::paintGL() {
 
-    if (mShouldReloadBuffers)
-        loadVAO();
+    if (mShouldReloadScene) {
+        mShouldReloadScene = false;
+        mScene = mNextScene;
+
+        mScene->initializeGL();
+        if (!mScene.isNull())
+            loadVAO();
+    }
 
 
     glEnable(GL_DEPTH_TEST);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    if (mScene != nullptr) {
+    if (!mScene.isNull()) {
         /******* Draw meshes. *******/
         // Set program.
         mShaderProgram.bind();
@@ -224,5 +230,19 @@ void MeshView::resizeGL(int w, int h) {
     mProjectionMatrix.perspective(90, ((float) w) / h, 0.1, 100);
 }
 
+void MeshView::load(QString path){
+    QSharedPointer<Scene> scene = QSharedPointer<Scene>::create();
+    scene->addObject(loadOBJ(path));
+    qDebug() << "new scene created...now set it";
+    setScene(scene);
+}
+
+void MeshView::save(QString path){
+    QVector<QSharedPointer<RenderableObject>> object = mScene->getAllObjects();
+    if(object.size()<1){
+        qDebug() << "Fail to save mesh: scene is empty";
+    }
+    saveOBJ(path, object[0]);
+}
 
 
