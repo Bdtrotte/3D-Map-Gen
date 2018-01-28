@@ -60,12 +60,6 @@ inline RenderableObjectP loadOBJ(QString path){
                 normalIndices.push_back(indexVec[2].toInt()-1);
             }
         }
-        /*
-        for(int i=0; i<list.size(); i++){
-            qDebug() << i << "." << list[i] <<list[i].toFloat();
-        }
-        qDebug() << endl;
-        */
     }
 
 
@@ -118,11 +112,11 @@ inline bool saveOBJ(QString path, RenderableObjectP object){
     QTextStream out(&file);
     QVector<QVector3D> vertices  = object->getVertexData();
     QVector<unsigned int> vertexIndices = object->getTriangleIndices();
-    /*uv and normal are not supported yet*/
-    QVector<QVector2D> uvs({{0,0}});
-    QVector<unsigned int> uvIndices = object->getTriangleIndices();
-    QVector<QVector3D> normals({{1,1,1}});
+    QVector<QVector3D> normals = object->getNormalData();
     QVector<unsigned int> normalIndices = object->getTriangleIndices();
+    /*uv is not supported yet*/
+    QVector<QVector2D> uvs = object->getNormalData();
+    QVector<unsigned int> uvIndices = object->getTriangleIndices();
     //
     assert(vertexIndices.size()%3==0);
     for(auto const& vert: vertices){
@@ -134,7 +128,7 @@ inline bool saveOBJ(QString path, RenderableObjectP object){
     }
     for(auto const& uv: uvs){
         out << "vt";
-        for(int i=0; i<2; i++){
+        for(int i=0; i<3; i++){
             out << " " << uv[i];
         }
         out << endl;

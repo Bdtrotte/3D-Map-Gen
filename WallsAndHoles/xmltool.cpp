@@ -1,6 +1,6 @@
 #include "xmltool.h"
 
-XMLTool::XMLTool()
+XMLTool::XMLTool(QString path)
 {
 
 }

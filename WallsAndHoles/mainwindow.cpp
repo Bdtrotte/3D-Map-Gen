@@ -19,6 +19,7 @@ MainWindow::~MainWindow()
 }
 
 void MainWindow::openMeshView() {
+    MeshViewContainer* mMeshViewContainer = findChild<MeshViewContainer *>();
     if (mMeshViewContainer == nullptr) {
         mMeshViewContainer = new MeshViewContainer();
         mMeshViewContainer->show();
@@ -39,7 +40,7 @@ void MainWindow::on_actionsave_triggered()
 }
 
 void MainWindow::on_actionexport_triggered()
-{   mMeshViewContainer = findChild<MeshViewContainer *>();
+{   MeshViewContainer* mMeshViewContainer = findChild<MeshViewContainer *>();
     if (mMeshViewContainer == nullptr) {
         QMessageBox messageBox;
         messageBox.critical(0,"Error","MeshView doesn't exist!");
@@ -53,7 +54,7 @@ void MainWindow::on_actionexport_triggered()
 }
 
 void MainWindow::on_actionimport_triggered(){
-    mMeshViewContainer = findChild<MeshViewContainer *>();
+    MeshViewContainer* mMeshViewContainer = findChild<MeshViewContainer *>();
     if (mMeshViewContainer == nullptr) {
         QMessageBox messageBox;
         messageBox.critical(0,"Error","MeshView doesn't exist!");
