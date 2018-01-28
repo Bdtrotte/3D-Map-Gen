@@ -1,58 +1,75 @@
 #include "rectcell.h"
-#include <QPainter>
-#include <QBrush>
-#include <QStyleOptionGraphicsItem>
-#include <QWidget>
 #include <QDebug>
-#include <QGraphicsSceneHoverEvent>
-#include <QGraphicsSceneMouseEvent>
-
-QBrush tempBrushColor;
-
-RectCell::RectCell(qreal x,qreal y,qreal w, qreal h) :
-    mEdited(false)
-{ 
-   setRect(x,y,w,h);
-   setAcceptHoverEvents(true);
-   setAcceptedMouseButtons(Qt::MouseButton(3));
-   setBrush(Qt::white);
-   QPen pen(Qt::black, 0, Qt::DashLine);
-   setPen(pen);
+RectCell::RectCell(qreal x, qreal y, qreal w, qreal h, qreal i, qreal j, QObject *parent) :
+     mToolName("none"),
+     mCoords(x,y),
+     mIndices(i,j),
+     mDimensions(w,h),
+     mBrush(Qt::white),
+     mPen(Qt::black, 0, Qt::DashLine)
+{
+ setAcceptHoverEvents(true);
 }
 
-void RectCell::applyTool(QString temptoolname)
-{
-    mEdited = !mEdited;
-    emit toolSignal();
+void RectCell::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget){
+    painter->setBrush(mBrush);
+    painter->setPen(mPen);
+    painter->drawRect(std::get<0>(mCoords),std::get<1>(mCoords),
+                     std::get<0>(mDimensions),std::get<1>(mDimensions));
+}
+
+QRectF RectCell::boundingRect() const{
+    QRectF rect = QRectF(std::get<0>(mCoords),std::get<1>(mCoords),
+                        std::get<0>(mDimensions),std::get<1>(mDimensions));
+    return rect;
 }
 
 
 void RectCell::mousePressEvent(QGraphicsSceneMouseEvent *e){
 
     if(e->button() == Qt::LeftButton){
-        setBrush(QColor(108,147,209,255));
-        tempBrushColor = brush();
-        update();
+         recolor(QColor(108,147,209,255));
+         sendTool(std::get<0>(mIndices),std::get<1>(mIndices), mToolName);
+         mToolName = "edited";
     }
     //Right click to erase the color
     if(e->button() == Qt::RightButton){
-        setBrush(Qt::white);
-        tempBrushColor = brush();
-        update();
+        recolor(Qt::white);
+        mToolName = "none";
     }
 }
 
 void RectCell::hoverEnterEvent(QGraphicsSceneHoverEvent *e){
-      tempBrushColor = brush();
-      setBrush(Qt::gray);
-      update();
+     recolor(Qt::gray);
 }
 
 void RectCell::hoverLeaveEvent(QGraphicsSceneHoverEvent *e){
-       setBrush(tempBrushColor);
-       update();
+    //NOTE:
+    // STRING is currently a placeholder for tool types!
+    // I will make a tool bar for MapView, and then we will
+    // be cooking with gas, but till then, naw.
+    if(mToolName == "none"){
+        recolor(Qt::white);
+    }
 }
 
-void RectCell::toolSignal(){
 
+void RectCell::recolor(QColor color)
+{
+    mBrush = QBrush(color);
+    update();
 }
+
+
+void RectCell::receiveTool()
+{
+   qDebug() << std::get<0>(mCoords);
+}
+
+
+void RectCell::sendTool(qreal i, qreal j, QString string)
+{
+ emit emitTool(i,j);
+}
+
+
