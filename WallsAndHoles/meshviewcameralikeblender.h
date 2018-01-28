@@ -11,6 +11,7 @@ public:
     ~MeshViewCameraLikeBlender() {}
 
     QMatrix4x4 getTransformationMatrix() const override;
+    QVector3D getPosition() const override;
 
     void mousePressEvent(QMouseEvent *event) override;
     void mouseMoveEvent(QMouseEvent *event) override;

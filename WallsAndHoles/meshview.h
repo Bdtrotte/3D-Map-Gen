@@ -13,7 +13,7 @@
 #include "abstractmeshviewcamera.h"
 #include "toolmanager.h"
 #include "objtools.h"
-
+#include "shaderprogramonelight.h"
 
 #define SHADER_VERTEX_POS "qt_Vertex"
 #define SHADER_MVP "qt_ModelViewProjectionMatrix"
@@ -57,11 +57,13 @@ protected:
 
 
     // Shader program.
-    QSharedPointer<QOpenGLShaderProgram> mBasicProgram;
+    ShaderProgramOneLight mShaderProgram;
 
     // VAO and buffers for rendering.
     QSharedPointer<QOpenGLVertexArrayObject> mVAO;
     QSharedPointer<QOpenGLBuffer> mVertexPositions;
+    QSharedPointer<QOpenGLBuffer> mVertexNormals;
+    QSharedPointer<QOpenGLBuffer> mVertexMaterials;
     QSharedPointer<QOpenGLBuffer> mTriangleIndices;
 
     // Scene object that is rendered.
