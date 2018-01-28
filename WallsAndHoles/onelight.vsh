@@ -17,6 +17,7 @@ smooth out vec3 fPosition;
 smooth out vec3 fNormal;
 
 // NOTE: Interpolating these values smoothly might not make sense.
+// Remember to change the interpolation qualifiers in the fragment shader too.
 out MaterialBlock {
     smooth float reflSpecular;
     smooth float reflDiffuse;
