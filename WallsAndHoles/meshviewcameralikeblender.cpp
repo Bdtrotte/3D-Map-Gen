@@ -5,7 +5,7 @@
 
 MeshViewCameraLikeBlender::MeshViewCameraLikeBlender()
     : mCenterOfRotation(0, 0, 0),
-      mDistanceFromCenter(5),
+      mDistanceFromCenter(45),
       mRotationPitch(0),
       mRotationYaw(0)
 {

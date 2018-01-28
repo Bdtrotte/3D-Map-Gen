@@ -13,7 +13,7 @@ MeshViewContainer::MeshViewContainer(QWidget *parent) :
 
     // Create a test scene.
     QSharedPointer<Scene> scene = QSharedPointer<Scene>::create();
-    scene->addObject(loadOBJ(":/assets/cube.obj"));
+    scene->addObject(loadOBJ(":/assets/teapot.obj"));
 
     // Find the MeshView child widget and set the scene.
     mMeshView = findChild<MeshView *>();

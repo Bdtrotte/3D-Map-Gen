@@ -221,7 +221,7 @@ void MeshView::resizeGL(int w, int h) {
     glViewport(0, 0, w, h);
 
     mProjectionMatrix.setToIdentity();
-    mProjectionMatrix.perspective(90, ((float) w) / h, 0.1, 30);
+    mProjectionMatrix.perspective(90, ((float) w) / h, 0.1, 100);
 }
 
 

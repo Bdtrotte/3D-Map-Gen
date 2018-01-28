@@ -9,5 +9,6 @@
     </qresource>
     <qresource prefix="/assets">
         <file>cube.obj</file>
+        <file>teapot.obj</file>
     </qresource>
 </RCC>
