@@ -11,13 +11,16 @@ MeshViewContainer::MeshViewContainer(QWidget *parent) :
 {
     ui->setupUi(this);
 
+
     // Create a test scene.
-    QSharedPointer<Scene> scene = QSharedPointer<Scene>::create();
-    scene->addObject(loadOBJ(":/assets/cube.obj"));
+    //QSharedPointer<Scene> scene = QSharedPointer<Scene>::create();
+    //scene->addObject(loadOBJ(":/assets/cube.obj"));
 
     // Find the MeshView child widget and set the scene.
     mMeshView = findChild<MeshView *>();
-    mMeshView->setScene(scene);
+    //mMeshView->setScene(scene);
+
+    mMeshView->load(":/assets/cube.obj");
 }
 
 MeshViewContainer::~MeshViewContainer() {
@@ -33,4 +36,13 @@ void MeshViewContainer::on_toolSelection_currentIndexChanged(int index) {
         mMeshView->activateTool("camera");
         break;
     }
+}
+
+void MeshViewContainer::saveMesh(QString path){
+    mMeshView = findChild<MeshView *>();
+    mMeshView->save(path);
+}
+void MeshViewContainer::loadMesh(QString path){
+    mMeshView = findChild<MeshView *>();
+    mMeshView->load(path);
 }

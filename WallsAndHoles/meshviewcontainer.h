@@ -16,9 +16,12 @@ class MeshViewContainer : public QWidget
 public:
     explicit MeshViewContainer(QWidget *parent = 0);
     ~MeshViewContainer();
+    void saveMesh(QString path);
+    void loadMesh(QString path);
 
 private slots:
     void on_toolSelection_currentIndexChanged(int index);
+
 
 protected:
 

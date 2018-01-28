@@ -12,6 +12,7 @@
 #include "scene.h"
 #include "abstractmeshviewcamera.h"
 #include "toolmanager.h"
+#include "objtools.h"
 
 
 #define SHADER_VERTEX_POS "qt_Vertex"
@@ -37,6 +38,8 @@ public slots:
      * @param name The name of the tool.
      */
     void activateTool(QString name);
+    void load(QString path);
+    void save(QString path);
 
 protected:
     void initializeGL() override;
@@ -64,6 +67,10 @@ protected:
     // Scene object that is rendered.
     QSharedPointer<Scene> mScene;
 
+    // This variable is just used for synchronization. mScene should not be changed
+    // in parallel with the paint loop.
+    QSharedPointer<Scene> mNextScene;
+
     // The Projection*View matrix.
     QMatrix4x4 mProjectionMatrix;
 
@@ -75,7 +82,7 @@ protected:
     ToolManagerP mTools;
 
     // True when Scene related buffers need to be reloaded.
-    bool mShouldReloadBuffers;
+    bool mShouldReloadScene;
 
 private:
     Ui::MeshView *ui;
