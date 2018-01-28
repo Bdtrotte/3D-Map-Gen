@@ -44,7 +44,8 @@ SOURCES += \
     mapview.cpp \
     editor.cpp \
     newmapdialog.cpp \
-    meshmaterial.cpp
+    meshmaterial.cpp \
+    shaderprogramonelight.cpp
 
 HEADERS += \
     mainwindow.h \
@@ -70,7 +71,8 @@ HEADERS += \
     editor.h \
     newmapdialog.h \
     array2d.h \
-    meshmaterial.h
+    meshmaterial.h \
+    shaderprogramonelight.h
 
 FORMS += \
     mainwindow.ui \

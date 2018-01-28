@@ -4,6 +4,8 @@
         <file>basic.fsh</file>
         <file>colors.vsh</file>
         <file>colors.fsh</file>
+        <file>onelight.fsh</file>
+        <file>onelight.vsh</file>
     </qresource>
     <qresource prefix="/assets">
         <file>cube.obj</file>

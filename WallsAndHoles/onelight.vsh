@@ -5,23 +5,23 @@ uniform mat4 mvp;
 in vec3 vPosition;
 in vec3 vNormal;
 
-in MaterialBlock {
-    float reflSpecular;
-    float reflDiffuse;
-    float reflAmbient;
-    float shininess;
-} vMaterial;
+
+in float vReflSpecular;
+in float vReflDiffuse;
+in float vReflAmbient;
+in float vShininess;
 
 
 
 smooth out vec3 fPosition;
 smooth out vec3 fNormal;
 
+// NOTE: Interpolating these values smoothly might not make sense.
 out MaterialBlock {
-    float reflSpecular;
-    float reflDiffuse;
-    float reflAmbient;
-    float shininess;
+    smooth float reflSpecular;
+    smooth float reflDiffuse;
+    smooth float reflAmbient;
+    smooth float shininess;
 } fMaterial;
 
 void main(void)
@@ -30,5 +30,9 @@ void main(void)
 
     fPosition = vPosition;
     fNormal = vNormal;
-    fMaterial = vMaterial;
+
+    fMaterial.reflSpecular = vReflSpecular;
+    fMaterial.reflDiffuse = vReflDiffuse;
+    fMaterial.reflAmbient = vReflAmbient;
+    fMaterial.shininess = vShininess;
 }
