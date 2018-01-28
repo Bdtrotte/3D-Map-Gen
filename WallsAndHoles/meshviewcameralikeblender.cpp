@@ -13,17 +13,35 @@ MeshViewCameraLikeBlender::MeshViewCameraLikeBlender()
 }
 
 QMatrix4x4 MeshViewCameraLikeBlender::getTransformationMatrix() const {
-    QMatrix4x4 trans;
+    QMatrix4x4 worldToCamera;
 
 
-    trans.translate(0, 0, -mDistanceFromCenter);
+    worldToCamera.translate(0, 0, -mDistanceFromCenter);
 
-    trans.rotate(mRotationPitch, 1, 0, 0);
-    trans.rotate(mRotationYaw, 0, 1, 0);
+    worldToCamera.rotate(mRotationPitch, 1, 0, 0);
+    worldToCamera.rotate(mRotationYaw, 0, 1, 0);
 
-    trans.translate(-mCenterOfRotation);
+    worldToCamera.translate(-mCenterOfRotation);
 
-    return trans;
+    return worldToCamera;
+}
+
+
+QVector3D MeshViewCameraLikeBlender::getPosition() const {
+
+    // This is just the inverse of the worldToCamera matrix in getTransformationMatrix().
+    // Instead of computing the matrix and then computing its inverse, we just apply
+    // operations in reverse order.
+    QMatrix4x4 cameraToWorld;
+
+    cameraToWorld.translate(mCenterOfRotation);
+
+    cameraToWorld.rotate(-mRotationYaw, 0, 1, 0);
+    cameraToWorld.rotate(-mRotationPitch, 1, 0, 0);
+
+    cameraToWorld.translate(0, 0, mDistanceFromCenter);
+
+    return QVector3D(cameraToWorld * QVector4D(0, 0, 0, 1));
 }
 
 
