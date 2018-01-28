@@ -15,9 +15,6 @@
 #include "shaderprogramonelight.h"
 
 
-#define SHADER_VERTEX_POS "qt_Vertex"
-#define SHADER_MVP "qt_ModelViewProjectionMatrix"
-
 namespace Ui {
 class MeshView;
 }
