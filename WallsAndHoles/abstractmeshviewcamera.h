@@ -21,6 +21,12 @@ public:
      */
     virtual QMatrix4x4 getTransformationMatrix() const = 0;
 
+    /**
+     * @brief Gets the world-space camera position.
+     * @return The world-space camera position.
+     */
+    virtual QVector3D getPosition() const = 0;
+
 
     virtual void activate() override {}
     virtual void deactivate() override {}

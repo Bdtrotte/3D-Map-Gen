@@ -20,7 +20,7 @@ MeshViewContainer::MeshViewContainer(QWidget *parent) :
     mMeshView = findChild<MeshView *>();
     //mMeshView->setScene(scene);
 
-    mMeshView->load(":/assets/cube.obj");
+    mMeshView->load(":/assets/teapot.obj");
 }
 
 MeshViewContainer::~MeshViewContainer() {

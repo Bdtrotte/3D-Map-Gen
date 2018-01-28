@@ -2,6 +2,7 @@
 
 #include "meshview.h"
 #include "ui_meshview.h"
+#include "objtools.h"
 
 #include "meshviewcameralikeblender.h"
 
@@ -61,20 +62,33 @@ void MeshView::activateTool(QString name) {
 }
 
 
-// Assumes an OpenGL context is bound, mBasicProgram is set up, and mScene != nullptr.
+// Assumes an OpenGL context is bound, mShaderProgram is set up, and mScene != nullptr.
 void MeshView::loadVAO() {
-    mShouldReloadScene = false;
-
     QVector<GLfloat> vertices;
+    QVector<GLfloat> normals;
+    QVector<GLfloat> materials;
     QVector<GLuint> indices;
 
     for (auto obj : mScene->getAllObjects()) {
         const QVector<QVector3D>& vdata = obj->getVertexData();
+        const QVector<QVector3D>& ndata = obj->getVertexNormals();
+        const QVector<MeshMaterial>& mdata = obj->getVertexMaterials();
+
         for (int i = 0; i < vdata.size(); ++i) {
             vertices.append(vdata[i][0]);
             vertices.append(vdata[i][1]);
             vertices.append(vdata[i][2]);
+
+            normals.append(ndata[i][0]);
+            normals.append(ndata[i][1]);
+            normals.append(ndata[i][2]);
+
+            materials.append(mdata[i].getReflAmbient());
+            materials.append(mdata[i].getReflDiffuse());
+            materials.append(mdata[i].getReflSpecular());
+            materials.append(mdata[i].getShininess());
         }
+
 
         const QVector<unsigned int>& triangleIndices = obj->getTriangleIndices();
         GLuint index = indices.size(); //Can't render multiple object without this
@@ -89,6 +103,20 @@ void MeshView::loadVAO() {
     mVertexPositions->allocate(vertices.data(), vertices.size() * sizeof(GLfloat));
     mVertexPositions->release();
 
+    mVertexNormals = QSharedPointer<QOpenGLBuffer>::create(QOpenGLBuffer::VertexBuffer);
+    mVertexNormals->create();
+    mVertexNormals->bind();
+    mVertexNormals->setUsagePattern(QOpenGLBuffer::DynamicDraw);
+    mVertexNormals->allocate(normals.data(), normals.size() * sizeof(GLfloat));
+    mVertexNormals->release();
+
+    mVertexMaterials = QSharedPointer<QOpenGLBuffer>::create(QOpenGLBuffer::VertexBuffer);
+    mVertexMaterials->create();
+    mVertexMaterials->bind();
+    mVertexMaterials->setUsagePattern(QOpenGLBuffer::DynamicDraw);
+    mVertexMaterials->allocate(materials.data(), materials.size() * sizeof(GLfloat));
+    mVertexMaterials->release();
+
     mTriangleIndices = QSharedPointer<QOpenGLBuffer>::create(QOpenGLBuffer::IndexBuffer);
     mTriangleIndices->create();
     mTriangleIndices->bind();
@@ -101,8 +129,19 @@ void MeshView::loadVAO() {
     mVAO->bind();
 
     mVertexPositions->bind();
-    mBasicProgram->setAttributeBuffer(SHADER_VERTEX_POS, GL_FLOAT, 0, 3);
+    mShaderProgram.setAttrPositionBuffer();
     mVertexPositions->release();
+
+    mVertexNormals->bind();
+    mShaderProgram.setAttrNormalBuffer();
+    mVertexNormals->release();
+
+    mVertexMaterials->bind();
+    mShaderProgram.setAttrReflAmbientBuffer(0 * sizeof(GLfloat), 4 * sizeof(GLfloat));
+    mShaderProgram.setAttrReflDiffuseBuffer(1 * sizeof(GLfloat), 4 * sizeof(GLfloat));
+    mShaderProgram.setAttrReflSpecularBuffer(2 * sizeof(GLfloat), 4 * sizeof(GLfloat));
+    mShaderProgram.setAttrShininessBuffer(3 * sizeof(GLfloat), 4 * sizeof(GLfloat));
+    mVertexMaterials->release();
 
     mVAO->release();
 }
@@ -112,15 +151,12 @@ void MeshView::loadVAO() {
 void MeshView::initializeGL() {
     initializeOpenGLFunctions();
 
-    // Create the shader program. This will free the previous program, if any.
-    mBasicProgram = QSharedPointer<QOpenGLShaderProgram>::create(nullptr);
-    mBasicProgram->create();
-    mBasicProgram->addCacheableShaderFromSourceFile(QOpenGLShader::Vertex, ":/shaders/basic.vsh");
-    mBasicProgram->addCacheableShaderFromSourceFile(QOpenGLShader::Fragment, ":/shaders/basic.fsh");
-    mBasicProgram->link();
+    // This will free the previously loaded program automatically.
+    mShaderProgram.create();
 
     // If mScene exists, the buffers should be reloaded now.
-    mShouldReloadScene = mScene != nullptr;
+    // If mShouldReloadScene is true, keep it true.
+    mShouldReloadScene |= mScene != nullptr;
 
     // Initialize GL for all objects in the scene.
     if (mScene != nullptr)
@@ -130,6 +166,7 @@ void MeshView::initializeGL() {
 void MeshView::paintGL() {
 
     if (mShouldReloadScene) {
+        mShouldReloadScene = false;
         mScene = mNextScene;
 
         mScene->initializeGL();
@@ -144,13 +181,21 @@ void MeshView::paintGL() {
     if (!mScene.isNull()) {
         /******* Draw meshes. *******/
         // Set program.
-        mBasicProgram->bind();
+        mShaderProgram.bind();
 
         // Set the matrix.
         QMatrix4x4 transform = mCamera->getTransformationMatrix();
         QMatrix4x4 mvp = mProjectionMatrix * transform;
-        mBasicProgram->setUniformValue(SHADER_MVP, mvp);
+        mShaderProgram.setUniformMVP(mvp);
 
+        // Set the lighting uniforms.
+        QVector3D camPos = mCamera->getPosition();
+
+        mShaderProgram.setUniformLightPosition(camPos);
+        mShaderProgram.setUniformCameraPosition(camPos);
+        mShaderProgram.setUniformAmbientColor(QVector3D(0.1, 0.1, 0.2));
+        mShaderProgram.setUniformSourceDiffuseColor(QVector3D(0.3, 0.3, 0.2));
+        mShaderProgram.setUniformSourceSpecularColor(QVector3D(0.3, 0.3, 0.2));
 
 
         // Set arrays.
@@ -158,16 +203,16 @@ void MeshView::paintGL() {
         mTriangleIndices->bind();
 
         // Draw.
-        mBasicProgram->enableAttributeArray(SHADER_VERTEX_POS);
+        mShaderProgram.enableArrays();
         glDrawElements(GL_TRIANGLES, mTriangleIndices->size()/sizeof(unsigned int), GL_UNSIGNED_INT, 0);
-        mBasicProgram->disableAttributeArray(SHADER_VERTEX_POS);
+        mShaderProgram.disableArrays();
 
         // Unset arrays.
         mTriangleIndices->release();
         mVAO->release();
 
         // Unset program.
-        mBasicProgram->release();
+        mShaderProgram.release();
 
         /******* Draw widgets. *******/
         for (QSharedPointer<AbstractDrawableGLObject> drawable : mScene->getAllDrawables())
@@ -182,7 +227,7 @@ void MeshView::resizeGL(int w, int h) {
     glViewport(0, 0, w, h);
 
     mProjectionMatrix.setToIdentity();
-    mProjectionMatrix.perspective(90, ((float) w) / h, 0.1, 30);
+    mProjectionMatrix.perspective(90, ((float) w) / h, 0.1, 100);
 }
 
 void MeshView::load(QString path){
@@ -193,7 +238,7 @@ void MeshView::load(QString path){
 }
 
 void MeshView::save(QString path){
-    QVector<RenderableObjectP> object = mScene->getAllObjects();
+    QVector<QSharedPointer<RenderableObject>> object = mScene->getAllObjects();
     if(object.size()<1){
         qDebug() << "Fail to save mesh: scene is empty";
     }
