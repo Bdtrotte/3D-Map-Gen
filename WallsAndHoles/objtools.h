@@ -7,6 +7,7 @@
 
 #define RenderableObjectP QSharedPointer<RenderableObject>
 
+
 inline RenderableObjectP loadOBJ(QString path){
     QFile file(path);
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
@@ -63,8 +64,45 @@ inline RenderableObjectP loadOBJ(QString path){
         */
     }
 
+
+    /*
+     * In RenderableObject, each triangle index corresponds to an index into ALL of the vertex
+     * arrays simultaneously. There are no separate vertex/normal/UV indices.
+     *
+     * This part of the function may add new elements to the vertex/normal/uv arrays to
+     * accomodate for this.
+     * */
+    QVector<QVector3D> pVertices;
+    QVector<QVector3D> pNormals;
+//    QVector<QVector2D> pUV;
+    QVector<unsigned int> pTriangleIndices;
+
+    QVector<QPair<int, int>> indexPairToIndex;
+
+    // Loop through
+    for (int i = 0; i < vertexIndices.size(); ++i) {
+        int vidx = vertexIndices[i];
+        int nidx = normalIndices[i];
+
+        int idx = indexPairToIndex.indexOf(QPair<int, int>(vidx, nidx));
+
+        // If this vertex/normal pair hasn't been used yet, create new entries.
+        if (idx == -1) {
+            pVertices.append(vertices[vidx]);
+            pNormals.append(normals[nidx]);
+
+            idx = indexPairToIndex.size();
+            indexPairToIndex.append(QPair<int, int>(vidx, nidx));
+        }
+
+        // Note, at this point pVertices[idx] and pNormals[idx] are the position
+        // and normal of the i_th vertex.
+        pTriangleIndices.append(idx);
+    }
+
+
     //RenderableObject only support vertex now. Add full support in future.
-    RenderableObjectP object = RenderableObjectP::create(vertices, vertexIndices);
+    RenderableObjectP object = RenderableObjectP::create(pVertices, pNormals, pTriangleIndices);
     return object;
 }
 
