@@ -1,8 +1,6 @@
 #include "mapview.h"
-#include <QGraphicsView>
 #include <rectcell.h>
 #include <QDebug>
-#include <QKeyEvent>
 #include <QScrollBar>
 
 MapView::MapView(QWidget *parent)
@@ -14,11 +12,15 @@ MapView::MapView(QWidget *parent)
     QGraphicsScene *scene = new QGraphicsScene;
     scene->setBackgroundBrush(Qt::gray);
     setScene(scene);
-
-    for(qreal i = 0; i < mMapHeight*30; i+=30){
-        for(qreal j = 0; j < mMapWidth*30; j+=30){
-            RectCell *temp = new RectCell(j+100,i+100,30,30);
+    for(qreal i = 0; i < mMapHeight; i++){
+        for(qreal j = 0; j < mMapWidth; j++){
+            RectCell *temp = new RectCell(j*30,i*30,30,30,i,j);
+            connect(temp,SIGNAL(emitTool(int,int)),this,SLOT(receiveRectCell(int,int)));
+           //fix tomorrow
+            connect(std::bind(&MapView::emitRect, std::ref(i),std::ref(j))
+                    ,temp, &RectCell::receiveTool );
             scene->addItem(temp);
+
         }
     }
     QMatrix mat;
@@ -53,35 +55,6 @@ void MapView::wheelEvent(QWheelEvent *event)
     setMatrix(mat);
 }
 
-void MapView::clear()
-{
-    QGraphicsScene *scene = new QGraphicsScene;
-    scene->setBackgroundBrush(Qt::gray);
-    setScene(scene);
-
-    for (qreal i = 0; i < mMapHeight*30; i+=30) {
-        for (qreal j = 0; j < mMapWidth*30; j+=30) {
-            RectCell *temp = new RectCell(j+100,i+100,30,30);
-            scene->addItem(temp);
-        }
-    }
-}
-
-void MapView::createMap(int tx, int ty)
-{
-    QGraphicsScene *scene = new QGraphicsScene;
-    scene->setBackgroundBrush(Qt::gray);
-    setScene(scene);
-
-    for(qreal i = 0; i < tx*30; i+=30) {
-        for(qreal j = 0; j < ty*30; j+=30) {
-            RectCell *temp = new RectCell(j+100,i+100,30,30);
-            scene->addItem(temp);
-        }
-    }
-}
-
-
 void MapView::mouseMoveEvent(QMouseEvent *event)
 {
     if (event->buttons() == Qt::MiddleButton) {
@@ -98,4 +71,41 @@ void MapView::mouseMoveEvent(QMouseEvent *event)
         mOldX = event->x();
         mOldY = event->y();
     }
+}
+
+void MapView::clear()
+{
+    QGraphicsScene *scene = new QGraphicsScene;
+    scene->setBackgroundBrush(Qt::gray);
+    setScene(scene);
+
+    for(qreal i = 0; i < mMapHeight; i++){
+        for(qreal j = 0; j < mMapWidth; j++){
+            RectCell *temp = new RectCell(j*30,i*30,30,30,i,j);
+            scene->addItem(temp);
+        }
+    }
+}
+
+void MapView::createMap(int tx, int ty)
+{
+    QGraphicsScene *scene = new QGraphicsScene;
+    scene->setBackgroundBrush(Qt::gray);
+    setScene(scene);
+
+    for(qreal i = 0; i < tx; i++){
+        for(qreal j = 0; j < ty; j++){
+            RectCell *temp = new RectCell(j*30,i*30,30,30,i,j);
+            scene->addItem(temp);
+        }
+    }
+}
+
+void MapView::receiveRectCell(int i, int j){
+    qDebug() << "test";
+    emit emitRect(i,j);
+}
+
+void MapView::emitRect(int i, int j){
+
 }
