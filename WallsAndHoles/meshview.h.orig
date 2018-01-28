@@ -12,8 +12,12 @@
 #include "scene.h"
 #include "abstractmeshviewcamera.h"
 #include "toolmanager.h"
-#include "objtools.h"
+<<<<<<< HEAD
 #include "shaderprogramonelight.h"
+=======
+#include "objtools.h"
+>>>>>>> master
+
 
 namespace Ui {
 class MeshView;

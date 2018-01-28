@@ -34,6 +34,9 @@ private slots:
 
     void on_actionimport_triggered();
 
+protected:
+    MeshViewContainer *mMeshViewContainer;
+
 private:
     Ui::MainWindow *ui;
 };

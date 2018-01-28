@@ -2,6 +2,7 @@
 
 #include "meshview.h"
 #include "ui_meshview.h"
+#include "objtools.h"
 
 #include "meshviewcameralikeblender.h"
 
@@ -63,8 +64,6 @@ void MeshView::activateTool(QString name) {
 
 // Assumes an OpenGL context is bound, mShaderProgram is set up, and mScene != nullptr.
 void MeshView::loadVAO() {
-    mShouldReloadScene = false;
-
     QVector<GLfloat> vertices;
     QVector<GLfloat> normals;
     QVector<GLfloat> materials;
@@ -156,7 +155,8 @@ void MeshView::initializeGL() {
     mShaderProgram.create();
 
     // If mScene exists, the buffers should be reloaded now.
-    mShouldReloadScene = mScene != nullptr;
+    // If mShouldReloadScene is true, keep it true.
+    mShouldReloadScene |= mScene != nullptr;
 
     // Initialize GL for all objects in the scene.
     if (mScene != nullptr)
@@ -166,6 +166,7 @@ void MeshView::initializeGL() {
 void MeshView::paintGL() {
 
     if (mShouldReloadScene) {
+        mShouldReloadScene = false;
         mScene = mNextScene;
 
         mScene->initializeGL();
@@ -226,7 +227,7 @@ void MeshView::resizeGL(int w, int h) {
     glViewport(0, 0, w, h);
 
     mProjectionMatrix.setToIdentity();
-    mProjectionMatrix.perspective(90, ((float) w) / h, 0.1, 30);
+    mProjectionMatrix.perspective(90, ((float) w) / h, 0.1, 100);
 }
 
 void MeshView::load(QString path){
@@ -237,7 +238,7 @@ void MeshView::load(QString path){
 }
 
 void MeshView::save(QString path){
-    QVector<RenderableObjectP> object = mScene->getAllObjects();
+    QVector<QSharedPointer<RenderableObject>> object = mScene->getAllObjects();
     if(object.size()<1){
         qDebug() << "Fail to save mesh: scene is empty";
     }
