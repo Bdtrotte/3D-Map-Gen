@@ -17,6 +17,9 @@ public:
     float getReflSpecular() const;
     float getShininess() const;
 
+    static const MeshMaterial Metal;
+    static const MeshMaterial Soft;
+
 protected:
     float mReflAmbient;
     float mReflDiffuse;
