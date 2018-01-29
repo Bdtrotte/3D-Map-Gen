@@ -32,7 +32,7 @@ public:
     void resize(int rows, int cols)
     {
         data.resize(rows);
-        for (QVector<Type> v : data)
+        for (QVector<Type> &v : data)
             v.resize(cols);
     }
 
