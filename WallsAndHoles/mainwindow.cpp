@@ -56,7 +56,7 @@ void MainWindow::on_actionsave_triggered()
 }
 
 void MainWindow::on_actionexport_triggered() {
-    MeshViewContainer *meshViewContainer = findChild<MeshViewContainer *>();
+    /*MeshViewContainer *meshViewContainer = findChild<MeshViewContainer *>();
 
     if (meshViewContainer == nullptr) {
         QMessageBox messageBox;
@@ -69,11 +69,11 @@ void MainWindow::on_actionexport_triggered() {
         tr("Export OBJ"), "/home", tr("Export Files (*.obj)"));
 
     if(!fileName.isEmpty())
-        meshViewContainer->saveMesh(fileName);
+        meshViewContainer->saveMesh(fileName);*/
 }
 
 void MainWindow::on_actionimport_triggered() {
-    MeshViewContainer *meshViewContainer = findChild<MeshViewContainer *>();
+    /*MeshViewContainer *meshViewContainer = findChild<MeshViewContainer *>();
 
     if (meshViewContainer == nullptr) {
         QMessageBox messageBox;
@@ -86,5 +86,5 @@ void MainWindow::on_actionimport_triggered() {
         tr("import OBJ"), "/home", tr("import Files (*.obj)"));
 
     if(!fileName.isEmpty())
-        meshViewContainer->loadMesh(fileName);
+        meshViewContainer->loadMesh(fileName);*/
 }
