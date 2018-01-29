@@ -8,6 +8,7 @@
 #include <QObject>
 #include <QSize>
 #include <QSharedPointer>
+#include <QDebug>
 
 class TileMap : public QObject
 {

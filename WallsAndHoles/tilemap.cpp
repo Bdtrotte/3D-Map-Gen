@@ -59,6 +59,7 @@ void TileMap::resizeMap(QSize newSize)
     mMap.resize(newSize.width(), newSize.height());
 
     int maxX = newSize.width();
+
     if (oldSize.width() < newSize.width()) {
         maxX = oldSize.width();
         for (int x = oldSize.width(); x < newSize.width(); ++x)

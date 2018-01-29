@@ -11,6 +11,7 @@ Editor::Editor(QObject *parent)
     , mMainWindow(new MainWindow())
     , mMapView(new MapView(mMainWindow))
     , mToolBar(new QToolBar(mMainWindow))
+    , mTileMap(new TileMap(QSize(1,1)))
 {
     mMainWindow->show();
     mMainWindow->setCentralWidget(mMapView);
@@ -35,7 +36,7 @@ void Editor::createNewMap()
     NewMapDialog nmd;
     nmd.exec();
     if (nmd.result.width != -1) {
-        TileMap *tmap = new TileMap(QSize(nmd.result.width,nmd.result.height));
+        mTileMap->resizeMap(QSize(nmd.result.width,nmd.result.height));
         mMapView->createMap(nmd.result.width, nmd.result.height);
     }
 }
@@ -45,5 +46,6 @@ void Editor::clearMapView(){
     cmd.exec();
     if(cmd.accepted){
         mMapView->clear();
+        mTileMap->resizeMap(QSize(1,1));
     }
 }
