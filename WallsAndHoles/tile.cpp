@@ -1,5 +1,7 @@
 #include "tile.h"
 
+#include <QDebug>
+
 Tile::Tile(SharedTileTemplate tileTemplate,
                int xPos,
                int yPos,
@@ -12,40 +14,41 @@ Tile::Tile(SharedTileTemplate tileTemplate,
     , mRelativeHeight(0)
     , mRelativePosition(QVector2D())
 {
-    connect(tileTemplate.data(), &TileTemplate::exclusivePropertyChanged,
-            this, [this]{ emit tileChanged(mXPos, mYPos); });
-    connect(tileTemplate.data(), &TileTemplate::thicknessChanged,
-            this, &Tile::templateThicknessChanged);
-    connect(tileTemplate.data(), &TileTemplate::positionChanged,
-            this, &Tile::templatePositionChanged);
-}
-
-Tile::~Tile()
-{
-    mTileTemplate->disconnect(this);
+    if (!mTileTemplate.isNull()) {
+        connect(mTileTemplate.data(), &TileTemplate::exclusivePropertyChanged,
+                this, [this]{ emit tileChanged(mXPos, mYPos); });
+        connect(mTileTemplate.data(), &TileTemplate::thicknessChanged,
+                this, &Tile::templateThicknessChanged);
+        connect(mTileTemplate.data(), &TileTemplate::positionChanged,
+                this, &Tile::templatePositionChanged);
+    }
 }
 
 void Tile::setRelativeThickness(float relativeThickness)
 {
-    if (relativeThickness + mTileTemplate->thickness() > 1)
-        relativeThickness = 1 - mTileTemplate->thickness();
-    else if (relativeThickness + mTileTemplate->thickness() < MIN_TILE_THICKNESS)
-        relativeThickness = -mTileTemplate->thickness() + MIN_TILE_THICKNESS;
+    Q_ASSERT(relativeThickness > 0 && relativeThickness <= 1);
 
-    QVector2D pos = mRelativePosition + mTileTemplate->position();
-    float thickness = relativeThickness + mTileTemplate->thickness();
+    if (!mTileTemplate.isNull()) {
+        if (relativeThickness + mTileTemplate->thickness() > 1)
+            relativeThickness = 1 - mTileTemplate->thickness();
+        else if (relativeThickness + mTileTemplate->thickness() < MIN_TILE_THICKNESS)
+            relativeThickness = -mTileTemplate->thickness() + MIN_TILE_THICKNESS;
 
-    if (thickness/2 + pos.x() > 1)
-        relativeThickness = 2 - 2 * pos.x() - mTileTemplate->thickness();
-    else if (-thickness/2 + pos.x() < 0)
-        relativeThickness = 2 * pos.x() - mTileTemplate->thickness();
+        QVector2D pos = mRelativePosition + mTileTemplate->position();
+        float thickness = relativeThickness + mTileTemplate->thickness();
 
-    thickness = relativeThickness + mTileTemplate->thickness();
+        if (thickness/2 + pos.x() > 1)
+            relativeThickness = 2 - 2 * pos.x() - mTileTemplate->thickness();
+        else if (-thickness/2 + pos.x() < 0)
+            relativeThickness = 2 * pos.x() - mTileTemplate->thickness();
 
-    if (thickness/2 + pos.y() > 1)
-        relativeThickness = 2 - 2 * pos.y() - mTileTemplate->thickness();
-    else if (-thickness/2 + pos.y() < 0)
-        relativeThickness = 2 * pos.y() - mTileTemplate->thickness();
+        thickness = relativeThickness + mTileTemplate->thickness();
+
+        if (thickness/2 + pos.y() > 1)
+            relativeThickness = 2 - 2 * pos.y() - mTileTemplate->thickness();
+        else if (-thickness/2 + pos.y() < 0)
+            relativeThickness = 2 * pos.y() - mTileTemplate->thickness();
+    }
 
     mRelativeThickness = relativeThickness;
 
@@ -61,18 +64,25 @@ void Tile::setRelativeHeight(float relativeHeight)
 
 void Tile::setRelativePosition(QVector2D relavtivePosition)
 {
-    float thickness = mRelativeThickness + mTileTemplate->thickness();
-    QVector2D pos = relavtivePosition + mTileTemplate->position();
+    Q_ASSERT(relavtivePosition.x() < 0.5
+             && relavtivePosition.x() > -0.5
+             && relavtivePosition.y() < 0.5
+             && relavtivePosition.y() > -0.5);
 
-    if (thickness/2 + pos.x() > 1)
-        relavtivePosition.setX(1 - thickness/2 - mTileTemplate->position().x());
-    else if (-thickness/2 + pos.x() < 0)
-        relavtivePosition.setX(thickness/2 - mTileTemplate->position().x());
+    if (!mTileTemplate.isNull()) {
+        float thickness = mRelativeThickness + mTileTemplate->thickness();
+        QVector2D pos = relavtivePosition + mTileTemplate->position();
 
-    if (thickness/2 + pos.y() > 1)
-        relavtivePosition.setY(1 - thickness/2 - mTileTemplate->position().y());
-    else if (-thickness/2 + pos.y() < 0)
-        relavtivePosition.setY(thickness/2 - mTileTemplate->position().y());
+        if (thickness/2 + pos.x() > 1)
+            relavtivePosition.setX(1 - thickness/2 - mTileTemplate->position().x());
+        else if (-thickness/2 + pos.x() < 0)
+            relavtivePosition.setX(thickness/2 - mTileTemplate->position().x());
+
+        if (thickness/2 + pos.y() > 1)
+            relavtivePosition.setY(1 - thickness/2 - mTileTemplate->position().y());
+        else if (-thickness/2 + pos.y() < 0)
+            relavtivePosition.setY(thickness/2 - mTileTemplate->position().y());
+    }
 
     mRelativePosition = relavtivePosition;
 
@@ -88,6 +98,14 @@ void Tile::resetTile(SharedTileTemplate newTileTemplate)
         mTileTemplate->disconnect(this);
 
     mTileTemplate = newTileTemplate;
+    if (!mTileTemplate.isNull()) {
+        connect(mTileTemplate.data(), &TileTemplate::exclusivePropertyChanged,
+                this, [this]{ emit tileChanged(mXPos, mYPos); });
+        connect(mTileTemplate.data(), &TileTemplate::thicknessChanged,
+                this, &Tile::templateThicknessChanged);
+        connect(mTileTemplate.data(), &TileTemplate::positionChanged,
+                this, &Tile::templatePositionChanged);
+    }
 
     emit tileChanged(mXPos, mYPos);
 }

@@ -1,7 +1,9 @@
 
 #include "toolmanager.h"
 
-ToolManager::ToolManager() {
+ToolManager::ToolManager(QObject *parent)
+    : QObject(parent)
+{
     mActionGroup = new QActionGroup(this);
 }
 

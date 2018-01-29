@@ -30,8 +30,7 @@ class ToolManager : public QObject {
 public:
     using AbstractToolP = QSharedPointer<AbstractTool>;
 
-    ToolManager();
-
+    ToolManager(QObject *parent = nullptr);
 
     /**
      * @brief Registers the tool with the given identifier.
