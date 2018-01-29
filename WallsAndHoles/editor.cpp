@@ -1,6 +1,7 @@
 #include "editor.h"
 
 #include "newmapdialog.h"
+#include "clearmapdialog.h"
 #include "meshviewcontainer.h"
 
 #include <QDockWidget>
@@ -17,6 +18,9 @@ Editor::Editor(QObject *parent)
     QAction *newMap = mToolBar->addAction("New Map");
     connect(newMap, &QAction::triggered, this, &Editor::createNewMap);
 
+    QAction *clearMap = mToolBar->addAction("Clear Map");
+    connect(clearMap, &QAction::triggered, this, &Editor::clearMapView);
+
     mMainWindow->addToolBar(mToolBar);
 
     QDockWidget *dw = new QDockWidget("Mesh View", mMainWindow);
@@ -31,6 +35,15 @@ void Editor::createNewMap()
     NewMapDialog nmd;
     nmd.exec();
     if (nmd.result.width != -1) {
+        TileMap *tmap = new TileMap(QSize(nmd.result.width,nmd.result.height));
         mMapView->createMap(nmd.result.width, nmd.result.height);
+    }
+}
+
+void Editor::clearMapView(){
+    ClearMapDialog cmd;
+    cmd.exec();
+    if(cmd.accepted){
+        mMapView->clear();
     }
 }

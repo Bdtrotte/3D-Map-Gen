@@ -25,6 +25,7 @@ public:
 public slots:
     void createNewMap();
 
+    void clearMapView();
 private:
     MainWindow *mMainWindow;
     MapView *mMapView;
