@@ -99,3 +99,16 @@ void MapView::mouseMoveEvent(QMouseEvent *event)
         mOldY = event->y();
     }
 }
+
+void MapView::openMap(QString path){
+    qDebug() << "openMap called";
+}
+
+void MapView::saveMap(QString path){
+    QSize mapSize(10,10);
+    TileMap testMap(mapSize);
+    TileTemplateSet testSet;
+    TileTemplate testTemp(10,10,QVector(0,0),Qt::blue);
+    testMap.setTile(0,0,&testTemp);
+    testSet.addTileTemplate(&testTemp);
+}

@@ -10,9 +10,12 @@ public:
     /*
     void openTileMap(TileMap&);
     void openTileTemplateSet();
-    void saveTileMap();
-    void saveTileTemplateSet();
     */
+    void saveTileMap(TileMap& tileMap, TileTemplateSet& templateSet);
+    void saveTileTemplateSet(TileTemplateSet& templateSet);
+
+private:
+    QString mPath;
 };
 
 #endif // XMLTOOL_H

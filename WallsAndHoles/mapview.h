@@ -4,6 +4,9 @@
 #include <QGraphicsView>
 #include <QKeyEvent>
 #include <QWidget>
+#include "tilemap.h"
+#include "tiletemplateset.h"
+#include "xmltool.h"
 
 
 class MapView : public QGraphicsView
@@ -12,6 +15,8 @@ public:
     MapView(QWidget *parent);
     void clear();
     void createMap(int tx, int ty);
+    void openMap(QString path);
+    void saveMap(QString path);
 
 protected slots:
     //scroll to be on copy photoshop

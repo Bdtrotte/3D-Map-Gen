@@ -233,7 +233,7 @@ void MeshView::resizeGL(int w, int h) {
 void MeshView::load(QString path){
     QSharedPointer<Scene> scene = QSharedPointer<Scene>::create();
     scene->addObject(loadOBJ(path));
-    qDebug() << "new scene created...now set it";
+    //qDebug() << "new scene created...now set it";
     setScene(scene);
 }
 
