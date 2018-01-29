@@ -7,10 +7,12 @@ class XMLTool
 {
 public:
     XMLTool(QString path);
-    openTileMap(TileMap&);
-    openTileTemplateSet();
-    saveTileMap();
-    saveTileTemplateSet();
+    /*
+    void openTileMap(TileMap&);
+    void openTileTemplateSet();
+    void saveTileMap();
+    void saveTileTemplateSet();
+    */
 };
 
 #endif // XMLTOOL_H

@@ -112,10 +112,10 @@ inline bool saveOBJ(QString path, RenderableObjectP object){
     QTextStream out(&file);
     QVector<QVector3D> vertices  = object->getVertexData();
     QVector<unsigned int> vertexIndices = object->getTriangleIndices();
-    QVector<QVector3D> normals = object->getNormalData();
+    QVector<QVector3D> normals = object->getVertexNormals();
     QVector<unsigned int> normalIndices = object->getTriangleIndices();
     /*uv is not supported yet*/
-    QVector<QVector2D> uvs = object->getNormalData();
+    QVector<QVector3D> uvs = object->getVertexNormals();
     QVector<unsigned int> uvIndices = object->getTriangleIndices();
     //
     assert(vertexIndices.size()%3==0);
