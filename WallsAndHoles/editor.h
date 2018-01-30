@@ -27,6 +27,7 @@ public:
 public slots:
     void createNewMap();
 
+    void heightMap();
 private:
     MainWindow *mMainWindow;
 

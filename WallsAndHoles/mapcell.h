@@ -19,6 +19,7 @@ public:
 
     void setHighlightBrush(const QBrush &color) { mHighlight->setBrush(color); }
 
+    void changeBG(int x, int y, QColor color);
 public slots:
     void tileChanged();
 

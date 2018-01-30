@@ -50,3 +50,11 @@ void MapCell::tileChanged()
     else
         mGraphics->setBrush(Qt::NoBrush);
 }
+
+void MapCell::changeBG(int x, int y, QColor color){
+    mBackground = new QGraphicsRectItem(x * 30, y * 30, 30, 30);
+    mBackground->setZValue(-1);
+    mBackground->setBrush(color);
+    mBackground->setPen(QPen(Qt::black, 0, Qt::DashLine));
+    mScene->addItem(mBackground);
+}

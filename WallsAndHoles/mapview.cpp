@@ -77,6 +77,15 @@ void MapView::createMap(TileMap *tileMap)
     }
 }
 
+void MapView::genHeightMap(TileMap *tileMap){
+    for(int x = 0; x < tileMap->mapSize().width();++x){
+        for(int y = 0; y < tileMap->mapSize().height(); ++y){
+            int height = tileMap->tileAt(x,y).relativeHeight()*255;
+            int colorVal = 255-height;
+            mMapCells(x,y)->changeBG(x, y, QColor(colorVal,colorVal,colorVal));
+        }
+    }
+}
 
 void MapView::mouseMoveEvent(QMouseEvent *event)
 {
