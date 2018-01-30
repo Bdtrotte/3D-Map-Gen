@@ -3,6 +3,7 @@
 
 #include "mainwindow.h"
 #include "tilemap.h"
+#include "tilemaptoolmanager.h"
 #include "mapview.h"
 
 #include <QObject>
@@ -21,13 +22,23 @@ class Editor : public QObject
 
 public:
     explicit Editor(QObject *parent = nullptr);
+    ~Editor();
 
 public slots:
     void createNewMap();
 
 private:
     MainWindow *mMainWindow;
+
+    //TileMap data
+    TileMap *mTileMap;
+    QRegion mTileMapSelectedRegion;
+
+    //views
     MapView *mMapView;
+
+    //Tools
+    TileMapToolManager *mTileMapToolManager;
     QToolBar *mToolBar;
 };
 

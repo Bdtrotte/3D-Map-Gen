@@ -3,6 +3,7 @@
 
 #include <QVector>
 #include <QSize>
+#include <QDebug>
 
 /**
  * @brief The Array2D class is basically a 2D implementation of QVector.

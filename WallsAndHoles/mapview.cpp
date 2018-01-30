@@ -1,26 +1,23 @@
 #include "mapview.h"
+
+#include "mapcell.h"
+
 #include <QGraphicsView>
-#include <rectcell.h>
 #include <QDebug>
 #include <QKeyEvent>
 #include <QScrollBar>
 
-MapView::MapView(QWidget *parent)
+MapView::MapView(const QRegion &selectedRegion, QWidget *parent)
     : QGraphicsView(parent),
       mScale(0.5),
-      mMapWidth(20),
-      mMapHeight(20)
+      mMapCells(0, 0),
+      mSelectedRegion(selectedRegion)
 {
+    setMouseTracking(true);
+
     QGraphicsScene *scene = new QGraphicsScene;
     scene->setBackgroundBrush(Qt::gray);
     setScene(scene);
-
-    for(qreal i = 0; i < mMapHeight*30; i+=30){
-        for(qreal j = 0; j < mMapWidth*30; j+=30){
-            RectCell *temp = new RectCell(j+100,i+100,30,30);
-            scene->addItem(temp);
-        }
-    }
     QMatrix mat;
     mat.scale(mScale,mScale);
     setMatrix(mat);
@@ -28,7 +25,7 @@ MapView::MapView(QWidget *parent)
 
 void MapView::wheelEvent(QWheelEvent *event)
 {
-    //for future: make this tied to
+    // TODO: make this tied to
     //the MapHeight and MapWidth numbers
 
     float d = event->delta();
@@ -55,28 +52,27 @@ void MapView::wheelEvent(QWheelEvent *event)
 
 void MapView::clear()
 {
-    QGraphicsScene *scene = new QGraphicsScene;
-    scene->setBackgroundBrush(Qt::gray);
-    setScene(scene);
+    QSize size = mMapCells.size();
+    for (int x = 0; x < size.width(); ++x)
+        for (int y = 0; y < size.width(); ++y)
+            delete mMapCells(x, y);
 
-    for (qreal i = 0; i < mMapHeight*30; i+=30) {
-        for (qreal j = 0; j < mMapWidth*30; j+=30) {
-            RectCell *temp = new RectCell(j+100,i+100,30,30);
-            scene->addItem(temp);
-        }
-    }
+    mMapCells.resize(0, 0);
 }
 
-void MapView::createMap(int tx, int ty)
+void MapView::createMap(TileMap *tileMap)
 {
-    QGraphicsScene *scene = new QGraphicsScene;
-    scene->setBackgroundBrush(Qt::gray);
-    setScene(scene);
+    clear();
 
-    for(qreal i = 0; i < tx*30; i+=30) {
-        for(qreal j = 0; j < ty*30; j+=30) {
-            RectCell *temp = new RectCell(j+100,i+100,30,30);
-            scene->addItem(temp);
+    QSize mapSize = tileMap->mapSize();
+
+    mMapCells.resize(mapSize.width(), mapSize.height());
+
+    for(int y = 0; y < tileMap->mapSize().height(); ++y) {
+        for(int x = 0; x < tileMap->mapSize().width(); ++x) {
+            mMapCells(x, y) = new MapCell(scene(), x, y, tileMap->cTileAt(x, y));
+            if (mSelectedRegion.contains(QPoint(x, y)))
+                mMapCells(x, y)->setHighlightBrush(QColor(200, 200, 255, 80)); //TODO: This should be defined somewhere meaningful
         }
     }
 }
@@ -84,6 +80,35 @@ void MapView::createMap(int tx, int ty)
 
 void MapView::mouseMoveEvent(QMouseEvent *event)
 {
+    QPointF curMousePoint = mapToScene(event->pos()) / 30;
+    QPoint curMouseCell(curMousePoint.x(), curMousePoint.y());
+
+    if (curMousePoint.x() < 0) curMouseCell.setX(-1);
+    if (curMousePoint.y() < 0) curMouseCell.setY(-1);
+
+    if (curMouseCell != mPreMousePoint) {
+        if (mPreMousePoint.x() >= 0 && mPreMousePoint.x() < mMapCells.size().width()
+                && mPreMousePoint.y() >= 0 && mPreMousePoint.y() < mMapCells.size().height()) {
+            if (mSelectedRegion.contains(mPreMousePoint))
+                mMapCells(mPreMousePoint.x(), mPreMousePoint.y())->setHighlightBrush(QColor(200, 200, 255, 80)); //TODO: This should be defined somewhere meaningful
+            else
+                mMapCells(mPreMousePoint.x(), mPreMousePoint.y())->setHighlightBrush(Qt::NoBrush);
+        }
+
+        if (curMouseCell.x() >= 0 && curMouseCell.x() < mMapCells.size().width()
+                && curMouseCell.y() >= 0 && curMouseCell.y() < mMapCells.size().height()) {
+            //Just manually setting highlight color here, but TODO: make this a configurable variable somewhere else
+            mMapCells(curMouseCell.x(), curMouseCell.y())->setHighlightBrush(QColor(0, 0, 0, 20));
+
+            if (event->buttons() & Qt::LeftButton) {
+                //entered a new cell while holding leftclick
+                emit cellActivated(curMouseCell.x(), curMouseCell.y());
+            }
+        }
+
+        mPreMousePoint = curMouseCell;
+    }
+
     if (event->buttons() == Qt::MiddleButton) {
         int dx = mOldX - event->x();
         int dy = mOldY - event->y();
@@ -97,5 +122,29 @@ void MapView::mouseMoveEvent(QMouseEvent *event)
         QGraphicsView::mouseMoveEvent(event);
         mOldX = event->x();
         mOldY = event->y();
+    }
+}
+
+void MapView::mousePressEvent(QMouseEvent *event)
+{
+    if (event->button() == Qt::LeftButton) {
+        if (mPreMousePoint.x() >= 0 && mPreMousePoint.x() < mMapCells.size().width()
+                && mPreMousePoint.y() >= 0 && mPreMousePoint.y() < mMapCells.size().height()) {
+            emit cellClicked(mPreMousePoint.x(), mPreMousePoint.y());
+            emit cellActivated(mPreMousePoint.x(), mPreMousePoint.y());
+        }
+    } else {
+        QGraphicsView::mousePressEvent(event);
+    }
+}
+
+void MapView::mouseReleaseEvent(QMouseEvent *event)
+{
+    if (event->button() == Qt::LeftButton) {
+        if (mPreMousePoint.x() >= 0 && mPreMousePoint.x() < mMapCells.size().width()
+                && mPreMousePoint.y() >= 0 && mPreMousePoint.y() < mMapCells.size().height())
+            emit cellReleased(mPreMousePoint.x(), mPreMousePoint.y());
+    } else {
+        QGraphicsView::mouseReleaseEvent(event);
     }
 }
