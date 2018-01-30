@@ -3,6 +3,7 @@
 
 #include <QVector>
 #include <QSize>
+#include <QDebug>
 
 
 template< typename Type > class Array2DIterator;
@@ -42,7 +43,7 @@ public:
     void resize(int rows, int cols)
     {
         data.resize(rows);
-        for (QVector<Type> v : data)
+        for (QVector<Type> &v : data)
             v.resize(cols);
     }
 

@@ -40,21 +40,23 @@ SOURCES += \
     drawableaxes.cpp \
     toolmanager.cpp \
     meshviewcontainer.cpp \
-    rectcell.cpp \
     mapview.cpp \
     editor.cpp \
     newmapdialog.cpp \
     meshmaterial.cpp \
     shaderprogramonelight.cpp \
+<<<<<<< HEAD
     m2mpropertyclass.cpp \
     m2mpropertyinstance.cpp \
     m2mpropertyset.cpp \
     m2mpattern.cpp \
     map2mesh.cpp \
+    m2mtilemesher.cpp
+=======
     mapcell.cpp \
     tilemapbrushtool.cpp \
-    tilemaptoolmanager.cpp \
-    m2mtilemesher.cpp
+    tilemaptoolmanager.cpp
+>>>>>>> master
 
 HEADERS += \
     mainwindow.h \
@@ -75,24 +77,25 @@ HEADERS += \
     abstractmeshviewcamera.h \
     abstractdrawableglobject.h \
     meshviewcontainer.h \
-    rectcell.h \
     mapview.h \
     editor.h \
     newmapdialog.h \
     array2d.h \
     meshmaterial.h \
     shaderprogramonelight.h \
+<<<<<<< HEAD
     m2mpropertyclass.h \
     m2mpropertyinstance.h \
     m2mpropertyset.h \
     m2mpattern.h \
     map2mesh.h \
-    m2mtilemesher.h \
-    shaderprogramonelight.h \
+    m2mtilemesher.h
+=======
     mapcell.h \
     tilemaptoolmanager.h \
     abstracttilemaptool.h \
     tilemapbrushtool.h
+>>>>>>> master
 
 FORMS += \
     mainwindow.ui \

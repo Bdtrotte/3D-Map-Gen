@@ -28,12 +28,12 @@ public:
     /**
      * @brief Activates the tool. This is called before the tool is used.
      */
-    virtual void activate() = 0;
+    virtual void activate() {}
 
     /**
      * @brief Deactivates the tool. This is called before the tool stops being used.
      */
-    virtual void deactivate() = 0;
+    virtual void deactivate() {}
 
 
     virtual void mousePressEvent(QMouseEvent *) {}
