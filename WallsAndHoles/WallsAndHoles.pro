@@ -45,7 +45,13 @@ SOURCES += \
     editor.cpp \
     newmapdialog.cpp \
     meshmaterial.cpp \
-    shaderprogramonelight.cpp
+    shaderprogramonelight.cpp \
+    m2mpropertyclass.cpp \
+    m2mpropertyinstance.cpp \
+    m2mpropertyset.cpp \
+    m2mpattern.cpp \
+    map2mesh.cpp \
+    m2mtilemesher.cpp
 
 HEADERS += \
     mainwindow.h \
@@ -72,7 +78,13 @@ HEADERS += \
     newmapdialog.h \
     array2d.h \
     meshmaterial.h \
-    shaderprogramonelight.h
+    shaderprogramonelight.h \
+    m2mpropertyclass.h \
+    m2mpropertyinstance.h \
+    m2mpropertyset.h \
+    m2mpattern.h \
+    map2mesh.h \
+    m2mtilemesher.h
 
 FORMS += \
     mainwindow.ui \
