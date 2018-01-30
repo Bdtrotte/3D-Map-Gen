@@ -25,10 +25,12 @@ public:
 public slots:
     void createNewMap();
 
+    void clearMapView();
 private:
     MainWindow *mMainWindow;
     MapView *mMapView;
     QToolBar *mToolBar;
+    TileMap *mTileMap;
 };
 
 #endif // EDITOR_H

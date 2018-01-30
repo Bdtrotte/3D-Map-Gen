@@ -45,7 +45,8 @@ SOURCES += \
     editor.cpp \
     newmapdialog.cpp \
     meshmaterial.cpp \
-    shaderprogramonelight.cpp
+    shaderprogramonelight.cpp \
+    clearmapdialog.cpp
 
 HEADERS += \
     mainwindow.h \
@@ -72,13 +73,15 @@ HEADERS += \
     newmapdialog.h \
     array2d.h \
     meshmaterial.h \
-    shaderprogramonelight.h
+    shaderprogramonelight.h \
+    clearmapdialog.h
 
 FORMS += \
     mainwindow.ui \
     meshview.ui \
     meshviewcontainer.ui \
-    newmapdialog.ui
+    newmapdialog.ui \
+    clearmapdialog.ui
 
 DISTFILES += \
     basic.fsh \

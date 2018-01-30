@@ -15,12 +15,12 @@ MapView::MapView(QWidget *parent)
     scene->setBackgroundBrush(Qt::gray);
     setScene(scene);
 
-    for(qreal i = 0; i < mMapHeight*30; i+=30){
-        for(qreal j = 0; j < mMapWidth*30; j+=30){
-            RectCell *temp = new RectCell(j+100,i+100,30,30);
-            scene->addItem(temp);
-        }
-    }
+//    for(qreal i = 0; i < mMapHeight*30; i+=30){
+//        for(qreal j = 0; j < mMapWidth*30; j+=30){
+//            RectCell *temp = new RectCell(j+100,i+100,30,30);
+//            scene->addItem(temp);
+//        }
+//    }
     QMatrix mat;
     mat.scale(mScale,mScale);
     setMatrix(mat);
@@ -59,12 +59,12 @@ void MapView::clear()
     scene->setBackgroundBrush(Qt::gray);
     setScene(scene);
 
-    for (qreal i = 0; i < mMapHeight*30; i+=30) {
-        for (qreal j = 0; j < mMapWidth*30; j+=30) {
-            RectCell *temp = new RectCell(j+100,i+100,30,30);
-            scene->addItem(temp);
-        }
-    }
+//    for (qreal i = 0; i < mMapHeight*30; i+=30) {
+//        for (qreal j = 0; j < mMapWidth*30; j+=30) {
+//            RectCell *temp = new RectCell(j+100,i+100,30,30);
+//            scene->addItem(temp);
+//        }
+//    }
 }
 
 void MapView::createMap(int tx, int ty)
@@ -73,8 +73,8 @@ void MapView::createMap(int tx, int ty)
     scene->setBackgroundBrush(Qt::gray);
     setScene(scene);
 
-    for(qreal i = 0; i < tx*30; i+=30) {
-        for(qreal j = 0; j < ty*30; j+=30) {
+    for(qreal i = 0; i < ty*30; i+=30) {
+        for(qreal j = 0; j < tx*30; j+=30) {
             RectCell *temp = new RectCell(j+100,i+100,30,30);
             scene->addItem(temp);
         }

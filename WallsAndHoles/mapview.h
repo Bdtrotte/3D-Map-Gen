@@ -4,6 +4,7 @@
 #include <QGraphicsView>
 #include <QKeyEvent>
 #include <QWidget>
+#include "tilemap.h"
 
 
 class MapView : public QGraphicsView
