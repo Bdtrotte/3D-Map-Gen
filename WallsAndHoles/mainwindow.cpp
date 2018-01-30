@@ -46,16 +46,16 @@ void MainWindow::on_actionsave_triggered()
         messageBox.setFixedSize(500,200);
         return;
     }
-
+    /*
     QString fileName = QFileDialog::getSaveFileName(this,
-        tr("Save Map"), "/home", tr("Save Files (*.xml)"));
-
+        tr("Save Map"), "/home", tr("Save Files (*.xml)"));*/
+    QString fileName = "test.xml";
     if(!fileName.isEmpty())
         mapView->saveMap(fileName);
 }
 
 void MainWindow::on_actionexport_triggered() {
-    /*MeshViewContainer *meshViewContainer = findChild<MeshViewContainer *>();
+    MeshViewContainer *meshViewContainer = findChild<MeshViewContainer *>();
 
     if (meshViewContainer == nullptr) {
         QMessageBox messageBox;
@@ -68,11 +68,11 @@ void MainWindow::on_actionexport_triggered() {
         tr("Export OBJ"), "/home", tr("Export Files (*.obj)"));
 
     if(!fileName.isEmpty())
-        meshViewContainer->saveMesh(fileName);*/
+        meshViewContainer->saveMesh(fileName);
 }
 
 void MainWindow::on_actionimport_triggered() {
-    /*MeshViewContainer *meshViewContainer = findChild<MeshViewContainer *>();
+    MeshViewContainer *meshViewContainer = findChild<MeshViewContainer *>();
 
     if (meshViewContainer == nullptr) {
         QMessageBox messageBox;
@@ -85,5 +85,5 @@ void MainWindow::on_actionimport_triggered() {
         tr("import OBJ"), "/home", tr("import Files (*.obj)"));
 
     if(!fileName.isEmpty())
-        meshViewContainer->loadMesh(fileName);*/
+        meshViewContainer->loadMesh(fileName);
 }

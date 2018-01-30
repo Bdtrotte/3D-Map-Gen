@@ -106,8 +106,8 @@ void MapView::openMap(QString path){
 
 void MapView::saveMap(QString path){
     QSize mapSize(10,10);
-    //qDebug() << "creating sample map";
-    //TileMap testMap(mapSize);
+    qDebug() << "creating sample map";
+    TileMap testMap(mapSize);
     qDebug() << "creating sample templateSet";
     TileTemplateSet testSet;
     qDebug() << "creating sample tempalte";
@@ -118,5 +118,5 @@ void MapView::saveMap(QString path){
     XMLTool xml(path);
     qDebug() << "saving...";
     //xml.saveTileMap(testMap, testSet);
-    xml.saveTileTemplateSet(testSet);
+    //xml.saveTileTemplateSet(testSet);
 }
