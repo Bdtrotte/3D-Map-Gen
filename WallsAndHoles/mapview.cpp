@@ -106,9 +106,17 @@ void MapView::openMap(QString path){
 
 void MapView::saveMap(QString path){
     QSize mapSize(10,10);
+    qDebug() << "creating sample map";
     TileMap testMap(mapSize);
+    qDebug() << "creating sample templateSet";
     TileTemplateSet testSet;
-    TileTemplate testTemp(10,10,QVector(0,0),Qt::blue);
-    testMap.setTile(0,0,&testTemp);
-    testSet.addTileTemplate(&testTemp);
+    qDebug() << "creating sample tempalte";
+    SharedTileTemplate testTemp=SharedTileTemplate::create(10,10,QVector2D(0,0),Qt::blue);
+    qDebug() << "add template to map and set";
+    testMap.setTile(0,0,testTemp);
+    testSet.addTileTemplate(testTemp);
+    XMLTool xml(path);
+    qDebug() << "saving...";
+    //xml.saveTileMap(testMap, testSet);
+    xml.saveTileTemplateSet(testSet);
 }

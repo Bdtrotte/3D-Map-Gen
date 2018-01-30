@@ -2,6 +2,9 @@
 #define XMLTOOL_H
 #include "tilemap.h"
 #include "tiletemplateset.h"
+#include <QDomDocument>
+#include <QFile>
+#include <QTextStream>
 
 class XMLTool
 {
@@ -11,8 +14,8 @@ public:
     void openTileMap(TileMap&);
     void openTileTemplateSet();
     */
-    void saveTileMap(TileMap& tileMap, TileTemplateSet& templateSet);
-    void saveTileTemplateSet(TileTemplateSet& templateSet);
+    int saveTileMap(TileMap& tileMap, TileTemplateSet& templateSet);
+    int saveTileTemplateSet(TileTemplateSet& templateSet);
 
 private:
     QString mPath;
