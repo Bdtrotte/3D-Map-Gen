@@ -46,11 +46,10 @@ void MainWindow::on_actionsave_triggered()
         messageBox.setFixedSize(500,200);
         return;
     }
-    /*
+
     QString fileName = QFileDialog::getSaveFileName(this,
         tr("Save Map"), "/home", tr("Save Files (*.xml)"));
-    */
-    QString fileName = "test.xml";
+
     if(!fileName.isEmpty())
         mapView->saveMap(fileName);
 }

@@ -20,7 +20,7 @@ int XMLTool::saveTileTemplateSet(TileTemplateSet &templateSet){
     QDomElement element;
     QDomAttr attr;
     QDomProcessingInstruction instruction = doc.createProcessingInstruction( "xml", "version = \'1.0\' encoding=\'UTF-8\'" );
-    doc.appendChild( instruction );
+    doc.appendChild(instruction);
 
     QDomElement root = doc.createElement( "TileTemplateSet" );
     doc.appendChild(root);
@@ -33,7 +33,7 @@ int XMLTool::saveTileTemplateSet(TileTemplateSet &templateSet){
         attr.setValue(QString::number(temp->thickness()));
         element.setAttributeNode(attr);
         attr = doc.createAttribute("Position");
-        attr.setValue(QString("%f,%f").arg(temp->position()[0], temp->position()[1]));
+        attr.setValue(QString("%1,%2").arg(QString::number(temp->position()[0]), QString::number(temp->position()[1])));
         element.setAttributeNode(attr);
         attr = doc.createAttribute("Color");
         attr.setValue(temp->color().name());
