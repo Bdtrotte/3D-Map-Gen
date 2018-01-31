@@ -6,7 +6,9 @@
 #include <QDebug>
 
 
+// Iterator classes for Array2D.
 template< typename Type > class Array2DIterator;
+template< typename Type > class Array2DCIterator;
 
 /**
  * @brief The Array2D class is basically a 2D implementation of QVector.
@@ -17,6 +19,11 @@ template< typename Type > class Array2DIterator;
  *
  *  // Access.
  *  arr(r,c) = obj;
+ *
+ * It is possible to iterate through the Array2D using a for-each loop, as so:
+ *  for (Type obj : array) { ... }
+ *
+ * In the above, there is no guaranteed order of traversal.
  */
 template< typename Type >
 class Array2D {
@@ -51,15 +58,24 @@ public:
                                       data.empty()? 0 : data[0].size()); }
 
 
+
+    /* Standard begin() and end() methods. */
+
+    Array2DCIterator<Type> begin() const {
+        return Array2DCIterator<Type>::beginning(this);
+    }
+
+    Array2DCIterator<Type> end() const {
+        return Array2DCIterator<Type>::ending(this);
+    }
+
+
     Array2DIterator<Type> begin() {
-        return Array2DIterator(this, 0, 0);
+        return Array2DIterator<Type>::beginning(this);
     }
 
     Array2DIterator<Type> end() {
-        auto sz = size();
-        int width = sz.width();
-        int height = sz.height();
-        return Array2DIterator(this, width, height);
+        return Array2DIterator<Type>::ending(this);
     }
 
 protected:
@@ -67,20 +83,25 @@ protected:
 };
 
 
+/* Implementations of Array2DIterator and Array2DCIterator */
+
 template< typename Type >
 class Array2DIterator {
 public:
-    Array2DIterator(Array2D *r, int x, int y) : arr(r), x(x), y(y) {}
+    static Array2DIterator<Type> beginning(Array2D<Type> *r) { return Array2DIterator<Type>(r, 0, 0); }
+    static Array2DIterator<Type> ending(Array2D<Type> *r) { return Array2DIterator<Type>(r, 0, r->size().height()); }
 
-    bool operator==(const Array2DIterator &other) const {
+    Array2DIterator(Array2D<Type> *r, int x, int y) : arr(r), x(x), y(y) {}
+
+    bool operator==(const Array2DIterator<Type> &other) const {
         return other.arr == arr && other.x == x && other.y == y;
     }
 
-    bool operator!=(const Array2DIterator &other) const {
+    bool operator!=(const Array2DIterator<Type> &other) const {
         return !(*this == other);
     }
 
-    Array2DIterator &operator++() {
+    Array2DIterator<Type> &operator++() {
         ++x;
         if (x >= arr->size().width()) {
             x = 0;
@@ -91,8 +112,8 @@ public:
     }
 
     // Postfix ++
-    Array2DIterator operator++(int) {
-        Array2DIterator iter(*this);
+    Array2DIterator<Type> operator++(int) {
+        Array2DIterator<Type> iter(*this);
         ++(*this);
         return iter;
     }
@@ -102,7 +123,49 @@ public:
     }
 
 protected:
-    Array2D *arr;
+    Array2D<Type> *arr;
+    int x, y;
+};
+
+template< typename Type >
+class Array2DCIterator {
+public:
+    static Array2DCIterator<Type> beginning(const Array2D<Type> *r) { return Array2DCIterator<Type>(r, 0, 0); }
+    static Array2DCIterator<Type> ending(const Array2D<Type> *r) { return Array2DCIterator<Type>(r, 0, r->size().height()); }
+
+    Array2DCIterator(const Array2D<Type> *r, int x, int y) : arr(r), x(x), y(y) {}
+
+    bool operator==(const Array2DCIterator<Type> &other) const {
+        return other.arr == arr && other.x == x && other.y == y;
+    }
+
+    bool operator!=(const Array2DCIterator<Type> &other) const {
+        return !(*this == other);
+    }
+
+    Array2DCIterator<Type> &operator++() {
+        ++x;
+        if (x >= arr->size().width()) {
+            x = 0;
+            ++y;
+        }
+
+        return *this;
+    }
+
+    // Postfix ++
+    Array2DCIterator<Type> operator++(int) {
+        Array2DIterator<Type> iter(*this);
+        ++(*this);
+        return iter;
+    }
+
+    const Type &operator*() const {
+        return (*arr)(x, y);
+    }
+
+protected:
+    const Array2D<Type> *arr;
     int x, y;
 };
 
