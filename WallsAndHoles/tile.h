@@ -31,7 +31,7 @@ public:
     void setRelativeThickness(float relativeThickness);
     void setRelativeHeight(float relativeHeight);
     //will be clipped so that walls don't leave tilebounds
-    void setRelativePosition(QVector2D relavtivePosition);
+    void setRelativePosition(QVector2D relativePosition);
 
     /**
      * Sets all relative values to zero,
