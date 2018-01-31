@@ -21,6 +21,10 @@ public:
 
     SharedTileTemplate tileTemplate() const { return mTileTemplate; }
 
+    float thickness() const;
+    float height() const;
+    QVector2D position() const;
+
     float relativeThickness() const { return mRelativeThickness; }
     float relativeHeight() const { return mRelativeHeight; }
     QVector2D relativePosition() const { return mRelativePosition; }
