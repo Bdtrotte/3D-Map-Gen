@@ -28,7 +28,6 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
     main.cpp \
-    mainwindow.cpp \
     meshview.cpp \
     meshviewcameralikeblender.cpp \
     renderableobject.cpp \
@@ -50,7 +49,6 @@ SOURCES += \
     tilemaptoolmanager.cpp
 
 HEADERS += \
-    mainwindow.h \
     renderableobject.h \
     scene.h \
     meshview.h \
@@ -80,7 +78,6 @@ HEADERS += \
     tilemapbrushtool.h
 
 FORMS += \
-    mainwindow.ui \
     meshview.ui \
     meshviewcontainer.ui \
     newmapdialog.ui

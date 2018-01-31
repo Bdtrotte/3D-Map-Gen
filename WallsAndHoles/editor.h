@@ -1,7 +1,6 @@
 #ifndef EDITOR_H
 #define EDITOR_H
 
-#include "mainwindow.h"
 #include "tilemap.h"
 #include "tilemaptoolmanager.h"
 #include "mapview.h"
@@ -25,10 +24,15 @@ public:
     ~Editor();
 
 public slots:
-    void createNewMap();
+    void newMap();
+    void saveMap();
+    void loadMap();
+    void exportMapMesh();
 
 private:
-    MainWindow *mMainWindow;
+    void setUpMenuBar();
+
+    QMainWindow *mMainWindow;
 
     //TileMap data
     TileMap *mTileMap;
