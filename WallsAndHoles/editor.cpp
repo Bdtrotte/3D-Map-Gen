@@ -27,6 +27,9 @@ Editor::Editor(QObject *parent)
 
     mToolBar->addAction(mTileMapToolManager->registerTool(QSharedPointer<AbstractTileMapTool>(new TileMapBrushTool(mTileMap)), "Brush Tool"));
 
+    QAction *heightMap = mToolBar->addAction("Height Map");
+    connect(heightMap, &QAction::triggered, this, &Editor::heightMap);
+
     //Set up and add all dock widgets
     QDockWidget *dw = new QDockWidget("Mesh View", mMainWindow);
     MeshViewContainer *mvc = new MeshViewContainer(dw);
@@ -61,4 +64,8 @@ void Editor::createNewMap()
 
         mMapView->createMap(mTileMap);
     }
+}
+
+void Editor::heightMap(){
+    mMapView->genHeightMap(mTileMap);
 }
