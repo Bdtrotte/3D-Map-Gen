@@ -91,10 +91,11 @@ void MeshView::loadVAO() {
 
 
         const QVector<unsigned int>& triangleIndices = obj->getTriangleIndices();
-        GLuint index = indices.size(); //Can't render multiple object without this
+        GLuint index = vertices.size(); //Can't render multiple object without this
         for (int i = 0; i < triangleIndices.size(); ++i)
             indices.append(index+triangleIndices[i]);
     }
+
 
     mVertexPositions = QSharedPointer<QOpenGLBuffer>::create(QOpenGLBuffer::VertexBuffer);
     mVertexPositions->create();
@@ -204,7 +205,7 @@ void MeshView::paintGL() {
 
         // Draw.
         mShaderProgram.enableArrays();
-        glDrawElements(GL_TRIANGLES, mTriangleIndices->size()/sizeof(unsigned int), GL_UNSIGNED_INT, 0);
+        glDrawElements(GL_TRIANGLES, mTriangleIndices->size() / sizeof(unsigned int), GL_UNSIGNED_INT, 0); // mTriangleIndices->size() is in bytes!
         mShaderProgram.disableArrays();
 
         // Unset arrays.

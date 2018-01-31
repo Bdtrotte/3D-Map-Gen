@@ -15,7 +15,7 @@
 /**
  * @brief An object that keeps track of map-to-mesh conversion.
  */
-class Map2Mesh {
+class Map2Mesh : public QObject {
 
     Q_OBJECT
 
@@ -25,7 +25,7 @@ public:
      * @brief Creates the conversion object.
      * @param tilemap - The tilemap on which the conversion will happen.
      */
-    Map2Mesh(TileMap *tileMap);
+    Map2Mesh(TileMap *tileMap, QObject *parent = nullptr);
 
     /**
      * @brief Returns a list of all the tile meshes.
@@ -48,12 +48,11 @@ public slots:
      */
     void remakeAll();
 
-protected:
 
-    /**
-     * @brief Combines all of the per-tile meshes into one big mesh.
-     */
-    void remakeMesh();
+signals:
+    void mapUpdated();
+
+protected:
 
 
     TileMap *mTileMap;

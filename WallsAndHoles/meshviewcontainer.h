@@ -19,6 +19,8 @@ public:
     void saveMesh(QString path);
     void loadMesh(QString path);
 
+    void setScene(QSharedPointer<Scene> scene);
+
 private slots:
     void on_toolSelection_currentIndexChanged(int index);
 

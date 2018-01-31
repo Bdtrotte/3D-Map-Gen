@@ -19,6 +19,7 @@ public:
                   int yPos = -1,
                   QObject *parent = nullptr);
 
+    bool hasTileTemplate() const { return !mTileTemplate.isNull(); }
     SharedTileTemplate tileTemplate() const { return mTileTemplate; }
 
     float relativeThickness() const { return mRelativeThickness; }

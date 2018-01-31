@@ -11,12 +11,13 @@
 Editor::Editor(QObject *parent)
     : QObject(parent)
     , mMainWindow(new MainWindow())
+    , mMap2Mesh(nullptr)
     , mTileMap(nullptr)
     , mMapView(new MapView(mTileMapSelectedRegion, mMainWindow))
     , mTileMapToolManager(new TileMapToolManager(this))
     , mToolBar(new QToolBar(mMainWindow))
 {
-    //Initiallize mMainWindow
+    //Initialize mMainWindow
     mMainWindow->show();
     mMainWindow->setCentralWidget(mMapView);
 
@@ -29,8 +30,8 @@ Editor::Editor(QObject *parent)
 
     //Set up and add all dock widgets
     QDockWidget *dw = new QDockWidget("Mesh View", mMainWindow);
-    MeshViewContainer *mvc = new MeshViewContainer(dw);
-    dw->setWidget(mvc);
+    mMeshViewContainer = new MeshViewContainer(dw);
+    dw->setWidget(mMeshViewContainer);
 
     mMainWindow->addDockWidget(Qt::RightDockWidgetArea, dw);
 
@@ -54,9 +55,26 @@ void Editor::createNewMap()
     nmd.exec();
 
     if (nmd.result.width != -1) {
+        // TODO: delete mTileMap
         mTileMap = new TileMap(QSize(nmd.result.width, nmd.result.height), this);
         mTileMapToolManager->setTileMap(mTileMap);
 
         mMapView->createMap(mTileMap);
+
+        if (mMap2Mesh != nullptr)
+            delete mMap2Mesh;
+
+        mMap2Mesh = new Map2Mesh(mTileMap, this);
+        connect(mMap2Mesh, &Map2Mesh::mapUpdated, this, &Editor::updateScene);
     }
+}
+
+void Editor::updateScene()
+{
+    QSharedPointer<Scene> scene = QSharedPointer<Scene>::create();
+
+    for (auto&& obj : mMap2Mesh->getMeshes())
+        scene->addObject(obj);
+
+    mMeshViewContainer->setScene(scene);
 }
