@@ -8,9 +8,6 @@
 #include "tilemap.h"
 
 #include "array2d.h"
-#include "m2mpropertyclass.h"
-#include "m2mpropertyinstance.h"
-#include "m2mpropertyset.h"
 
 /**
  * @brief An object that keeps track of map-to-mesh conversion.

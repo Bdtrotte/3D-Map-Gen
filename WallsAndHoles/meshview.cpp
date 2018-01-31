@@ -91,7 +91,7 @@ void MeshView::loadVAO() {
 
 
         const QVector<unsigned int>& triangleIndices = obj->getTriangleIndices();
-        GLuint index = vertices.size(); //Can't render multiple object without this
+        GLuint index = vertices.size()/3 - vdata.size(); //Can't render multiple object without this
         for (int i = 0; i < triangleIndices.size(); ++i)
             indices.append(index+triangleIndices[i]);
     }

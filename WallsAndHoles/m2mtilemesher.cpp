@@ -24,5 +24,5 @@ RenderableObject M2MTileMesher::getTopMesh(const Tile &tile, QVector3D offset, f
     };
 
 
-    return RenderableObject(vertices, normals, triangles);
+    return RenderableObject(vertices, normals, MeshMaterial::Soft, triangles);
 }
