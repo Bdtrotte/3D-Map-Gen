@@ -84,13 +84,15 @@ void MapView::genHeightMap(TileMap *tileMap){
                 //if height is less than 0 the heightMap will be red
                 float sig = (.25*height)/(.25*(height - 1));
                 int colorVal = 255-(255*sig);
-                mMapCells(x,y)->changeHeightMap(x, y, QColor(255, colorVal, colorVal, 100));
+                int alpha = (150*sig);
+                mMapCells(x,y)->changeHeightMap(x, y, QColor(255, colorVal, colorVal, alpha));
             }
             else{
                 //if height is greater than 0 the heightMap will be green
                 float sig = (.25*height)/(.25*(height + 1));
                 int colorVal = 255-(255*sig);
-                mMapCells(x,y)->changeHeightMap(x, y, QColor(colorVal, 255, colorVal, 100));
+                int alpha = (150*sig);
+                mMapCells(x,y)->changeHeightMap(x, y, QColor(colorVal, 255, colorVal, alpha));
             }
         }
     }
