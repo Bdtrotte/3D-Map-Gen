@@ -53,7 +53,7 @@ void MapView::clear()
 {
     QSize size = mMapCells.size();
     for (int x = 0; x < size.width(); ++x)
-        for (int y = 0; y < size.width(); ++y)
+        for (int y = 0; y < size.height(); ++y)
             delete mMapCells(x, y);
 
     mMapCells.resize(0, 0);
