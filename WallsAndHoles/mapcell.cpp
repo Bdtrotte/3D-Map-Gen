@@ -6,6 +6,7 @@ MapCell::MapCell(QGraphicsScene *scene, int x, int y, const Tile &tile, QObject 
     , mX(x)
     , mY(y)
     , mTile(tile)
+    , mHeightMap(nullptr)
 {
     mGraphics = new QGraphicsRectItem(x * 30 + 10, y * 30 + 10, 10, 10);
     mGraphics->setPen(Qt::NoPen);
@@ -24,8 +25,6 @@ MapCell::MapCell(QGraphicsScene *scene, int x, int y, const Tile &tile, QObject 
     mBackground->setBrush(Qt::white);
     mBackground->setPen(QPen(Qt::black, 0, Qt::DashLine));
 
-    mHeightMap = nullptr;
-
     mScene->addItem(mGraphics);
     mScene->addItem(mHighlight);
     mScene->addItem(mBackground);
@@ -40,6 +39,7 @@ MapCell::~MapCell()
     mScene->removeItem(mHighlight);
     mScene->removeItem(mBackground);
     mScene->removeItem(mHeightMap);
+
     delete mGraphics;
     delete mHighlight;
     delete mBackground;
@@ -55,13 +55,14 @@ void MapCell::tileChanged()
 }
 
 void MapCell::changeHeightMap(int x, int y, QColor color){
-    if(mHeightMap != nullptr){
+    if(mHeightMap){
         mScene->removeItem(mHeightMap);
         delete mHeightMap;
     }
+
     mHeightMap = new QGraphicsRectItem(x * 30, y * 30, 30, 30);
     mHeightMap->setZValue(2);
     mHeightMap->setBrush(color);
-    mHeightMap->setPen(color);
+    mHeightMap->setPen(Qt::NoPen);
     mScene->addItem(mHeightMap);
 }

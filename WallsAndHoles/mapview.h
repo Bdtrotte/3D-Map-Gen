@@ -25,6 +25,7 @@ public:
     void clear();
     void createMap(TileMap *tileMap);
     void genHeightMap(TileMap *tileMap);
+    void clearHeightMap(TileMap *tileMap);
 
 protected:
     void wheelEvent(QWheelEvent *event) override;

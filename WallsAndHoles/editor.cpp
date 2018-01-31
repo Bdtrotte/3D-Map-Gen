@@ -15,6 +15,7 @@ Editor::Editor(QObject *parent)
     , mMapView(new MapView(mTileMapSelectedRegion, mMainWindow))
     , mTileMapToolManager(new TileMapToolManager(this))
     , mToolBar(new QToolBar(mMainWindow))
+    , mHMap(false)
 {
     //Initiallize mMainWindow
     mMainWindow->show();
@@ -27,6 +28,7 @@ Editor::Editor(QObject *parent)
 
     mToolBar->addAction(mTileMapToolManager->registerTool(QSharedPointer<AbstractTileMapTool>(new TileMapBrushTool(mTileMap)), "Brush Tool"));
 
+    //Height Map Widget
     QAction *heightMap = mToolBar->addAction("Height Map");
     connect(heightMap, &QAction::triggered, this, &Editor::heightMap);
 
@@ -57,6 +59,9 @@ void Editor::createNewMap()
     nmd.exec();
 
     if (nmd.result.width != -1) {
+        if(mTileMap){
+            delete mTileMap;
+        }
         mTileMap = new TileMap(QSize(nmd.result.width, nmd.result.height), this);
         mTileMapToolManager->setTileMap(mTileMap);
 
@@ -65,5 +70,10 @@ void Editor::createNewMap()
 }
 
 void Editor::heightMap(){
-    mMapView->genHeightMap(mTileMap);
+    mHMap = !mHMap;
+    if(mHMap)
+        mMapView->genHeightMap(mTileMap);
+    else
+        mMapView->clearHeightMap(mTileMap);
 }
+

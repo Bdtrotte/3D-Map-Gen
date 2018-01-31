@@ -80,20 +80,27 @@ void MapView::genHeightMap(TileMap *tileMap){
     for(int x = 0; x < tileMap->mapSize().width();++x){
         for(int y = 0; y < tileMap->mapSize().height(); ++y){
             float height = tileMap->tileAt(x,y).relativeHeight();
+            height = x-y;
             if(height < 0){
                 //if height is less than 0 the heightMap will be red
-                float sig = height/(height - 1);
+                float sig = (.25*height)/(.25*(height - 1));
                 int colorVal = 255-(255*sig);
-                mMapCells(x,y)->changeHeightMap(x, y, QColor(255, colorVal, colorVal, 80));
+                mMapCells(x,y)->changeHeightMap(x, y, QColor(255, colorVal, colorVal, 100));
             }
             else{
                 //if height is greater than 0 the heightMap will be green
-                float sig = height/(height + 1);
+                float sig = (.25*height)/(.25*(height + 1));
                 int colorVal = 255-(255*sig);
-                mMapCells(x,y)->changeHeightMap(x, y, QColor(colorVal, 255, colorVal, 80));
+                mMapCells(x,y)->changeHeightMap(x, y, QColor(colorVal, 255, colorVal, 100));
             }
         }
     }
+}
+
+void MapView::clearHeightMap(TileMap *tileMap){
+    for(int x = 0; x < tileMap->mapSize().width();++x)
+        for(int y = 0; y < tileMap->mapSize().height(); ++y)
+            mMapCells(x,y)->changeHeightMap(x, y, Qt::transparent);
 }
 
 void MapView::mouseMoveEvent(QMouseEvent *event)

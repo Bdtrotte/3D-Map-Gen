@@ -8,6 +8,7 @@
 #include <QGraphicsItem>
 #include <QGraphicsRectItem>
 #include <QGraphicsSceneHoverEvent>
+#include <QDebug>
 
 class MapCell : public QObject
 {

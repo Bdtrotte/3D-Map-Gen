@@ -41,6 +41,9 @@ private:
     //Tools
     TileMapToolManager *mTileMapToolManager;
     QToolBar *mToolBar;
+
+    //Height Map bool
+    bool mHMap;
 };
 
 #endif // EDITOR_H
