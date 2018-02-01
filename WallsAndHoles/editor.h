@@ -1,7 +1,6 @@
 #ifndef EDITOR_H
 #define EDITOR_H
 
-#include "mainwindow.h"
 #include "tilemap.h"
 #include "tilemaptoolmanager.h"
 #include "mapview.h"
@@ -27,7 +26,10 @@ public:
     ~Editor();
 
 public slots:
-    void createNewMap();
+    void newMap();
+    void saveMap();
+    void loadMap();
+    void exportMapMesh();
 
     /**
      * @brief Gives a new scene to the mesh view by creating it from the data in mMap2Mesh.
@@ -35,7 +37,9 @@ public slots:
     void makeNewScene();
 
 private:
-    MainWindow *mMainWindow;
+    void setUpMenuBar();
+
+    QMainWindow *mMainWindow;
 
     // Map-to-Mesh Converter
     Map2Mesh *mMap2Mesh;
