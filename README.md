@@ -1,7 +1,8 @@
 # 3D-Map-Gen
 
 ## General Goal
-Build a simple 2D tile map which is converted into a high detail 3D map.
+Simplify level design for video games.
+A user will be able to draw a simple 2D tile map and have it converted into a high detail 3D mesh.
 
 ## Frameworks
 We use Qt, C++ and OpenGL.
