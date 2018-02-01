@@ -38,6 +38,11 @@ public slots:
     void load(QString path);
     void save(QString path);
 
+    /**
+     * @brief Makes buffers be reloaded before the next frame is drawn.
+     */
+    void invalidateBuffers();
+
 protected:
     void initializeGL() override;
     void paintGL() override;

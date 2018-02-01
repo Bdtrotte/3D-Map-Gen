@@ -34,8 +34,15 @@ MeshView::~MeshView() {
 void MeshView::setScene(QSharedPointer<Scene> scene) {
     mNextScene = scene;
 
+    connect(mNextScene.data(), &Scene::objectAdded, this, &MeshView::invalidateBuffers);
+
     // The reason loadVAO() is not called here is because the appropriate
     // OpenGL context may not be bound.
+    invalidateBuffers();
+}
+
+
+void MeshView::invalidateBuffers() {
     mShouldReloadScene = true;
 }
 

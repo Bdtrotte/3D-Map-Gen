@@ -3,16 +3,22 @@
 
 #include <QVector>
 #include <QSharedPointer>
+#include <QObject>
 
 #include "renderableobject.h"
 #include "abstractdrawableglobject.h"
 
-class Scene {
+class Scene : public QObject {
+
+    Q_OBJECT
+
+public:
+
     using RenderableObjectP = QSharedPointer<RenderableObject>;
     using DrawableObjectP = QSharedPointer<AbstractDrawableGLObject>;
 
-public:
-    Scene();
+    Scene(QObject *parent = nullptr);
+    virtual ~Scene() {}
 
     /**
      * @brief Adds a RenderableObject to the scene.
@@ -30,15 +36,24 @@ public:
     // in each object. This does not consider whether vertices are reused.
     size_t getNumVertices() const;
 
+    const QVector<DrawableObjectP>& getAllDrawables() const;
+    const QVector<RenderableObjectP>& getAllObjects() const;
 
     /**
      * @brief Calls initialzeGL() on all drawables.
+     *
+     * NOTE: For now, this does not need to be a slot. Slot functionality can be added as needed.
      */
     void initializeGL();
 
 
-    const QVector<DrawableObjectP>& getAllDrawables() const;
-    const QVector<RenderableObjectP>& getAllObjects() const;
+signals:
+    /**
+     * @brief This signal is emitted whenever an object is added to the scene.
+     * @param object The object that was added.
+     */
+    void objectAdded(RenderableObjectP object);
+
 
 protected:
 

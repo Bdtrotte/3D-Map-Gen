@@ -1,12 +1,16 @@
 #include "scene.h"
 #include "drawableaxes.h"
 
-Scene::Scene() {
+Scene::Scene(QObject *parent)
+    : QObject(parent)
+{
     drawables.append(QSharedPointer<DrawableAxes>::create());
 }
 
 void Scene::addObject(RenderableObjectP object) {
     objects.append(object);
+
+    emit objectAdded(object);
 }
 
 void Scene::addObject(DrawableObjectP object) {
