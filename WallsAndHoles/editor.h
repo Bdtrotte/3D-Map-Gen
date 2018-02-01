@@ -4,6 +4,8 @@
 #include "tilemap.h"
 #include "tilemaptoolmanager.h"
 #include "mapview.h"
+#include "map2mesh.h"
+#include "meshviewcontainer.h"
 
 #include <QObject>
 #include <QToolBar>
@@ -29,10 +31,18 @@ public slots:
     void loadMap();
     void exportMapMesh();
 
+    /**
+     * @brief Gives a new scene to the mesh view by creating it from the data in mMap2Mesh.
+     */
+    void makeNewScene();
+
 private:
     void setUpMenuBar();
 
     QMainWindow *mMainWindow;
+
+    // Map-to-Mesh Converter
+    Map2Mesh *mMap2Mesh;
 
     //TileMap data
     TileMap *mTileMap;
@@ -40,6 +50,7 @@ private:
 
     //views
     MapView *mMapView;
+    MeshViewContainer *mMeshViewContainer;
 
     //Tools
     TileMapToolManager *mTileMapToolManager;

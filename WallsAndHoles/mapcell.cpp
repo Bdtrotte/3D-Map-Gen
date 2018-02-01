@@ -9,7 +9,7 @@ MapCell::MapCell(QGraphicsScene *scene, int x, int y, const Tile &tile, QObject 
 {
     mGraphics = new QGraphicsRectItem(x * 30 + 10, y * 30 + 10, 10, 10);
     mGraphics->setPen(Qt::NoPen);
-    if (!mTile.isEmpty())
+    if (mTile.hasTileTemplate())
         mGraphics->setBrush(mTile.tileTemplate()->color());
     else
         mGraphics->setBrush(Qt::NoBrush);
@@ -45,7 +45,7 @@ MapCell::~MapCell()
 
 void MapCell::tileChanged()
 {
-    if (!mTile.isEmpty())
+    if (mTile.hasTileTemplate())
         mGraphics->setBrush(mTile.tileTemplate()->color());
     else
         mGraphics->setBrush(Qt::NoBrush);

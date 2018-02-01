@@ -13,6 +13,7 @@
 Editor::Editor(QObject *parent)
     : QObject(parent)
     , mMainWindow(new QMainWindow())
+    , mMap2Mesh(nullptr)
     , mTileMap(nullptr)
     , mMapView(new MapView(mTileMapSelectedRegion, mMainWindow))
     , mTileMapToolManager(new TileMapToolManager(this))
@@ -27,8 +28,8 @@ Editor::Editor(QObject *parent)
 
     //Set up and add all dock widgets
     QDockWidget *dw = new QDockWidget("Mesh View", mMainWindow);
-    MeshViewContainer *mvc = new MeshViewContainer(dw);
-    dw->setWidget(mvc);
+    mMeshViewContainer = new MeshViewContainer(dw);
+    dw->setWidget(mMeshViewContainer);
 
     mMainWindow->addDockWidget(Qt::RightDockWidgetArea, dw);
 
@@ -60,7 +61,31 @@ void Editor::newMap()
         mTileMapToolManager->setTileMap(mTileMap);
 
         mMapView->createMap(mTileMap);
+
+        if (mMap2Mesh != nullptr)
+            delete mMap2Mesh;
+
+        mMap2Mesh = new Map2Mesh(mTileMap, this);
+
+        // TODO: It is inefficient to update the entire scene when just a part
+        // of the map is updated.
+        connect(mMap2Mesh, &Map2Mesh::mapMeshUpdated, this, &Editor::makeNewScene);
+
+        // Note: Map2Mesh's mapUpdated() signal is emitted during its constructor,
+        // but that is BEFORE the above connection is made. Therefore, updateScene()
+        // must be called manually here.
+        makeNewScene();
     }
+}
+
+void Editor::makeNewScene()
+{
+    QSharedPointer<Scene> scene = QSharedPointer<Scene>::create();
+
+    for (auto&& obj : mMap2Mesh->getMeshes())
+        scene->addObject(obj);
+
+    mMeshViewContainer->setScene(scene);
 }
 
 void Editor::saveMap()

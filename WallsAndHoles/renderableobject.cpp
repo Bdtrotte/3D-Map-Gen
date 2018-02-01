@@ -39,6 +39,17 @@ RenderableObject::RenderableObject(QVector<QVector3D> vertices, QVector<QVector3
     Q_ASSERT( indices.size() % 3 == 0 );
 }
 
+
+RenderableObject::RenderableObject(QVector<QVector3D> vertices, QVector<QVector3D> normals, MeshMaterial material, QVector<unsigned int> indices)
+    : mVertexPositions(vertices),
+      mVertexNormals(normals),
+      mVertexMaterials(vertices.size(), material),
+      mTriangleIndices(indices) {
+
+    Q_ASSERT( vertices.size() == normals.size() );
+    Q_ASSERT( indices.size() % 3 == 0 );
+}
+
 RenderableObject::RenderableObject(QVector<QVector3D> vertices, QVector<QVector3D> normals, QVector<MeshMaterial> materials, QVector<unsigned int> indices)
     : mVertexPositions(vertices),
       mVertexNormals(normals),
