@@ -43,8 +43,6 @@ public:
      */
     void resetTile(SharedTileTemplate newTileTemplate);
 
-    bool isEmpty() const { return mTileTemplate.isNull(); }
-
 signals:
     void tileChanged(int x, int y);
 
