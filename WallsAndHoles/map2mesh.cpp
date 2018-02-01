@@ -28,7 +28,7 @@ void Map2Mesh::tileChanged(int x, int y) {
     QVector3D center = QVector3D(mTileMap->mapSize().width()/2.0, 0, mTileMap->mapSize().height()/2.0);
     mTileMeshes(x, y) = QSharedPointer<RenderableObject>::create(M2MTileMesher::getTopMesh(mTileMap->tileAt(x, y), QVector3D(x, 0, y) - center));
 
-    emit mapUpdated();
+    emit mapMeshUpdated();
 }
 
 
@@ -42,5 +42,5 @@ void Map2Mesh::remakeAll() {
             mTileMeshes(x, y) = QSharedPointer<RenderableObject>::create(M2MTileMesher::getTopMesh(mTileMap->tileAt(x, y), QVector3D(x, 0, y) - center));
 
 
-    emit mapUpdated();
+    emit mapMeshUpdated();
 }

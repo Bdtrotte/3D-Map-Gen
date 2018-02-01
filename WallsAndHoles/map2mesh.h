@@ -47,7 +47,11 @@ public slots:
 
 
 signals:
-    void mapUpdated();
+
+    /**
+     * @brief Emitted when the output mesh is updated.
+     */
+    void mapMeshUpdated();
 
 protected:
 
