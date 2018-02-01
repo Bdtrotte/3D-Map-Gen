@@ -40,13 +40,15 @@ SOURCES += \
     drawableaxes.cpp \
     toolmanager.cpp \
     meshviewcontainer.cpp \
-    rectcell.cpp \
     mapview.cpp \
     editor.cpp \
     newmapdialog.cpp \
     meshmaterial.cpp \
     shaderprogramonelight.cpp \
-    xmltool.cpp
+    xmltool.cpp \
+    mapcell.cpp \
+    tilemapbrushtool.cpp \
+    tilemaptoolmanager.cpp
 
 HEADERS += \
     mainwindow.h \
@@ -67,14 +69,17 @@ HEADERS += \
     abstractmeshviewcamera.h \
     abstractdrawableglobject.h \
     meshviewcontainer.h \
-    rectcell.h \
     mapview.h \
     editor.h \
     newmapdialog.h \
     array2d.h \
     meshmaterial.h \
     shaderprogramonelight.h \
-    xmltool.h
+    xmltool.h \
+    mapcell.h \
+    tilemaptoolmanager.h \
+    abstracttilemaptool.h \
+    tilemapbrushtool.h
 
 FORMS += \
     mainwindow.ui \

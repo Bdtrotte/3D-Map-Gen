@@ -5,20 +5,15 @@
 #include <QDomDocument>
 #include <QFile>
 #include <QTextStream>
+#include <QXmlStreamReader>
 
-class XMLTool
-{
-public:
-    XMLTool(QString path);
-    /*
-    void openTileMap(TileMap&);
-    void openTileTemplateSet();
-    */
-    int saveTileMap(TileMap& tileMap, TileTemplateSet& templateSet);
-    int saveTileTemplateSet(TileTemplateSet& templateSet);
+namespace XMLTool {
 
-private:
-    QString mPath;
-};
+    SharedTileMap openTileMap(QString tileMapPath);
+    SharedTileTemplateSet openTileTemplateSet(QString templateSetPath);
+
+    int saveTileMap(TileMap& tileMap, TileTemplateSet& templateSet, QString tileMapPath, QString templateSetPath);
+    int saveTileTemplateSet(TileTemplateSet& templateSet, QString templateSetPath);
+}
 
 #endif // XMLTOOL_H

@@ -27,11 +27,10 @@ void MainWindow::on_actionopen_triggered()
         messageBox.setFixedSize(500,200);
         return;
     }
-    /*
+
     QString fileName = QFileDialog::getOpenFileName(this,
         tr("Open Map"), "/home", tr("Open Files (*.xml)"));
-    */
-    QString fileName = "test.xml";
+
     if(!fileName.isEmpty())
         mapView->openMap(fileName);
 }
@@ -46,10 +45,10 @@ void MainWindow::on_actionsave_triggered()
         messageBox.setFixedSize(500,200);
         return;
     }
-    /*
+
     QString fileName = QFileDialog::getSaveFileName(this,
-        tr("Save Map"), "/home", tr("Save Files (*.xml)"));*/
-    QString fileName = "test.xml";
+        tr("Save Map"), "/home", tr("Save Files (*.xml)"));
+
     if(!fileName.isEmpty())
         mapView->saveMap(fileName);
 }

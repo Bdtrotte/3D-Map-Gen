@@ -33,4 +33,5 @@ private:
     QVector<SharedTileTemplate> mTileTemplates;
 };
 
+typedef QSharedPointer<TileTemplateSet> SharedTileTemplateSet;
 #endif // TILESET_H

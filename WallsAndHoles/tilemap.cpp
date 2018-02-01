@@ -1,5 +1,7 @@
 #include "tilemap.h"
 
+#include <QDebug>
+
 TileMap::TileMap(QSize mapSize,
                  QObject *parent)
     : QObject(parent)
@@ -7,6 +9,7 @@ TileMap::TileMap(QSize mapSize,
 {
     for (int x = 0; x < mMap.size().width(); ++x) {
         for (int y = 0; y < mMap.size().height(); ++y) {
+            mMap(x, y) = QSharedPointer<Tile>::create(nullptr, x, y, this);
             connect(mMap(x, y).data(), &Tile::tileChanged,
                     this, &TileMap::tileChanged);
         }
@@ -61,17 +64,24 @@ void TileMap::resizeMap(QSize newSize)
     int maxX = newSize.width();
     if (oldSize.width() < newSize.width()) {
         maxX = oldSize.width();
-        for (int x = oldSize.width(); x < newSize.width(); ++x)
-            for (int y = 0; y < newSize.height(); ++y)
+        for (int x = oldSize.width(); x < newSize.width(); ++x) {
+            for (int y = 0; y < newSize.height(); ++y) {
+                mMap(x, y) = QSharedPointer<Tile>::create(nullptr, x, y, this);
                 connect(mMap(x, y).data(), &Tile::tileChanged,
                         this, &TileMap::tileChanged);
+            }
+        }
     }
 
-    if (oldSize.height() < newSize.height())
-        for (int x = 0; x < maxX; ++x)
-            for (int y = oldSize.height(); y < newSize.height(); ++y)
+    if (oldSize.height() < newSize.height()) {
+        for (int x = 0; x < maxX; ++x) {
+            for (int y = oldSize.height(); y < newSize.height(); ++y) {
+                mMap(x, y) = QSharedPointer<Tile>::create(nullptr, x, y, this);
                 connect(mMap(x, y).data(), &Tile::tileChanged,
                         this, &TileMap::tileChanged);
+            }
+        }
+    }
 
     emit resized();
 }

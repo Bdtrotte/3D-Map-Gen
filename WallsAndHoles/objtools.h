@@ -7,7 +7,6 @@
 
 typedef QSharedPointer<RenderableObject> RenderableObjectP;
 
-
 inline RenderableObjectP loadOBJ(QString path){
     QFile file(path);
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text))

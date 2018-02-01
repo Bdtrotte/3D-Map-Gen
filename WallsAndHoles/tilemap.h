@@ -33,6 +33,8 @@ public:
     //changes the size of the map. If the size is reduced, tiles will be lost (resizes around top left corner)
     void resizeMap(QSize newSize);
 
+    const Array2D<QSharedPointer<Tile>> &cTiles() const { return mMap; }
+
 signals:
     void tileChanged(int x, int y);
     void resized();
