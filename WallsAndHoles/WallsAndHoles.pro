@@ -48,7 +48,11 @@ SOURCES += \
     mapcell.cpp \
     tilemapbrushtool.cpp \
     tilemaptoolmanager.cpp \
-    m2mtilemesher.cpp
+    m2mtilemesher.cpp \
+    m2mpropertyclass.cpp \
+    m2mpropertyinstance.cpp \
+    m2mpropertyset.cpp \
+    map2meshproperties.cpp
 
 HEADERS += \
     renderableobject.h \
@@ -80,7 +84,10 @@ HEADERS += \
     mapcell.h \
     tilemaptoolmanager.h \
     abstracttilemaptool.h \
-    tilemapbrushtool.h
+    tilemapbrushtool.h \
+    m2mpropertyclass.h \
+    m2mpropertyinstance.h \
+    m2mpropertyset.h
 
 FORMS += \
     meshview.ui \

@@ -16,6 +16,7 @@ TileMap::TileMap(QSize mapSize,
     }
 }
 
+
 Tile &TileMap::tileAt(int x, int y)
 {
     Q_ASSERT(x >= 0);
@@ -34,6 +35,11 @@ const Tile &TileMap::cTileAt(int x, int y) const
     Q_ASSERT(y < mMap.size().height());
 
     return *mMap(x, y);
+}
+
+const Array2D<QSharedPointer<Tile>> &TileMap::getArray2D() const
+{
+    return mMap;
 }
 
 void TileMap::setTile(int x, int y, SharedTileTemplate tileTemplate)

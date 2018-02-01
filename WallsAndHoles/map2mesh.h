@@ -7,6 +7,8 @@
 #include "renderableobject.h"
 #include "tilemap.h"
 
+#include "m2mpropertyset.h"
+
 #include "array2d.h"
 
 /**
@@ -17,6 +19,7 @@ class Map2Mesh : public QObject {
     Q_OBJECT
 
 public:
+
 
     /**
      * @brief Creates the conversion object.
@@ -55,6 +58,12 @@ signals:
 
 protected:
 
+    /**
+     * @brief Figures out mTileProperties for all tiles, and updates meshes when
+     * properties change.
+     */
+    void inferProperties();
+
 
     TileMap *mTileMap;
 
@@ -64,6 +73,18 @@ protected:
      * @brief A mesh for every tile.
      */
     Array2D<QSharedPointer<RenderableObject>> mTileMeshes;
+
+    /**
+     * @brief Inferred properties for every tile.
+     */
+    Array2D<M2MPropertySet> mTileProperties;
+
+
+public:
+    struct Properties {
+        static M2MPropertyClass *Height;
+    };
 };
+
 
 #endif // TIMAMAP2MESH_H
