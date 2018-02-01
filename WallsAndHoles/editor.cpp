@@ -66,11 +66,19 @@ void Editor::createNewMap()
             delete mMap2Mesh;
 
         mMap2Mesh = new Map2Mesh(mTileMap, this);
-        connect(mMap2Mesh, &Map2Mesh::mapUpdated, this, &Editor::updateScene);
+
+        // TODO: It is inefficient to update the entire scene when just a part
+        // of the map is updated.
+        connect(mMap2Mesh, &Map2Mesh::mapMeshUpdated, this, &Editor::makeNewScene);
+
+        // Note: Map2Mesh's mapUpdated() signal is emitted during its constructor,
+        // but that is BEFORE the above connection is made. Therefore, updateScene()
+        // must be called manually here.
+        makeNewScene();
     }
 }
 
-void Editor::updateScene()
+void Editor::makeNewScene()
 {
     QSharedPointer<Scene> scene = QSharedPointer<Scene>::create();
 
