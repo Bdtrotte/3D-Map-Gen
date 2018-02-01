@@ -44,6 +44,7 @@ public:
     const QVector<unsigned int>& getTriangleIndices() const { return mTriangleIndices; }
 
     size_t getNumVertices() const { return mVertexPositions.size(); }
+    size_t getNumTriangles() const { return mTriangleIndices.size() / 3; }
 
 protected:
 
