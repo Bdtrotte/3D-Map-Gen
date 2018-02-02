@@ -36,12 +36,12 @@ SharedTileMap XMLTool::openTileMap(QString tileMapPath){
             if(xmlReader.name()=="TileTemplateSet"){
                 SharedTileTemplateSet templateSet;
                 foreach(const QXmlStreamAttribute &attr, xmlReader.attributes()) {
-                    if (attr.name().toString() == QString("path")) {
+                    if (attr.name().toString() == QString("SavePath")) {
                         templateSet = XMLTool::openTileTemplateSet(attr.value().toString());
-                        if(templateSet==nullptr)
-                            return nullptr;
                     }
                 }
+                if(templateSet==nullptr)
+                    return nullptr;
                 tileMap->setDepend(templateSet);
             }
             if(xmlReader.name() == "Tile") {
@@ -74,6 +74,7 @@ SharedTileMap XMLTool::openTileMap(QString tileMapPath){
                         relativePosition[1] = pos[1].toFloat();
                     }
                 }
+
                 for(SharedTileTemplateSet set: tileMap->dependencies()){
                     if(id>=set->cTileTemplates().size()){
                         id-=set->cTileTemplates().size();
@@ -91,7 +92,6 @@ SharedTileMap XMLTool::openTileMap(QString tileMapPath){
             }
         }
     }
-
     if(xmlReader.hasError()) {
             QMessageBox::critical(0,
             "xmlFile.xml Parse Error",xmlReader.errorString(),
@@ -132,7 +132,6 @@ SharedTileTemplateSet XMLTool::openTileTemplateSet(QString templateSetPath){
                 QVector2D position;
                 QColor color;
                 foreach(const QXmlStreamAttribute &attr, xmlReader.attributes()) {
-                    qDebug() << attr.name().toString();
                     if (attr.name().toString() == QString("Thickness")) {
                         thickness = attr.value().toFloat();
                     }
@@ -202,7 +201,7 @@ int XMLTool::saveTileMap(SharedTileMap tileMap, bool saveTemplates){
     for(int i=0; i<tiles.size().height(); i++){
         for(int j=0; j<tiles.size().width(); j++){
             QSharedPointer<Tile> tile = tiles(i,j);
-            if(!tile->isEmpty()){
+            if(tile->hasTileTemplate()){
                 element = doc.createElement("Tile");
                 attr = doc.createAttribute("x");
                 attr.setValue(QString::number(j));

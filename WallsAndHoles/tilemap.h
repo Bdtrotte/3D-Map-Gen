@@ -18,8 +18,18 @@ public:
     TileMap(QSize mapSize,
             QObject *parent = nullptr);
 
+
     Tile &tileAt(int x, int y);
     const Tile &cTileAt(int x, int y) const;
+
+    /**
+     * @brief Returns a representation of this map as an Array2D.
+     *
+     * Useful to access special Array2D iterators.
+     *
+     * @return An Array2D such that arr(x, y) == tileAt(x, y)
+     */
+    const Array2D<QSharedPointer<Tile>> &getArray2D() const;
 
     void setTile(int x, int y, SharedTileTemplate tileTemplate);
 
@@ -30,6 +40,9 @@ public:
     void clear();
 
     QSize mapSize() const { return mMap.size(); }
+
+    int width() const { return mMap.size().width(); }
+    int height() const { return mMap.size().height(); }
 
     //changes the size of the map. If the size is reduced, tiles will be lost (resizes around top left corner)
     void resizeMap(QSize newSize);

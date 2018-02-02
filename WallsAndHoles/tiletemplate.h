@@ -14,7 +14,7 @@ class TileTemplate : public QObject
 
 public:
     explicit TileTemplate(float height = 0,
-                          float thickness = 0,
+                          float thickness = 1,
                           QVector2D position = QVector2D(0.5, 0.5),
                           QColor color = Qt::white,
                           QObject *parent = nullptr);

@@ -15,22 +15,28 @@
 Editor::Editor(QObject *parent)
     : QObject(parent)
     , mMainWindow(new QMainWindow())
+    , mMap2Mesh(nullptr)
     , mTileMap(nullptr)
+    , mTileTemplateSet(new TileTemplateSet)
     , mMapView(new MapView(mTileMapSelectedRegion, mMainWindow))
     , mTileMapToolManager(new TileMapToolManager(this))
     , mToolBar(new QToolBar(mMainWindow))
 {
+    //TMP set up a basic tileTemplate
+    mTileTemplateSet->addTileTemplate(SharedTileTemplate(new TileTemplate(2, 1, QVector2D(0.5,0.5), Qt::red)));
+
     //Initiallize mMainWindow
     mMainWindow->setCentralWidget(mMapView);
     setUpMenuBar();
     mMainWindow->addToolBar(mToolBar);
 
-    mToolBar->addAction(mTileMapToolManager->registerTool(QSharedPointer<AbstractTileMapTool>(new TileMapBrushTool(mTileMap)), "Brush Tool"));
+    mToolBar->addAction(mTileMapToolManager->registerTool(
+                            QSharedPointer<AbstractTileMapTool>(new TileMapBrushTool(mTileMap, mTileTemplateSet->tileTemplates()[0])), "Brush Tool"));
 
     //Set up and add all dock widgets
     QDockWidget *dw = new QDockWidget("Mesh View", mMainWindow);
-    MeshViewContainer *mvc = new MeshViewContainer(dw);
-    dw->setWidget(mvc);
+    mMeshViewContainer = new MeshViewContainer(dw);
+    dw->setWidget(mMeshViewContainer);
 
     mMainWindow->addDockWidget(Qt::RightDockWidgetArea, dw);
 
@@ -62,12 +68,42 @@ void Editor::newMap()
         mTileMapToolManager->setTileMap(mTileMap);
 
         mMapView->createMap(mTileMap);
+
+        if (mMap2Mesh != nullptr)
+            delete mMap2Mesh;
+
+        mMap2Mesh = new Map2Mesh(mTileMap, this);
+
+        // TODO: It is inefficient to update the entire scene when just a part
+        // of the map is updated.
+        connect(mMap2Mesh, &Map2Mesh::mapMeshUpdated, this, &Editor::makeNewScene);
+
+        // Note: Map2Mesh's mapUpdated() signal is emitted during its constructor,
+        // but that is BEFORE the above connection is made. Therefore, updateScene()
+        // must be called manually here.
+        makeNewScene();
     }
+}
+
+void Editor::makeNewScene()
+{
+    QSharedPointer<Scene> scene = QSharedPointer<Scene>::create();
+
+    for (auto&& obj : mMap2Mesh->getMeshes())
+        scene->addObject(obj);
+
+    mMeshViewContainer->setScene(scene);
 }
 
 void Editor::saveMap()
 {
-    mTileMap->setDepend(SharedTileTemplateSet::create());
+    if(mTileMap==nullptr){
+        QMessageBox messageBox;
+        messageBox.critical(0,"Error","TileMap doesn't exist!");
+        messageBox.setFixedSize(500,200);
+        return;
+    }
+    mTileMap->setDepend(QSharedPointer<TileTemplateSet>(mTileTemplateSet));
     //mTileMap->updateDepend();
     if(mTileMap->savePath().isEmpty()){
         mTileMap->setSavePath(QFileDialog::getSaveFileName(mMainWindow,
@@ -88,8 +124,16 @@ void Editor::loadMap()
     QString fileName = QFileDialog::getOpenFileName(mMainWindow,
         tr("Open Map"), "/home", tr("Open Files (*.xml)"));
 
-    SharedTileMap tilemap = XMLTool::openTileMap(fileName);
-    mTileMap = tilemap.data();
+    SharedTileMap tileMap = XMLTool::openTileMap(fileName);
+    if(tileMap==nullptr){
+        QMessageBox messageBox;
+        messageBox.critical(0,"Error","Fail to load TileMap!");
+        messageBox.setFixedSize(500,200);
+        return;
+    }
+    mTileMap = tileMap.data();
+    if(!mTileMap->dependencies().isEmpty())
+        mTileTemplateSet = (mTileMap->dependencies()[0]).data();
     mTileMapToolManager->setTileMap(mTileMap);
     mMapView->createMap(mTileMap);
 }
