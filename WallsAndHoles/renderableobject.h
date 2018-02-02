@@ -27,6 +27,11 @@ public:
     /// VERTEX AND THE NORMAL. That is, you cannot specify separate indices for normals and vertices. A default material is used.
     RenderableObject(QVector<QVector3D> vertices, QVector<QVector3D> normals, QVector<unsigned int> indices);
 
+
+    /// @brief Constructs an object with the given vertices, normals & triangle indices. Note that each index selects BOTH THE
+    /// VERTEX AND THE NORMAL. That is, you cannot specify separate indices for normals and vertices.
+    RenderableObject(QVector<QVector3D> vertices, QVector<QVector3D> normals, MeshMaterial material, QVector<unsigned int> indices);
+
     /// @brief Constructs an object with the given vertices, normals, materials & triangle indices. Note that each index selects THE
     /// VERTEX, THE NORMAL AND THE MATERIAL. That is, you cannot specify separate indices for normals/vertices/materials.
     RenderableObject(QVector<QVector3D> vertices, QVector<QVector3D> normals, QVector<MeshMaterial> materials, QVector<unsigned int> indices);
@@ -39,6 +44,7 @@ public:
     const QVector<unsigned int>& getTriangleIndices() const { return mTriangleIndices; }
 
     size_t getNumVertices() const { return mVertexPositions.size(); }
+    size_t getNumTriangles() const { return mTriangleIndices.size() / 3; }
 
 protected:
 

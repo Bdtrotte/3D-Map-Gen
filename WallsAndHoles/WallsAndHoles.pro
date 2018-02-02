@@ -44,9 +44,15 @@ SOURCES += \
     newmapdialog.cpp \
     meshmaterial.cpp \
     shaderprogramonelight.cpp \
+    map2mesh.cpp \
     mapcell.cpp \
     tilemapbrushtool.cpp \
-    tilemaptoolmanager.cpp
+    tilemaptoolmanager.cpp \
+    m2mtilemesher.cpp \
+    m2mpropertyclass.cpp \
+    m2mpropertyinstance.cpp \
+    m2mpropertyset.cpp \
+    map2meshproperties.cpp
 
 HEADERS += \
     renderableobject.h \
@@ -72,10 +78,16 @@ HEADERS += \
     array2d.h \
     meshmaterial.h \
     shaderprogramonelight.h \
+    map2mesh.h \
+    m2mtilemesher.h \
+    shaderprogramonelight.h \
     mapcell.h \
     tilemaptoolmanager.h \
     abstracttilemaptool.h \
-    tilemapbrushtool.h
+    tilemapbrushtool.h \
+    m2mpropertyclass.h \
+    m2mpropertyinstance.h \
+    m2mpropertyset.h
 
 FORMS += \
     meshview.ui \

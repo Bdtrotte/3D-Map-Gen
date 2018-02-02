@@ -27,6 +27,10 @@ MeshViewContainer::~MeshViewContainer() {
     delete ui;
 }
 
+void MeshViewContainer::setScene(QSharedPointer<Scene> scene) {
+    mMeshView->setScene(scene);
+}
+
 void MeshViewContainer::on_toolSelection_currentIndexChanged(int index) {
     switch (index) {
     case 0:
