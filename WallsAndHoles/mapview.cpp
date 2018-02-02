@@ -1,20 +1,26 @@
 #include "mapview.h"
-
+#include "rendermap.h"
 #include "mapcell.h"
 
 #include <QGraphicsView>
 #include <QDebug>
 #include <QKeyEvent>
 #include <QScrollBar>
+#include <QToolBar>
+#include <QVBoxLayout>
+#include <QDockWidget>
+#include <QSignalMapper>
 
 MapView::MapView(const QRegion &selectedRegion, QWidget *parent)
     : QGraphicsView(parent),
       mScale(0.5),
       mMapCells(0, 0),
-      mSelectedRegion(selectedRegion)
+      mSelectedRegion(selectedRegion),
+      mRenderMap(new RenderMap())
 {
-    setMouseTracking(true);
+    setupViewTB();
 
+    setMouseTracking(true);
     QGraphicsScene *scene = new QGraphicsScene;
     scene->setBackgroundBrush(Qt::gray);
     setScene(scene);
@@ -148,3 +154,28 @@ void MapView::mouseReleaseEvent(QMouseEvent *event)
         QGraphicsView::mouseReleaseEvent(event);
     }
 }
+
+void MapView::setupViewTB(){
+    QToolBar *tb = new QToolBar(this);
+
+    QAction *defaultView = new QAction("Default View");
+    QAction *hMap = new QAction("Height Map");
+
+    connect(defaultView, &QAction::triggered, this, &MapView::defaultView);
+    connect(hMap, &QAction::triggered, this, &MapView::heightMap);
+
+    tb->addAction(defaultView);
+    tb->addAction(hMap);
+    tb->setAutoFillBackground(true);
+    tb->show();
+}
+
+void MapView::defaultView(){
+    mRenderMap.test(0);
+}
+
+void MapView::heightMap(){
+    mRenderMap.test(1);
+}
+
+

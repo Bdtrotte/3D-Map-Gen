@@ -52,7 +52,8 @@ SOURCES += \
     m2mpropertyclass.cpp \
     m2mpropertyinstance.cpp \
     m2mpropertyset.cpp \
-    map2meshproperties.cpp
+    map2meshproperties.cpp \
+    rendermap.cpp
 
 HEADERS += \
     renderableobject.h \
@@ -87,7 +88,8 @@ HEADERS += \
     tilemapbrushtool.h \
     m2mpropertyclass.h \
     m2mpropertyinstance.h \
-    m2mpropertyset.h
+    m2mpropertyset.h \
+    rendermap.h
 
 FORMS += \
     meshview.ui \
