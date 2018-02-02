@@ -163,7 +163,6 @@ void MapView::setupViewTB(){
 
     connect(defaultView, &QAction::triggered, this, &MapView::defaultView);
     connect(hMap, &QAction::triggered, this, &MapView::heightMap);
-
     tb->addAction(defaultView);
     tb->addAction(hMap);
     tb->setAutoFillBackground(true);
@@ -171,11 +170,11 @@ void MapView::setupViewTB(){
 }
 
 void MapView::defaultView(){
-    mRenderMap.test(0);
+    mRenderMap.test(0,mMapCells);
 }
 
 void MapView::heightMap(){
-    mRenderMap.test(1);
+    mRenderMap.test(1,mMapCells);
 }
 
 

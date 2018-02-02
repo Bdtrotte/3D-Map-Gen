@@ -4,13 +4,24 @@
 RenderMap::RenderMap(QObject *parent)
     :QObject(parent){ }
 
-void RenderMap::test(int a){
+void RenderMap::test(int a, Array2D<MapCell *> mapCells){
     switch (a) {
     case heightMap:
-        qDebug() << "HeightMap";
+        if(mapCells.size() == QSize(0,0)){
+            qDebug() << "Not";
+            break;
+        }
+        else
+            qDebug() << "HeightMap";
         break;
     case defaultView:
-        qDebug() << "DefaultView";
+        if(mapCells.size() == QSize(0,0)){
+            qDebug() << "Not";
+            break;
+        }
+        else
+            qDebug() << "Default";
+        break;
     default:
         break;
     }

@@ -3,6 +3,8 @@
 #include <QObject>
 #include "tile.h"
 #include "tilemap.h"
+#include "mapcell.h"
+#include "array2d.h"
 
 class RenderMap : public QObject{
         Q_OBJECT
@@ -10,7 +12,7 @@ class RenderMap : public QObject{
 public:
     RenderMap(QObject *parent = nullptr);
     enum Views{ defaultView, heightMap };
-    void test(int a);
+    void test(int a, Array2D<MapCell *> mapCells);
 
 public slots:
     //void tileChanged();
