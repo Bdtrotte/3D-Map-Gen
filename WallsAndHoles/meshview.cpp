@@ -69,6 +69,7 @@ void MeshView::loadVAO() {
     QVector<GLfloat> materials;
     QVector<GLuint> indices;
 
+    // Aggregate vertex/normal/material/index information into arrays that will be uploaded to OpenGL buffers.
     for (auto obj : mScene->getAllObjects()) {
         const QVector<QVector3D>& vdata = obj->getVertexData();
         const QVector<QVector3D>& ndata = obj->getVertexNormals();
@@ -91,10 +92,11 @@ void MeshView::loadVAO() {
 
 
         const QVector<unsigned int>& triangleIndices = obj->getTriangleIndices();
-        GLuint index = indices.size(); //Can't render multiple object without this
+        GLuint index = vertices.size()/3 - vdata.size();    // `index` is the index of the 0th vertex of this object in the global arrays.
         for (int i = 0; i < triangleIndices.size(); ++i)
             indices.append(index+triangleIndices[i]);
     }
+
 
     mVertexPositions = QSharedPointer<QOpenGLBuffer>::create(QOpenGLBuffer::VertexBuffer);
     mVertexPositions->create();
@@ -204,7 +206,7 @@ void MeshView::paintGL() {
 
         // Draw.
         mShaderProgram.enableArrays();
-        glDrawElements(GL_TRIANGLES, mTriangleIndices->size()/sizeof(unsigned int), GL_UNSIGNED_INT, 0);
+        glDrawElements(GL_TRIANGLES, mTriangleIndices->size() / sizeof(unsigned int), GL_UNSIGNED_INT, 0); // mTriangleIndices->size() is in bytes!
         mShaderProgram.disableArrays();
 
         // Unset arrays.

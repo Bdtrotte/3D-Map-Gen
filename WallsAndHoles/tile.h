@@ -19,6 +19,7 @@ public:
                   int yPos = -1,
                   QObject *parent = nullptr);
 
+    bool hasTileTemplate() const { return !mTileTemplate.isNull(); }
     SharedTileTemplate tileTemplate() const { return mTileTemplate; }
 
     float thickness() const;
@@ -41,8 +42,6 @@ public:
      * and changes the tileTemplate to newTileTemplate
      */
     void resetTile(SharedTileTemplate newTileTemplate);
-
-    bool isEmpty() const { return mTileTemplate.isNull(); }
 
 signals:
     void tileChanged(int x, int y);
