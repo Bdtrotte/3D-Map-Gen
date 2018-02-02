@@ -15,16 +15,21 @@ Editor::Editor(QObject *parent)
     , mMainWindow(new QMainWindow())
     , mMap2Mesh(nullptr)
     , mTileMap(nullptr)
+    , mTileTemplateSet(new TileTemplateSet)
     , mMapView(new MapView(mTileMapSelectedRegion, mMainWindow))
     , mTileMapToolManager(new TileMapToolManager(this))
     , mToolBar(new QToolBar(mMainWindow))
 {
+    //TMP set up a basic tileTemplate
+    mTileTemplateSet->addTileTemplate(SharedTileTemplate(new TileTemplate(2, 1, QVector2D(0.5,0.5), Qt::red)));
+
     //Initiallize mMainWindow
     mMainWindow->setCentralWidget(mMapView);
     setUpMenuBar();
     mMainWindow->addToolBar(mToolBar);
 
-    mToolBar->addAction(mTileMapToolManager->registerTool(QSharedPointer<AbstractTileMapTool>(new TileMapBrushTool(mTileMap)), "Brush Tool"));
+    mToolBar->addAction(mTileMapToolManager->registerTool(
+                            QSharedPointer<AbstractTileMapTool>(new TileMapBrushTool(mTileMap, mTileTemplateSet->tileTemplates()[0])), "Brush Tool"));
 
     //Set up and add all dock widgets
     QDockWidget *dw = new QDockWidget("Mesh View", mMainWindow);
