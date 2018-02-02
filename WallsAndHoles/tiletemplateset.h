@@ -23,6 +23,9 @@ public:
     const QVector<SharedTileTemplate> &cTileTemplates() const { return mTileTemplates; }
     QVector<SharedTileTemplate> &tileTemplates() { return mTileTemplates; }
 
+    const QString savePath() const { return mSavePath; }
+    void setSavePath(QString path){ mSavePath = path; }
+
 signals:
     void tileTemplateAdded(int tileId);
     void tileTemplateRemoved(int tileId);
@@ -31,6 +34,9 @@ public slots:
 
 private:
     QVector<SharedTileTemplate> mTileTemplates;
+
+    //default save path of this tileTempalteSet object
+    QString mSavePath;
 };
 
 typedef QSharedPointer<TileTemplateSet> SharedTileTemplateSet;

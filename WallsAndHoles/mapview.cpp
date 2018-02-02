@@ -65,7 +65,6 @@ void MapView::createMap(TileMap *tileMap)
     clear();
 
     QSize mapSize = tileMap->mapSize();
-
     mMapCells.resize(mapSize.width(), mapSize.height());
 
     for(int y = 0; y < tileMap->mapSize().height(); ++y) {
@@ -148,25 +147,4 @@ void MapView::mouseReleaseEvent(QMouseEvent *event)
     } else {
         QGraphicsView::mouseReleaseEvent(event);
     }
-}
-
-void MapView::openMap(QString path){
-    qDebug() << "openMap called";
-    SharedTileTemplateSet set = XMLTool::openTileTemplateSet(path);
-}
-
-void MapView::saveMap(QString path){
-    QSize mapSize(10,10);
-    qDebug() << "creating sample map";
-    TileMap testMap(mapSize);
-    qDebug() << "creating sample templateSet";
-    TileTemplateSet testSet;
-    qDebug() << "creating sample tempalte";
-    SharedTileTemplate testTemp=SharedTileTemplate::create(10,10,QVector2D(0,0),Qt::blue);
-    qDebug() << "add template to map and set";
-    testMap.setTile(0,0,testTemp);
-    testSet.addTileTemplate(testTemp);
-    qDebug() << "saving...";
-    XMLTool::saveTileMap(testMap, testSet, path, path+".tts");
-    //xml.saveTileTemplateSet(testSet);
 }

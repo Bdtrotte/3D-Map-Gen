@@ -9,6 +9,8 @@
 #include <QDebug>
 #include <QMainWindow>
 #include <QMenuBar>
+#include <QMessageBox>
+#include <QFileDialog>
 
 Editor::Editor(QObject *parent)
     : QObject(parent)
@@ -65,17 +67,36 @@ void Editor::newMap()
 
 void Editor::saveMap()
 {
-
+    mTileMap->setDepend(SharedTileTemplateSet::create());
+    //mTileMap->updateDepend();
+    if(mTileMap->savePath().isEmpty()){
+        mTileMap->setSavePath(QFileDialog::getSaveFileName(mMainWindow,
+            tr("Save Map"), "/home", tr("Save Files (*.xml)")));
+    }
+    for(SharedTileTemplateSet set: mTileMap->dependencies()){
+        qDebug()<<"save dependencies...";
+        if(set->savePath().isEmpty()){
+            set->setSavePath(QFileDialog::getSaveFileName(mMainWindow,
+                tr("Save Templates"), "/home", tr("Save Files (*.xml)")));
+        }
+    }
+    XMLTool::saveTileMap(QSharedPointer<TileMap>(mTileMap));
 }
 
 void Editor::loadMap()
 {
+    QString fileName = QFileDialog::getOpenFileName(mMainWindow,
+        tr("Open Map"), "/home", tr("Open Files (*.xml)"));
 
+    SharedTileMap tilemap = XMLTool::openTileMap(fileName);
+    mTileMap = tilemap.data();
+    mTileMapToolManager->setTileMap(mTileMap);
+    mMapView->createMap(mTileMap);
 }
 
 void Editor::exportMapMesh()
 {
-    /*MeshViewContainer *meshViewContainer = findChild<MeshViewContainer *>();
+    MeshViewContainer *meshViewContainer = mMainWindow->findChild<MeshViewContainer *>();
 
     if (meshViewContainer == nullptr) {
         QMessageBox messageBox;
@@ -84,12 +105,12 @@ void Editor::exportMapMesh()
         return;
     }
 
-    QString fileName = QFileDialog::getSaveFileName(this,
+    QString fileName = QFileDialog::getSaveFileName(mMainWindow,
         tr("Export OBJ"), "/home", tr("Export Files (*.obj)"));
 
     if(!fileName.isEmpty())
         meshViewContainer->saveMesh(fileName);
-    */
+
 
     /*MeshViewContainer *meshViewContainer = findChild<MeshViewContainer *>();
 

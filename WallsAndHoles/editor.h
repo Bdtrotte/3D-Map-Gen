@@ -4,6 +4,7 @@
 #include "tilemap.h"
 #include "tilemaptoolmanager.h"
 #include "mapview.h"
+#include "xmltool.h"
 
 #include <QObject>
 #include <QToolBar>

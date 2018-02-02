@@ -33,15 +33,61 @@ SharedTileMap XMLTool::openTileMap(QString tileMapPath){
                 }
                 tileMap = SharedTileMap::create(size);
             }
+            if(xmlReader.name()=="TileTemplateSet"){
+                SharedTileTemplateSet templateSet;
+                foreach(const QXmlStreamAttribute &attr, xmlReader.attributes()) {
+                    if (attr.name().toString() == QString("path")) {
+                        templateSet = XMLTool::openTileTemplateSet(attr.value().toString());
+                        if(templateSet==nullptr)
+                            return nullptr;
+                    }
+                }
+                tileMap->setDepend(templateSet);
+            }
             if(xmlReader.name() == "Tile") {
                 float x;
                 float y;
-                QVector2D position;
-                QColor color;
+                int id;
+                SharedTileTemplate tileTemplate;
+                float relativeThickness;
+                float relativeHeight;
+                QVector2D relativePosition;
                 foreach(const QXmlStreamAttribute &attr, xmlReader.attributes()) {
-
+                    if(attr.name().toString() == QString("x")){
+                        x = attr.value().toInt();
+                    }
+                    if(attr.name().toString() == QString("y")){
+                        y = attr.value().toInt();
+                    }
+                    if(attr.name().toString() == QString("TemplateID")){
+                        id = attr.value().toInt();
+                    }
+                    if(attr.name().toString() == QString("RelativeThickness")){
+                        relativeThickness = attr.value().toFloat();
+                    }
+                    if(attr.name().toString() == QString("RelativeHeight")){
+                        relativeHeight = attr.value().toFloat();
+                    }
+                    if(attr.name().toString() == QString("RelativePosition")){
+                        QStringList pos = attr.value().toString().split(',');
+                        relativePosition[0] = pos[0].toFloat();
+                        relativePosition[1] = pos[1].toFloat();
+                    }
                 }
-                //tileMap->setTile();
+                for(SharedTileTemplateSet set: tileMap->dependencies()){
+                    if(id>=set->cTileTemplates().size()){
+                        id-=set->cTileTemplates().size();
+                        continue;
+                    }else{
+                        tileTemplate = set->cTileTemplates()[id];
+                        break;
+                    }
+                }
+                QSharedPointer<Tile> tile = tileMap->tiles()(x,y);
+                tile->resetTile(tileTemplate);
+                tile->setRelativeThickness(relativeThickness);
+                tile->setRelativeHeight(relativeHeight);
+                tile->setRelativePosition(relativePosition);
             }
         }
     }
@@ -88,17 +134,18 @@ SharedTileTemplateSet XMLTool::openTileTemplateSet(QString templateSetPath){
                 foreach(const QXmlStreamAttribute &attr, xmlReader.attributes()) {
                     qDebug() << attr.name().toString();
                     if (attr.name().toString() == QString("Thickness")) {
-                         thickness = attr.value().toFloat();
+                        thickness = attr.value().toFloat();
                     }
                     if (attr.name().toString() == QString("Height")) {
-                         height = attr.value().toFloat();
+                        height = attr.value().toFloat();
                     }
                     if (attr.name().toString() == QString("Position")) {
-                         position = QVector2D(attr.value().toString().split(',')[0].toFloat(),
-                                 attr.value().toString().split(',')[1].toFloat());
+                        QStringList pos = attr.value().toString().split(',');
+                        position[0] = pos[0].toFloat();
+                        position[1] = pos[1].toFloat();
                     }
                     if (attr.name().toString() == QString("Color")) {
-                         color = QColor(attr.value().toString());
+                        color = QColor(attr.value().toString());
                     }
                 }
                 SharedTileTemplate tileTemplate = SharedTileTemplate::create(height,thickness,position,color);
@@ -119,9 +166,10 @@ SharedTileTemplateSet XMLTool::openTileTemplateSet(QString templateSetPath){
     return templateSet;
 }
 
-int XMLTool::saveTileMap(TileMap &tileMap, TileTemplateSet &templateSet, QString tileMapPath, QString templateSetPath){
-    const QVector<SharedTileTemplate> templates = templateSet.cTileTemplates();
-    const Array2D<QSharedPointer<Tile>> tiles = tileMap.cTiles();
+int XMLTool::saveTileMap(SharedTileMap tileMap, bool saveTemplates){
+    QVector<SharedTileTemplateSet> templateSets = tileMap->dependencies();
+    const Array2D<QSharedPointer<Tile>> tiles = tileMap->cTiles();
+    QString tileMapPath = tileMap->savePath();
     QFile file(tileMapPath);
     if (!file.open(QIODevice::WriteOnly | QIODevice::Truncate))
         return -1;
@@ -139,19 +187,27 @@ int XMLTool::saveTileMap(TileMap &tileMap, TileTemplateSet &templateSet, QString
     attr = doc.createAttribute("height");
     attr.setValue(QString::number(tiles.size().height()));
     root.setAttributeNode(attr);
-    attr = doc.createAttribute("templateSet");
-    attr.setValue(templateSetPath);
-    root.setAttributeNode(attr);
     doc.appendChild(root);
+    for(int i=0; i<templateSets.size(); i++){
+        element = doc.createElement("TileTemplateSet");
+        attr = doc.createAttribute("id");
+        attr.setValue(QString::number(i));
+        element.setAttributeNode(attr);
+        attr = doc.createAttribute("SavePath");
+        attr.setValue(templateSets[i]->savePath());
+        element.setAttributeNode(attr);
+        root.appendChild(element);
+        if(saveTemplates){ XMLTool::saveTileTemplateSet(templateSets[i]); }
+    }
     for(int i=0; i<tiles.size().height(); i++){
         for(int j=0; j<tiles.size().width(); j++){
             QSharedPointer<Tile> tile = tiles(i,j);
             if(!tile->isEmpty()){
                 element = doc.createElement("Tile");
-                attr = doc.createAttribute("X");
+                attr = doc.createAttribute("x");
                 attr.setValue(QString::number(j));
                 element.setAttributeNode(attr);
-                attr = doc.createAttribute("Y");
+                attr = doc.createAttribute("y");
                 attr.setValue(QString::number(i));
                 element.setAttributeNode(attr);
                 attr = doc.createAttribute("RelativeThickness");
@@ -166,19 +222,34 @@ int XMLTool::saveTileMap(TileMap &tileMap, TileTemplateSet &templateSet, QString
                     QString::number(tile->relativePosition()[1])));
                 element.setAttributeNode(attr);
                 attr = doc.createAttribute("TemplateID");
-                attr.setValue(QString::number(templates.indexOf(tile->tileTemplate())));
+                int id=-1; int count=0;
+                for(SharedTileTemplateSet set: templateSets){
+                    if((id=set->cTileTemplates().indexOf(tile->tileTemplate()))==-1){
+                        count+=set->cTileTemplates().size();
+                        continue;
+                    }else{
+                        id += count;
+                        break;
+                    }
+                }
+                if(id==-1){
+                    qDebug() << "Dependent tileTemplateSet not found when saving tilemap.";
+                    return -1;
+                }
+                attr.setValue(QString::number(id));
                 element.setAttributeNode(attr);
                 root.appendChild(element);
             }
         }
     }
     doc.save(out, 4);
-    XMLTool::saveTileTemplateSet(templateSet, templateSetPath);
+    file.close();
     return 0;
 }
 
-int XMLTool::saveTileTemplateSet(TileTemplateSet &templateSet, QString templateSetPath){
-    const QVector<SharedTileTemplate> templatelist = templateSet.cTileTemplates();
+int XMLTool::saveTileTemplateSet(SharedTileTemplateSet templateSet){
+    const QVector<SharedTileTemplate> templatelist = templateSet->cTileTemplates();
+    QString templateSetPath = templateSet->savePath();
     QFile file(templateSetPath);
     if (!file.open(QIODevice::WriteOnly | QIODevice::Truncate))
         return -1;
@@ -208,5 +279,6 @@ int XMLTool::saveTileTemplateSet(TileTemplateSet &templateSet, QString templateS
         root.appendChild(element);
     }
     doc.save(out, 4);
+    file.close();
     return 0;
 }

@@ -4,6 +4,7 @@
 #include "array2d.h"
 #include "tile.h"
 #include "tiletemplate.h"
+#include "tiletemplateset.h"
 
 #include <QObject>
 #include <QSize>
@@ -33,7 +34,19 @@ public:
     //changes the size of the map. If the size is reduced, tiles will be lost (resizes around top left corner)
     void resizeMap(QSize newSize);
 
+    const QString savePath() const { return mSavePath; }
+    void setSavePath(QString path){ mSavePath = path; }
+
+    //If tile-template link present, update tile id accordingly, otherwise create link according to tile id.
+    void setDepend(SharedTileTemplateSet templateSet){ mDependencies.push_back(templateSet); }
+    //remove all dependencies that are no longer used in this tilemap.
+    void updateDepend();
+
+    QVector<SharedTileTemplateSet> dependencies() const { return mDependencies; }
+
+    Array2D<QSharedPointer<Tile>> &tiles() { return mMap; }
     const Array2D<QSharedPointer<Tile>> &cTiles() const { return mMap; }
+
 
 signals:
     void tileChanged(int x, int y);
@@ -42,6 +55,11 @@ signals:
 private:
     //2D array of Tile*. If mMap[x][y]->isEmpty() then ground is shown
     Array2D<QSharedPointer<Tile>> mMap;
+
+    //holding a reference to all tileTemplateSet that this tilemap depends on
+    QVector<SharedTileTemplateSet> mDependencies;
+    //default save path of this tilemap object, can be changed when using "save as" command.
+    QString mSavePath;
 };
 
 typedef QSharedPointer<TileMap> SharedTileMap;

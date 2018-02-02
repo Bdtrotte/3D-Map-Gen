@@ -12,7 +12,6 @@
 #include <QRegion>
 #include "tilemap.h"
 #include "tiletemplateset.h"
-#include "xmltool.h"
 
 /**
  * @brief The MapView class
@@ -27,8 +26,6 @@ public:
 
     void clear();
     void createMap(TileMap *tileMap);
-    void openMap(QString path);
-    void saveMap(QString path);
 
 protected:
     void wheelEvent(QWheelEvent *event) override;

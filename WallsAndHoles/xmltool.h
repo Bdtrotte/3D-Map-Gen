@@ -12,8 +12,8 @@ namespace XMLTool {
     SharedTileMap openTileMap(QString tileMapPath);
     SharedTileTemplateSet openTileTemplateSet(QString templateSetPath);
 
-    int saveTileMap(TileMap& tileMap, TileTemplateSet& templateSet, QString tileMapPath, QString templateSetPath);
-    int saveTileTemplateSet(TileTemplateSet& templateSet, QString templateSetPath);
+    int saveTileMap(SharedTileMap tileMap, bool saveTemplates = true);
+    int saveTileTemplateSet(SharedTileTemplateSet templateSet);
 }
 
 #endif // XMLTOOL_H

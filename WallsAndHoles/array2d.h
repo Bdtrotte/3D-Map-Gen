@@ -37,8 +37,8 @@ public:
             v.resize(cols);
     }
 
-    QSize size() const { return QSize(data.size(),
-                                      data.empty()? 0 : data[0].size()); }
+    QSize size() const {
+        return QSize(data.size(),data.empty()? 0 : data[0].size()); }
 
 protected:
     QVector<QVector<Type>> data;
