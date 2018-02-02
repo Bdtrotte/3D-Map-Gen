@@ -158,23 +158,31 @@ void MapView::mouseReleaseEvent(QMouseEvent *event)
 void MapView::setupViewTB(){
     QToolBar *tb = new QToolBar(this);
 
-    QAction *defaultView = new QAction("Default View");
-    QAction *hMap = new QAction("Height Map");
+    QActionGroup *actGroup = new QActionGroup(this);
+    QAction *dView = new QAction("Default View", actGroup);
+    QAction *hMap = new QAction("Height Map", actGroup);
+    dView->setCheckable(true);
+    hMap->setCheckable(true);
 
-    connect(defaultView, &QAction::triggered, this, &MapView::defaultView);
+    connect(dView, &QAction::triggered, this, &MapView::defaultView);
     connect(hMap, &QAction::triggered, this, &MapView::heightMap);
-    tb->addAction(defaultView);
+
+    tb->addAction(dView);
     tb->addAction(hMap);
     tb->setAutoFillBackground(true);
     tb->show();
 }
 
 void MapView::defaultView(){
-    mRenderMap.test(0,mMapCells);
+    for(int x = 0; x<mMapCells.size().width(); ++x)
+        for(int y = 0; y<mMapCells.size().height(); ++y)
+            mRenderMap.renderMap(0,mMapCells(x,y));
 }
 
 void MapView::heightMap(){
-    mRenderMap.test(1,mMapCells);
+    for(int x = 0; x<mMapCells.size().width(); ++x)
+        for(int y = 0; y<mMapCells.size().height(); ++y)
+            mRenderMap.renderMap(1,mMapCells(x,y));
 }
 
 

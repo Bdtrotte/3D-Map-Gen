@@ -12,7 +12,7 @@ class RenderMap : public QObject{
 public:
     RenderMap(QObject *parent = nullptr);
     enum Views{ defaultView, heightMap };
-    void test(int a, Array2D<MapCell *> mapCells);
+    void renderMap(int a, MapCell *mapCell);
 
 public slots:
     //void tileChanged();

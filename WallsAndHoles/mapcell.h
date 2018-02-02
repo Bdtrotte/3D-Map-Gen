@@ -19,6 +19,9 @@ public:
 
     void setHighlightBrush(const QBrush &color) { mHighlight->setBrush(color); }
 
+    float getTileHeight();
+    void setView(QColor color);
+
 public slots:
     void tileChanged();
 
@@ -32,6 +35,7 @@ private:
     QGraphicsRectItem *mGraphics;
     QGraphicsRectItem *mHighlight;
     QGraphicsRectItem *mBackground;
+    QGraphicsRectItem *mView;
 };
 
 #endif // MAPCELL_H
