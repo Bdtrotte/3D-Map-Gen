@@ -24,9 +24,15 @@ MapCell::MapCell(QGraphicsScene *scene, int x, int y, const Tile &tile, QObject 
     mBackground->setBrush(Qt::white);
     mBackground->setPen(QPen(Qt::black, 0, Qt::DashLine));
 
+    mView = new QGraphicsRectItem(x * 30, y * 30, 30, 30);
+    mView->setZValue(2);
+    mView->setBrush(Qt::NoBrush);
+    mView->setPen(QPen(Qt::NoPen));
+
     mScene->addItem(mGraphics);
     mScene->addItem(mHighlight);
     mScene->addItem(mBackground);
+    mScene->addItem(mView);
 
     connect(&mTile, &Tile::tileChanged,
             this, &MapCell::tileChanged);
@@ -37,10 +43,12 @@ MapCell::~MapCell()
     mScene->removeItem(mGraphics);
     mScene->removeItem(mHighlight);
     mScene->removeItem(mBackground);
+    mScene->removeItem(mView);
 
     delete mGraphics;
     delete mHighlight;
     delete mBackground;
+    delete mView;
 }
 
 void MapCell::tileChanged()
@@ -49,4 +57,14 @@ void MapCell::tileChanged()
         mGraphics->setBrush(mTile.tileTemplate()->color());
     else
         mGraphics->setBrush(Qt::NoBrush);
+
+    emit(cellUpdated());
+}
+
+void MapCell::setView(QColor color){
+    mView->setBrush(color);
+}
+
+float MapCell::getTileHeight(){
+    return mTile.height();
 }

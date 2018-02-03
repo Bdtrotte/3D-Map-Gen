@@ -4,12 +4,14 @@
 #include "array2d.h"
 #include "mapcell.h"
 #include "tilemap.h"
+#include "rendermap.h"
 
 #include <QObject>
 #include <QGraphicsView>
 #include <QKeyEvent>
 #include <QWidget>
 #include <QRegion>
+#include <QToolBar>
 
 /**
  * @brief The MapView class
@@ -24,6 +26,13 @@ public:
 
     void clear();
     void createMap(TileMap *tileMap);
+
+public slots:
+    void updateRenderMap();
+
+private slots:
+    void defaultView();
+    void heightMap();
 
 protected:
     void wheelEvent(QWheelEvent *event) override;
@@ -51,6 +60,12 @@ private:
     QPoint mPreMousePoint;
 
     const QRegion &mSelectedRegion;
+
+    RenderMap *mRenderMap;
+
+    QToolBar *mToolBar;
+
+    void setupViewTB();
 };
 
 #endif // MAPVIEW_H
