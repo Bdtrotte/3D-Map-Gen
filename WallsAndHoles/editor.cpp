@@ -139,6 +139,7 @@ void Editor::loadMap()
 
 void Editor::exportMapMesh()
 {
+
     MeshViewContainer *meshViewContainer = mMainWindow->findChild<MeshViewContainer *>();
 
     if (meshViewContainer == nullptr) {
@@ -154,8 +155,8 @@ void Editor::exportMapMesh()
     if(!fileName.isEmpty())
         meshViewContainer->saveMesh(fileName);
 
-
-    /*MeshViewContainer *meshViewContainer = findChild<MeshViewContainer *>();
+/*
+    MeshViewContainer *meshViewContainer = mMainWindow->findChild<MeshViewContainer *>();
 
     if (meshViewContainer == nullptr) {
         QMessageBox messageBox;
@@ -164,12 +165,12 @@ void Editor::exportMapMesh()
         return;
     }
 
-    QString fileName = QFileDialog::getOpenFileName(this,
+    QString fileName = QFileDialog::getOpenFileName(mMainWindow,
         tr("import OBJ"), "/home", tr("import Files (*.obj)"));
 
     if(!fileName.isEmpty())
         meshViewContainer->loadMesh(fileName);
-    */
+*/
 }
 
 void Editor::setUpMenuBar()

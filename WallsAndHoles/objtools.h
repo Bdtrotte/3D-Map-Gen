@@ -37,9 +37,10 @@ inline RenderableObjectP loadOBJ(QString path){
             assert(list.size()==3);
             uvs.push_back(QVector2D{
                 list[1].toFloat(),
-                list[2].toFloat(),
+                list[2].toFloat()
             });
         }
+
         if(list[0]=="vn"){
             assert(list.size()==4);
             normals.push_back(QVector3D{
@@ -48,6 +49,7 @@ inline RenderableObjectP loadOBJ(QString path){
                 list[3].toFloat()
             });
         }
+
 
         if(list[0]=="f"){
             assert(list.size()==4);
@@ -114,7 +116,7 @@ inline bool saveOBJ(QString path, RenderableObjectP object){
     QVector<QVector3D> normals = object->getVertexNormals();
     QVector<unsigned int> normalIndices = object->getTriangleIndices();
     /*uv is not supported yet*/
-    QVector<QVector3D> uvs = object->getVertexNormals();
+    QVector<QVector2D> uvs = QVector<QVector2D>(object->getTriangleIndices().size());
     QVector<unsigned int> uvIndices = object->getTriangleIndices();
     //
     assert(vertexIndices.size()%3==0);
@@ -125,13 +127,15 @@ inline bool saveOBJ(QString path, RenderableObjectP object){
         }
         out << endl;
     }
+
     for(auto const& uv: uvs){
         out << "vt";
-        for(int i=0; i<3; i++){
+        for(int i=0; i<2; i++){
             out << " " << uv[i];
         }
         out << endl;
     }
+
     for(auto const& norm: normals){
         out << "vn";
         for(int i=0; i<3; i++){
@@ -141,9 +145,9 @@ inline bool saveOBJ(QString path, RenderableObjectP object){
     }
     for(int i=0; i<vertexIndices.size(); i++){
         if(i%3==0) out << "f";
-        out << ' ' << vertexIndices[i];
-        out << '/' << uvIndices[i];
-        out << '/' << normalIndices[i];
+        out << ' ' << vertexIndices[i]+1;
+        out << '/' << uvIndices[i]+1;
+        out << '/' << normalIndices[i]+1;
         if(i%3==2) out << endl;
     }
     file.close();
