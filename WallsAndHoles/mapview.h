@@ -28,9 +28,11 @@ public:
     void createMap(TileMap *tileMap);
 
 public slots:
+    void updateRenderMap();
+
+private slots:
     void defaultView();
     void heightMap();
-    void updateRenderMap();
 
 protected:
     void wheelEvent(QWheelEvent *event) override;
@@ -59,12 +61,11 @@ private:
 
     const QRegion &mSelectedRegion;
 
-    RenderMap mRenderMap;
+    RenderMap *mRenderMap;
 
     QToolBar *mToolBar;
 
     void setupViewTB();
-    void test();
 };
 
 #endif // MAPVIEW_H

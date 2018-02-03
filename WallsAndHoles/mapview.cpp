@@ -19,7 +19,6 @@ MapView::MapView(const QRegion &selectedRegion, QWidget *parent)
       mToolBar(new QToolBar(this))
 {
     setupViewTB();
-
     setMouseTracking(true);
     QGraphicsScene *scene = new QGraphicsScene;
     scene->setBackgroundBrush(Qt::gray);
@@ -85,7 +84,6 @@ void MapView::createMap(TileMap *tileMap)
         }
     }
 }
-
 
 void MapView::mouseMoveEvent(QMouseEvent *event)
 {
@@ -158,18 +156,17 @@ void MapView::mouseReleaseEvent(QMouseEvent *event)
     }
 }
 
-void MapView::setupViewTB(){
-
+void MapView::setupViewTB(){    
     QActionGroup *actGroup = new QActionGroup(this);
     QAction *dView = new QAction("Default View", actGroup);
     QAction *hMap = new QAction("Height Map", actGroup);
+
     dView->setCheckable(true);
     hMap->setCheckable(true);
     dView->setChecked(true);
 
     connect(dView, &QAction::triggered, this, &MapView::defaultView);
     connect(hMap, &QAction::triggered, this, &MapView::heightMap);
-
 
     mToolBar->addAction(dView);
     mToolBar->addAction(hMap);
@@ -180,13 +177,13 @@ void MapView::setupViewTB(){
 void MapView::defaultView(){
     for(int x = 0; x<mMapCells.size().width(); ++x)
         for(int y = 0; y<mMapCells.size().height(); ++y)
-            mRenderMap.renderMap(0,mMapCells(x,y));
+            mRenderMap->renderMap(0,mMapCells(x,y));
 }
 
 void MapView::heightMap(){
     for(int x = 0; x<mMapCells.size().width(); ++x)
         for(int y = 0; y<mMapCells.size().height(); ++y)
-            mRenderMap.renderMap(1,mMapCells(x,y));
+            mRenderMap->renderMap(1,mMapCells(x,y));
 }
 
 void MapView::updateRenderMap(){
@@ -194,8 +191,6 @@ void MapView::updateRenderMap(){
         defaultView();
     if(mToolBar->actions().at(1)->isChecked())
         heightMap();
-    else
-        qDebug() << "Not a valid action";
 }
 
 
