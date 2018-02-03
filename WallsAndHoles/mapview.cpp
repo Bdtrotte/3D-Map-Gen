@@ -194,8 +194,6 @@ void MapView::updateRenderMap(){
         defaultView();
     if(mToolBar->actions().at(1)->isChecked())
         heightMap();
-    else
-        qDebug() << "Not a valid action";
 }
 
 
