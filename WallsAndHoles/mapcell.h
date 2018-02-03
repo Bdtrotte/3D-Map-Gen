@@ -24,7 +24,8 @@ public:
 
 public slots:
     void tileChanged();
-
+signals:
+    void cellUpdated();
 private:
     QGraphicsScene *mScene;
     int mX, mY;

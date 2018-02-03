@@ -11,6 +11,7 @@
 #include <QKeyEvent>
 #include <QWidget>
 #include <QRegion>
+#include <QToolBar>
 
 /**
  * @brief The MapView class
@@ -29,6 +30,8 @@ public:
 public slots:
     void defaultView();
     void heightMap();
+    void updateRenderMap();
+
 protected:
     void wheelEvent(QWheelEvent *event) override;
     void mouseMoveEvent(QMouseEvent *event) override;
@@ -57,6 +60,8 @@ private:
     const QRegion &mSelectedRegion;
 
     RenderMap mRenderMap;
+
+    QToolBar *mToolBar;
 
     void setupViewTB();
     void test();

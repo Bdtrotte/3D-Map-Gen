@@ -10,15 +10,18 @@ void RenderMap::renderMap(int a, MapCell *mapCell){
     {
         float h = mapCell->getTileHeight();
         if(h < 0){
+            //if the height is less than 0 the heightMap will be red
             float sig = (.25*h)/(.25*(h - 1));
             int colorVal = 255-(255*sig);
-            mapCell->setView(QColor(255, colorVal, colorVal, 255));
+            int alpha = 150*sig;
+            mapCell->setView(QColor(255, colorVal, colorVal, alpha));
         }
         else{
             //if height is greater than 0 the heightMap will be green
             float sig = (.25*h)/(.25*(h + 1));
             int colorVal = 255-(255*sig);
-            mapCell->setView(QColor(colorVal, 255, colorVal, 255));
+            int alpha = 150*sig;
+            mapCell->setView(QColor(colorVal, 255, colorVal, alpha));
         }
         break;
     }

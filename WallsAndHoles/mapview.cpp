@@ -6,7 +6,6 @@
 #include <QDebug>
 #include <QKeyEvent>
 #include <QScrollBar>
-#include <QToolBar>
 #include <QVBoxLayout>
 #include <QDockWidget>
 #include <QSignalMapper>
@@ -16,7 +15,8 @@ MapView::MapView(const QRegion &selectedRegion, QWidget *parent)
       mScale(0.5),
       mMapCells(0, 0),
       mSelectedRegion(selectedRegion),
-      mRenderMap(new RenderMap())
+      mRenderMap(new RenderMap()),
+      mToolBar(new QToolBar(this))
 {
     setupViewTB();
 
@@ -59,10 +59,12 @@ void MapView::wheelEvent(QWheelEvent *event)
 void MapView::clear()
 {
     QSize size = mMapCells.size();
-    for (int x = 0; x < size.width(); ++x)
-        for (int y = 0; y < size.width(); ++y)
+    for (int x = 0; x < size.width(); ++x){
+        for (int y = 0; y < size.height(); ++y){
+            disconnect(mMapCells(x, y), &MapCell::cellUpdated, 0, 0);
             delete mMapCells(x, y);
-
+        }
+    }
     mMapCells.resize(0, 0);
 }
 
@@ -77,6 +79,7 @@ void MapView::createMap(TileMap *tileMap)
     for(int y = 0; y < tileMap->mapSize().height(); ++y) {
         for(int x = 0; x < tileMap->mapSize().width(); ++x) {
             mMapCells(x, y) = new MapCell(scene(), x, y, tileMap->cTileAt(x, y));
+            connect(mMapCells(x,y), &MapCell::cellUpdated, this, &MapView::updateRenderMap);
             if (mSelectedRegion.contains(QPoint(x, y)))
                 mMapCells(x, y)->setHighlightBrush(QColor(200, 200, 255, 80)); //TODO: This should be defined somewhere meaningful
         }
@@ -156,21 +159,22 @@ void MapView::mouseReleaseEvent(QMouseEvent *event)
 }
 
 void MapView::setupViewTB(){
-    QToolBar *tb = new QToolBar(this);
 
     QActionGroup *actGroup = new QActionGroup(this);
     QAction *dView = new QAction("Default View", actGroup);
     QAction *hMap = new QAction("Height Map", actGroup);
     dView->setCheckable(true);
     hMap->setCheckable(true);
+    dView->setChecked(true);
 
     connect(dView, &QAction::triggered, this, &MapView::defaultView);
     connect(hMap, &QAction::triggered, this, &MapView::heightMap);
 
-    tb->addAction(dView);
-    tb->addAction(hMap);
-    tb->setAutoFillBackground(true);
-    tb->show();
+
+    mToolBar->addAction(dView);
+    mToolBar->addAction(hMap);
+    mToolBar->setAutoFillBackground(true);
+    mToolBar->show();
 }
 
 void MapView::defaultView(){
@@ -183,6 +187,15 @@ void MapView::heightMap(){
     for(int x = 0; x<mMapCells.size().width(); ++x)
         for(int y = 0; y<mMapCells.size().height(); ++y)
             mRenderMap.renderMap(1,mMapCells(x,y));
+}
+
+void MapView::updateRenderMap(){
+    if(mToolBar->actions().at(0)->isChecked())
+        defaultView();
+    if(mToolBar->actions().at(1)->isChecked())
+        heightMap();
+    else
+        qDebug() << "Not a valid action";
 }
 
 

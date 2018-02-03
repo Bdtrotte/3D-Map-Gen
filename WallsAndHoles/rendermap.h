@@ -13,11 +13,6 @@ public:
     RenderMap(QObject *parent = nullptr);
     enum Views{ defaultView, heightMap };
     void renderMap(int a, MapCell *mapCell);
-
-public slots:
-    //void tileChanged();
-
-
 };
 
 #endif // RENDERMAP_H
