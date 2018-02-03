@@ -110,7 +110,6 @@ void Editor::saveMap()
             tr("Save Map"), "/home", tr("Save Files (*.xml)")));
     }
     for(SharedTileTemplateSet set: mTileMap->dependencies()){
-        qDebug()<<"save dependencies...";
         if(set->savePath().isEmpty()){
             set->setSavePath(QFileDialog::getSaveFileName(mMainWindow,
                 tr("Save Templates"), "/home", tr("Save Files (*.xml)")));

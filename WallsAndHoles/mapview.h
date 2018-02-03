@@ -10,8 +10,6 @@
 #include <QKeyEvent>
 #include <QWidget>
 #include <QRegion>
-#include "tilemap.h"
-#include "tiletemplateset.h"
 
 /**
  * @brief The MapView class

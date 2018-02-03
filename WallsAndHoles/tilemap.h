@@ -50,14 +50,14 @@ public:
     const QString savePath() const { return mSavePath; }
     void setSavePath(QString path){ mSavePath = path; }
 
-    //If tile-template link present, update tile id accordingly, otherwise create link according to tile id.
+    //simply add a dependent templateSet for saving/reloading,
+    //run updateDepend to check if this dependent it really necessary
     void setDepend(SharedTileTemplateSet templateSet){ mDependencies.push_back(templateSet); }
     //remove all dependencies that are no longer used in this tilemap.
     void updateDepend();
 
     QVector<SharedTileTemplateSet> dependencies() const { return mDependencies; }
 
-    Array2D<QSharedPointer<Tile>> &tiles() { return mMap; }
     const Array2D<QSharedPointer<Tile>> &cTiles() const { return mMap; }
 
 

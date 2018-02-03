@@ -84,11 +84,11 @@ SharedTileMap XMLTool::openTileMap(QString tileMapPath){
                         break;
                     }
                 }
-                QSharedPointer<Tile> tile = tileMap->tiles()(x,y);
-                tile->resetTile(tileTemplate);
-                tile->setRelativeThickness(relativeThickness);
-                tile->setRelativeHeight(relativeHeight);
-                tile->setRelativePosition(relativePosition);
+                Tile& tile = tileMap->tileAt(x,y);
+                tile.resetTile(tileTemplate);
+                tile.setRelativeThickness(relativeThickness);
+                tile.setRelativeHeight(relativeHeight);
+                tile.setRelativePosition(relativePosition);
             }
         }
     }
