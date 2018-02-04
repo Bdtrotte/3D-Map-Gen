@@ -53,7 +53,7 @@ SOURCES += \
     m2mpropertyinstance.cpp \
     m2mpropertyset.cpp \
     map2meshproperties.cpp \
-    rendermap.cpp
+    mapcellgraphicsitem.cpp
 
 HEADERS += \
     renderableobject.h \
@@ -89,7 +89,7 @@ HEADERS += \
     m2mpropertyclass.h \
     m2mpropertyinstance.h \
     m2mpropertyset.h \
-    rendermap.h
+    mapcellgraphicsitem.h
 
 FORMS += \
     meshview.ui \
