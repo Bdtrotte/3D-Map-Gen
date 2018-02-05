@@ -5,8 +5,6 @@
 #include <QDebug>
 #include <QKeyEvent>
 #include <QScrollBar>
-#include <QVBoxLayout>
-#include <QDockWidget>
 #include <QSignalMapper>
 
 MapView::MapView(const QRegion &selectedRegion, QWidget *parent)
