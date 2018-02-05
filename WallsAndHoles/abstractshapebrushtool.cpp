@@ -36,7 +36,6 @@ void AbstractShapeBrushTool::drawOverlay(int endX, int endY) {
     clearOverlay();
 
     Array2D<bool> shape = getShape(endX - mStartX, endY - mStartY);
-    // TODO: Draw an overlay using shape.
 
     int startX = std::min(mStartX, endX);
     int startY = std::min(mStartY, endY);
