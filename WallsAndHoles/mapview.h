@@ -61,9 +61,6 @@ private:
 
     void setupViewToolBar();
 
-
-
-
 };
 
 #endif // MAPVIEW_H

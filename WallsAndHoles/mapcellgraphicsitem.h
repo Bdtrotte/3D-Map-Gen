@@ -4,6 +4,11 @@
 #include <QPainter>
 #include <QDebug>
 
+/**
+ * @brief The MapCellGraphicsItem class
+ * Inherits from QGraphicsItem this class
+ * is used for painting and generating the cells in MapCell
+ */
 class MapCellGraphicsItem :public QGraphicsItem
 {
 public:

@@ -54,8 +54,8 @@ void MapCell::tileChanged()
     setGraphics(mViewFlag);
 }
 
-void MapCell::setGraphics(int flag){
-    mViewFlag = flag;
+void MapCell::setGraphics(int viewFlag){
+    mViewFlag = viewFlag;
 
     switch (mViewFlag) {
     case defaultView:

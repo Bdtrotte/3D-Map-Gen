@@ -19,9 +19,13 @@ public:
 
     void setHighlightBrush(const QBrush &color) { mHighlight->setBrush(color); }
 
-    float getTileHeight();
-
-    void setGraphics(int flag);
+    /**
+     * @brief setGraphics changes the view of the class
+     * @param flag:
+     * (0 - default view)
+     * (1 - height map view)
+     */
+    void setGraphics(int viewFlag);
 
 public slots:
     void tileChanged();
