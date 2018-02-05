@@ -1,12 +1,11 @@
 #ifndef MAPCELL_H
 #define MAPCELL_H
 
+#include "mapcellgraphicsitem.h"
 #include "tile.h"
 
 #include <QObject>
 #include <QGraphicsScene>
-#include <QGraphicsItem>
-#include <QGraphicsRectItem>
 #include <QGraphicsSceneHoverEvent>
 
 class MapCell : public QObject
@@ -35,12 +34,12 @@ private:
     //the tile this cell is displaying.
     const Tile &mTile;
 
-    QGraphicsRectItem *mGraphics;
-    QGraphicsRectItem *mHighlight;
-    QGraphicsRectItem *mBackground;
-
     enum views { defaultView, heightMapView };
     int mViewFlag;
+
+    MapCellGraphicsItem *mBackground;
+    MapCellGraphicsItem *mHighlight;
+    MapCellGraphicsItem *mGraphics;
 
 };
 

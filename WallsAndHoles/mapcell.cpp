@@ -1,5 +1,4 @@
 #include "mapcell.h"
-#include "mapcellgraphicsitem.h"
 #include <QDebug>
 
 MapCell::MapCell(QGraphicsScene *scene, int x, int y, const Tile &tile, QObject *parent)
@@ -10,19 +9,19 @@ MapCell::MapCell(QGraphicsScene *scene, int x, int y, const Tile &tile, QObject 
     , mTile(tile)
     , mViewFlag(defaultView)
 {
-    mGraphics = new QGraphicsRectItem(x * 30 + 10, y * 30 + 10, 10, 10);
+    mGraphics = new MapCellGraphicsItem(x*30+10, y*30+10, 10, 10);
     mGraphics->setPen(Qt::NoPen);
     if (mTile.hasTileTemplate())
         mGraphics->setBrush(mTile.tileTemplate()->color());
     else
         mGraphics->setBrush(Qt::NoBrush);
 
-    mHighlight = new QGraphicsRectItem(x * 30, y * 30, 30, 30);
+    mHighlight = new MapCellGraphicsItem(x*30, y*30, 30, 30);
     mHighlight->setZValue(1);
     mHighlight->setBrush(Qt::NoBrush);
     mHighlight->setPen(Qt::NoPen);
 
-    mBackground = new QGraphicsRectItem(x * 30, y * 30, 30, 30);
+    mBackground = new MapCellGraphicsItem(x*30, y*30, 30, 30);
     mBackground->setZValue(-1);
     mBackground->setBrush(Qt::white);
     mBackground->setPen(QPen(Qt::black, 0, Qt::DashLine));
