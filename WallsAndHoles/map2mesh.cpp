@@ -71,7 +71,8 @@ void Map2Mesh::inferProperties() {
                 }
             );
 
-            float minSurroundingHeight = (*lowestNeighborItr)->height();
+
+            float minSurroundingHeight = std::min((*lowestNeighborItr)->height(), grid(x, y)->height());
 
             props.addProperty(M2MPropertyInstance::createInstance(
                                     heights, {
