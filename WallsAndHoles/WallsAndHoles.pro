@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui
+QT       += core gui xml
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -44,6 +44,7 @@ SOURCES += \
     newmapdialog.cpp \
     meshmaterial.cpp \
     shaderprogramonelight.cpp \
+    xmltool.cpp \
     map2mesh.cpp \
     mapcell.cpp \
     tilemapbrushtool.cpp \
@@ -78,6 +79,7 @@ HEADERS += \
     array2d.h \
     meshmaterial.h \
     shaderprogramonelight.h \
+    xmltool.h \
     map2mesh.h \
     m2mtilemesher.h \
     shaderprogramonelight.h \
