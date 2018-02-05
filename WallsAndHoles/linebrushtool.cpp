@@ -55,9 +55,9 @@ Array2D<bool> LineBrushTool::getShape(int dx, int dy) const {
         int curY = round(y);
 
         // Check (curX, curY) is in bounds.
-        if (curX < 0 || curX > dx)
+        if (curX < 0 || curX > abs(dx))
             break;
-        if (curY < 0 || curY > dy)
+        if (curY < 0 || curY > abs(dy))
             break;
 
         shape(curX, curY) = true;

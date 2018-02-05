@@ -4,6 +4,7 @@
 #include "meshviewcontainer.h"
 #include "tilemapbrushtool.h"
 #include "linebrushtool.h"
+#include "rectbrushtool.h"
 
 #include <QDockWidget>
 #include <QApplication>
@@ -33,12 +34,14 @@ Editor::Editor(QObject *parent)
 
     // Add tools.
     mToolBar->addAction(mTileMapToolManager->registerTool(
-                            QSharedPointer<AbstractTileMapTool>(
-                                new TileMapBrushTool(mTileMap, mTileTemplateSet->tileTemplates()[0])),
+                            QSharedPointer<TileMapBrushTool>::create(mTileMap, mTileTemplateSet->tileTemplates()[0]),
                         "Brush Tool"));
     mToolBar->addAction(mTileMapToolManager->registerTool(
                             QSharedPointer<LineBrushTool>::create(mTileMap, mTileTemplateSet->tileTemplates()[0]),
-                        "Line tool"));
+                        "Line Tool"));
+    mToolBar->addAction(mTileMapToolManager->registerTool(
+                            QSharedPointer<RectBrushTool>::create(mTileMap, mTileTemplateSet->tileTemplates()[0]),
+                        "Rect Tool"));
 
     //Set up and add all dock widgets
     QDockWidget *dw = new QDockWidget("Mesh View", mMainWindow);
