@@ -12,8 +12,6 @@ class TileMapToolManager : public ToolManager
 public:
     TileMapToolManager(QObject *parent = nullptr);
 
-    QAction *registerTool(QSharedPointer<AbstractTileMapTool> tool, QString name) { return ToolManager::registerTool(tool, name); }
-
     void setTileMap(TileMap *tileMap);
 
 public slots:
@@ -22,7 +20,6 @@ public slots:
     void cellReleased(int x, int y);
 
 private:
-    using ToolManager::registerTool;
     using ToolManager::mousePressEvent;
     using ToolManager::mouseReleaseEvent;
     using ToolManager::mouseMoveEvent;
