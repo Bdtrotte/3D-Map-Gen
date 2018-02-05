@@ -6,7 +6,7 @@
 
 class RectBrushTool : public AbstractShapeBrushTool {
 public:
-    RectBrushTool(TileMap *tileMap, SharedTileTemplate drawWith);
+    RectBrushTool(MapView *mapView, TileMap *tileMap, SharedTileTemplate drawWith);
 
     /// @brief Draws a rectangle.
     Array2D<bool> getShape(int dx, int dy) const override;

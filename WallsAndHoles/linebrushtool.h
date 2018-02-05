@@ -6,7 +6,7 @@
 
 class LineBrushTool : public AbstractShapeBrushTool {
 public:
-    LineBrushTool(TileMap *tileMap, SharedTileTemplate drawMaterial);
+    LineBrushTool(MapView *mapView, TileMap *tileMap, SharedTileTemplate drawMaterial);
 
     /**
      * @brief Makes a 1-pixel line.

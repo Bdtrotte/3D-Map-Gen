@@ -1,15 +1,18 @@
 #ifndef ABSTRACTSHAPEBRUSHTOOL_H
 #define ABSTRACTSHAPEBRUSHTOOL_H
 
+
 #include "array2d.h"
 #include "abstracttilemaptool.h"
 #include "tilemap.h"
 #include "tiletemplate.h"
+#include "mapview.h"
+#include "mapoverlaycell.h"
 
 class AbstractShapeBrushTool : public AbstractTileMapTool {
 public:
 
-    AbstractShapeBrushTool(TileMap *tileMap, SharedTileTemplate drawWith);
+    AbstractShapeBrushTool(MapView *mapView, TileMap *tileMap, SharedTileTemplate drawWith);
 
 
     void cellClicked(int x, int y) override;
@@ -39,6 +42,12 @@ public:
 private:
     int mStartX;  /// The X position of the first click.
     int mStartY;  /// The Y position of the first click.
+
+    /// The MapView on which an overlay will be drawn.
+    MapView *mMapView;
+
+    /// The overlay that is drawn over the map view.
+    Array2D<QSharedPointer<MapOverlayCell>> mOverlay;
 
     /// The tile template that will be placed down on the map.
     SharedTileTemplate mDrawMaterial;

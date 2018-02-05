@@ -57,7 +57,8 @@ SOURCES += \
     abstractshapebrushtool.cpp \
     linebrushtool.cpp \
     rectbrushtool.cpp \
-    ellipsebrushtool.cpp
+    ellipsebrushtool.cpp \
+    mapoverlaycell.cpp
 
 HEADERS += \
     renderableobject.h \
@@ -97,7 +98,8 @@ HEADERS += \
     abstractshapebrushtool.h \
     linebrushtool.h \
     rectbrushtool.h \
-    ellipsebrushtool.h
+    ellipsebrushtool.h \
+    mapoverlaycell.h
 
 FORMS += \
     meshview.ui \

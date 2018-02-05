@@ -39,13 +39,13 @@ Editor::Editor(QObject *parent)
                             QSharedPointer<TileMapBrushTool>::create(mTileMap, mTileTemplateSet->tileTemplates()[0]),
                         "Brush Tool"));
     mToolBar->addAction(mTileMapToolManager->registerTool(
-                            QSharedPointer<LineBrushTool>::create(mTileMap, mTileTemplateSet->tileTemplates()[0]),
+                            QSharedPointer<LineBrushTool>::create(mMapView, mTileMap, mTileTemplateSet->tileTemplates()[0]),
                         "Line Tool"));
     mToolBar->addAction(mTileMapToolManager->registerTool(
-                            QSharedPointer<RectBrushTool>::create(mTileMap, mTileTemplateSet->tileTemplates()[0]),
+                            QSharedPointer<RectBrushTool>::create(mMapView, mTileMap, mTileTemplateSet->tileTemplates()[0]),
                         "Rect Tool"));
     mToolBar->addAction(mTileMapToolManager->registerTool(
-                            QSharedPointer<EllipseBrushTool>::create(mTileMap, mTileTemplateSet->tileTemplates()[0]),
+                            QSharedPointer<EllipseBrushTool>::create(mMapView, mTileMap, mTileTemplateSet->tileTemplates()[0]),
                         "Ellipse Tool"));
 
     //Set up and add all dock widgets

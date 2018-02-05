@@ -1,7 +1,8 @@
 #include "abstractshapebrushtool.h"
 
-AbstractShapeBrushTool::AbstractShapeBrushTool(TileMap *tileMap, SharedTileTemplate drawWith)
+AbstractShapeBrushTool::AbstractShapeBrushTool(MapView *mapView, TileMap *tileMap, SharedTileTemplate drawWith)
     : AbstractTileMapTool(tileMap),
+      mMapView(mapView),
       mDrawMaterial(drawWith)
 {
 
@@ -37,11 +38,22 @@ void AbstractShapeBrushTool::drawOverlay(int endX, int endY) {
     Array2D<bool> shape = getShape(endX - mStartX, endY - mStartY);
     // TODO: Draw an overlay using shape.
 
-//    qDebug() << "Shape overlay from (" << mStartX << ", " << mStartY << ") to (" << endX << ", " << endY << ")";
+    int startX = std::min(mStartX, endX);
+    int startY = std::min(mStartY, endY);
+
+    mOverlay = Array2D<QSharedPointer<MapOverlayCell>>(mTileMap->mapSize());
+
+    QGraphicsScene *scene = mMapView->scene();
+
+    for (int dx = 0; dx < shape.width(); ++dx)
+        for (int dy = 0; dy < shape.height(); ++dy)
+            if (shape(dx, dy))
+                mOverlay(startX + dx, startY + dy) = QSharedPointer<MapOverlayCell>::create(scene, startX + dx, startY + dy, QColor(255, 0, 0, 100));
 }
 
 void AbstractShapeBrushTool::clearOverlay() {
-    // TODO: Clear overlay.
+    // Clears overlay.
+    mOverlay = Array2D<QSharedPointer<MapOverlayCell>>();
 }
 
 void AbstractShapeBrushTool::placeShape(int endX, int endY) {

@@ -5,7 +5,7 @@
 
 class EllipseBrushTool : public AbstractShapeBrushTool {
 public:
-    EllipseBrushTool(TileMap *tileMap, SharedTileTemplate drawMaterial);
+    EllipseBrushTool(MapView *mapView, TileMap *tileMap, SharedTileTemplate drawMaterial);
 
     /// Draws an ellipse.
     Array2D<bool> getShape(int dx, int dy) const override;
