@@ -37,7 +37,7 @@ void AbstractShapeBrushTool::drawOverlay(int endX, int endY) {
     Array2D<bool> shape = getShape(endX - mStartX, endY - mStartY);
     // TODO: Draw an overlay using shape.
 
-    qDebug() << "Shape overlay from (" << mStartX << ", " << mStartY << ") to (" << endX << ", " << endY << ")";
+//    qDebug() << "Shape overlay from (" << mStartX << ", " << mStartY << ") to (" << endX << ", " << endY << ")";
 }
 
 void AbstractShapeBrushTool::clearOverlay() {

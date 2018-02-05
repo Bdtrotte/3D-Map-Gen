@@ -56,7 +56,8 @@ SOURCES += \
     map2meshproperties.cpp \
     abstractshapebrushtool.cpp \
     linebrushtool.cpp \
-    rectbrushtool.cpp
+    rectbrushtool.cpp \
+    ellipsebrushtool.cpp
 
 HEADERS += \
     renderableobject.h \
@@ -95,7 +96,8 @@ HEADERS += \
     m2mpropertyset.h \
     abstractshapebrushtool.h \
     linebrushtool.h \
-    rectbrushtool.h
+    rectbrushtool.h \
+    ellipsebrushtool.h
 
 FORMS += \
     meshview.ui \

@@ -3,8 +3,10 @@
 #include "newmapdialog.h"
 #include "meshviewcontainer.h"
 #include "tilemapbrushtool.h"
+
 #include "linebrushtool.h"
 #include "rectbrushtool.h"
+#include "ellipsebrushtool.h"
 
 #include <QDockWidget>
 #include <QApplication>
@@ -42,6 +44,9 @@ Editor::Editor(QObject *parent)
     mToolBar->addAction(mTileMapToolManager->registerTool(
                             QSharedPointer<RectBrushTool>::create(mTileMap, mTileTemplateSet->tileTemplates()[0]),
                         "Rect Tool"));
+    mToolBar->addAction(mTileMapToolManager->registerTool(
+                            QSharedPointer<EllipseBrushTool>::create(mTileMap, mTileTemplateSet->tileTemplates()[0]),
+                        "Ellipse Tool"));
 
     //Set up and add all dock widgets
     QDockWidget *dw = new QDockWidget("Mesh View", mMainWindow);
