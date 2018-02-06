@@ -10,6 +10,7 @@
 #include <QKeyEvent>
 #include <QWidget>
 #include <QRegion>
+#include <QToolBar>
 
 /**
  * @brief The MapView class
@@ -24,6 +25,11 @@ public:
 
     void clear();
     void createMap(TileMap *tileMap);
+
+private slots:
+    void setNoView(bool state);
+    void setDefaultView(bool state);
+    void setHeightMap(bool state);
 
 protected:
     void wheelEvent(QWheelEvent *event) override;
@@ -63,6 +69,8 @@ signals:
     void cellReleased(int x, int y);
 
 private:
+    void setupViewToolBar();
+
     float mScale;
     int mOldX;
     int mOldY;
@@ -72,6 +80,11 @@ private:
     QPoint mPreMousePoint;
 
     const QRegion &mSelectedRegion;
+
+    QToolBar *mToolBar;
+    QAction *mNoView;
+    QAction *mDefaultView;
+    QAction *mHeightView;
 };
 
 #endif // MAPVIEW_H

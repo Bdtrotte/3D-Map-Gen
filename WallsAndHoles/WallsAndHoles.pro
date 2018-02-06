@@ -54,6 +54,7 @@ SOURCES += \
     m2mpropertyinstance.cpp \
     m2mpropertyset.cpp \
     map2meshproperties.cpp \
+    mapcellgraphicsitem.cpp \
     abstractshapebrushtool.cpp \
     linebrushtool.cpp \
     rectbrushtool.cpp \
@@ -95,6 +96,7 @@ HEADERS += \
     m2mpropertyclass.h \
     m2mpropertyinstance.h \
     m2mpropertyset.h \
+    mapcellgraphicsitem.h \
     abstractshapebrushtool.h \
     linebrushtool.h \
     rectbrushtool.h \
