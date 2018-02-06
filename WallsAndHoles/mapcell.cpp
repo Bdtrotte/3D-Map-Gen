@@ -4,18 +4,13 @@
 MapCell::MapCell(QGraphicsScene *scene, int x, int y, const Tile &tile, QObject *parent)
     : QObject(parent)
     , mScene(scene)
-    , mX(x)
-    , mY(y)
-    , mTile(tile)
-    , mViewFlag(1)
 {
-    mGraphics = new MapCellGraphicsItem(x*30+10, y*30+10, 10, 10, mTile);
-    mGraphics->setPen(Qt::NoPen);
-    if (mTile.hasTileTemplate()){
-        mGraphics->setBrush(mTile.tileTemplate()->color());
-    }
-    else
-        mGraphics->setBrush(Qt::NoBrush);
+    mGraphics = new MapCellGraphicsItem(x*30, y*30, 30, 30, tile);
+
+    mGrid = new QGraphicsRectItem(x*30, y*30, 30, 30);
+    mGrid->setZValue(2);
+    mGrid->setBrush(Qt::NoBrush);
+    mGrid->setPen(QPen(Qt::black, 0, Qt::DashLine));
 
     mHighlight = new QGraphicsRectItem(x*30, y*30, 30, 30);
     mHighlight->setZValue(1);
@@ -25,39 +20,38 @@ MapCell::MapCell(QGraphicsScene *scene, int x, int y, const Tile &tile, QObject 
     mBackground = new QGraphicsRectItem(x*30, y*30, 30, 30);
     mBackground->setZValue(-1);
     mBackground->setBrush(Qt::white);
-    mBackground->setPen(QPen(Qt::black, 0, Qt::DashLine));
+    mBackground->setPen(Qt::NoPen);
 
     mScene->addItem(mGraphics);
+    mScene->addItem(mGrid);
     mScene->addItem(mHighlight);
     mScene->addItem(mBackground);
 
-    connect(&mTile, &Tile::tileChanged,
+    connect(&tile, &Tile::tileChanged,
             this, &MapCell::tileChanged);
 }
 
 MapCell::~MapCell()
 {
     mScene->removeItem(mGraphics);
+    mScene->removeItem(mGrid);
     mScene->removeItem(mHighlight);
     mScene->removeItem(mBackground);
 
     delete mGraphics;
+    delete mGrid;
     delete mHighlight;
     delete mBackground;
 }
 
 void MapCell::tileChanged()
 {
-    if (mTile.hasTileTemplate())
-        mGraphics->setBrush(mTile.tileTemplate()->color());
-    else
-        mGraphics->setBrush(Qt::NoBrush);
-    setGraphics(mViewFlag);
+    mGraphics->update();
 }
 
-void MapCell::setGraphics(int viewFlag){
-    mViewFlag = viewFlag;
-    mGraphics->setView(mViewFlag);
-    mScene->update();
+void MapCell::setGraphics(MapViewMode viewMode, bool enabled)
+{
+    mGraphics->setViewMode(viewMode, enabled);
+    mGraphics->update();
 }
 

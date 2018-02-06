@@ -1,62 +1,40 @@
 #include "mapcellgraphicsitem.h"
 
 MapCellGraphicsItem::MapCellGraphicsItem(int x, int y, qreal w, qreal h, const Tile &tile)
-    :
-      mX(x),
-      mY(y),
-      mW(w),
-      mH(h),
-      mTile(tile),
-      mViewFlag(1)
+    : mTile(tile)
+    , mViewMode(DefaultView)
+    , mRect(QRectF(x, y, w, h)) {}
+
+void MapCellGraphicsItem::setViewMode(MapViewMode viewMode, bool enabled)
 {
-    mRect = boundingRect();
-}
-void MapCellGraphicsItem::setBrush(QBrush brush){
-    mBrush = brush;
-}
-
-void MapCellGraphicsItem::setPen(QPen pen){
-    mPen = pen;
-}
-
-void MapCellGraphicsItem::setView(int viewFlag){
-    mViewFlag = viewFlag;
+    if (enabled) {
+        if (viewMode)
+            mViewMode |= viewMode;
+        else
+            mViewMode = 0;
+    } else {
+        mViewMode &= ~viewMode;
+    }
 }
 
 QRectF MapCellGraphicsItem::boundingRect() const
 {
-    return QRectF(mX, mY, mW, mH);
+    return mRect;
 }
 
-void MapCellGraphicsItem::setRect(int x, int y, qreal w, qreal h){
-    mX = x;
-    mY = y;
-    mW = w;
-    mH = h;
-}
+void MapCellGraphicsItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *)
+{
+    if (mViewMode == NoView) return;
 
-
-
-void MapCellGraphicsItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget){   
-    switch (mViewFlag) {
-    case Noview:
-    {
-        painter->setBrush(Qt::NoBrush);
-        painter->setPen(Qt::NoPen);
-        painter->drawRect(mRect);
-        update();
-        break;
+    if (mViewMode & DefaultView) {
+        if (mTile.hasTileTemplate()) {
+            painter->setPen(Qt::NoPen);
+            painter->setBrush(mTile.tileTemplate()->color());
+            painter->drawRect(mRect);
+        }
     }
-    case DefaultView:
-    {
-        painter->setPen(mPen);
-        painter->setBrush(mBrush);
-        painter->drawRect(mRect);
-        update();
-        break;
-    }
-    case HeightMap:
-    {
+
+    if (mViewMode & HeightMapView) {
         float height = mTile.height();
         if(height < 0){
             float sig =(.25*height)/(.25*height-1);
@@ -72,11 +50,7 @@ void MapCellGraphicsItem::paint(QPainter *painter, const QStyleOptionGraphicsIte
             painter->setPen(Qt::NoPen);
             painter->setBrush(QBrush(QColor(colorVal, 255, colorVal, alpha)));
         }
-        painter->drawRect(mX-10, mY-10, 30, 30);
-        update();
-    }
-    default:
-        break;
+        painter->drawRect(mRect);
     }
 }
 

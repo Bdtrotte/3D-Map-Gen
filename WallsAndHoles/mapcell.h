@@ -19,33 +19,19 @@ public:
     ~MapCell();
 
     void setHighlightBrush(const QBrush &color) { mHighlight->setBrush(color); }
-
-    /**
-     * @brief setGraphics changes the view of the class
-     * @param flag:
-     * (0 - no view)
-     * (1 - default view)
-     * (2 - height map view)
-     */
-    void setGraphics(int viewFlag);
+    void setGraphics(MapViewMode viewMode, bool enabled);
 
 public slots:
     void tileChanged();
 
 private:
-
     QGraphicsScene *mScene;
-    int mX, mY;
 
-    //the tile this cell is displaying.
-    const Tile &mTile;
-
-    int mViewFlag;
-
+    // TODO replace this with a gridGraphicsItem in MapView
+    QGraphicsRectItem *mGrid;
     QGraphicsRectItem *mBackground;
     QGraphicsRectItem *mHighlight;
     MapCellGraphicsItem *mGraphics;
-
 };
 
 #endif // MAPCELL_H
