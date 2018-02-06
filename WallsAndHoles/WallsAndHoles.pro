@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui
+QT       += core gui xml
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -44,6 +44,7 @@ SOURCES += \
     newmapdialog.cpp \
     meshmaterial.cpp \
     shaderprogramonelight.cpp \
+    xmltool.cpp \
     map2mesh.cpp \
     mapcell.cpp \
     tilemapbrushtool.cpp \
@@ -53,7 +54,12 @@ SOURCES += \
     m2mpropertyinstance.cpp \
     m2mpropertyset.cpp \
     map2meshproperties.cpp \
-    mapcellgraphicsitem.cpp
+    mapcellgraphicsitem.cpp \
+    abstractshapebrushtool.cpp \
+    linebrushtool.cpp \
+    rectbrushtool.cpp \
+    ellipsebrushtool.cpp \
+    mapoverlaycell.cpp
 
 HEADERS += \
     renderableobject.h \
@@ -79,6 +85,7 @@ HEADERS += \
     array2d.h \
     meshmaterial.h \
     shaderprogramonelight.h \
+    xmltool.h \
     map2mesh.h \
     m2mtilemesher.h \
     shaderprogramonelight.h \
@@ -89,7 +96,12 @@ HEADERS += \
     m2mpropertyclass.h \
     m2mpropertyinstance.h \
     m2mpropertyset.h \
-    mapcellgraphicsitem.h
+    mapcellgraphicsitem.h \
+    abstractshapebrushtool.h \
+    linebrushtool.h \
+    rectbrushtool.h \
+    ellipsebrushtool.h \
+    mapoverlaycell.h
 
 FORMS += \
     meshview.ui \

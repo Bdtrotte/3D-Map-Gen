@@ -4,11 +4,17 @@
 #include "meshviewcontainer.h"
 #include "tilemapbrushtool.h"
 
+#include "linebrushtool.h"
+#include "rectbrushtool.h"
+#include "ellipsebrushtool.h"
+
 #include <QDockWidget>
 #include <QApplication>
 #include <QDebug>
 #include <QMainWindow>
 #include <QMenuBar>
+#include <QMessageBox>
+#include <QFileDialog>
 
 Editor::Editor(QObject *parent)
     : QObject(parent)
@@ -28,8 +34,19 @@ Editor::Editor(QObject *parent)
     setUpMenuBar();
     mMainWindow->addToolBar(mToolBar);
 
-    mToolBar->addAction(mTileMapToolManager->registerTool(
-                            QSharedPointer<AbstractTileMapTool>(new TileMapBrushTool(mTileMap, mTileTemplateSet->tileTemplates()[0])), "Brush Tool"));
+    // Add tools.
+    mToolBar->addAction(mTileMapToolManager->registerMapTool(
+                            QSharedPointer<TileMapBrushTool>::create(mTileMap, mTileTemplateSet->tileTemplates()[0]),
+                        "Brush Tool"));
+    mToolBar->addAction(mTileMapToolManager->registerMapTool(
+                            QSharedPointer<LineBrushTool>::create(mMapView, mTileMap, mTileTemplateSet->tileTemplates()[0]),
+                        "Line Tool"));
+    mToolBar->addAction(mTileMapToolManager->registerMapTool(
+                            QSharedPointer<RectBrushTool>::create(mMapView, mTileMap, mTileTemplateSet->tileTemplates()[0]),
+                        "Rect Tool"));
+    mToolBar->addAction(mTileMapToolManager->registerMapTool(
+                            QSharedPointer<EllipseBrushTool>::create(mMapView, mTileMap, mTileTemplateSet->tileTemplates()[0]),
+                        "Ellipse Tool"));
 
     //Set up and add all dock widgets
     QDockWidget *dw = new QDockWidget("Mesh View", mMainWindow);
@@ -95,17 +112,50 @@ void Editor::makeNewScene()
 
 void Editor::saveMap()
 {
-
+    if(mTileMap==nullptr){
+        QMessageBox messageBox;
+        messageBox.critical(0,"Error","TileMap doesn't exist!");
+        messageBox.setFixedSize(500,200);
+        return;
+    }
+    mTileMap->setDepend(QSharedPointer<TileTemplateSet>(mTileTemplateSet));
+    //mTileMap->updateDepend();
+    if(mTileMap->savePath().isEmpty()){
+        mTileMap->setSavePath(QFileDialog::getSaveFileName(mMainWindow,
+            tr("Save Map"), "/home", tr("Save Files (*.xml)")));
+    }
+    for(SharedTileTemplateSet set: mTileMap->dependencies()){
+        if(set->savePath().isEmpty()){
+            set->setSavePath(QFileDialog::getSaveFileName(mMainWindow,
+                tr("Save Templates"), "/home", tr("Save Files (*.xml)")));
+        }
+    }
+    XMLTool::saveTileMap(QSharedPointer<TileMap>(mTileMap));
 }
 
 void Editor::loadMap()
 {
+    QString fileName = QFileDialog::getOpenFileName(mMainWindow,
+        tr("Open Map"), "/home", tr("Open Files (*.xml)"));
 
+    SharedTileMap tileMap = XMLTool::openTileMap(fileName);
+    if(tileMap==nullptr){
+        QMessageBox messageBox;
+        messageBox.critical(0,"Error","Fail to load TileMap!");
+        messageBox.setFixedSize(500,200);
+        return;
+    }
+    mTileMap = tileMap.data();
+    if(!mTileMap->dependencies().isEmpty())
+        mTileTemplateSet = (mTileMap->dependencies()[0]).data();
+    mTileMapToolManager->setTileMap(mTileMap);
+    mMapView->createMap(mTileMap);
 }
 
 void Editor::exportMapMesh()
 {
-    /*MeshViewContainer *meshViewContainer = findChild<MeshViewContainer *>();
+
+    MeshViewContainer *meshViewContainer = mMainWindow->findChild<MeshViewContainer *>();
 
     if (meshViewContainer == nullptr) {
         QMessageBox messageBox;
@@ -114,14 +164,14 @@ void Editor::exportMapMesh()
         return;
     }
 
-    QString fileName = QFileDialog::getSaveFileName(this,
+    QString fileName = QFileDialog::getSaveFileName(mMainWindow,
         tr("Export OBJ"), "/home", tr("Export Files (*.obj)"));
 
     if(!fileName.isEmpty())
         meshViewContainer->saveMesh(fileName);
-    */
 
-    /*MeshViewContainer *meshViewContainer = findChild<MeshViewContainer *>();
+/*
+    MeshViewContainer *meshViewContainer = mMainWindow->findChild<MeshViewContainer *>();
 
     if (meshViewContainer == nullptr) {
         QMessageBox messageBox;
@@ -130,12 +180,12 @@ void Editor::exportMapMesh()
         return;
     }
 
-    QString fileName = QFileDialog::getOpenFileName(this,
+    QString fileName = QFileDialog::getOpenFileName(mMainWindow,
         tr("import OBJ"), "/home", tr("import Files (*.obj)"));
 
     if(!fileName.isEmpty())
         meshViewContainer->loadMesh(fileName);
-    */
+*/
 }
 
 void Editor::setUpMenuBar()

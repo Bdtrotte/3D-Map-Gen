@@ -5,6 +5,7 @@
 #include "tilemaptoolmanager.h"
 #include "tiletemplateset.h"
 #include "mapview.h"
+#include "xmltool.h"
 #include "map2mesh.h"
 #include "meshviewcontainer.h"
 

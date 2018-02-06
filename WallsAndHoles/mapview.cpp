@@ -67,7 +67,6 @@ void MapView::createMap(TileMap *tileMap)
     clear();
 
     QSize mapSize = tileMap->mapSize();
-
     mMapCells.resize(mapSize.width(), mapSize.height());
 
     for(int y = 0; y < tileMap->mapSize().height(); ++y) {
@@ -125,6 +124,7 @@ void MapView::mouseMoveEvent(QMouseEvent *event)
         mOldY = event->y();
     }
 }
+
 
 void MapView::mousePressEvent(QMouseEvent *event)
 {
