@@ -58,9 +58,6 @@ void AbstractShapeBrushTool::placeShape(int endX, int endY) {
     Q_ASSERT( endX >= 0 && endX < mTileMap->width() );
     Q_ASSERT( endY >= 0 && endY < mTileMap->height() );
 
-    int startX = std::min(mStartX, endX);
-    int startY = std::min(mStartY, endY);
-
     for (QPoint p : shape) {
         int x = mStartX + p.x();
         int y = mStartY + p.y();

@@ -66,9 +66,11 @@ QVector<QPoint> EllipseBrushTool::getShape(int dx, int dy) const {
         return points;
     }
 
+    double w = abs(dx);
+    double h = abs(dy);
 
-    double w = abs(dx) + 1;
-    double h = abs(dy) + 1;
+    if (dx >= 0) ++w;
+    if (dy >= 0) ++h;
 
     // Center coordinates.
     double cx = w * 0.5 * (dx < 0 ? -1 : 1);
