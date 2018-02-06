@@ -1,0 +1,62 @@
+#ifndef ABSTRACTSHAPEBRUSHTOOL_H
+#define ABSTRACTSHAPEBRUSHTOOL_H
+
+#include <QVector>
+#include <QPoint>
+
+#include "array2d.h"
+#include "abstracttilemaptool.h"
+#include "tilemap.h"
+#include "tiletemplate.h"
+#include "mapview.h"
+#include "mapoverlaycell.h"
+
+class AbstractShapeBrushTool : public AbstractTileMapTool {
+public:
+
+    AbstractShapeBrushTool(MapView *mapView, TileMap *tileMap, SharedTileTemplate drawWith);
+
+
+    void cellClicked(int x, int y) override;
+    void cellActivated(int x, int y) override;
+    void cellReleased(int x, int y) override;
+
+
+    /**
+     * @brief This function should output a QVector of points that should be filled in.
+     *
+     * All points are specified as offsets from (0, 0), which is assumed to be the place
+     * where the mouse drag started. The point (dx, dy) is the place where the mouse drag
+     * ended.
+     *
+     * There is no assumption on whether the points lie in the rectangle between (0, 0) and (dx, dy).
+     *
+     * @param dx  The X offset from the start of drawing.
+     * @param dy  The Y offset from the start of drawing.
+     */
+    virtual QVector<QPoint> getShape(int dx, int dy) const = 0;
+
+private:
+    int mStartX;  /// The X position of the first click.
+    int mStartY;  /// The Y position of the first click.
+
+    /// The MapView on which an overlay will be drawn.
+    MapView *mMapView;
+
+    /// The overlay that is drawn over the map view.
+    Array2D<QSharedPointer<MapOverlayCell>> mOverlay;
+
+    /// The tile template that will be placed down on the map.
+    SharedTileTemplate mDrawMaterial;
+
+    /// Draws an overlay previewing the shape that will be drawn.
+    void drawOverlay(int endX, int endY);
+
+    /// Clears the overlay.
+    void clearOverlay();
+
+    /// Places down a shape.
+    void placeShape(int endX, int endY);
+};
+
+#endif // ABSTRACTSHAPEBRUSHTOOL_H

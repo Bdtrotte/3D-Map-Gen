@@ -12,9 +12,9 @@ class TileMapToolManager : public ToolManager
 public:
     TileMapToolManager(QObject *parent = nullptr);
 
-    QAction *registerTool(QSharedPointer<AbstractTileMapTool> tool, QString name) { return ToolManager::registerTool(tool, name); }
-
     void setTileMap(TileMap *tileMap);
+
+    QAction *registerMapTool(QSharedPointer<AbstractTileMapTool> tool, QString name) { return ToolManager::registerTool(tool, name); }
 
 public slots:
     void cellActivated(int x, int y);
@@ -24,9 +24,8 @@ public slots:
 private:
     using ToolManager::registerTool;
     using ToolManager::mousePressEvent;
-    using ToolManager::mouseReleaseEvent;
     using ToolManager::mouseMoveEvent;
-    using ToolManager::wheelEvent;
+    using ToolManager::mouseReleaseEvent;
 };
 
 #endif // TILEMAPTOOLMANAGER_H

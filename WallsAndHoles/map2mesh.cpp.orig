@@ -71,10 +71,13 @@ void Map2Mesh::inferProperties() {
                 }
             );
 
-			float minSurroundingHeight = grid(x, y)->height();
-			if (lowestNeighborItr != grid.end_neighbors(x, y))
-            	minSurroundingHeight = std::min((*lowestNeighborItr)->height(), grid(x, y)->height());
+<<<<<<< HEAD
 
+            float minSurroundingHeight = std::min((*lowestNeighborItr)->height(), grid(x, y)->height());
+
+=======
+            float minSurroundingHeight = (*lowestNeighborItr)->height();
+>>>>>>> master
             props.addProperty(M2MPropertyInstance::createInstance(
                                     heights, {
                                       { heights, "baseHeight", minSurroundingHeight },
