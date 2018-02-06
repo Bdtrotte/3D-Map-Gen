@@ -4,6 +4,10 @@
 #include "meshviewcontainer.h"
 #include "tilemapbrushtool.h"
 
+#include "linebrushtool.h"
+#include "rectbrushtool.h"
+#include "ellipsebrushtool.h"
+
 #include <QDockWidget>
 #include <QApplication>
 #include <QDebug>
@@ -30,8 +34,19 @@ Editor::Editor(QObject *parent)
     setUpMenuBar();
     mMainWindow->addToolBar(mToolBar);
 
-    mToolBar->addAction(mTileMapToolManager->registerTool(
-                            QSharedPointer<AbstractTileMapTool>(new TileMapBrushTool(mTileMap, mTileTemplateSet->tileTemplates()[0])), "Brush Tool"));
+    // Add tools.
+    mToolBar->addAction(mTileMapToolManager->registerMapTool(
+                            QSharedPointer<TileMapBrushTool>::create(mTileMap, mTileTemplateSet->tileTemplates()[0]),
+                        "Brush Tool"));
+    mToolBar->addAction(mTileMapToolManager->registerMapTool(
+                            QSharedPointer<LineBrushTool>::create(mMapView, mTileMap, mTileTemplateSet->tileTemplates()[0]),
+                        "Line Tool"));
+    mToolBar->addAction(mTileMapToolManager->registerMapTool(
+                            QSharedPointer<RectBrushTool>::create(mMapView, mTileMap, mTileTemplateSet->tileTemplates()[0]),
+                        "Rect Tool"));
+    mToolBar->addAction(mTileMapToolManager->registerMapTool(
+                            QSharedPointer<EllipseBrushTool>::create(mMapView, mTileMap, mTileTemplateSet->tileTemplates()[0]),
+                        "Ellipse Tool"));
 
     //Set up and add all dock widgets
     QDockWidget *dw = new QDockWidget("Mesh View", mMainWindow);
