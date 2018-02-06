@@ -1,6 +1,8 @@
 #ifndef ABSTRACTSHAPEBRUSHTOOL_H
 #define ABSTRACTSHAPEBRUSHTOOL_H
 
+#include <QVector>
+#include <QPoint>
 
 #include "array2d.h"
 #include "abstracttilemaptool.h"
@@ -21,23 +23,18 @@ public:
 
 
     /**
-     * @brief This function should create an Array2D of size (abs(dx)+1, abs(dy)+1)
-     * that is TRUE wherever a tile will be updated and FALSE elsewhere.
+     * @brief This function should output a QVector of points that should be filled in.
      *
-     * The array should be filled with the assumption that...
+     * All points are specified as offsets from (0, 0), which is assumed to be the place
+     * where the mouse drag started. The point (dx, dy) is the place where the mouse drag
+     * ended.
      *
-     * ...if dx > 0 and dy > 0, then drawing started at (0, 0).
-     *
-     * ...if dx > 0 and dy < 0, then drawing started at (0, -dy).
-     *
-     * ...if dx < 0 and dy > 0, then drawing started at (-dx, 0).
-     *
-     * ...if dx < 0 and dy < 0, then drawing started at (-dx, -dy).
+     * There is no assumption on whether the points lie in the rectangle between (0, 0) and (dx, dy).
      *
      * @param dx  The X offset from the start of drawing.
      * @param dy  The Y offset from the start of drawing.
      */
-    virtual Array2D<bool> getShape(int dx, int dy) const = 0;
+    virtual QVector<QPoint> getShape(int dx, int dy) const = 0;
 
 private:
     int mStartX;  /// The X position of the first click.

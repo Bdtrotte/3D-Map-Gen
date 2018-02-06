@@ -14,16 +14,18 @@ public:
 
     void setTileMap(TileMap *tileMap);
 
+    QAction *registerMapTool(QSharedPointer<AbstractTileMapTool> tool, QString name) { return ToolManager::registerTool(tool, name); }
+
 public slots:
     void cellActivated(int x, int y);
     void cellClicked(int x, int y);
     void cellReleased(int x, int y);
 
 private:
+    using ToolManager::registerTool;
     using ToolManager::mousePressEvent;
-    using ToolManager::mouseReleaseEvent;
     using ToolManager::mouseMoveEvent;
-    using ToolManager::wheelEvent;
+    using ToolManager::mouseReleaseEvent;
 };
 
 #endif // TILEMAPTOOLMANAGER_H

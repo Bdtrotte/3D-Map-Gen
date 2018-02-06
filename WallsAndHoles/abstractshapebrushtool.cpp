@@ -35,19 +35,16 @@ void AbstractShapeBrushTool::cellReleased(int x, int y) {
 void AbstractShapeBrushTool::drawOverlay(int endX, int endY) {
     clearOverlay();
 
-    Array2D<bool> shape = getShape(endX - mStartX, endY - mStartY);
-
-    int startX = std::min(mStartX, endX);
-    int startY = std::min(mStartY, endY);
+    QVector<QPoint> shape = getShape(endX - mStartX, endY - mStartY);
 
     mOverlay = Array2D<QSharedPointer<MapOverlayCell>>(mTileMap->mapSize());
 
     QGraphicsScene *scene = mMapView->scene();
 
-    for (int dx = 0; dx < shape.width(); ++dx)
-        for (int dy = 0; dy < shape.height(); ++dy)
-            if (shape(dx, dy))
-                mOverlay(startX + dx, startY + dy) = QSharedPointer<MapOverlayCell>::create(scene, startX + dx, startY + dy, QColor(255, 0, 0, 100));
+    QPoint start(mStartX, mStartY);
+    for (QPoint p : shape)
+        if (mOverlay.isInBounds(start + p))
+            mOverlay(start + p) = QSharedPointer<MapOverlayCell>::create(scene, mStartX + p.x(), mStartY + p.y(), QColor(255, 0, 0, 100));
 }
 
 void AbstractShapeBrushTool::clearOverlay() {
@@ -56,7 +53,7 @@ void AbstractShapeBrushTool::clearOverlay() {
 }
 
 void AbstractShapeBrushTool::placeShape(int endX, int endY) {
-    Array2D<bool> shape = getShape(endX - mStartX, endY - mStartY);
+    QVector<QPoint> shape = getShape(endX - mStartX, endY - mStartY);
 
     Q_ASSERT( endX >= 0 && endX < mTileMap->width() );
     Q_ASSERT( endY >= 0 && endY < mTileMap->height() );
@@ -64,8 +61,11 @@ void AbstractShapeBrushTool::placeShape(int endX, int endY) {
     int startX = std::min(mStartX, endX);
     int startY = std::min(mStartY, endY);
 
-    for (int dx = 0; dx < shape.width(); ++dx)
-        for (int dy = 0; dy < shape.height(); ++dy)
-            if (shape(dx, dy))
-                mTileMap->setTile(startX + dx, startY + dy, mDrawMaterial);
+    for (QPoint p : shape) {
+        int x = mStartX + p.x();
+        int y = mStartY + p.y();
+
+        if (x >= 0 && x < mTileMap->width() && y >= 0 && y < mTileMap->height())
+            mTileMap->setTile(x, y, mDrawMaterial);
+    }
 }

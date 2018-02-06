@@ -13,27 +13,32 @@ LineBrushTool::LineBrushTool(MapView *mapView, TileMap *tileMap, SharedTileTempl
 
 
 
-Array2D<bool> LineBrushTool::getShape(int dx, int dy) const {
+QVector<QPoint> LineBrushTool::getShape(int dx, int dy) const {
+
+    QVector<QPoint> points;
 
 
     // Vertical line.
-    if (dx == 0)
-        return Array2D<bool>(1, abs(dy) + 1, true);
+    if (dx == 0) {
+        for (int y = 0; y <= abs(dy); ++y)
+            points.push_back(QPoint(0, dy < 0 ? -y : y));
+        return points;
+    }
 
     // Horizontal line.
-    if (dy == 0)
-        return Array2D<bool>(abs(dx) + 1, 1, true);
+    if (dy == 0) {
+        for (int x = 0; x <= abs(dx); ++x)
+            points.push_back(QPoint(dx < 0 ? -x : x, 0));
+        return points;
+    }
 
 
     // Diagonal line.
-    Array2D<bool> shape(abs(dx) + 1, abs(dy) + 1, false);
 
-    int startX = std::max(0, -dx);
-    int startY = std::max(0, -dy);
+    float x = 0;
+    float y = 0;
 
-
-    float x = startX;
-    float y = startY;
+    points.push_back(QPoint(0, 0));
 
     while (true) {
         float ox = x + 0.5f;
@@ -54,14 +59,26 @@ Array2D<bool> LineBrushTool::getShape(int dx, int dy) const {
         int curX = round(x);
         int curY = round(y);
 
-        // Check (curX, curY) is in bounds.
-        if (curX < 0 || curX > abs(dx))
-            break;
-        if (curY < 0 || curY > abs(dy))
-            break;
 
-        shape(curX, curY) = true;
+        // Check that we are still in bounds. Finish when the next point is past (dx, dy).
+        if (dx < 0) {
+            if (curX < dx)
+                break;
+        } else {
+            if (curX > dx)
+                break;
+        }
+
+        if (dy < 0) {
+            if (curY < dy)
+                break;
+        } else {
+            if (curY > dy)
+                break;
+        }
+
+        points.push_back(QPoint(curX, curY));
     }
 
-    return shape;
+    return points;
 }

@@ -35,16 +35,16 @@ Editor::Editor(QObject *parent)
     mMainWindow->addToolBar(mToolBar);
 
     // Add tools.
-    mToolBar->addAction(mTileMapToolManager->registerTool(
+    mToolBar->addAction(mTileMapToolManager->registerMapTool(
                             QSharedPointer<TileMapBrushTool>::create(mTileMap, mTileTemplateSet->tileTemplates()[0]),
                         "Brush Tool"));
-    mToolBar->addAction(mTileMapToolManager->registerTool(
+    mToolBar->addAction(mTileMapToolManager->registerMapTool(
                             QSharedPointer<LineBrushTool>::create(mMapView, mTileMap, mTileTemplateSet->tileTemplates()[0]),
                         "Line Tool"));
-    mToolBar->addAction(mTileMapToolManager->registerTool(
+    mToolBar->addAction(mTileMapToolManager->registerMapTool(
                             QSharedPointer<RectBrushTool>::create(mMapView, mTileMap, mTileTemplateSet->tileTemplates()[0]),
                         "Rect Tool"));
-    mToolBar->addAction(mTileMapToolManager->registerTool(
+    mToolBar->addAction(mTileMapToolManager->registerMapTool(
                             QSharedPointer<EllipseBrushTool>::create(mMapView, mTileMap, mTileTemplateSet->tileTemplates()[0]),
                         "Ellipse Tool"));
 

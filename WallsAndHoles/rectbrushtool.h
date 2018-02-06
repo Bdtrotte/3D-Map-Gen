@@ -9,7 +9,7 @@ public:
     RectBrushTool(MapView *mapView, TileMap *tileMap, SharedTileTemplate drawWith);
 
     /// @brief Draws a rectangle.
-    Array2D<bool> getShape(int dx, int dy) const override;
+    QVector<QPoint> getShape(int dx, int dy) const override;
 };
 
 #endif // RECTBRUSHTOOL_H

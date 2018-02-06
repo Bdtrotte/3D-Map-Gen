@@ -8,20 +8,24 @@ RectBrushTool::RectBrushTool(MapView *mapView, TileMap *tileMap, SharedTileTempl
 
 
 
-Array2D<bool> RectBrushTool::getShape(int dx, int dy) const {
-    Array2D<bool> shape(abs(dx) + 1, abs(dy) + 1, false);
+QVector<QPoint> RectBrushTool::getShape(int dx, int dy) const {
+    QVector<QPoint> points;
 
 
-    for (int x = 0; x < shape.width(); ++x) {
-        shape(x, 0) = true;
-        shape(x, abs(dy)) = true;
+    for (int x = 0; x < abs(dx) + 1; ++x) {
+        int px = dx < 0 ? -x : x;
+
+        points.push_back(QPoint(px, 0));
+        points.push_back(QPoint(px, dy));
     }
 
-    for (int y = 0; y < shape.height(); ++y) {
-        shape(0, y) = true;
-        shape(abs(dx), y) = true;
+    for (int y = 1; y < abs(dy); ++y) {
+        int py = dy < 0 ? -y : y;
+
+        points.push_back(QPoint(0, py));
+        points.push_back(QPoint(dx, py));
     }
 
 
-    return shape;
+    return points;
 }

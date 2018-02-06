@@ -8,7 +8,7 @@ public:
     EllipseBrushTool(MapView *mapView, TileMap *tileMap, SharedTileTemplate drawMaterial);
 
     /// Draws an ellipse.
-    Array2D<bool> getShape(int dx, int dy) const override;
+    QVector<QPoint> getShape(int dx, int dy) const override;
 };
 
 #endif // ELLIPSEBRUSHTOOL_H
