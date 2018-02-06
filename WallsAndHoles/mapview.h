@@ -27,6 +27,7 @@ public:
     void createMap(TileMap *tileMap);
 
 private slots:
+    void setNoView();
     void setDefaultView();
     void setHeightMap();
 

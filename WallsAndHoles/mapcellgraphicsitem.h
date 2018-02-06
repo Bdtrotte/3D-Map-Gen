@@ -1,5 +1,7 @@
 #ifndef MAPCELLGRAPHICSITEM_H
 #define MAPCELLGRAPHICSITEM_H
+#include "tile.h"
+
 #include <QGraphicsItem>
 #include <QPainter>
 #include <QDebug>
@@ -12,7 +14,12 @@
 class MapCellGraphicsItem :public QGraphicsItem
 {
 public:
-    MapCellGraphicsItem(int x, int y, qreal w, qreal h);
+    enum Views{
+        Noview = 0,
+        DefaultView = 1,
+        HeightMap = 2
+    };
+    MapCellGraphicsItem(int x, int y, qreal w, qreal h, const Tile &tile);
 
     QRectF boundingRect() const;
 
@@ -23,14 +30,23 @@ public:
     void setPen(QPen pen);
     void setBrush(QBrush brush);
     void setRect(int x, int y, qreal w, qreal h);
+    void setView(int viewFlag);
 private:
     int mX;
     int mY;
     qreal mW;
     qreal mH;
 
+    const Tile &mTile;
+
+    int mViewFlag;
+
     QBrush mBrush;
     QPen mPen;
+
+    QRectF mRect;
+
+
 };
 
 #endif // MAPCELLGRAPHICSITEM_H

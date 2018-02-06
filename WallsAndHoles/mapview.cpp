@@ -152,33 +152,41 @@ void MapView::mouseReleaseEvent(QMouseEvent *event)
 
 void MapView::setupViewToolBar(){
     QActionGroup *actGroup = new QActionGroup(this);
+    QAction *nView = new QAction("No View", actGroup);
     QAction *dView = new QAction("Default View", actGroup);
     QAction *hMap = new QAction("Height Map", actGroup);
 
+    nView->setCheckable(true);
     dView->setCheckable(true);
-    hMap->setCheckable(true);
+     hMap->setCheckable(true);
+
     dView->setChecked(true);
 
+    connect(nView, &QAction::triggered, this, &MapView::setNoView);
     connect(dView, &QAction::triggered, this, &MapView::setDefaultView);
-    connect(hMap, &QAction::triggered, this, &MapView::setHeightMap);
+    connect(hMap,  &QAction::triggered, this, &MapView::setHeightMap);
 
+    mToolBar->addAction(nView);
     mToolBar->addAction(dView);
     mToolBar->addAction(hMap);
     mToolBar->setAutoFillBackground(true);
     mToolBar->show();
 }
 
-void MapView::setDefaultView(){
+void MapView::setNoView(){
     for(int x = 0; x<mMapCells.size().width(); ++x)
         for(int y = 0; y<mMapCells.size().height(); ++y)
             mMapCells(x,y)->setGraphics(0);
 }
 
-void MapView::setHeightMap(){
+void MapView::setDefaultView(){
     for(int x = 0; x<mMapCells.size().width(); ++x)
         for(int y = 0; y<mMapCells.size().height(); ++y)
             mMapCells(x,y)->setGraphics(1);
 }
 
-
-
+void MapView::setHeightMap(){
+    for(int x = 0; x<mMapCells.size().width(); ++x)
+        for(int y = 0; y<mMapCells.size().height(); ++y)
+            mMapCells(x,y)->setGraphics(2);
+}

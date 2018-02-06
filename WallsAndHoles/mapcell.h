@@ -7,6 +7,7 @@
 #include <QObject>
 #include <QGraphicsScene>
 #include <QGraphicsSceneHoverEvent>
+#include <QGraphicsRectItem>
 
 class MapCell : public QObject
 {
@@ -22,8 +23,9 @@ public:
     /**
      * @brief setGraphics changes the view of the class
      * @param flag:
-     * (0 - default view)
-     * (1 - height map view)
+     * (0 - no view)
+     * (1 - default view)
+     * (2 - height map view)
      */
     void setGraphics(int viewFlag);
 
@@ -38,11 +40,10 @@ private:
     //the tile this cell is displaying.
     const Tile &mTile;
 
-    enum views { defaultView, heightMapView };
     int mViewFlag;
 
-    MapCellGraphicsItem *mBackground;
-    MapCellGraphicsItem *mHighlight;
+    QGraphicsRectItem *mBackground;
+    QGraphicsRectItem *mHighlight;
     MapCellGraphicsItem *mGraphics;
 
 };
