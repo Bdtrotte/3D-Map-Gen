@@ -10,8 +10,8 @@ TileMapToolManager::TileMapToolManager(QObject *parent)
 
 void TileMapToolManager::setTileMap(TileMap *tileMap)
 {
-    for (AbstractToolP t : mTools)
-        static_cast<AbstractTileMapTool *>(t.data())->setTileMap(tileMap);
+    for (AbstractToolP tool : mTools)
+        tool2TileMapTool(tool)->setTileMap(tileMap);
 }
 
 void TileMapToolManager::cellActivated(int x, int y)
@@ -32,5 +32,5 @@ void TileMapToolManager::cellReleased(int x, int y)
 void TileMapToolManager::tileTemplateChanged(SharedTileTemplate tileTemplate)
 {
     for (AbstractToolP tool : mTools)
-        static_cast<AbstractTileMapTool *>(tool.data())->setTileTemplate(tileTemplate);
+        tool2TileMapTool(tool)->setTileTemplate(tileTemplate);
 }
