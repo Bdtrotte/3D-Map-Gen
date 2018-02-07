@@ -115,3 +115,8 @@ void TileMap::setProperty(Properties property)
 {
     mProperty = property;
 }
+
+Properties TileMap::getProperty()
+{
+    return mProperty;
+}

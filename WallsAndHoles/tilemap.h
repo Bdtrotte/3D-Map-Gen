@@ -67,6 +67,8 @@ public:
     const Array2D<QSharedPointer<Tile>> &cTiles() const { return mMap; }
 
     void setProperty(Properties property);
+
+    Properties getProperty();
 signals:
     void tileChanged(int x, int y);
     void resized();
