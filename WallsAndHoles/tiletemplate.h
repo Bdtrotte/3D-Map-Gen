@@ -13,10 +13,11 @@ class TileTemplate : public QObject
     Q_OBJECT
 
 public:
-    explicit TileTemplate(float height = 0,
+    explicit TileTemplate(QColor color = Qt::white,
+                          QString name = "New Tile Template",
+                          float height = 0,
                           float thickness = 1,
                           QVector2D position = QVector2D(0.5, 0.5),
-                          QColor color = Qt::white,
                           QObject *parent = nullptr);
 
     void setHeight(float height);
@@ -26,6 +27,9 @@ public:
     void setPosition(QVector2D position);
 
     void setColor(QColor color);
+
+    QString name() const { return mName; }
+    void setName(QString name) { mName = name; emit changed(); }
 
     float height() const { return mHeight; }
     float thickness() const { return mThickness; }
@@ -40,7 +44,12 @@ signals:
     void thicknessChanged();
     void positionChanged();
 
+    //emited anytime anything which needs to be saved changes
+    void changed();
+
 private:
+    QString mName;
+
     float mHeight;
     float mThickness;
     QVector2D mPosition;

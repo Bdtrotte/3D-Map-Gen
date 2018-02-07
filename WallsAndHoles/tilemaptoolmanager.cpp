@@ -28,3 +28,9 @@ void TileMapToolManager::cellReleased(int x, int y)
 {
     if (!mActiveTool.isNull()) tool2TileMapTool(mActiveTool)->cellReleased(x, y);
 }
+
+void TileMapToolManager::tileTemplateChanged(SharedTileTemplate tileTemplate)
+{
+    for (AbstractToolP tool : mTools)
+        static_cast<AbstractTileMapTool *>(tool.data())->setTileTemplate(tileTemplate);
+}
