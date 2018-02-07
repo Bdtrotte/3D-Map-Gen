@@ -53,6 +53,7 @@ public:
     //simply add a dependent templateSet for saving/reloading,
     //run updateDepend to check if this dependent it really necessary
     void setDepend(SharedTileTemplateSet templateSet);
+
     //remove all dependencies that are no longer used in this tilemap.
     void updateDepend();
 

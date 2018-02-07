@@ -80,6 +80,6 @@ void MeshViewCameraLikeBlender::mouseMoveEvent(QMouseEvent *event) {
 
 
 void MeshViewCameraLikeBlender::wheelEvent(QWheelEvent *event) {
-    mDistanceFromCenter *= pow(1.02, event->delta());
+    mDistanceFromCenter *= pow(1.02, event->delta()/20);
     event->accept();
 }

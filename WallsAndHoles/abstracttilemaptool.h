@@ -3,20 +3,52 @@
 
 #include "abstracttool.h"
 #include "tilemap.h"
+#include "tiletemplate.h"
 
 class AbstractTileMapTool : public AbstractTool
 {
 public:
-    AbstractTileMapTool(TileMap *tileMap) : mTileMap(tileMap) {}
+    AbstractTileMapTool(TileMap *tileMap)
+        : mTileMap(tileMap)
+        , mTileTemplate(nullptr) {}
 
     void setTileMap(TileMap *tileMap) { mTileMap = tileMap; }
 
+    void setTileTemplate(SharedTileTemplate tileTemplate) { mTileTemplate = tileTemplate; }
+
+    /**
+     * @brief Called when the left mouse button is down over a new cell.
+     *
+     * This function is invoked when the mouse button is pressed down or when the mouse
+     * moves over a new cell while pressed down.
+     *
+     * @param x The cell's x position.
+     * @param y The cell's y position.
+     */
     virtual void cellActivated(int, int) {}
-    virtual void cellClicked(int, int)   {}
-    virtual void cellReleased(int, int)  {}
+
+    /**
+     * @brief Called the first time the left mouse button is pressed over a cell.
+     *
+     * Unlike cellActivated(), this function is called when the mouse button is first pressed
+     * and not called for other cells if the mouse is dragged afterward.
+     *
+     * @param x The cell's x position.
+     * @param y The cell's y position.
+     */
+    virtual void cellClicked(int, int) {}
+
+    /**
+     * @brief Called when the left mouse button is released over a cell.
+     *
+     * @param x The cell's x position.
+     * @param y The cell's y position.
+     */
+    virtual void cellReleased(int, int) {}
 
 protected:
     TileMap *mTileMap;
+    SharedTileTemplate mTileTemplate;
 
 private:
     using AbstractTool::mousePressEvent;

@@ -4,6 +4,10 @@
 #include "meshviewcontainer.h"
 #include "tilemapbrushtool.h"
 
+#include "linebrushtool.h"
+#include "rectbrushtool.h"
+#include "ellipsebrushtool.h"
+
 #include <QDockWidget>
 #include <QApplication>
 #include <QDebug>
@@ -11,34 +15,49 @@
 #include <QMenuBar>
 #include <QMessageBox>
 #include <QFileDialog>
+#include <QListView>
 
 Editor::Editor(QObject *parent)
     : QObject(parent)
     , mMainWindow(new QMainWindow())
     , mMap2Mesh(nullptr)
     , mTileMap(nullptr)
-    , mTileTemplateSet(new TileTemplateSet)
     , mMapView(new MapView(mTileMapSelectedRegion, mMainWindow))
     , mTileMapToolManager(new TileMapToolManager(this))
     , mToolBar(new QToolBar(mMainWindow))
 {
-    //TMP set up a basic tileTemplate
-    mTileTemplateSet->addTileTemplate(SharedTileTemplate(new TileTemplate(2, 1, QVector2D(0.5,0.5), Qt::red)));
-
     //Initiallize mMainWindow
     mMainWindow->setCentralWidget(mMapView);
     setUpMenuBar();
     mMainWindow->addToolBar(mToolBar);
 
-    mToolBar->addAction(mTileMapToolManager->registerTool(
-                            QSharedPointer<AbstractTileMapTool>(new TileMapBrushTool(mTileMap, mTileTemplateSet->tileTemplates()[0])), "Brush Tool"));
+    // Add tools.
+
+    mToolBar->addAction(mTileMapToolManager->registerMapTool(
+                            QSharedPointer<TileMapBrushTool>::create(mTileMap)
+                            , "Brush Tool"));
+    mToolBar->addAction(mTileMapToolManager->registerMapTool(
+                            QSharedPointer<LineBrushTool>::create(mMapView, mTileMap)
+                            , "Line Tool"));
+    mToolBar->addAction(mTileMapToolManager->registerMapTool(
+                            QSharedPointer<RectBrushTool>::create(mMapView, mTileMap)
+                            , "Rect Tool"));
+    mToolBar->addAction(mTileMapToolManager->registerMapTool(
+                            QSharedPointer<EllipseBrushTool>::create(mMapView, mTileMap)
+                            , "Ellipse Tool"));
 
     //Set up and add all dock widgets
     QDockWidget *dw = new QDockWidget("Mesh View", mMainWindow);
     mMeshViewContainer = new MeshViewContainer(dw);
     dw->setWidget(mMeshViewContainer);
 
+    //TMP testing templatesets model view
+    QDockWidget *tdw = new QDockWidget("Template Set View", mMainWindow);
+    mTileTemplateSetsView = new TileTemplateSetsView(tdw);
+    tdw->setWidget(mTileTemplateSetsView);
+
     mMainWindow->addDockWidget(Qt::RightDockWidgetArea, dw);
+    mMainWindow->addDockWidget(Qt::LeftDockWidgetArea, tdw);
 
     //Create widget connections
     connect(mMapView, &MapView::cellActivated,
@@ -47,6 +66,9 @@ Editor::Editor(QObject *parent)
             mTileMapToolManager, &TileMapToolManager::cellClicked);
     connect(mMapView, &MapView::cellReleased,
             mTileMapToolManager, &TileMapToolManager::cellReleased);
+
+    connect(mTileTemplateSetsView, &TileTemplateSetsView::tileTemplateChanged,
+            mTileMapToolManager, &TileMapToolManager::tileTemplateChanged);
 
     mMainWindow->showMaximized();
 }
@@ -103,7 +125,7 @@ void Editor::saveMap()
         messageBox.setFixedSize(500,200);
         return;
     }
-    mTileMap->setDepend(QSharedPointer<TileTemplateSet>(mTileTemplateSet));
+    //mTileMap->setDepend(QSharedPointer<TileTemplateSet>(mTileTemplateSets[0]));
     //mTileMap->updateDepend();
     if(mTileMap->savePath().isEmpty()){
         mTileMap->setSavePath(QFileDialog::getSaveFileName(mMainWindow,
@@ -132,7 +154,7 @@ void Editor::loadMap()
     }
     mTileMap = tileMap.data();
     if(!mTileMap->dependencies().isEmpty())
-        mTileTemplateSet = (mTileMap->dependencies()[0]).data();
+        //mTileTemplateSets[0] = (mTileMap->dependencies()[0]);
     mTileMapToolManager->setTileMap(mTileMap);
     mMapView->createMap(mTileMap);
 }

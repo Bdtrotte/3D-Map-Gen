@@ -2,6 +2,8 @@
 // For std::min_element
 #include <algorithm>
 
+#include <QTimer>
+
 #include "map2mesh.h"
 
 #include "m2mtilemesher.h"
@@ -19,7 +21,8 @@ Map2Mesh::Map2Mesh(TileMap *tileMap, QObject *parent)
 }
 
 
-QVector<QSharedPointer<RenderableObject>> Map2Mesh::getMeshes() const {
+QVector<QSharedPointer<RenderableObject>> Map2Mesh::getMeshes() const
+{
     QVector<QSharedPointer<RenderableObject>> meshes;
 
     for (QSharedPointer<RenderableObject> tileMesh : mTileMeshes)
@@ -29,28 +32,34 @@ QVector<QSharedPointer<RenderableObject>> Map2Mesh::getMeshes() const {
 }
 
 
-void Map2Mesh::tileChanged(int x, int y) {
-    // TODO: Possibly inefficient.
-    inferProperties();
+void Map2Mesh::tileChanged(int x, int y)
+{
+    if (!mInferScheduled) {
+        mInferScheduled = true;
 
-    emit mapMeshUpdated();
+        QTimer::singleShot(500, this, [this] () {
+            mInferScheduled = false;
+            inferProperties();
+        });
+    }
 }
 
 
-void Map2Mesh::remakeAll() {
+void Map2Mesh::remakeAll()
+{
     mTileMeshes = Array2D<QSharedPointer<RenderableObject>>(mTileMap->mapSize());
 
     // Reset tile properties to a 0x0 grid so that all meshes are changed in inferProperties.
     mTileProperties = Array2D<M2MPropertySet>();
 
     inferProperties();
-
-
-    emit mapMeshUpdated();
 }
 
 
-void Map2Mesh::inferProperties() {
+
+// TODO: There may be threading issues here! What if mTileMap changes while we are processing?
+void Map2Mesh::inferProperties()
+{
     const Array2D<QSharedPointer<Tile>> &grid = mTileMap->getArray2D();
 
     Array2D<M2MPropertySet> newProperties = Array2D<M2MPropertySet>(mTileMap->mapSize());
@@ -72,7 +81,6 @@ void Map2Mesh::inferProperties() {
             );
 
             float minSurroundingHeight = (*lowestNeighborItr)->height();
-
             props.addProperty(M2MPropertyInstance::createInstance(
                                     heights, {
                                       { heights, "baseHeight", minSurroundingHeight },
@@ -100,5 +108,8 @@ void Map2Mesh::inferProperties() {
     }
 
     mTileProperties = newProperties;
+
+
+    emit mapMeshUpdated();
 }
 

@@ -10,6 +10,7 @@
 #include <QKeyEvent>
 #include <QWidget>
 #include <QRegion>
+#include <QToolBar>
 
 /**
  * @brief The MapView class
@@ -25,6 +26,11 @@ public:
     void clear();
     void createMap(TileMap *tileMap);
 
+private slots:
+    void setNoView(bool state);
+    void setDefaultView(bool state);
+    void setHeightMap(bool state);
+
 protected:
     void wheelEvent(QWheelEvent *event) override;
     void mouseMoveEvent(QMouseEvent *event) override;
@@ -32,16 +38,39 @@ protected:
     void mouseReleaseEvent(QMouseEvent *event) override;
 
 signals:
-    //emited when the left mouse button is pressed while the mouse is over a given cell (clicked, or dragged over)
+    /**
+     * @brief Emitted when the left mouse button is down over a new cell.
+     *
+     * This signal is sent out when the mouse button is pressed down or when the mouse
+     * moves over a new cell while pressed down.
+     *
+     * @param x The cell's x position.
+     * @param y The cell's y position.
+     */
     void cellActivated(int x, int y);
 
-    //emited when a cell is clicked
+    /**
+     * @brief Emitted the first time the left mouse button is pressed over a cell.
+     *
+     * Unlike cellActivated(), this signal is sent out when the mouse button is first pressed
+     * and not sent out for other cells if the mouse is dragged afterward.
+     *
+     * @param x The cell's x position.
+     * @param y The cell's y position.
+     */
     void cellClicked(int x, int y);
 
-    //emited when the mouse is released over this cell
+    /**
+     * @brief Emitted when the left mouse button is released over a cell.
+     *
+     * @param x The cell's x position.
+     * @param y The cell's y position.
+     */
     void cellReleased(int x, int y);
 
 private:
+    void setupViewToolBar();
+
     float mScale;
     int mOldX;
     int mOldY;
@@ -51,6 +80,11 @@ private:
     QPoint mPreMousePoint;
 
     const QRegion &mSelectedRegion;
+
+    QToolBar *mToolBar;
+    QAction *mNoView;
+    QAction *mDefaultView;
+    QAction *mHeightView;
 };
 
 #endif // MAPVIEW_H

@@ -4,6 +4,7 @@
 #include <QVector>
 #include <QSize>
 #include <QDebug>
+#include <QPoint>
 
 
 // Iterator classes for Array2D.
@@ -52,6 +53,10 @@ public:
         return data[r][c];
     }
 
+    Type& operator()(QPoint p) {
+        return (*this)(p.x(), p.y());
+    }
+
     void resize(int rows, int cols)
     {
         data.resize(rows);
@@ -63,6 +68,12 @@ public:
 
     int width() const { return data.size(); }
     int height() const { return data.empty() ? 0 : data[0].size(); }
+
+    /**
+     * @brief Returns true if (p.x(), p.y()) is a valid region.
+     * @param p  The point.
+     */
+    bool isInBounds(QPoint p) const { return p.x() >= 0 && p.x() < width() && p.y() >= 0 && p.y() < height(); }
 
 
     /* Standard begin() and end() methods. */

@@ -97,6 +97,7 @@ void TileMap::setDepend(SharedTileTemplateSet templateSet){
         mDependencies.push_back(templateSet);
     }
 }
+
 void TileMap::updateDepend(){
     QVector<bool> valid(mDependencies.size());
     for (int x = 0; x < mMap.size().width(); ++x) {
