@@ -4,6 +4,8 @@
 #include "meshviewcontainer.h"
 #include "tilemapbrushtool.h"
 
+#include "filltool.h"
+
 #include "linebrushtool.h"
 #include "rectbrushtool.h"
 #include "ellipsebrushtool.h"
@@ -35,17 +37,21 @@ Editor::Editor(QObject *parent)
     mMainWindow->addToolBar(mToolBar);
 
     // Add tools.
+    SharedTileTemplate defaultDrawMaterial = mTileTemplateSet->tileTemplates()[0];
     mToolBar->addAction(mTileMapToolManager->registerMapTool(
-                            QSharedPointer<TileMapBrushTool>::create(mTileMap, mTileTemplateSet->tileTemplates()[0]),
+                            QSharedPointer<TileMapBrushTool>::create(mTileMap, defaultDrawMaterial),
                         "Brush Tool"));
     mToolBar->addAction(mTileMapToolManager->registerMapTool(
-                            QSharedPointer<LineBrushTool>::create(mMapView, mTileMap, mTileTemplateSet->tileTemplates()[0]),
+                            QSharedPointer<FillTool>::create(mTileMap, defaultDrawMaterial),
+                        "Fill Tool"));
+    mToolBar->addAction(mTileMapToolManager->registerMapTool(
+                            QSharedPointer<LineBrushTool>::create(mMapView, mTileMap, defaultDrawMaterial),
                         "Line Tool"));
     mToolBar->addAction(mTileMapToolManager->registerMapTool(
-                            QSharedPointer<RectBrushTool>::create(mMapView, mTileMap, mTileTemplateSet->tileTemplates()[0]),
+                            QSharedPointer<RectBrushTool>::create(mMapView, mTileMap, defaultDrawMaterial),
                         "Rect Tool"));
     mToolBar->addAction(mTileMapToolManager->registerMapTool(
-                            QSharedPointer<EllipseBrushTool>::create(mMapView, mTileMap, mTileTemplateSet->tileTemplates()[0]),
+                            QSharedPointer<EllipseBrushTool>::create(mMapView, mTileMap, defaultDrawMaterial),
                         "Ellipse Tool"));
 
     //Set up and add all dock widgets
