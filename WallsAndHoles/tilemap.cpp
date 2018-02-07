@@ -110,3 +110,8 @@ void TileMap::updateDepend(){
     }
     mDependencies = newDependencies;
 }
+
+void TileMap::setProperty(Properties property)
+{
+    mProperty = property;
+}

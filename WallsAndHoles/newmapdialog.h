@@ -2,6 +2,7 @@
 #define NEWMAPDIALOG_H
 
 #include <QDialog>
+#include "tilemap.h"
 
 namespace Ui {
 class NewMapDialog;
@@ -24,9 +25,16 @@ public:
     ~NewMapDialog();
 
     NewMapData result;
+    Properties TileMapProperty;
 
 private slots:
     void on_buttonBox_accepted();
+
+    void on_outdoorRadioBtn_clicked();
+
+    void on_noPropertyRadioBtn_clicked();
+
+    void on_indoorRadioBtn_clicked();
 
 private:
     Ui::NewMapDialog *ui;
