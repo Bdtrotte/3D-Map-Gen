@@ -5,13 +5,11 @@
 
 #include "linebrushtool.h"
 
-LineBrushTool::LineBrushTool(MapView *mapView, TileMap *tileMap, SharedTileTemplate drawMaterial)
-    : AbstractShapeBrushTool(mapView, tileMap, drawMaterial)
+LineBrushTool::LineBrushTool(MapView *mapView, TileMap *tileMap)
+    : AbstractShapeBrushTool(mapView, tileMap)
 {
 
 }
-
-
 
 QVector<QPoint> LineBrushTool::getShape(int dx, int dy) const {
 

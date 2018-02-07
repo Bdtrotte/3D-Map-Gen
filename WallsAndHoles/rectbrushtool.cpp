@@ -1,7 +1,7 @@
 #include "rectbrushtool.h"
 
-RectBrushTool::RectBrushTool(MapView *mapView, TileMap *tileMap, SharedTileTemplate drawWith)
-    : AbstractShapeBrushTool(mapView, tileMap, drawWith)
+RectBrushTool::RectBrushTool(MapView *mapView, TileMap *tileMap)
+    : AbstractShapeBrushTool(mapView, tileMap)
 {
 
 }

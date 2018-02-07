@@ -3,13 +3,18 @@
 
 #include "abstracttool.h"
 #include "tilemap.h"
+#include "tiletemplate.h"
 
 class AbstractTileMapTool : public AbstractTool
 {
 public:
-    AbstractTileMapTool(TileMap *tileMap) : mTileMap(tileMap) {}
+    AbstractTileMapTool(TileMap *tileMap)
+        : mTileMap(tileMap)
+        , mTileTemplate(nullptr) {}
 
     void setTileMap(TileMap *tileMap) { mTileMap = tileMap; }
+
+    void setTileTemplate(SharedTileTemplate tileTemplate) { mTileTemplate = tileTemplate; }
 
     /**
      * @brief Called when the left mouse button is down over a new cell.
@@ -43,6 +48,7 @@ public:
 
 protected:
     TileMap *mTileMap;
+    SharedTileTemplate mTileTemplate;
 
 private:
     using AbstractTool::mousePressEvent;

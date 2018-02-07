@@ -4,8 +4,8 @@
 #include "ellipsebrushtool.h"
 
 
-EllipseBrushTool::EllipseBrushTool(MapView *mapView, TileMap *tileMap, SharedTileTemplate drawWith)
-    : AbstractShapeBrushTool(mapView, tileMap, drawWith)
+EllipseBrushTool::EllipseBrushTool(MapView *mapView, TileMap *tileMap)
+    : AbstractShapeBrushTool(mapView, tileMap)
 {
 
 }
