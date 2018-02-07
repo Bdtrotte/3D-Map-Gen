@@ -45,11 +45,8 @@ void FillTool::updateSelection(int x, int y)
 
     while (!toBeProcessed.isEmpty()) {
 
-
         QPoint p = toBeProcessed.dequeue();
 
-
-        qDebug() << "processing tile (" << p.x() << ", " << p.y() << ")";
 
         // Add the point to the selection.
         mSelection.insert(p);
