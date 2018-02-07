@@ -80,7 +80,7 @@ private:
     //default save path of this tilemap object, can be changed when using "save as" command.
     QString mSavePath;
 
-    int mProperty;
+    Properties mProperty;
 };
 
 typedef QSharedPointer<TileMap> SharedTileMap;
