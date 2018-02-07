@@ -101,6 +101,7 @@ SharedTileMap XMLTool::openTileMap(QString tileMapPath){
     //close reader and flush file
     xmlReader.clear();
     file.close();
+    tileMap->setSavePath(tileMapPath);
     return tileMap;
 }
 
@@ -162,6 +163,7 @@ SharedTileTemplateSet XMLTool::openTileTemplateSet(QString templateSetPath){
     //close reader and flush file
     xmlReader.clear();
     file.close();
+    templateSet->setSavePath(templateSetPath);
     return templateSet;
 }
 

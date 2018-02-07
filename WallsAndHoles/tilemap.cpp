@@ -92,6 +92,11 @@ void TileMap::resizeMap(QSize newSize)
     emit resized();
 }
 
+void TileMap::setDepend(SharedTileTemplateSet templateSet){
+    if(mDependencies.indexOf(templateSet)==-1){
+        mDependencies.push_back(templateSet);
+    }
+}
 void TileMap::updateDepend(){
     QVector<bool> valid(mDependencies.size());
     for (int x = 0; x < mMap.size().width(); ++x) {
