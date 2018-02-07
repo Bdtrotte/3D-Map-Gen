@@ -3,6 +3,7 @@
 #include "newmapdialog.h"
 #include "meshviewcontainer.h"
 #include "tilemapbrushtool.h"
+#include "tilemapselectiontool.h"
 
 #include "linebrushtool.h"
 #include "rectbrushtool.h"
@@ -56,8 +57,17 @@ Editor::Editor(QObject *parent)
     mTileTemplateSetsView = new TileTemplateSetsView(tdw);
     tdw->setWidget(mTileTemplateSetsView);
 
+    //Temporary setup for tilePropertyView
+    QDockWidget *tilePropDW = new QDockWidget("Tile Property View", mMainWindow);
+    mTilePropertyView = new TilePropertyView(tempDW);
+    tempDW->setWidget(mTilePropertyView);
+    mToolBar->addAction(mTileMapToolManager->registerMapTool(
+                            QSharedPointer<TileMapSelectionTool>::create(mTilePropertyView, mTileMap)
+                            , "Selection Tool"));
+
     mMainWindow->addDockWidget(Qt::RightDockWidgetArea, dw);
     mMainWindow->addDockWidget(Qt::LeftDockWidgetArea, tdw);
+    mMainWindow->addDockWidget(Qt::LeftDockWidgetArea, tilePropDW);
 
     //Create widget connections
     connect(mMapView, &MapView::cellActivated,

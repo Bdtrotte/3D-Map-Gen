@@ -9,6 +9,8 @@
 #include "map2mesh.h"
 #include "meshviewcontainer.h"
 #include "tiletemplatesetsview.h"
+#include "tilepropertyview.h"
+
 
 #include <QObject>
 #include <QList>
@@ -56,6 +58,7 @@ private:
     MapView *mMapView;
     MeshViewContainer *mMeshViewContainer;
     TileTemplateSetsView *mTileTemplateSetsView;
+    TilePropertyView *mTilePropertyView;
 
     //Tools
     TileMapToolManager *mTileMapToolManager;

@@ -62,9 +62,6 @@ public:
 
     Qt::ItemFlags flags(const QModelIndex& index) const override;
 
-    const QString savePath() const { return mSavePath; }
-    void setSavePath(QString path){ mSavePath = path; }
-
 signals:
     void saveStateChanged(bool state);
 
