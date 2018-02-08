@@ -71,6 +71,10 @@ Editor::Editor(QObject *parent)
             mTileMapToolManager, &TileMapToolManager::cellClicked);
     connect(mMapView, &MapView::cellReleased,
             mTileMapToolManager, &TileMapToolManager::cellReleased);
+    connect(mMapView, &MapView::cellHovered,
+            mTileMapToolManager, &TileMapToolManager::cellHovered);
+    connect(mMapView, &MapView::mouseExitedMap,
+            mTileMapToolManager, &TileMapToolManager::mouseExitedMap);
 
     connect(mTileTemplateSetsView, &TileTemplateSetsView::tileTemplateChanged,
             mTileMapToolManager, &TileMapToolManager::tileTemplateChanged);

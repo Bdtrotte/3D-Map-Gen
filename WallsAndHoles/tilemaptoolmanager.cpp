@@ -29,6 +29,16 @@ void TileMapToolManager::cellReleased(int x, int y)
     if (!mActiveTool.isNull()) tool2TileMapTool(mActiveTool)->cellReleased(x, y);
 }
 
+void TileMapToolManager::cellHovered(int x, int y)
+{
+    if (!mActiveTool.isNull()) tool2TileMapTool(mActiveTool)->cellHovered(x, y);
+}
+
+void TileMapToolManager::mouseExitedMap()
+{
+    if (!mActiveTool.isNull()) tool2TileMapTool(mActiveTool)->mouseExitedMap();
+}
+
 void TileMapToolManager::tileTemplateChanged(SharedTileTemplate tileTemplate)
 {
     for (AbstractToolP tool : mTools)
