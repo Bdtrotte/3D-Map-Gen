@@ -27,6 +27,8 @@ public:
 
     /**
      * @brief Called whenever mTileMap changes. Called in constructor.
+     *
+     * @param previous  The OLD mTileMap. The new one can be retreived using getTileMap().
      */
     virtual void toolTileMapChanged(TileMap *previous = nullptr) {}
 
