@@ -100,10 +100,15 @@ void MapView::mouseMoveEvent(QMouseEvent *event)
             //Just manually setting highlight color here, but TODO: make this a configurable variable somewhere else
             mMapCells(curMouseCell.x(), curMouseCell.y())->setHighlightBrush(QColor(0, 0, 0, 20));
 
+            // Emit a hovered signal for this cell.
+            emit cellHovered(curMouseCell.x(), curMouseCell.y());
+
             if (event->buttons() & Qt::LeftButton) {
                 //entered a new cell while holding leftclick
                 emit cellActivated(curMouseCell.x(), curMouseCell.y());
             }
+        } else {
+            emit mouseExitedMap();
         }
 
         mPreMousePoint = curMouseCell;
