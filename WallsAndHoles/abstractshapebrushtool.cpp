@@ -38,10 +38,13 @@ void AbstractShapeBrushTool::drawOverlay(int endX, int endY) {
 
     QGraphicsScene *scene = mMapView->scene();
 
+    QColor color = getTileTemplate()->color();
+    color.setAlpha(100);
+
     QPoint start(mStartX, mStartY);
     for (QPoint p : shape)
         if (mOverlay.isInBounds(start + p))
-            mOverlay(start + p) = QSharedPointer<MapOverlayCell>::create(scene, mStartX + p.x(), mStartY + p.y(), QColor(255, 0, 0, 100));
+            mOverlay(start + p) = QSharedPointer<MapOverlayCell>::create(scene, mStartX + p.x(), mStartY + p.y(), color);
 }
 
 void AbstractShapeBrushTool::clearOverlay() {
