@@ -14,6 +14,11 @@ TileMap::TileMap(QSize mapSize,
                     this, &TileMap::tileChanged);
         }
     }
+
+
+    // tileChanged() and resized() signals should always be followed by a mapChanged() signal
+    connect(this, &TileMap::tileChanged, this, [this] () { emit mapChanged(); });
+    connect(this, &TileMap::resized, this, [this] () { emit mapChanged(); });
 }
 
 

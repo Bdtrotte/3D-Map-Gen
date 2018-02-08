@@ -7,5 +7,5 @@ TileMapBrushTool::TileMapBrushTool(TileMap *tileMap)
 
 void TileMapBrushTool::cellActivated(int x, int y)
 {
-    mTileMap->setTile(x, y, mTileTemplate);
+    getTileMap()->setTile(x, y, getTileTemplate());
 }

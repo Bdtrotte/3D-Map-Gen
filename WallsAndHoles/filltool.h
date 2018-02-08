@@ -7,7 +7,9 @@
 
 #include "abstracttilemaptool.h"
 
-class FillTool : public AbstractTileMapTool {
+class FillTool : public QObject, public AbstractTileMapTool {
+    Q_OBJECT
+
 public:
     FillTool(TileMap *tileMap);
 
@@ -18,6 +20,9 @@ public:
      */
     void cellClicked(int x, int y) override;
 
+
+    void toolTileMapChanged(TileMap *prev) override;
+
     /* TODO:
      *
      * There should be a fill tool preview.
@@ -26,6 +31,10 @@ public:
      * update the fill preview.
      * */
 
+public slots:
+
+    void invalidateSelection();
+
 protected:
 
 
@@ -33,10 +42,6 @@ protected:
     /// the given point is selected.
     void updateSelection(int x, int y);
 
-    /**
-     * @brief Returns the TileTemplate that should be drawn with.
-     */
-    SharedTileTemplate getDrawMaterial() const;
 
     /// The set of points that will be filled in.
     QSet<QPoint> mSelection;

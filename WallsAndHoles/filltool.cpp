@@ -26,17 +26,46 @@ void FillTool::cellClicked(int x, int y)
     // Update the fill selection.
     updateSelection(x, y);
 
+
+    // Temporarily block invalidateSelection() signals.
+    disconnect(getTileMap(), &TileMap::mapChanged, this, &FillTool::invalidateSelection);
+
     // Fill it in.
-    SharedTileTemplate drawMaterial = getDrawMaterial();
+    SharedTileTemplate drawMaterial = getTileTemplate();
     for (QPoint point : mSelection)
-        mTileMap->setTile(point.x(), point.y(), drawMaterial);
+        getTileMap()->setTile(point.x(), point.y(), drawMaterial);
+
+    // Stop blocking signals.
+    connect(getTileMap(), &TileMap::mapChanged, this, &FillTool::invalidateSelection);
 }
 
+
+void FillTool::toolTileMapChanged(TileMap *prev)
+{
+    // Clear mSelection because it is no longer valid.
+    invalidateSelection();
+
+    // Disconnect old connections.
+    if (prev != nullptr)
+        getTileMap()->disconnect(this);
+
+    // Make new connections.
+    connect(getTileMap(), &TileMap::mapChanged, this, &FillTool::invalidateSelection);
+}
+
+
+void FillTool::invalidateSelection()
+{
+    mSelection.clear();
+}
 
 
 void FillTool::updateSelection(int x, int y)
 {
+    if (mSelection.contains(QPoint(x, y)))
+        return;
 
+    mSelection.clear();
     QQueue<QPoint> toBeProcessed;
     QSet<QPoint> inQueueOrProcessed;
 
@@ -51,21 +80,17 @@ void FillTool::updateSelection(int x, int y)
         mSelection.insert(p);
 
         // The Tile corresponding to the current point.
-        const Tile &pTile = mTileMap->tileAt(p.x(), p.y());
+        const Tile &pTile = getTileMap()->tileAt(p.x(), p.y());
 
         // Add the point's neighbors to the queue if they match the point and
         // are not already in the queue.
-        QPoint neighbors[8] = {
-            QPoint(p.x() + 1, p.y() + 1),
+        QPoint neighbors[4] = {
             QPoint(p.x() + 0, p.y() + 1),
-            QPoint(p.x() - 1, p.y() + 1),
 
             QPoint(p.x() + 1, p.y() + 0),
             QPoint(p.x() - 1, p.y() + 0),
 
-            QPoint(p.x() + 1, p.y() - 1),
-            QPoint(p.x() + 0, p.y() - 1),
-            QPoint(p.x() - 1, p.y() - 1)
+            QPoint(p.x() + 0, p.y() - 1)
 
         };
 
@@ -79,15 +104,15 @@ void FillTool::updateSelection(int x, int y)
                 int ny = neighbor.y();
 
                 // Make sure neighbor is in bounds.
-                if (nx >= 0 && nx < mTileMap->width()
-                        && ny >= 0 && ny < mTileMap->height()) {
+                if (nx >= 0 && nx < getTileMap()->width()
+                        && ny >= 0 && ny < getTileMap()->height()) {
 
 
                     // Check if the neighbor matches the current point.
                     bool tileMatches = true;
-                    if (mTileMap->tileAt(nx, ny).hasTileTemplate() != pTile.hasTileTemplate())
+                    if (getTileMap()->tileAt(nx, ny).hasTileTemplate() != pTile.hasTileTemplate())
                         tileMatches = false;
-                    else if (mTileMap->tileAt(nx, ny).tileTemplate() != pTile.tileTemplate())
+                    else if (getTileMap()->tileAt(nx, ny).tileTemplate() != pTile.tileTemplate())
                         tileMatches = false;
 
 
@@ -100,11 +125,4 @@ void FillTool::updateSelection(int x, int y)
             }
         }
     }
-}
-
-
-
-SharedTileTemplate FillTool::getDrawMaterial() const
-{
-    return mTileTemplate;
 }
