@@ -28,6 +28,16 @@ void AbstractShapeBrushTool::cellReleased(int x, int y)
     placeShape(x, y);
 }
 
+void AbstractShapeBrushTool::mouseExitedMap()
+{
+    clearOverlay();
+}
+
+void AbstractShapeBrushTool::deactivate()
+{
+    clearOverlay();
+}
+
 
 void AbstractShapeBrushTool::drawOverlay(int endX, int endY) {
     clearOverlay();
