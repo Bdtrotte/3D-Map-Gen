@@ -1,12 +1,8 @@
 #include "abstractshapebrushtool.h"
 
-AbstractShapeBrushTool::AbstractShapeBrushTool(MapView *mapView, TileMap *tileMap, SharedTileTemplate drawWith)
+AbstractShapeBrushTool::AbstractShapeBrushTool(MapView *mapView, TileMap *tileMap)
     : AbstractTileMapTool(tileMap),
-      mMapView(mapView),
-      mDrawMaterial(drawWith)
-{
-
-}
+      mMapView(mapView) {}
 
 
 void AbstractShapeBrushTool::cellClicked(int x, int y) {
@@ -20,16 +16,17 @@ void AbstractShapeBrushTool::cellClicked(int x, int y) {
 }
 
 
-void AbstractShapeBrushTool::cellActivated(int x, int y) {
+void AbstractShapeBrushTool::cellActivated(int x, int y)
+{
     drawOverlay(x, y);
 }
 
 
-void AbstractShapeBrushTool::cellReleased(int x, int y) {
+void AbstractShapeBrushTool::cellReleased(int x, int y)
+{
     clearOverlay();
     placeShape(x, y);
 }
-
 
 
 void AbstractShapeBrushTool::drawOverlay(int endX, int endY) {
@@ -63,6 +60,6 @@ void AbstractShapeBrushTool::placeShape(int endX, int endY) {
         int y = mStartY + p.y();
 
         if (x >= 0 && x < mTileMap->width() && y >= 0 && y < mTileMap->height())
-            mTileMap->setTile(x, y, mDrawMaterial);
+            mTileMap->setTile(x, y, mTileTemplate);
     }
 }

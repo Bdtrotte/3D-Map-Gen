@@ -2,9 +2,8 @@
 
 #include <QDebug>
 
-TileMapBrushTool::TileMapBrushTool(TileMap *tileMap, SharedTileTemplate tileTemplate)
-    : AbstractTileMapTool(tileMap)
-    , mTileTemplate(tileTemplate) {}
+TileMapBrushTool::TileMapBrushTool(TileMap *tileMap)
+    : AbstractTileMapTool(tileMap) {}
 
 void TileMapBrushTool::cellActivated(int x, int y)
 {

@@ -8,8 +8,10 @@
 #include "xmltool.h"
 #include "map2mesh.h"
 #include "meshviewcontainer.h"
+#include "tiletemplatesetsview.h"
 
 #include <QObject>
+#include <QList>
 #include <QToolBar>
 
 /**
@@ -50,12 +52,10 @@ private:
     TileMap *mTileMap;
     QRegion mTileMapSelectedRegion;
 
-    //TileTemplateSet data
-    TileTemplateSet *mTileTemplateSet;
-
     //views
     MapView *mMapView;
     MeshViewContainer *mMeshViewContainer;
+    TileTemplateSetsView *mTileTemplateSetsView;
 
     //Tools
     TileMapToolManager *mTileMapToolManager;

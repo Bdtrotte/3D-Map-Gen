@@ -21,6 +21,8 @@ public slots:
     void cellClicked(int x, int y);
     void cellReleased(int x, int y);
 
+    void tileTemplateChanged(SharedTileTemplate tileTemplate);
+
 private:
     using ToolManager::registerTool;
     using ToolManager::mousePressEvent;
