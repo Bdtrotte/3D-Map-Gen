@@ -35,28 +35,12 @@ Editor::Editor(QObject *parent)
     mMainWindow->addToolBar(mToolBar);
 
     // Add tools.
-<<<<<<< HEAD
-    SharedTileTemplate defaultDrawMaterial = mTileTemplateSet->tileTemplates()[0];
-    mToolBar->addAction(mTileMapToolManager->registerMapTool(
-                            QSharedPointer<TileMapBrushTool>::create(mTileMap, defaultDrawMaterial),
-                        "Brush Tool"));
-    mToolBar->addAction(mTileMapToolManager->registerMapTool(
-                            QSharedPointer<FillTool>::create(mTileMap, defaultDrawMaterial),
-                        "Fill Tool"));
-    mToolBar->addAction(mTileMapToolManager->registerMapTool(
-                            QSharedPointer<LineBrushTool>::create(mMapView, mTileMap, defaultDrawMaterial),
-                        "Line Tool"));
-    mToolBar->addAction(mTileMapToolManager->registerMapTool(
-                            QSharedPointer<RectBrushTool>::create(mMapView, mTileMap, defaultDrawMaterial),
-                        "Rect Tool"));
-    mToolBar->addAction(mTileMapToolManager->registerMapTool(
-                            QSharedPointer<EllipseBrushTool>::create(mMapView, mTileMap, defaultDrawMaterial),
-                        "Ellipse Tool"));
-=======
-
     mToolBar->addAction(mTileMapToolManager->registerMapTool(
                             QSharedPointer<TileMapBrushTool>::create(mTileMap)
                             , "Brush Tool"));
+    mToolBar->addAction(mTileMapToolManager->registerMapTool(
+                            QSharedPointer<FillTool>::create(mTileMap)
+                            , "Fill Tool"));
     mToolBar->addAction(mTileMapToolManager->registerMapTool(
                             QSharedPointer<LineBrushTool>::create(mMapView, mTileMap)
                             , "Line Tool"));
@@ -66,7 +50,6 @@ Editor::Editor(QObject *parent)
     mToolBar->addAction(mTileMapToolManager->registerMapTool(
                             QSharedPointer<EllipseBrushTool>::create(mMapView, mTileMap)
                             , "Ellipse Tool"));
->>>>>>> master
 
     //Set up and add all dock widgets
     QDockWidget *dw = new QDockWidget("Mesh View", mMainWindow);

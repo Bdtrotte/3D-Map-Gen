@@ -13,9 +13,8 @@ inline uint qHash (const QPoint & key)
 
 
 
-FillTool::FillTool(TileMap *tileMap, SharedTileTemplate drawWith)
-    : AbstractTileMapTool(tileMap),
-      mDrawMaterial(drawWith)
+FillTool::FillTool(TileMap *tileMap)
+    : AbstractTileMapTool(tileMap)
 {
 }
 
@@ -107,6 +106,5 @@ void FillTool::updateSelection(int x, int y)
 
 SharedTileTemplate FillTool::getDrawMaterial() const
 {
-    // TODO: This will be changed in the future.
-    return mDrawMaterial;
+    return mTileTemplate;
 }

@@ -9,7 +9,7 @@
 
 class FillTool : public AbstractTileMapTool {
 public:
-    FillTool(TileMap *tileMap, SharedTileTemplate drawWith);
+    FillTool(TileMap *tileMap);
 
     /**
      * @brief This will immediately fill an area.
@@ -41,9 +41,6 @@ protected:
     /// The set of points that will be filled in.
     QSet<QPoint> mSelection;
 
-
-    /// TEMPORARY: The drawing material. USE getDrawMaterial() INSTEAD.
-    SharedTileTemplate mDrawMaterial;
 };
 
 #endif // FILLTOOL_H
