@@ -4,6 +4,8 @@
 #include "meshviewcontainer.h"
 #include "tilemapbrushtool.h"
 
+#include "filltool.h"
+
 #include "linebrushtool.h"
 #include "rectbrushtool.h"
 #include "ellipsebrushtool.h"
@@ -33,10 +35,12 @@ Editor::Editor(QObject *parent)
     mMainWindow->addToolBar(mToolBar);
 
     // Add tools.
-
     mToolBar->addAction(mTileMapToolManager->registerMapTool(
                             QSharedPointer<TileMapBrushTool>::create(mTileMap)
                             , "Brush Tool"));
+    mToolBar->addAction(mTileMapToolManager->registerMapTool(
+                            QSharedPointer<FillTool>::create(mTileMap)
+                            , "Fill Tool"));
     mToolBar->addAction(mTileMapToolManager->registerMapTool(
                             QSharedPointer<LineBrushTool>::create(mMapView, mTileMap)
                             , "Line Tool"));

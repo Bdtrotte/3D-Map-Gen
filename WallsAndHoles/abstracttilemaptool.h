@@ -10,11 +10,26 @@ class AbstractTileMapTool : public AbstractTool
 public:
     AbstractTileMapTool(TileMap *tileMap)
         : mTileMap(tileMap)
-        , mTileTemplate(nullptr) {}
+        , mTileTemplate(nullptr)
+    {
+        toolTileMapChanged();
+    }
 
-    void setTileMap(TileMap *tileMap) { mTileMap = tileMap; }
+    void setTileMap(TileMap *tileMap)
+    {
+        TileMap *prev = mTileMap;
+        mTileMap = tileMap;
+        toolTileMapChanged(prev);
+    }
 
     void setTileTemplate(SharedTileTemplate tileTemplate) { mTileTemplate = tileTemplate; }
+
+
+    /**
+     * @brief Called whenever mTileMap changes. Called in constructor.
+     */
+    virtual void toolTileMapChanged(TileMap *previous = nullptr) {}
+
 
     /**
      * @brief Called when the left mouse button is down over a new cell.
@@ -47,10 +62,16 @@ public:
     virtual void cellReleased(int, int) {}
 
 protected:
+
+
+    TileMap *getTileMap() const { return mTileMap; }
+
+    SharedTileTemplate getTileTemplate() const { return mTileTemplate; }
+
+private:
     TileMap *mTileMap;
     SharedTileTemplate mTileTemplate;
 
-private:
     using AbstractTool::mousePressEvent;
     using AbstractTool::mouseReleaseEvent;
     using AbstractTool::mouseMoveEvent;

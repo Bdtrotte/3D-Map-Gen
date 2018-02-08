@@ -65,6 +65,11 @@ signals:
     void tileChanged(int x, int y);
     void resized();
 
+    /**
+     * @brief Sent out whenever the map is changed in any way. Happens after tileChanged() and resized() signals.
+     */
+    void mapChanged();
+
 private:
     //2D array of Tile*. If mMap[x][y]->isEmpty() then ground is shown
     Array2D<QSharedPointer<Tile>> mMap;
