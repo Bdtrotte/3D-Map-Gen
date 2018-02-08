@@ -39,7 +39,7 @@ Editor::Editor(QObject *parent)
                             QSharedPointer<TileMapBrushTool>::create(mTileMap)
                             , "Brush Tool"));
     mToolBar->addAction(mTileMapToolManager->registerMapTool(
-                            QSharedPointer<FillTool>::create(mTileMap)
+                            QSharedPointer<FillTool>::create(mMapView, mTileMap)
                             , "Fill Tool"));
     mToolBar->addAction(mTileMapToolManager->registerMapTool(
                             QSharedPointer<LineBrushTool>::create(mMapView, mTileMap)

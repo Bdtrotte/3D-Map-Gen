@@ -13,8 +13,9 @@ inline uint qHash (const QPoint & key)
 
 
 
-FillTool::FillTool(TileMap *tileMap)
-    : AbstractTileMapTool(tileMap)
+FillTool::FillTool(MapView *mapView, TileMap *tileMap)
+    : AbstractTileMapTool(tileMap),
+      mMapView(mapView)
 {
 }
 
@@ -22,6 +23,8 @@ FillTool::FillTool(TileMap *tileMap)
 
 void FillTool::cellClicked(int x, int y)
 {
+    // Clear the overlay.
+    clearOverlay();
 
     // Update the fill selection.
     updateSelection(x, y);
@@ -37,6 +40,12 @@ void FillTool::cellClicked(int x, int y)
 
     // Stop blocking signals.
     connect(getTileMap(), &TileMap::mapChanged, this, &FillTool::invalidateSelection);
+}
+
+
+void FillTool::cellHovered(int x, int y)
+{
+    drawOverlay(x, y);
 }
 
 
@@ -125,4 +134,42 @@ void FillTool::updateSelection(int x, int y)
             }
         }
     }
+}
+
+
+
+void FillTool::clearOverlay()
+{
+    mOverlay = Array2D<QSharedPointer<MapOverlayCell>>();
+}
+
+
+void FillTool::drawOverlay(int endX, int endY)
+{
+    if (!mSelection.contains(QPoint(endX, endY))) {
+        clearOverlay();
+
+        updateSelection(endX, endY);
+
+        QColor color = getTileTemplate()->color();
+        color.setAlpha(100);
+
+        QGraphicsScene *scene = mMapView->scene();
+
+        mOverlay.resize(getTileMap()->width(), getTileMap()->height());
+        for (QPoint p : mSelection)
+            mOverlay(p) = QSharedPointer<MapOverlayCell>::create(scene, p.x(), p.y(), color);
+    }
+}
+
+void FillTool::mouseExitedMap()
+{
+    mSelection.clear();
+    clearOverlay();
+}
+
+void FillTool::deactivate()
+{
+    mSelection.clear();
+    clearOverlay();
 }
