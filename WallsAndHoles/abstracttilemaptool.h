@@ -30,7 +30,7 @@ public:
      *
      * @param previous  The OLD mTileMap. The new one can be retreived using getTileMap().
      */
-    virtual void toolTileMapChanged(TileMap *previous = nullptr) {}
+    virtual void toolTileMapChanged(TileMap *previous = nullptr) { Q_UNUSED(previous); }
 
 
     /**
