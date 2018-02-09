@@ -45,6 +45,7 @@ public:
 
 signals:
     void tileChanged(int x, int y);
+    void tilePinged(int x, int y);
 
 public slots:
     //by calling the respective set functions, it is ensured that the tile wont go out of bounds.
@@ -53,6 +54,8 @@ public slots:
     void templatePositionChanged() { setRelativeThickness(mRelativeThickness); }
 
 private:
+    void makeTemplateConnections();
+
     SharedTileTemplate mTileTemplate;
 
     const int mXPos;

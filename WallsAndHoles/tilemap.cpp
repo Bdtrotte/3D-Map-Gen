@@ -12,6 +12,8 @@ TileMap::TileMap(QSize mapSize,
             mMap(x, y) = QSharedPointer<Tile>::create(nullptr, x, y, this);
             connect(mMap(x, y).data(), &Tile::tileChanged,
                     this, &TileMap::tileChanged);
+            connect(mMap(x, y).data(), &Tile::tilePinged,
+                    this, &TileMap::tilePinged);
         }
     }
 
@@ -97,21 +99,48 @@ void TileMap::resizeMap(QSize newSize)
     emit resized();
 }
 
-void TileMap::updateDepend(){
-    QVector<bool> valid(mDependencies.size());
-    for (int x = 0; x < mMap.size().width(); ++x) {
-        for (int y = 0; y < mMap.size().height(); ++y) {
-            for(int i=0; i<mDependencies.size(); i++){
-                if(mDependencies[i]->cTileTemplates().indexOf(mMap(x, y)->tileTemplate())>=0){
-                    valid[i]=true;
-                }
-            }
-        }
+bool TileMap::tileTemplateUsed(SharedTileTemplate tileTemplate)
+{
+    mTilePingReceiveMode = SetCheck;
+    mTilePinged = false;
+
+    tileTemplate->emitTilePing();
+
+    bool result = mTilePinged;
+    mTilePinged = false;
+    mTilePingReceiveMode = None;
+
+    return result;
+}
+
+bool TileMap::tileTemplateSetUsed(SharedTileTemplateSet tileTemplateSet)
+{
+    mTilePingReceiveMode = SetCheck;
+    mTilePinged = false;
+
+    for (SharedTileTemplate t : tileTemplateSet->cTileTemplates()) {
+        t->emitTilePing();
+
+        if (mTilePinged)
+            break;
     }
-    QVector<SharedTileTemplateSet> newDependencies;
-    for(int i=0; i<valid.size(); i++){
-        if(valid[i])
-            newDependencies.push_back(mDependencies[i]);
+
+    bool result = mTilePinged;
+    mTilePinged = false;
+    mTilePingReceiveMode = None;
+
+    return result;
+}
+
+void TileMap::tilePinged(int x, int y)
+{
+    Q_UNUSED(x);
+    Q_UNUSED(y);
+
+    switch(mTilePingReceiveMode) {
+    case SetCheck:
+        mTilePinged = true;
+        break;
+    default: break;
     }
-    mDependencies = newDependencies;
 }

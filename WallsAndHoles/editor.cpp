@@ -85,6 +85,7 @@ Editor::Editor(QObject *parent)
 Editor::~Editor()
 {
     delete mMainWindow;
+    delete mTileMap;
 }
 
 void Editor::newMap()
@@ -93,9 +94,8 @@ void Editor::newMap()
     nmd.exec();
 
     if (nmd.result.width != -1) {
-        if (mTileMap)
-            delete mTileMap;
-        mTileMap = new TileMap(QSize(nmd.result.width, nmd.result.height), this);
+        delete mTileMap;
+        mTileMap = new TileMap(QSize(nmd.result.width, nmd.result.height));
         mTileMapToolManager->setTileMap(mTileMap);
 
         mMapView->createMap(mTileMap);
@@ -128,52 +128,56 @@ void Editor::makeNewScene()
 
 void Editor::saveMap()
 {
-    if(mTileMap==nullptr){
+    // TODO : Save should be disabled if there is no map
+    if(mTileMap == nullptr){
         QMessageBox messageBox;
         messageBox.critical(0,"Error","TileMap doesn't exist!");
         messageBox.setFixedSize(500,200);
         return;
     }
-    //mTileMap->setDepend(QSharedPointer<TileTemplateSet>(mTileTemplateSets[0]));
-    //mTileMap->updateDepend();
+
     if(mTileMap->savePath().isEmpty()){
         mTileMap->setSavePath(QFileDialog::getSaveFileName(mMainWindow,
-            tr("Save Map"), "/home", tr("Save Files (*.xml)")));
+                                                           tr("Save Map"),
+                                                           "/home/",
+                                                           tr("Save Files (*.xml)")));
     }
-    for(SharedTileTemplateSet set: mTileMap->dependencies()){
-        if(set->savePath().isEmpty()){
-            set->setSavePath(QFileDialog::getSaveFileName(mMainWindow,
-                tr("Save Templates"), "/home", tr("Save Files (*.xml)")));
-        }
-    }
-    XMLTool::saveTileMap(QSharedPointer<TileMap>(mTileMap));
+
+    const QList<SharedTileTemplateSet> &tileTemplateSets = mTileTemplateSetsView->tileTemplateSets();
+
+    for (SharedTileTemplateSet tts : tileTemplateSets)
+        tts->save();
+
+    XMLTool::saveTileMap(mTileMap, tileTemplateSets);
 }
 
 void Editor::loadMap()
 {
     QString fileName = QFileDialog::getOpenFileName(mMainWindow,
-        tr("Open Map"), "/home", tr("Open Files (*.xml)"));
+                                                    tr("Open Map"),
+                                                    "/home/",
+                                                    tr("Open Files (*.xml)"));
 
-    SharedTileMap tileMap = XMLTool::openTileMap(fileName);
-    if(tileMap==nullptr){
+    TileMap *tileMap = XMLTool::openTileMap(fileName, mTileTemplateSetsView);
+
+    if (tileMap == nullptr) {
         QMessageBox messageBox;
         messageBox.critical(0,"Error","Fail to load TileMap!");
         messageBox.setFixedSize(500,200);
         return;
     }
-    mTileMap = tileMap.data();
-    if(!mTileMap->dependencies().isEmpty())
-        //mTileTemplateSets[0] = (mTileMap->dependencies()[0]);
+
+    // TODO SHOULD provide option to save old tileMap
+    delete mTileMap;
+
+    mTileMap = tileMap;
     mTileMapToolManager->setTileMap(mTileMap);
     mMapView->createMap(mTileMap);
 }
 
 void Editor::exportMapMesh()
 {
-
-    MeshViewContainer *meshViewContainer = mMainWindow->findChild<MeshViewContainer *>();
-
-    if (meshViewContainer == nullptr) {
+    if (mMeshViewContainer == nullptr) {
         QMessageBox messageBox;
         messageBox.critical(0,"Error","MeshView doesn't exist!");
         messageBox.setFixedSize(500,200);
@@ -181,27 +185,12 @@ void Editor::exportMapMesh()
     }
 
     QString fileName = QFileDialog::getSaveFileName(mMainWindow,
-        tr("Export OBJ"), "/home", tr("Export Files (*.obj)"));
+                                                    tr("Export OBJ"),
+                                                    "/home/",
+                                                    tr("Export Files (*.obj)"));
 
     if(!fileName.isEmpty())
-        meshViewContainer->saveMesh(fileName);
-
-/*
-    MeshViewContainer *meshViewContainer = mMainWindow->findChild<MeshViewContainer *>();
-
-    if (meshViewContainer == nullptr) {
-        QMessageBox messageBox;
-        messageBox.critical(0,"Error","MeshView doesn't exist!");
-        messageBox.setFixedSize(500,200);
-        return;
-    }
-
-    QString fileName = QFileDialog::getOpenFileName(mMainWindow,
-        tr("import OBJ"), "/home", tr("import Files (*.obj)"));
-
-    if(!fileName.isEmpty())
-        meshViewContainer->loadMesh(fileName);
-*/
+        mMeshViewContainer->saveMesh(fileName);
 }
 
 void Editor::setUpMenuBar()

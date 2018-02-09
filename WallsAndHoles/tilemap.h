@@ -50,16 +50,27 @@ public:
     const QString savePath() const { return mSavePath; }
     void setSavePath(QString path){ mSavePath = path; }
 
-    //simply add a dependent templateSet for saving/reloading,
-    //run updateDepend to check if this dependent it really necessary
-    void setDepend(SharedTileTemplateSet templateSet){ mDependencies.push_back(templateSet); }
-    //remove all dependencies that are no longer used in this tilemap.
-    void updateDepend();
-
-    QVector<SharedTileTemplateSet> dependencies() const { return mDependencies; }
-
     const Array2D<QSharedPointer<Tile>> &cTiles() const { return mMap; }
 
+    /**
+     * @brief tileTemplateUsed
+     * Returns true if some tile in the map uses this tileTemplate
+     * @param tileTemplate
+     * The tile template to check.
+     */
+    bool tileTemplateUsed(SharedTileTemplate tileTemplate);
+
+    /**
+     * @brief tileTemplateSetUsed
+     * Returns true if some tile in the map uses any of the tileTemplates
+     * of the given set
+     * @param tileTemplateSet
+     * The set to check
+     */
+    bool tileTemplateSetUsed(SharedTileTemplateSet tileTemplateSet);
+
+public slots:
+    void tilePinged(int x, int y);
 
 signals:
     void tileChanged(int x, int y);
@@ -71,15 +82,25 @@ signals:
     void mapChanged();
 
 private:
+    /**
+     * @brief The TilePingReceiveMode enum
+     * How a tilePinged singnal should be received.
+     */
+    enum TilePingReceiveMode {
+        None,
+        SetCheck
+    };
+
     //2D array of Tile*. If mMap[x][y]->isEmpty() then ground is shown
     Array2D<QSharedPointer<Tile>> mMap;
 
-    //holding a reference to all tileTemplateSet that this tilemap depends on
-    QVector<SharedTileTemplateSet> mDependencies;
     //default save path of this tilemap object, can be changed when using "save as" command.
     QString mSavePath;
-};
 
-typedef QSharedPointer<TileMap> SharedTileMap;
+    TilePingReceiveMode mTilePingReceiveMode;
+    //set to true when mTilePingReceiveMode == SetCheck, and a tilePinged is received.
+    //Should be carefully be set to false elsewhere
+    bool mTilePinged;
+};
 
 #endif // TILEMAP_H

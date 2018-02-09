@@ -14,14 +14,7 @@ Tile::Tile(SharedTileTemplate tileTemplate,
     , mRelativeHeight(0)
     , mRelativePosition(QVector2D())
 {
-    if (!mTileTemplate.isNull()) {
-        connect(mTileTemplate.data(), &TileTemplate::exclusivePropertyChanged,
-                this, [this]{ emit tileChanged(mXPos, mYPos); });
-        connect(mTileTemplate.data(), &TileTemplate::thicknessChanged,
-                this, &Tile::templateThicknessChanged);
-        connect(mTileTemplate.data(), &TileTemplate::positionChanged,
-                this, &Tile::templatePositionChanged);
-    }
+    makeTemplateConnections();
 }
 
 float Tile::thickness() const
@@ -131,14 +124,25 @@ void Tile::resetTile(SharedTileTemplate newTileTemplate)
         mTileTemplate->disconnect(this);
 
     mTileTemplate = newTileTemplate;
+    makeTemplateConnections();
+
+    emit tileChanged(mXPos, mYPos);
+}
+
+void Tile::makeTemplateConnections()
+{
     if (!mTileTemplate.isNull()) {
         connect(mTileTemplate.data(), &TileTemplate::exclusivePropertyChanged,
-                this, [this]{ emit tileChanged(mXPos, mYPos); });
+                this, [this]{
+            emit tileChanged(mXPos, mYPos);
+        });
         connect(mTileTemplate.data(), &TileTemplate::thicknessChanged,
                 this, &Tile::templateThicknessChanged);
         connect(mTileTemplate.data(), &TileTemplate::positionChanged,
                 this, &Tile::templatePositionChanged);
+        connect(mTileTemplate.data(), &TileTemplate::pingTiles,
+                this, [this]{
+            emit tilePinged(mXPos, mYPos);
+        });
     }
-
-    emit tileChanged(mXPos, mYPos);
 }
