@@ -68,6 +68,20 @@ signals:
      */
     void cellReleased(int x, int y);
 
+
+    /**
+     * @brief Emitted when the mouse hovers over a new cell.
+     * @param x The cell's x position.
+     * @param y The cell's y position.
+     */
+    void cellHovered(int x, int y);
+
+
+    /**
+     * @brief Emitted when the mouse exits the map.
+     */
+    void mouseExitedMap();
+
 private:
     void setupViewToolBar();
 

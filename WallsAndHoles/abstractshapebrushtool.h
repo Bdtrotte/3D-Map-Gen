@@ -20,6 +20,10 @@ public:
     void cellActivated(int x, int y) override;
     void cellReleased(int x, int y) override;
 
+    void mouseExitedMap() override;
+
+    void deactivate() override;
+
     /**
      * @brief This function should output a QVector of points that should be filled in.
      *

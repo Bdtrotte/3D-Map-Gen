@@ -63,6 +63,20 @@ public:
      */
     virtual void cellReleased(int, int) {}
 
+
+    /**
+     * @brief Called when the mouse hovers over a new cell.
+     * @param x The cell's x position.
+     * @param y The cell's y position.
+     */
+    virtual void cellHovered(int, int) {}
+
+
+    /**
+     * @brief Called when the mouse is no longer hovering over a cell.
+     */
+    virtual void mouseExitedMap() {}
+
 protected:
 
 
