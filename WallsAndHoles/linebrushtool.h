@@ -6,7 +6,7 @@
 
 class LineBrushTool : public AbstractShapeBrushTool {
 public:
-    LineBrushTool(MapView *mapView, TileMap *tileMap, SharedTileTemplate drawMaterial);
+    LineBrushTool(MapView *mapView, TileMap *tileMap);
 
     /**
      * @brief Makes a 1-pixel line by intersecting a line with a grid.

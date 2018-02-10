@@ -4,8 +4,8 @@
 #include "ellipsebrushtool.h"
 
 
-EllipseBrushTool::EllipseBrushTool(MapView *mapView, TileMap *tileMap, SharedTileTemplate drawWith)
-    : AbstractShapeBrushTool(mapView, tileMap, drawWith)
+EllipseBrushTool::EllipseBrushTool(MapView *mapView, TileMap *tileMap)
+    : AbstractShapeBrushTool(mapView, tileMap)
 {
 
 }
@@ -52,6 +52,18 @@ static double getYTheta(double sn, double bestTheta, double minTheta) {
 
 QVector<QPoint> EllipseBrushTool::getShape(int dx, int dy) const {
 
+    /*
+     * Currently, this method works by intersecting an ellipse with a grid.
+     * The while loop sweeps through angles between 0 and 2pi in as few iterations
+     * as possible while hitting every grid square.
+     *
+     *
+     * There is a much easier and faster way of drawing an ellipse:
+     *  1) Only draw one quadrant, then reflect.
+     *  2) To draw the quadrant, just intersect the ellipse with lines.
+     * If this function becomes buggy, reimplement using this process.
+     * */
+
     QVector<QPoint> points;
 
     if (dx == 0) {
@@ -87,8 +99,9 @@ QVector<QPoint> EllipseBrushTool::getShape(int dx, int dy) const {
     double x = cx + rx * cos(theta);
     double y = cy + ry * sin(theta);
 
+    // "Small angle" that is small enough not to skip too many tiles, but is large
+    // enough so that the while() loop doesn't iterate too many times.
     double smallAngle = 0.02 * std::min(fabs(atan(rx / ry)), fabs(atan(ry / rx)));
-    qDebug() << "dx: " << dx << ", dy: " << dy << "; smallAngle == " << smallAngle;
 
     while (theta <= 2 * M_PI) {
         points.push_back(QPoint(floor(x), floor(y)));

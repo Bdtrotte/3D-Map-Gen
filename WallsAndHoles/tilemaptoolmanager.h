@@ -20,6 +20,10 @@ public slots:
     void cellActivated(int x, int y);
     void cellClicked(int x, int y);
     void cellReleased(int x, int y);
+    void cellHovered(int x, int y);
+    void mouseExitedMap();
+
+    void tileTemplateChanged(SharedTileTemplate tileTemplate);
 
 private:
     using ToolManager::registerTool;

@@ -11,16 +11,18 @@
 #include "mapview.h"
 #include "mapoverlaycell.h"
 
-class AbstractShapeBrushTool : public AbstractTileMapTool {
+class AbstractShapeBrushTool : public AbstractTileMapTool
+{
 public:
-
-    AbstractShapeBrushTool(MapView *mapView, TileMap *tileMap, SharedTileTemplate drawWith);
-
+    AbstractShapeBrushTool(MapView *mapView, TileMap *tileMap);
 
     void cellClicked(int x, int y) override;
     void cellActivated(int x, int y) override;
     void cellReleased(int x, int y) override;
 
+    void mouseExitedMap() override;
+
+    void deactivate() override;
 
     /**
      * @brief This function should output a QVector of points that should be filled in.
@@ -45,9 +47,6 @@ private:
 
     /// The overlay that is drawn over the map view.
     Array2D<QSharedPointer<MapOverlayCell>> mOverlay;
-
-    /// The tile template that will be placed down on the map.
-    SharedTileTemplate mDrawMaterial;
 
     /// Draws an overlay previewing the shape that will be drawn.
     void drawOverlay(int endX, int endY);

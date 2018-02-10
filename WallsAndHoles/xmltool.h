@@ -13,7 +13,7 @@ namespace XMLTool {
     SharedTileTemplateSet openTileTemplateSet(QString templateSetPath);
 
     int saveTileMap(SharedTileMap tileMap, bool saveTemplates = true);
-    int saveTileTemplateSet(SharedTileTemplateSet templateSet);
+    int saveTileTemplateSet(TileTemplateSet *templateSet);
 }
 
 #endif // XMLTOOL_H

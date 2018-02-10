@@ -6,7 +6,7 @@
 
 class RectBrushTool : public AbstractShapeBrushTool {
 public:
-    RectBrushTool(MapView *mapView, TileMap *tileMap, SharedTileTemplate drawWith);
+    RectBrushTool(MapView *mapView, TileMap *tileMap);
 
     /// @brief Draws a rectangle.
     QVector<QPoint> getShape(int dx, int dy) const override;

@@ -80,6 +80,11 @@ protected:
     Array2D<M2MPropertySet> mTileProperties;
 
 
+    /**
+     * @brief Whether an inferProperties() call has been scheduled. Used in tileChanged().
+     */
+    bool mInferScheduled;
+
 public:
     struct Properties {
         static M2MPropertyClass *Height;

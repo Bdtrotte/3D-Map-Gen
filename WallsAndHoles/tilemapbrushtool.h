@@ -8,12 +8,9 @@
 class TileMapBrushTool : public AbstractTileMapTool
 {
 public:
-    TileMapBrushTool(TileMap *tileMap, SharedTileTemplate tileTemplate);
+    TileMapBrushTool(TileMap *tileMap);
 
     void cellActivated(int x, int y) override;
-
-private:
-    SharedTileTemplate mTileTemplate;
 };
 
 #endif // TILEMAPBRUSHTOOL_H

@@ -54,12 +54,16 @@ SOURCES += \
     m2mpropertyinstance.cpp \
     m2mpropertyset.cpp \
     map2meshproperties.cpp \
+    tiletemplatesetsview.cpp \
+    newtiletemplatesetdialog.cpp \
+    tiletemplateeditor.cpp \
     mapcellgraphicsitem.cpp \
     abstractshapebrushtool.cpp \
     linebrushtool.cpp \
     rectbrushtool.cpp \
     ellipsebrushtool.cpp \
-    mapoverlaycell.cpp
+    mapoverlaycell.cpp \
+    filltool.cpp
 
 HEADERS += \
     renderableobject.h \
@@ -74,7 +78,6 @@ HEADERS += \
     tile.h \
     tilemap.h \
     tiletemplate.h \
-    tiletemplateset.h \
     abstracttool.h \
     abstractmeshviewcamera.h \
     abstractdrawableglobject.h \
@@ -96,12 +99,17 @@ HEADERS += \
     m2mpropertyclass.h \
     m2mpropertyinstance.h \
     m2mpropertyset.h \
+    tiletemplateset.h \
+    tiletemplatesetsview.h \
+    newtiletemplatesetdialog.h \
+    tiletemplateeditor.h \
     mapcellgraphicsitem.h \
     abstractshapebrushtool.h \
     linebrushtool.h \
     rectbrushtool.h \
     ellipsebrushtool.h \
-    mapoverlaycell.h
+    mapoverlaycell.h \
+    filltool.h
 
 FORMS += \
     meshview.ui \
