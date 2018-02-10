@@ -83,8 +83,6 @@ void TileTemplateSetsView::removeCurrentTileTemplateSet()
     mTabs->removeTab(curI);
     delete w;
 
-    emit tileTemplateSetAboutToBeRemoved(mTileTemplateSets[curI]);
-
     mTileTemplateSets.removeAt(curI);
     mListViews.removeAt(curI);
 }
@@ -140,10 +138,6 @@ void TileTemplateSetsView::removeTemplate()
     Q_ASSERT(curIndex.isValid());
 
     int row = curIndex.row();
-
-    TileTemplate *tileTemplate = mTileTemplateSets[curTab]->tileTemplateAt(row);
-
-    emit tileTemplateAboutToBeRemoved(tileTemplate);
 
     mTileTemplateSets[curTab]->removeTileTemplate(row);
 

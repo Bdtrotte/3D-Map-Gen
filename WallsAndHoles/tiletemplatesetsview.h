@@ -28,9 +28,6 @@ public:
 signals:
     void tileTemplateChanged(TileTemplate *tileTemplate);
 
-    void tileTemplateAboutToBeRemoved(const TileTemplate *tileTemplate);
-    void tileTemplateSetAboutToBeRemoved(const SavableTileTemplateSet *tileTemplateSet);
-
 private slots:
     void selectedTileTemplateChanged();
 

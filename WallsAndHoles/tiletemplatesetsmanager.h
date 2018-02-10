@@ -2,6 +2,7 @@
 #define TILETEMPLATESETSMANAGER_H
 
 #include "tilemap.h"
+#include "tiletemplatesetsview.h"
 #include "savabletiletemplateset.h"
 
 #include <QObject>
@@ -17,7 +18,13 @@ class TileTemplateSetsManager : public QObject
     Q_OBJECT
 
 public:
-    explicit TileTemplateSetsManager(QObject *parent = nullptr);
+    explicit TileTemplateSetsManager(TileMap *tileMap = nullptr, QObject *parent = nullptr);
+
+    /**
+     * @brief newTileTemplateSet
+     * Opens dialogs to create a new tileTemplateSet
+     */
+    void newTileTemplateSet();
 
     /**
      * @brief addTileTemplateSet
@@ -55,6 +62,13 @@ public:
 
     /**
      * @brief loadTileTemplateSet
+     * Opens dialogs to locate the templateSet to load, then loads it
+     * @return
+     */
+    SavableTileTemplateSet *loadTileTemplateSet();
+
+    /**
+     * @brief loadTileTemplateSet
      * Loads a tileTemplateSet at the given path.
      * If the file can't be loaded for any reason,
      * the user will be given dialogs to relocate the file.
@@ -65,10 +79,26 @@ public:
     SavableTileTemplateSet *tileTemplateSetAt(int i) { return mTileTemplateSets[i]; }
     const QList<SavableTileTemplateSet *> tileTemplateSets() { return mTileTemplateSets; }
 
-private:
-    QList<SavableTileTemplateSet *> mTileTemplateSets;
+signals:
+    /**
+     * @brief tileTemplateSetAdded
+     * Emitted whenever a new TileTemplateSet is added to the manager:
+     * Either by loading, new dialog, or somewhere in code.
+     * @param tileTemplateSet
+     */
+    void tileTemplateSetAdded(TileTemplateSet *tileTemplateSet);
 
+    /**
+     * @brief tileTemplateSetAboutToBeRemoved
+     * emitted right before the given tileTemplateSet is removed and deleted.
+     * @param tileTemplateSet
+     */
+    void tileTemplateSetAboutToBeRemoved(TileTemplateSet *tileTemplateSet);
+
+private:
     TileMap *mTileMap;
+
+    QList<SavableTileTemplateSet *> mTileTemplateSets;
 };
 
 #endif // TILETEMPLATESETSMANAGER_H
