@@ -1,6 +1,7 @@
 #include "newmapdialog.h"
-
 #include "ui_newmapdialog.h"
+
+#include <QMessageBox>
 
 NewMapDialog::NewMapDialog(QWidget *parent) :
     QDialog(parent),
@@ -8,6 +9,9 @@ NewMapDialog::NewMapDialog(QWidget *parent) :
     ui(new Ui::NewMapDialog())
 {
     ui->setupUi(this);
+
+    oneChecked = ui->checkBox_Ceiling->isChecked()||ui->checkBox_Default->isChecked()||
+            ui->checkBox_Indoor->isChecked()||ui->checkBox_Outdoor->isChecked();
 }
 
 NewMapDialog::~NewMapDialog()
@@ -20,34 +24,34 @@ void NewMapDialog::on_buttonBox_accepted()
     result = NewMapData(ui->widthSpinBox->value(), ui->heightSpinBox->value());
 }
 
-void NewMapDialog::on_checkBox_Default_stateChanged(int arg1)
+void NewMapDialog::on_checkBox_Default_toggled(bool checked)
 {
-    if(arg1 == 0)
-        TileMapProperty.defaultMap = false;
-    else if(arg1 == 2)
+    if(checked)
         TileMapProperty.defaultMap = true;
+    else
+        TileMapProperty.defaultMap = false;
 }
 
-void NewMapDialog::on_checkBox_Outdoor_stateChanged(int arg1)
+void NewMapDialog::on_checkBox_Outdoor_toggled(bool checked)
 {
-    if(arg1 == 0)
-        TileMapProperty.outsideMap = false;
-    else if(arg1 == 2)
+    if(checked)
         TileMapProperty.outsideMap = true;
+    else
+        TileMapProperty.outsideMap = false;
 }
 
-void NewMapDialog::on_checkBox_Indoor_stateChanged(int arg1)
+void NewMapDialog::on_checkBox_Indoor_toggled(bool checked)
 {
-    if(arg1 == 0)
-        TileMapProperty.indoorMap = false;
-    else if(arg1 == 2)
+    if(checked)
         TileMapProperty.indoorMap = true;
+    else
+        TileMapProperty.indoorMap = false;
 }
 
-void NewMapDialog::on_checkBox_Ceiling_stateChanged(int arg1)
+void NewMapDialog::on_checkBox_Ceiling_toggled(bool checked)
 {
-    if(arg1 == 0)
-        TileMapProperty.ceiling = false;
-    else if(arg1 == 2)
+    if(checked)
         TileMapProperty.ceiling = true;
+    else
+        TileMapProperty.ceiling = false;
 }

@@ -12,10 +12,10 @@
 
 struct Properties
 {
-    bool defaultMap;
-    bool outsideMap;
-    bool indoorMap;
-    bool ceiling;
+    bool defaultMap = false;
+    bool outsideMap = false;
+    bool indoorMap = false;
+    bool ceiling = false;
 };
 class TileMap : public QObject
 {
