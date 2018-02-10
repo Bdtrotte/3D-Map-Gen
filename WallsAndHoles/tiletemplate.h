@@ -69,6 +69,4 @@ private:
     QColor mColor;
 };
 
-typedef QSharedPointer<TileTemplate> SharedTileTemplate;
-
 #endif // TILETEMPLATE_H

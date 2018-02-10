@@ -17,7 +17,7 @@ TileMap *XMLTool::openTileMap(QString tileMapPath, TileTemplateSetsView *tileTem
 
     TileMap *tileMap;
 
-    QVector<SharedTileTemplateSet> loadedTileTemplateSets;
+    QVector<SavableTileTemplateSet *> loadedTileTemplateSets;
 
     //Parse the XML until we reach end of it
     while(!xmlReader.atEnd() && !xmlReader.hasError()) {
@@ -44,7 +44,7 @@ TileMap *XMLTool::openTileMap(QString tileMapPath, TileTemplateSetsView *tileTem
             }
 
             if(xmlReader.name()=="TileTemplateSet"){
-                SharedTileTemplateSet templateSet;
+                SavableTileTemplateSet *templateSet;
                 foreach(const QXmlStreamAttribute &attr, xmlReader.attributes()) {
                     if (attr.name().toString() == QString("SavePath")) {
                         templateSet = XMLTool::openTileTemplateSet(attr.value().toString());
@@ -61,7 +61,7 @@ TileMap *XMLTool::openTileMap(QString tileMapPath, TileTemplateSetsView *tileTem
                 float x;
                 float y;
                 int id;
-                SharedTileTemplate tileTemplate;
+                TileTemplate *tileTemplate;
                 float relativeThickness;
                 float relativeHeight;
                 QVector2D relativePosition;
@@ -88,7 +88,7 @@ TileMap *XMLTool::openTileMap(QString tileMapPath, TileTemplateSetsView *tileTem
                     }
                 }
 
-                for (SharedTileTemplateSet set: loadedTileTemplateSets) {
+                for (SavableTileTemplateSet *set: loadedTileTemplateSets) {
                     if (id >= set->size()) {
                         id -= set->size();
                         continue;
@@ -119,7 +119,7 @@ TileMap *XMLTool::openTileMap(QString tileMapPath, TileTemplateSetsView *tileTem
     return tileMap;
 }
 
-SharedTileTemplateSet XMLTool::openTileTemplateSet(QString templateSetPath){
+SavableTileTemplateSet *XMLTool::openTileTemplateSet(QString templateSetPath){
     //load the file
     QFile file(templateSetPath);
     if (!file.exists() || !file.open(QFile::ReadOnly | QFile::Text)) {
@@ -127,7 +127,7 @@ SharedTileTemplateSet XMLTool::openTileTemplateSet(QString templateSetPath){
         return nullptr;
     }
     QXmlStreamReader xmlReader(file.readAll());
-    SharedTileTemplateSet templateSet;
+    SavableTileTemplateSet *templateSet;
     //Parse the XML until we reach end of it
     while(!xmlReader.atEnd() && !xmlReader.hasError()) {
         // Read next element
@@ -139,9 +139,9 @@ SharedTileTemplateSet XMLTool::openTileTemplateSet(QString templateSetPath){
         //If token is StartElement - read it
         if(token == QXmlStreamReader::StartElement) {
             if(xmlReader.name() == "TileTemplateSet") {
-                templateSet = SharedTileTemplateSet::create(templateSetPath,
-                                                            xmlReader.attributes()[0].value().toString(),
-                                                            true);
+                templateSet = new SavableTileTemplateSet(templateSetPath,
+                                                         xmlReader.attributes()[0].value().toString(),
+                                                         true);
             }
             if(xmlReader.name() == "TileTemplate") {
                 QString name;
@@ -168,7 +168,7 @@ SharedTileTemplateSet XMLTool::openTileTemplateSet(QString templateSetPath){
                     if (attr.name().toString() == QString("Color"))
                         color = QColor(attr.value().toString());
                 }
-                SharedTileTemplate tileTemplate = SharedTileTemplate::create(color, name, height,thickness,position);
+                TileTemplate *tileTemplate = new TileTemplate(color, name, height, thickness, position, templateSet);
                 templateSet->addTileTemplate(tileTemplate, true);
             }
         }
@@ -186,8 +186,8 @@ SharedTileTemplateSet XMLTool::openTileTemplateSet(QString templateSetPath){
     return templateSet;
 }
 
-int XMLTool::saveTileMap(TileMap *tileMap, const QList<SharedTileTemplateSet> &tileTemplateSets) {
-    QVector<SharedTileTemplateSet> usedTileTemplateSets;
+int XMLTool::saveTileMap(TileMap *tileMap, const QList<SavableTileTemplateSet *> &tileTemplateSets) {
+    QVector<SavableTileTemplateSet *> usedTileTemplateSets;
     QString tileMapPath = tileMap->savePath();
     QFile file(tileMapPath);
     if (!file.open(QIODevice::WriteOnly | QIODevice::Truncate))
@@ -208,7 +208,7 @@ int XMLTool::saveTileMap(TileMap *tileMap, const QList<SharedTileTemplateSet> &t
     root.setAttributeNode(attr);
     doc.appendChild(root);
 
-    for (SharedTileTemplateSet tts : tileTemplateSets) {
+    for (SavableTileTemplateSet *tts : tileTemplateSets) {
         if (tileMap->tileTemplateSetUsed(tts)) {
             usedTileTemplateSets.append(tts);
 
@@ -246,7 +246,7 @@ int XMLTool::saveTileMap(TileMap *tileMap, const QList<SharedTileTemplateSet> &t
                 element.setAttributeNode(attr);
                 attr = doc.createAttribute("TemplateID");
                 int id=-1; int count=0;
-                for (SharedTileTemplateSet set: usedTileTemplateSets) {
+                for (SavableTileTemplateSet *set: usedTileTemplateSets) {
                     if ((id=set->cTileTemplates().indexOf(tile.tileTemplate())) == -1) {
                         count+=set->cTileTemplates().size();
                         continue;
@@ -271,8 +271,8 @@ int XMLTool::saveTileMap(TileMap *tileMap, const QList<SharedTileTemplateSet> &t
     return 0;
 }
 
-int XMLTool::saveTileTemplateSet(TileTemplateSet *templateSet){
-    const QList<SharedTileTemplate> templatelist = templateSet->cTileTemplates();
+int XMLTool::saveTileTemplateSet(SavableTileTemplateSet *templateSet){
+    const QList<TileTemplate *> templatelist = templateSet->cTileTemplates();
     QString templateSetPath = templateSet->savePath();
     QFile file(templateSetPath);
     if (!file.open(QIODevice::WriteOnly | QIODevice::Truncate))
@@ -289,7 +289,7 @@ int XMLTool::saveTileTemplateSet(TileTemplateSet *templateSet){
     attr.setValue(templateSet->name());
     root.setAttributeNode(attr);
     doc.appendChild(root);
-    for(SharedTileTemplate temp: templatelist){
+    for(TileTemplate *temp: templatelist){
         element = doc.createElement("TileTemplate");
         attr = doc.createAttribute("Name");
         attr.setValue(temp->name());

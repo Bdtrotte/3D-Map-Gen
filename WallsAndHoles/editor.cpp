@@ -143,9 +143,9 @@ void Editor::saveMap()
                                                            tr("Save Files (*.xml)")));
     }
 
-    const QList<SharedTileTemplateSet> &tileTemplateSets = mTileTemplateSetsView->tileTemplateSets();
+    const QList<SavableTileTemplateSet *> &tileTemplateSets = mTileTemplateSetsView->tileTemplateSets();
 
-    for (SharedTileTemplateSet tts : tileTemplateSets)
+    for (SavableTileTemplateSet *tts : tileTemplateSets)
         tts->save();
 
     XMLTool::saveTileMap(mTileMap, tileTemplateSets);

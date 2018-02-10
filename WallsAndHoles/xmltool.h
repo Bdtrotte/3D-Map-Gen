@@ -2,7 +2,7 @@
 #define XMLTOOL_H
 
 #include "tilemap.h"
-#include "tiletemplateset.h"
+#include "savabletiletemplateset.h"
 
 #include <QDomDocument>
 #include <QFile>
@@ -14,10 +14,10 @@ class TileTemplateSetsView;
 namespace XMLTool {
 
     TileMap *openTileMap(QString tileMapPath, TileTemplateSetsView *tileTemplateSetView);
-    SharedTileTemplateSet openTileTemplateSet(QString templateSetPath);
+    SavableTileTemplateSet *openTileTemplateSet(QString templateSetPath);
 
-    int saveTileMap(TileMap *tileMap, const QList<SharedTileTemplateSet> &tileTemplateSets);
-    int saveTileTemplateSet(TileTemplateSet *templateSet);
+    int saveTileMap(TileMap *tileMap, const QList<SavableTileTemplateSet *> &tileTemplateSets);
+    int saveTileTemplateSet(SavableTileTemplateSet *templateSet);
 }
 
 #endif // XMLTOOL_H

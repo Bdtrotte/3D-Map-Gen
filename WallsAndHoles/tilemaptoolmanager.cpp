@@ -39,7 +39,7 @@ void TileMapToolManager::mouseExitedMap()
     if (!mActiveTool.isNull()) tool2TileMapTool(mActiveTool)->mouseExitedMap();
 }
 
-void TileMapToolManager::tileTemplateChanged(SharedTileTemplate tileTemplate)
+void TileMapToolManager::tileTemplateChanged(TileTemplate *tileTemplate)
 {
     for (AbstractToolP tool : mTools)
         tool2TileMapTool(tool)->setTileTemplate(tileTemplate);

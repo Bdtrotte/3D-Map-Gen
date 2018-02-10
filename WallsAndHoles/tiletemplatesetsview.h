@@ -1,7 +1,7 @@
 #ifndef TILETEMPLATESETSVIEW_H
 #define TILETEMPLATESETSVIEW_H
 
-#include "tiletemplateset.h"
+#include "savabletiletemplateset.h"
 
 #include <QWidget>
 #include <QTabWidget>
@@ -20,16 +20,16 @@ class TileTemplateSetsView : public QWidget
 public:
     TileTemplateSetsView(QWidget *parent = nullptr);
 
-    void addTileTemplateSet(SharedTileTemplateSet tileTemplateSet);
+    void addTileTemplateSet(SavableTileTemplateSet *tileTemplateSet);
     void removeCurrentTileTemplateSet();
 
-    const QList<SharedTileTemplateSet> &tileTemplateSets() const { return mTileTemplateSets; }
+    const QList<SavableTileTemplateSet *> &tileTemplateSets() const { return mTileTemplateSets; }
 
 signals:
-    void tileTemplateChanged(SharedTileTemplate tileTemplate);
+    void tileTemplateChanged(TileTemplate *tileTemplate);
 
-    void tileTemplateAboutToBeRemoved(const SharedTileTemplate tileTemplate);
-    void tileTemplateSetAboutToBeRemoved(const SharedTileTemplateSet tileTemplateSet);
+    void tileTemplateAboutToBeRemoved(const TileTemplate *tileTemplate);
+    void tileTemplateSetAboutToBeRemoved(const SavableTileTemplateSet *tileTemplateSet);
 
 private slots:
     void selectedTileTemplateChanged();
@@ -43,9 +43,9 @@ private slots:
     void loadTemplateSet();
 
 private:
-    void tileTemplateSetSaveStatusChanged(SharedTileTemplateSet tileTemplateSet, bool status);
+    void tileTemplateSetSaveStatusChanged(SavableTileTemplateSet *tileTemplateSet, bool status);
 
-    QList<SharedTileTemplateSet> mTileTemplateSets;
+    QList<SavableTileTemplateSet *> mTileTemplateSets;
     QList<QListView *> mListViews;
 
     QTabWidget *mTabs;

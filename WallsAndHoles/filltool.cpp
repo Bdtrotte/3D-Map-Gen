@@ -34,7 +34,7 @@ void FillTool::cellClicked(int x, int y)
     disconnect(getTileMap(), &TileMap::mapChanged, this, &FillTool::invalidateSelection);
 
     // Fill it in.
-    SharedTileTemplate drawMaterial = getTileTemplate();
+    TileTemplate *drawMaterial = getTileTemplate();
     for (QPoint point : mSelection)
         getTileMap()->setTile(point.x(), point.y(), drawMaterial);
 

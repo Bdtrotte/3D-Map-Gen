@@ -2,7 +2,7 @@
 #define TILETEMPLATESETSMANAGER_H
 
 #include "tilemap.h"
-#include "tiletemplateset.h"
+#include "savabletiletemplateset.h"
 
 #include <QObject>
 
@@ -24,7 +24,7 @@ public:
      * Adds the given tileTemplateSet to the application
      * @param tileTemplateSet
      */
-    void addTileTemplateSet(SharedTileTemplateSet tileTemplateSet);
+    void addTileTemplateSet(SavableTileTemplateSet *tileTemplateSet);
 
     /**
      * @brief removeTileTemplateSet
@@ -37,7 +37,7 @@ public:
      * @param TileTemplateSet
      * @return
      */
-    bool removeTileTemplateSet(SharedTileTemplateSet TileTemplateSet);
+    bool removeTileTemplateSet(SavableTileTemplateSet *TileTemplateSet);
 
     /**
      * @brief removeTileTemplateSet
@@ -60,13 +60,13 @@ public:
      * the user will be given dialogs to relocate the file.
      * @param path
      */
-    SharedTileTemplateSet loadTileTemplateSet(QString path);
+    SavableTileTemplateSet *loadTileTemplateSet(QString path);
 
-    SharedTileTemplateSet tileTemplateSetAt(int i) { return mTileTemplateSets[i]; }
-    const QList<SharedTileTemplateSet> tileTemplateSets() { return mTileTemplateSets; }
+    SavableTileTemplateSet *tileTemplateSetAt(int i) { return mTileTemplateSets[i]; }
+    const QList<SavableTileTemplateSet *> tileTemplateSets() { return mTileTemplateSets; }
 
 private:
-    QList<SharedTileTemplateSet> mTileTemplateSets;
+    QList<SavableTileTemplateSet *> mTileTemplateSets;
 
     TileMap *mTileMap;
 };

@@ -2,16 +2,12 @@
 
 #include "xmltool.h"
 
-TileTemplateSet::TileTemplateSet(QString savePath,
-                                 QString name,
-                                 bool loadedFromFile,
+TileTemplateSet::TileTemplateSet(QString name,
                                  QObject *parent)
     : QAbstractItemModel(parent)
-    , mName(name)
-    , mSavePath(savePath)
-    , mSaved(loadedFromFile) {}
+    , mName(name) {}
 
-void TileTemplateSet::addTileTemplate(SharedTileTemplate tileTemplate,  bool dontAffectSaveStatus)
+void TileTemplateSet::addTileTemplate(TileTemplate *tileTemplate,  bool dontAffectSaveStatus)
 {
     if (!dontAffectSaveStatus)
         changed();
@@ -20,7 +16,7 @@ void TileTemplateSet::addTileTemplate(SharedTileTemplate tileTemplate,  bool don
     mTileTemplates.append(tileTemplate);
     endInsertRows();
 
-    connect(tileTemplate.data(), &TileTemplate::changed,
+    connect(tileTemplate, &TileTemplate::changed,
             this, &TileTemplateSet::templateChanged);
 }
 
@@ -33,16 +29,6 @@ void TileTemplateSet::removeTileTemplate(int index)
     beginRemoveRows(QModelIndex(), index, index);
     mTileTemplates.removeAt(index);
     endRemoveRows();
-}
-
-void TileTemplateSet::save()
-{
-    // TODO be loader when saving fails
-    if (XMLTool::saveTileTemplateSet(this) != 0)
-        return;
-
-    mSaved = true;
-    emit saveStateChanged(mSaved);
 }
 
 QModelIndex TileTemplateSet::index(int row, int, const QModelIndex &parent) const
@@ -118,13 +104,4 @@ Qt::ItemFlags TileTemplateSet::flags(const QModelIndex &index) const
     return Qt::ItemIsEditable
             | Qt::ItemIsSelectable
             | Qt::ItemIsEnabled;
-}
-
-void TileTemplateSet::changed()
-{
-    if (mSaved) {
-        emit saveStateChanged(false);
-    }
-
-    mSaved = false;
 }

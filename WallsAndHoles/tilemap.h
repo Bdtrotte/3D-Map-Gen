@@ -31,7 +31,7 @@ public:
      */
     const Array2D<QSharedPointer<Tile>> &getArray2D() const;
 
-    void setTile(int x, int y, SharedTileTemplate tileTemplate);
+    void setTile(int x, int y, TileTemplate *tileTemplate);
 
     //sets this tile to the default
     void clearTile(int x, int y) { setTile(x, y, nullptr); }
@@ -58,7 +58,7 @@ public:
      * @param tileTemplate
      * The tile template to check.
      */
-    bool tileTemplateUsed(SharedTileTemplate tileTemplate);
+    bool tileTemplateUsed(TileTemplate *tileTemplate);
 
     /**
      * @brief tileTemplateSetUsed
@@ -67,7 +67,7 @@ public:
      * @param tileTemplateSet
      * The set to check
      */
-    bool tileTemplateSetUsed(SharedTileTemplateSet tileTemplateSet);
+    bool tileTemplateSetUsed(TileTemplateSet *tileTemplateSet);
 
 public slots:
     void tilePinged(int x, int y);

@@ -2,7 +2,7 @@
 
 #include <QDebug>
 
-Tile::Tile(SharedTileTemplate tileTemplate,
+Tile::Tile(TileTemplate *tileTemplate,
                int xPos,
                int yPos,
                QObject *parent)
@@ -19,7 +19,7 @@ Tile::Tile(SharedTileTemplate tileTemplate,
 
 float Tile::thickness() const
 {
-    if (mTileTemplate.isNull())
+    if (mTileTemplate == nullptr)
         return mRelativeThickness + 1;
     else
         return mRelativeThickness + mTileTemplate->thickness();
@@ -27,7 +27,7 @@ float Tile::thickness() const
 
 float Tile::height() const
 {
-    if (mTileTemplate.isNull())
+    if (mTileTemplate == nullptr)
         return mRelativeHeight;
     else
         return mRelativeHeight + mTileTemplate->height();
@@ -35,7 +35,7 @@ float Tile::height() const
 
 QVector2D Tile::position() const
 {
-    if (mTileTemplate.isNull())
+    if (mTileTemplate == nullptr)
         return mRelativePosition + QVector2D(0.5, 0.5);
     else
         return mRelativePosition + mTileTemplate->position();
@@ -43,7 +43,7 @@ QVector2D Tile::position() const
 
 void Tile::setRelativeThickness(float relativeThickness)
 {
-    if (mTileTemplate.isNull()) {
+    if (mTileTemplate == nullptr) {
         mRelativeThickness = 0;
         emit tileChanged(mXPos, mYPos);
         return;
@@ -76,7 +76,7 @@ void Tile::setRelativeThickness(float relativeThickness)
 
 void Tile::setRelativeHeight(float relativeHeight)
 {
-    if (mTileTemplate.isNull())
+    if (mTileTemplate == nullptr)
         relativeHeight = 0;
 
     mRelativeHeight = relativeHeight;
@@ -91,7 +91,7 @@ void Tile::setRelativePosition(QVector2D relavtivePosition)
              && relavtivePosition.y() < 0.5
              && relavtivePosition.y() > -0.5);
 
-    if (mTileTemplate.isNull()) {
+    if (mTileTemplate == nullptr) {
         mRelativePosition = QVector2D();
         emit tileChanged(mXPos, mYPos);
         return;
@@ -115,12 +115,12 @@ void Tile::setRelativePosition(QVector2D relavtivePosition)
     emit tileChanged(mXPos, mYPos);
 }
 
-void Tile::resetTile(SharedTileTemplate newTileTemplate)
+void Tile::resetTile(TileTemplate *newTileTemplate)
 {
     mRelativeThickness = mRelativeHeight = 0;
     mRelativePosition = QVector2D();
 
-    if (!mTileTemplate.isNull())
+    if (mTileTemplate != nullptr)
         mTileTemplate->disconnect(this);
 
     mTileTemplate = newTileTemplate;
@@ -131,16 +131,16 @@ void Tile::resetTile(SharedTileTemplate newTileTemplate)
 
 void Tile::makeTemplateConnections()
 {
-    if (!mTileTemplate.isNull()) {
-        connect(mTileTemplate.data(), &TileTemplate::exclusivePropertyChanged,
+    if (mTileTemplate != nullptr) {
+        connect(mTileTemplate, &TileTemplate::exclusivePropertyChanged,
                 this, [this]{
             emit tileChanged(mXPos, mYPos);
         });
-        connect(mTileTemplate.data(), &TileTemplate::thicknessChanged,
+        connect(mTileTemplate, &TileTemplate::thicknessChanged,
                 this, &Tile::templateThicknessChanged);
-        connect(mTileTemplate.data(), &TileTemplate::positionChanged,
+        connect(mTileTemplate, &TileTemplate::positionChanged,
                 this, &Tile::templatePositionChanged);
-        connect(mTileTemplate.data(), &TileTemplate::pingTiles,
+        connect(mTileTemplate, &TileTemplate::pingTiles,
                 this, [this]{
             emit tilePinged(mXPos, mYPos);
         });

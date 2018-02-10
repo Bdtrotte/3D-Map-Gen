@@ -39,11 +39,11 @@ TileTemplateSetsView::TileTemplateSetsView(QWidget *parent)
     setLayout(layout);
 }
 
-void TileTemplateSetsView::addTileTemplateSet(SharedTileTemplateSet tileTemplateSet)
+void TileTemplateSetsView::addTileTemplateSet(SavableTileTemplateSet *tileTemplateSet)
 {
     mTileTemplateSets.append(tileTemplateSet);
 
-    connect(tileTemplateSet.data(), &TileTemplateSet::saveStateChanged,
+    connect(tileTemplateSet, &SavableTileTemplateSet::saveStateChanged,
             this, [this, tileTemplateSet](bool status){
         tileTemplateSetSaveStatusChanged(tileTemplateSet, status);
     });
@@ -51,7 +51,7 @@ void TileTemplateSetsView::addTileTemplateSet(SharedTileTemplateSet tileTemplate
     QWidget *templateWidget = new QWidget(this);
 
     QListView *templateList = new QListView(templateWidget);
-    templateList->setModel(tileTemplateSet.data());
+    templateList->setModel(tileTemplateSet);
     connect(templateList->selectionModel(), &QItemSelectionModel::currentRowChanged,
             this, &TileTemplateSetsView::selectedTileTemplateChanged);
     mListViews.append(templateList);
@@ -118,7 +118,12 @@ void TileTemplateSetsView::addTemplate()
     int curTab = mTabs->currentIndex();
     Q_ASSERT(curTab >= 0);
 
-    SharedTileTemplate newTemplate = SharedTileTemplate::create(QColor::fromHsv(qrand()%255, 255, 255));
+    TileTemplate *newTemplate = new TileTemplate(QColor::fromHsv(qrand()%255, 255, 255),
+                                                 "New Tile Template",
+                                                 0,
+                                                 1,
+                                                 QVector2D(0.5, 0.5),
+                                                 mTileTemplateSets[curTab]);
 
     mTileTemplateSets[curTab]->addTileTemplate(newTemplate);
     mListViews[curTab]->selectionModel()->setCurrentIndex(mTileTemplateSets[curTab]->index(mTileTemplateSets[curTab]->size() - 1, 0),
@@ -136,7 +141,7 @@ void TileTemplateSetsView::removeTemplate()
 
     int row = curIndex.row();
 
-    SharedTileTemplate tileTemplate = mTileTemplateSets[curTab]->tileTemplateAt(row);
+    TileTemplate *tileTemplate = mTileTemplateSets[curTab]->tileTemplateAt(row);
 
     emit tileTemplateAboutToBeRemoved(tileTemplate);
 
@@ -149,7 +154,7 @@ void TileTemplateSetsView::addTemplateSet()
 {
     NewTileTemplateSetDialog dia;
     if (dia.exec()) {
-        for (SharedTileTemplateSet ts : mTileTemplateSets) {
+        for (SavableTileTemplateSet *ts : mTileTemplateSets) {
             if (dia.result.fileLocation == ts->savePath()) {
                 QMessageBox mb;
                 mb.setText(tr("Tile Template Set already open at requested location."));
@@ -158,7 +163,7 @@ void TileTemplateSetsView::addTemplateSet()
             }
         }
 
-        SharedTileTemplateSet newTTS = SharedTileTemplateSet::create(dia.result.fileLocation, dia.result.name);
+        SavableTileTemplateSet *newTTS = new SavableTileTemplateSet(dia.result.fileLocation, dia.result.name);
         addTileTemplateSet(newTTS);
     }
 }
@@ -188,7 +193,7 @@ void TileTemplateSetsView::loadTemplateSet()
                                                 "/home/",
                                                 tr("XML files (*.xml)"));
 
-    for (SharedTileTemplateSet ts : mTileTemplateSets) {
+    for (SavableTileTemplateSet *ts : mTileTemplateSets) {
         if (path == ts->savePath()) {
             QMessageBox mb;
             mb.setText(tr("The requested file is already open."));
@@ -198,14 +203,14 @@ void TileTemplateSetsView::loadTemplateSet()
     }
 
     if (!path.isNull()) {
-        SharedTileTemplateSet newSet = XMLTool::openTileTemplateSet(path);
-        if (!newSet.isNull()) {
+        SavableTileTemplateSet *newSet = XMLTool::openTileTemplateSet(path);
+        if (newSet != nullptr) {
             addTileTemplateSet(newSet);
         }
     }
 }
 
-void TileTemplateSetsView::tileTemplateSetSaveStatusChanged(SharedTileTemplateSet tileTemplateSet, bool status)
+void TileTemplateSetsView::tileTemplateSetSaveStatusChanged(SavableTileTemplateSet *tileTemplateSet, bool status)
 {
     int tab = mTileTemplateSets.indexOf(tileTemplateSet);
 

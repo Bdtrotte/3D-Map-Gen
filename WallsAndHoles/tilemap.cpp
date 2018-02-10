@@ -49,7 +49,7 @@ const Array2D<QSharedPointer<Tile>> &TileMap::getArray2D() const
     return mMap;
 }
 
-void TileMap::setTile(int x, int y, SharedTileTemplate tileTemplate)
+void TileMap::setTile(int x, int y, TileTemplate *tileTemplate)
 {
     Q_ASSERT(x >= 0);
     Q_ASSERT(y >= 0);
@@ -99,7 +99,7 @@ void TileMap::resizeMap(QSize newSize)
     emit resized();
 }
 
-bool TileMap::tileTemplateUsed(SharedTileTemplate tileTemplate)
+bool TileMap::tileTemplateUsed(TileTemplate *tileTemplate)
 {
     mTilePingReceiveMode = SetCheck;
     mTilePinged = false;
@@ -113,12 +113,12 @@ bool TileMap::tileTemplateUsed(SharedTileTemplate tileTemplate)
     return result;
 }
 
-bool TileMap::tileTemplateSetUsed(SharedTileTemplateSet tileTemplateSet)
+bool TileMap::tileTemplateSetUsed(TileTemplateSet *tileTemplateSet)
 {
     mTilePingReceiveMode = SetCheck;
     mTilePinged = false;
 
-    for (SharedTileTemplate t : tileTemplateSet->cTileTemplates()) {
+    for (TileTemplate *t : tileTemplateSet->cTileTemplates()) {
         t->emitTilePing();
 
         if (mTilePinged)
