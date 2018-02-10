@@ -10,12 +10,19 @@
 #include <QSize>
 #include <QSharedPointer>
 
+struct Properties
+{
+    bool defaultMap = false;
+    bool outsideMap = false;
+    bool indoorMap = false;
+    bool ceiling = false;
+};
 class TileMap : public QObject
 {
     Q_OBJECT
 
 public:
-    TileMap(QSize mapSize,
+    TileMap(QSize mapSize, Properties properties,
             QObject *parent = nullptr);
 
 
@@ -60,6 +67,7 @@ public:
 
     const Array2D<QSharedPointer<Tile>> &cTiles() const { return mMap; }
 
+    Properties getProperties();
 
 signals:
     void tileChanged(int x, int y);
@@ -78,6 +86,8 @@ private:
     QVector<SharedTileTemplateSet> mDependencies;
     //default save path of this tilemap object, can be changed when using "save as" command.
     QString mSavePath;
+
+    Properties mProperties;
 };
 
 typedef QSharedPointer<TileMap> SharedTileMap;

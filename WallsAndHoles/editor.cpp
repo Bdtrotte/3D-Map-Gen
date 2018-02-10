@@ -92,10 +92,18 @@ void Editor::newMap()
     NewMapDialog nmd;
     nmd.exec();
 
+    while(!nmd.oneChecked){
+        QMessageBox messageBox;
+        messageBox.critical(0,"Error","Must select at least one property!");
+        messageBox.setFixedSize(500,200);
+        nmd.exec();
+    }
+
     if (nmd.result.width != -1) {
         if (mTileMap)
             delete mTileMap;
-        mTileMap = new TileMap(QSize(nmd.result.width, nmd.result.height), this);
+        mTileMap = new TileMap(QSize(nmd.result.width, nmd.result.height), nmd.TileMapProperty, this);
+
         mTileMapToolManager->setTileMap(mTileMap);
 
         mMapView->createMap(mTileMap);

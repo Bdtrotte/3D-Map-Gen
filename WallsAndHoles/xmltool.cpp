@@ -31,7 +31,9 @@ SharedTileMap XMLTool::openTileMap(QString tileMapPath){
                          size.setHeight(attr.value().toInt());
                     }
                 }
-                tileMap = SharedTileMap::create(size);
+                //TODO: Remove this, it is only a temporary fix
+                Properties p;
+                tileMap = SharedTileMap::create(size, p);
             }
             if(xmlReader.name()=="TileTemplateSet"){
                 SharedTileTemplateSet templateSet;

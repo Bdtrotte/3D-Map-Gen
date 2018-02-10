@@ -2,6 +2,7 @@
 #define NEWMAPDIALOG_H
 
 #include <QDialog>
+#include "tilemap.h"
 
 namespace Ui {
 class NewMapDialog;
@@ -24,9 +25,20 @@ public:
     ~NewMapDialog();
 
     NewMapData result;
+    Properties TileMapProperty;
+    //Checks if at least one property is selected
+    bool oneChecked;
 
 private slots:
     void on_buttonBox_accepted();
+
+    void on_checkBox_Default_toggled(bool checked);
+
+    void on_checkBox_Outdoor_toggled(bool checked);
+
+    void on_checkBox_Indoor_toggled(bool checked);
+
+    void on_checkBox_Ceiling_toggled(bool checked);
 
 private:
     Ui::NewMapDialog *ui;
