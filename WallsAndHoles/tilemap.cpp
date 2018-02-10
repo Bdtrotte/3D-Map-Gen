@@ -2,10 +2,11 @@
 
 #include <QDebug>
 
-TileMap::TileMap(QSize mapSize,
+TileMap::TileMap(QSize mapSize, Properties properties,
                  QObject *parent)
     : QObject(parent)
     , mMap(mapSize.width(), mapSize.height())
+    , mProperties(properties)
 {
     for (int x = 0; x < mMap.size().width(); ++x) {
         for (int y = 0; y < mMap.size().height(); ++y) {
@@ -111,12 +112,7 @@ void TileMap::updateDepend(){
     mDependencies = newDependencies;
 }
 
-void TileMap::setProperty(Properties property)
+Properties TileMap::getProperties()
 {
-    mProperty = property;
-}
-
-Properties TileMap::getProperty()
-{
-    return mProperty;
+    return mProperties;
 }

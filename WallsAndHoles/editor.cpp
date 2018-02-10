@@ -87,8 +87,7 @@ void Editor::newMap()
     if (nmd.result.width != -1) {
         if (mTileMap)
             delete mTileMap;
-        mTileMap = new TileMap(QSize(nmd.result.width, nmd.result.height), this);
-        mTileMap->setProperty(nmd.TileMapProperty);
+        mTileMap = new TileMap(QSize(nmd.result.width, nmd.result.height), nmd.TileMapProperty, this);
 
         mTileMapToolManager->setTileMap(mTileMap);
 

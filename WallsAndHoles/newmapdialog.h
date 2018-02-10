@@ -30,11 +30,13 @@ public:
 private slots:
     void on_buttonBox_accepted();
 
-    void on_outdoorRadioBtn_clicked();
+    void on_checkBox_Default_stateChanged(int arg1);
 
-    void on_noPropertyRadioBtn_clicked();
+    void on_checkBox_Outdoor_stateChanged(int arg1);
 
-    void on_indoorRadioBtn_clicked();
+    void on_checkBox_Indoor_stateChanged(int arg1);
+
+    void on_checkBox_Ceiling_stateChanged(int arg1);
 
 private:
     Ui::NewMapDialog *ui;
