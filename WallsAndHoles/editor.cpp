@@ -59,8 +59,8 @@ Editor::Editor(QObject *parent)
 
     //Temporary setup for tilePropertyView
     QDockWidget *tilePropDW = new QDockWidget("Tile Property View", mMainWindow);
-    mTilePropertyView = new TilePropertyView(tempDW);
-    tempDW->setWidget(mTilePropertyView);
+    mTilePropertyView = new TilePropertyView(tilePropDW);
+    tilePropDW->setWidget(mTilePropertyView);
     mToolBar->addAction(mTileMapToolManager->registerMapTool(
                             QSharedPointer<TileMapSelectionTool>::create(mTilePropertyView, mTileMap)
                             , "Selection Tool"));
