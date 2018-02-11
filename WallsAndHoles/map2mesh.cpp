@@ -32,6 +32,9 @@ QVector<QSharedPointer<RenderableObject>> Map2Mesh::getMeshes() const
 
 void Map2Mesh::tileChanged(int x, int y)
 {
+    Q_UNUSED(x);
+    Q_UNUSED(y);
+
     if (!mInferScheduled) {
         mInferScheduled = true;
 

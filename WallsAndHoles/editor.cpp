@@ -121,7 +121,7 @@ void Editor::saveMap()
         mTileMap->setSavePath(QFileDialog::getSaveFileName(mMainWindow,
                                                            tr("Save Map"),
                                                            "/home/",
-                                                           tr("Save Files (*.xml)")));
+                                                           tr("Save Files (*.wah)")));
     }
 
     mTileTemplateSetManager->saveAllTileTemplateSets();
@@ -134,7 +134,7 @@ void Editor::loadMap()
     QString fileName = QFileDialog::getOpenFileName(mMainWindow,
                                                     tr("Open Map"),
                                                     "/home/",
-                                                    tr("Open Files (*.xml)"));
+                                                    tr("Open Files (*.wah)"));
 
     TileMap *tileMap = XMLTool::openTileMap(fileName, mTileTemplateSetManager);
 

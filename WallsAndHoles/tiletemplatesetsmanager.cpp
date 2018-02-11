@@ -116,7 +116,7 @@ SavableTileTemplateSet *TileTemplateSetsManager::loadTileTemplateSet(bool tryToR
     QString path = QFileDialog::getOpenFileName(nullptr,
                                                 tr("Load Tile Template Set"),
                                                 "/home/",
-                                                tr("XML files (*.xml)"));
+                                                tr("WTS files (*.wts)"));
 
     return loadTileTemplateSet(path, tryToRelocateOnFail);
 }
