@@ -2,19 +2,26 @@
 
 #include "newtiletemplatesetdialog.h"
 #include "tiletemplateeditor.h"
-#include "xmltool.h"
 
 #include <QAction>
 #include <QDebug>
 #include <QVBoxLayout>
 #include <QToolBar>
-#include <QFileDialog>
-#include <QMessageBox>
 
-TileTemplateSetsView::TileTemplateSetsView(QWidget *parent)
+TileTemplateSetsView::TileTemplateSetsView(TileTemplateSetsManager *tileTemplateSetsManager,
+                                           QWidget *parent)
     : QWidget(parent)
+    , mTileTemplateSetsManager(tileTemplateSetsManager)
     , mTabs(new QTabWidget(this))
 {
+    //Must have a valid tileTemplateSetsManager.
+    Q_ASSERT(tileTemplateSetsManager != nullptr);
+
+    connect(mTileTemplateSetsManager, &TileTemplateSetsManager::tileTemplateSetAdded,
+            this, &TileTemplateSetsView::tileTemplateSetAdded);
+    connect(mTileTemplateSetsManager, &TileTemplateSetsManager::tileTemplateSetAboutToBeRemoved,
+            this, &TileTemplateSetsView::tileTemplateSetAboutToBeRemoved);
+
     mTabs->setTabPosition(QTabWidget::North);
 
     connect(mTabs, &QTabWidget::currentChanged,
@@ -39,10 +46,8 @@ TileTemplateSetsView::TileTemplateSetsView(QWidget *parent)
     setLayout(layout);
 }
 
-void TileTemplateSetsView::addTileTemplateSet(SavableTileTemplateSet *tileTemplateSet)
+void TileTemplateSetsView::tileTemplateSetAdded(SavableTileTemplateSet *tileTemplateSet)
 {
-    mTileTemplateSets.append(tileTemplateSet);
-
     connect(tileTemplateSet, &SavableTileTemplateSet::saveStateChanged,
             this, [this, tileTemplateSet](bool status){
         tileTemplateSetSaveStatusChanged(tileTemplateSet, status);
@@ -74,17 +79,17 @@ void TileTemplateSetsView::addTileTemplateSet(SavableTileTemplateSet *tileTempla
     mTabs->setCurrentIndex(mTabs->addTab(templateWidget, name));
 }
 
-void TileTemplateSetsView::removeCurrentTileTemplateSet()
+void TileTemplateSetsView::tileTemplateSetAboutToBeRemoved(SavableTileTemplateSet *tileTemplateSet)
 {
-    int curI = mTabs->currentIndex();
-    if (curI == -1) return;
+    int tab = mTileTemplateSetsManager->tileTemplateSets().indexOf(tileTemplateSet);
+
+    mTabs->setCurrentIndex(tab);
 
     QWidget *w = mTabs->currentWidget();
-    mTabs->removeTab(curI);
+    mTabs->removeTab(tab);
     delete w;
 
-    mTileTemplateSets.removeAt(curI);
-    mListViews.removeAt(curI);
+    mListViews.removeAt(tab);
 }
 
 void TileTemplateSetsView::selectedTileTemplateChanged()
@@ -98,15 +103,13 @@ void TileTemplateSetsView::selectedTileTemplateChanged()
         const QModelIndex &index = mListViews[curTab]->selectionModel()->currentIndex();
         if (index.isValid()) {
             templateId = index.row();
-            if (templateId >= mTileTemplateSets[curTab]->size())
-                templateId = mTileTemplateSets[curTab]->size() - 1;
         } else {
             templateId = -1;
         }
     }
 
     if (templateId != -1)
-        emit tileTemplateChanged(mTileTemplateSets[curTab]->tileTemplateAt(templateId));
+        emit tileTemplateChanged(mTileTemplateSetsManager->tileTemplateSetAt(curTab)->tileTemplateAt(templateId));
     else
         emit tileTemplateChanged(nullptr);
 }
@@ -120,11 +123,10 @@ void TileTemplateSetsView::addTemplate()
                                                  "New Tile Template",
                                                  0,
                                                  1,
-                                                 QVector2D(0.5, 0.5),
-                                                 mTileTemplateSets[curTab]);
+                                                 QVector2D(0.5, 0.5));
 
-    mTileTemplateSets[curTab]->addTileTemplate(newTemplate);
-    mListViews[curTab]->selectionModel()->setCurrentIndex(mTileTemplateSets[curTab]->index(mTileTemplateSets[curTab]->size() - 1, 0),
+    mTileTemplateSetsManager->tileTemplateSetAt(curTab)->addTileTemplate(newTemplate);
+    mListViews[curTab]->selectionModel()->setCurrentIndex(mTileTemplateSetsManager->tileTemplateSetAt(curTab)->index(mTileTemplateSetsManager->tileTemplateSetAt(curTab)->size() - 1, 0),
                                                           QItemSelectionModel::ClearAndSelect);
 }
 
@@ -139,27 +141,14 @@ void TileTemplateSetsView::removeTemplate()
 
     int row = curIndex.row();
 
-    mTileTemplateSets[curTab]->removeTileTemplate(row);
+    mTileTemplateSetsManager->tileTemplateSetAt(curTab)->removeTileTemplate(row);
 
     selectedTileTemplateChanged();
 }
 
 void TileTemplateSetsView::addTemplateSet()
 {
-    NewTileTemplateSetDialog dia;
-    if (dia.exec()) {
-        for (SavableTileTemplateSet *ts : mTileTemplateSets) {
-            if (dia.result.fileLocation == ts->savePath()) {
-                QMessageBox mb;
-                mb.setText(tr("Tile Template Set already open at requested location."));
-                mb.exec();
-                return;
-            }
-        }
-
-        SavableTileTemplateSet *newTTS = new SavableTileTemplateSet(dia.result.fileLocation, dia.result.name);
-        addTileTemplateSet(newTTS);
-    }
+    mTileTemplateSetsManager->newTileTemplateSet();
 }
 
 void TileTemplateSetsView::removeTemplateSet()
@@ -167,9 +156,7 @@ void TileTemplateSetsView::removeTemplateSet()
     int curTab = mTabs->currentIndex();
     Q_ASSERT(curTab >= 0);
 
-    // TODO add ability to abort remove
-
-    removeCurrentTileTemplateSet();
+    mTileTemplateSetsManager->removeTileTemplateSet(curTab);
 }
 
 void TileTemplateSetsView::saveTemplateSet()
@@ -177,38 +164,19 @@ void TileTemplateSetsView::saveTemplateSet()
     int curTab = mTabs->currentIndex();
     Q_ASSERT(curTab >= 0);
 
-    mTileTemplateSets[curTab]->save();
+    mTileTemplateSetsManager->tileTemplateSetAt(curTab)->save();
 }
 
 void TileTemplateSetsView::loadTemplateSet()
 {
-    QString path = QFileDialog::getOpenFileName(this,
-                                                tr("Load Tile Template Set"),
-                                                "/home/",
-                                                tr("XML files (*.xml)"));
-
-    for (SavableTileTemplateSet *ts : mTileTemplateSets) {
-        if (path == ts->savePath()) {
-            QMessageBox mb;
-            mb.setText(tr("The requested file is already open."));
-            mb.exec();
-            return;
-        }
-    }
-
-    if (!path.isNull()) {
-        SavableTileTemplateSet *newSet = XMLTool::openTileTemplateSet(path);
-        if (newSet != nullptr) {
-            addTileTemplateSet(newSet);
-        }
-    }
+    mTileTemplateSetsManager->loadTileTemplateSet();
 }
 
 void TileTemplateSetsView::tileTemplateSetSaveStatusChanged(SavableTileTemplateSet *tileTemplateSet, bool status)
 {
-    int tab = mTileTemplateSets.indexOf(tileTemplateSet);
+    int tab = mTileTemplateSetsManager->tileTemplateSets().indexOf(tileTemplateSet);
 
-    QString tabText = mTileTemplateSets[tab]->name();
+    QString tabText = mTileTemplateSetsManager->tileTemplateSetAt(tab)->name();
     if (!status)
         tabText += "*";
     mTabs->setTabText(tab, tabText);

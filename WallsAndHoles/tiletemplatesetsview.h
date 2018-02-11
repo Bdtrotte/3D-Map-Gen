@@ -2,6 +2,7 @@
 #define TILETEMPLATESETSVIEW_H
 
 #include "savabletiletemplateset.h"
+#include "tiletemplatesetsmanager.h"
 
 #include <QWidget>
 #include <QTabWidget>
@@ -18,17 +19,16 @@ class TileTemplateSetsView : public QWidget
     Q_OBJECT
 
 public:
-    TileTemplateSetsView(QWidget *parent = nullptr);
-
-    void addTileTemplateSet(SavableTileTemplateSet *tileTemplateSet);
-    void removeCurrentTileTemplateSet();
-
-    const QList<SavableTileTemplateSet *> &tileTemplateSets() const { return mTileTemplateSets; }
+    explicit TileTemplateSetsView(TileTemplateSetsManager *tileTemplateSetsManage,
+                                  QWidget *parent = nullptr);
 
 signals:
     void tileTemplateChanged(TileTemplate *tileTemplate);
 
 private slots:
+    void tileTemplateSetAdded(SavableTileTemplateSet *tileTemplateSet);
+    void tileTemplateSetAboutToBeRemoved(SavableTileTemplateSet *tileTemplateSet);
+
     void selectedTileTemplateChanged();
 
     void addTemplate();
@@ -42,7 +42,7 @@ private slots:
 private:
     void tileTemplateSetSaveStatusChanged(SavableTileTemplateSet *tileTemplateSet, bool status);
 
-    QList<SavableTileTemplateSet *> mTileTemplateSets;
+    TileTemplateSetsManager *mTileTemplateSetsManager;
     QList<QListView *> mListViews;
 
     QTabWidget *mTabs;

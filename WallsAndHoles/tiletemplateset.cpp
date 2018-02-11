@@ -9,6 +9,8 @@ TileTemplateSet::TileTemplateSet(QString name,
 
 void TileTemplateSet::addTileTemplate(TileTemplate *tileTemplate,  bool dontAffectSaveStatus)
 {
+    tileTemplate->setParent(this);
+
     if (!dontAffectSaveStatus)
         changed();
 

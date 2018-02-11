@@ -19,8 +19,6 @@ class Map2Mesh : public QObject {
     Q_OBJECT
 
 public:
-
-
     /**
      * @brief Creates the conversion object.
      * @param tilemap - The tilemap on which the conversion will happen.
@@ -33,7 +31,6 @@ public:
      */
     QVector<QSharedPointer<RenderableObject>> getMeshes() const;
 
-
 public slots:
     /**
      * @brief Modifies the mesh near the tile that changed.
@@ -42,28 +39,23 @@ public slots:
      */
     void tileChanged(int x, int y);
 
-
     /**
      * @brief Completely remakes all tile meshes.
      */
     void remakeAll();
 
-
 signals:
-
     /**
      * @brief Emitted when the output mesh is updated.
      */
     void mapMeshUpdated();
 
 protected:
-
     /**
      * @brief Figures out mTileProperties for all tiles, and updates meshes when
      * properties change.
      */
     void inferProperties();
-
 
     TileMap *mTileMap;
 

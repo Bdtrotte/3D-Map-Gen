@@ -69,6 +69,14 @@ public:
      */
     bool tileTemplateSetUsed(TileTemplateSet *tileTemplateSet);
 
+    /**
+     * @brief removingTileTemplateSet
+     * Called when a tileTemplateSet is going to be removed.
+     * Any tiles using templates from the set will be cleared.
+     * @param tileTemplateSet
+     */
+    void removingTileTemplateSet(TileTemplateSet *tileTemplateSet);
+
 public slots:
     void tilePinged(int x, int y);
 
@@ -87,8 +95,9 @@ private:
      * How a tilePinged singnal should be received.
      */
     enum TilePingReceiveMode {
-        None,
-        SetCheck
+        None,     //No action taken on ping reception.
+        SetCheck, //Set mTilePinged to true on ping reception.
+        Collect   //Add the pinded tile to mPingedTiles.
     };
 
     //2D array of Tile*. If mMap[x][y]->isEmpty() then ground is shown
@@ -101,6 +110,7 @@ private:
     //set to true when mTilePingReceiveMode == SetCheck, and a tilePinged is received.
     //Should be carefully be set to false elsewhere
     bool mTilePinged;
+    QVector<QSharedPointer<Tile>> mPingedTiles;
 };
 
 #endif // TILEMAP_H

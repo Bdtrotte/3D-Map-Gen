@@ -9,15 +9,21 @@
 #include <QTextStream>
 #include <QXmlStreamReader>
 
-class TileTemplateSetsView;
+class TileTemplateSetsManager;
 
 namespace XMLTool {
 
-    TileMap *openTileMap(QString tileMapPath, TileTemplateSetsView *tileTemplateSetView);
-    SavableTileTemplateSet *openTileTemplateSet(QString templateSetPath);
+enum SaveErrors {
+    NoError,
+    OpenFileError
+};
 
-    int saveTileMap(TileMap *tileMap, const QList<SavableTileTemplateSet *> &tileTemplateSets);
-    int saveTileTemplateSet(SavableTileTemplateSet *templateSet);
+TileMap *openTileMap(QString tileMapPath, TileTemplateSetsManager *tileTemplateSetManager);
+SavableTileTemplateSet *openTileTemplateSet(QString templateSetPath);
+
+int saveTileMap(TileMap *tileMap, const QList<SavableTileTemplateSet *> &tileTemplateSets);
+int saveTileTemplateSet(SavableTileTemplateSet *templateSet);
+
 }
 
 #endif // XMLTOOL_H

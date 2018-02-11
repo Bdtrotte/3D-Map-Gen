@@ -2,7 +2,6 @@
 #define TILETEMPLATESETSMANAGER_H
 
 #include "tilemap.h"
-#include "tiletemplatesetsview.h"
 #include "savabletiletemplateset.h"
 
 #include <QObject>
@@ -44,7 +43,7 @@ public:
      * @param TileTemplateSet
      * @return
      */
-    bool removeTileTemplateSet(SavableTileTemplateSet *TileTemplateSet);
+    bool removeTileTemplateSet(SavableTileTemplateSet *tileTemplateSet);
 
     /**
      * @brief removeTileTemplateSet
@@ -77,7 +76,9 @@ public:
     SavableTileTemplateSet *loadTileTemplateSet(QString path);
 
     SavableTileTemplateSet *tileTemplateSetAt(int i) { return mTileTemplateSets[i]; }
-    const QList<SavableTileTemplateSet *> tileTemplateSets() { return mTileTemplateSets; }
+    const QList<SavableTileTemplateSet *> &tileTemplateSets() { return mTileTemplateSets; }
+
+    void setTileMap(TileMap *tileMap) { mTileMap = tileMap; }
 
 signals:
     /**
@@ -86,14 +87,14 @@ signals:
      * Either by loading, new dialog, or somewhere in code.
      * @param tileTemplateSet
      */
-    void tileTemplateSetAdded(TileTemplateSet *tileTemplateSet);
+    void tileTemplateSetAdded(SavableTileTemplateSet *tileTemplateSet);
 
     /**
      * @brief tileTemplateSetAboutToBeRemoved
      * emitted right before the given tileTemplateSet is removed and deleted.
      * @param tileTemplateSet
      */
-    void tileTemplateSetAboutToBeRemoved(TileTemplateSet *tileTemplateSet);
+    void tileTemplateSetAboutToBeRemoved(SavableTileTemplateSet *tileTemplateSet);
 
 private:
     TileMap *mTileMap;

@@ -66,6 +66,8 @@ void MapView::createMap(TileMap *tileMap)
 {
     clear();
 
+    if (!tileMap) return;
+
     QSize mapSize = tileMap->mapSize();
     mMapCells.resize(mapSize.width(), mapSize.height());
 

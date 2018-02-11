@@ -25,6 +25,7 @@ Editor::Editor(QObject *parent)
     , mMainWindow(new QMainWindow())
     , mMap2Mesh(nullptr)
     , mTileMap(nullptr)
+    , mTileTemplateSetManager(new TileTemplateSetsManager(nullptr, this))
     , mMapView(new MapView(mTileMapSelectedRegion, mMainWindow))
     , mTileMapToolManager(new TileMapToolManager(this))
     , mToolBar(new QToolBar(mMainWindow))
@@ -56,9 +57,8 @@ Editor::Editor(QObject *parent)
     mMeshViewContainer = new MeshViewContainer(dw);
     dw->setWidget(mMeshViewContainer);
 
-    //TMP testing templatesets model view
     QDockWidget *tdw = new QDockWidget("Template Set View", mMainWindow);
-    mTileTemplateSetsView = new TileTemplateSetsView(tdw);
+    mTileTemplateSetsView = new TileTemplateSetsView(mTileTemplateSetManager, tdw);
     tdw->setWidget(mTileTemplateSetsView);
 
     mMainWindow->addDockWidget(Qt::RightDockWidgetArea, dw);
@@ -91,28 +91,9 @@ Editor::~Editor()
 void Editor::newMap()
 {
     NewMapDialog nmd;
-    nmd.exec();
 
-    if (nmd.result.width != -1) {
-        delete mTileMap;
-        mTileMap = new TileMap(QSize(nmd.result.width, nmd.result.height));
-        mTileMapToolManager->setTileMap(mTileMap);
-
-        mMapView->createMap(mTileMap);
-
-        if (mMap2Mesh != nullptr)
-            delete mMap2Mesh;
-
-        mMap2Mesh = new Map2Mesh(mTileMap, this);
-
-        // TODO: It is inefficient to update the entire scene when just a part
-        // of the map is updated.
-        connect(mMap2Mesh, &Map2Mesh::mapMeshUpdated, this, &Editor::makeNewScene);
-
-        // Note: Map2Mesh's mapUpdated() signal is emitted during its constructor,
-        // but that is BEFORE the above connection is made. Therefore, updateScene()
-        // must be called manually here.
-        makeNewScene();
+    if (nmd.exec()) {
+        setTileMap(new TileMap(QSize(nmd.result.width, nmd.result.height)));
     }
 }
 
@@ -143,12 +124,9 @@ void Editor::saveMap()
                                                            tr("Save Files (*.xml)")));
     }
 
-    const QList<SavableTileTemplateSet *> &tileTemplateSets = mTileTemplateSetsView->tileTemplateSets();
+    mTileTemplateSetManager->saveAllTileTemplateSets();
 
-    for (SavableTileTemplateSet *tts : tileTemplateSets)
-        tts->save();
-
-    XMLTool::saveTileMap(mTileMap, tileTemplateSets);
+    XMLTool::saveTileMap(mTileMap, mTileTemplateSetManager->tileTemplateSets());
 }
 
 void Editor::loadMap()
@@ -158,7 +136,7 @@ void Editor::loadMap()
                                                     "/home/",
                                                     tr("Open Files (*.xml)"));
 
-    TileMap *tileMap = XMLTool::openTileMap(fileName, mTileTemplateSetsView);
+    TileMap *tileMap = XMLTool::openTileMap(fileName, mTileTemplateSetManager);
 
     if (tileMap == nullptr) {
         QMessageBox messageBox;
@@ -167,12 +145,7 @@ void Editor::loadMap()
         return;
     }
 
-    // TODO SHOULD provide option to save old tileMap
-    delete mTileMap;
-
-    mTileMap = tileMap;
-    mTileMapToolManager->setTileMap(mTileMap);
-    mMapView->createMap(mTileMap);
+    setTileMap(tileMap);
 }
 
 void Editor::exportMapMesh()
@@ -191,6 +164,30 @@ void Editor::exportMapMesh()
 
     if(!fileName.isEmpty())
         mMeshViewContainer->saveMesh(fileName);
+}
+
+void Editor::setTileMap(TileMap *tileMap)
+{
+    // TODO SHOULD provide option to save old tileMap
+    delete mTileMap;
+
+    mTileMap = tileMap;
+    mTileMapToolManager->setTileMap(mTileMap);
+    mMapView->createMap(mTileMap);
+    mTileTemplateSetManager->setTileMap(mTileMap);
+
+    delete mMap2Mesh;
+
+    mMap2Mesh = new Map2Mesh(mTileMap, this);
+
+    // TODO: It is inefficient to update the entire scene when just a part
+    // of the map is updated.
+    connect(mMap2Mesh, &Map2Mesh::mapMeshUpdated, this, &Editor::makeNewScene);
+
+    // Note: Map2Mesh's mapUpdated() signal is emitted during its constructor,
+    // but that is BEFORE the above connection is made. Therefore, updateScene()
+    // must be called manually here.
+    makeNewScene();
 }
 
 void Editor::setUpMenuBar()

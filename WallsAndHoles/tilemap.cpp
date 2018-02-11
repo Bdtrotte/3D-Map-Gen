@@ -132,14 +132,29 @@ bool TileMap::tileTemplateSetUsed(TileTemplateSet *tileTemplateSet)
     return result;
 }
 
+void TileMap::removingTileTemplateSet(TileTemplateSet *tileTemplateSet)
+{
+    mTilePingReceiveMode = Collect;
+    mPingedTiles.clear();
+
+    for (TileTemplate *t : tileTemplateSet->cTileTemplates())
+        t->emitTilePing();
+
+    for (QSharedPointer<Tile> t : mPingedTiles)
+        t->resetTile(nullptr);
+
+    mPingedTiles.clear();
+    mTilePingReceiveMode = None;
+}
+
 void TileMap::tilePinged(int x, int y)
 {
-    Q_UNUSED(x);
-    Q_UNUSED(y);
-
     switch(mTilePingReceiveMode) {
     case SetCheck:
         mTilePinged = true;
+        break;
+    case Collect:
+        mPingedTiles.append(mMap(x, y));
         break;
     default: break;
     }
