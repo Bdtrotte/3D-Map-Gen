@@ -74,6 +74,7 @@ void MeshViewCameraLikeBlender::mouseMoveEvent(QMouseEvent *event) {
             mCenterOfRotation = mCenterStart + 0.005 * mDistanceFromCenter * (up * deltaPos.y() + right * deltaPos.x());
         }
 
+        emit changed();
         event->accept();
     }
 }
@@ -81,5 +82,7 @@ void MeshViewCameraLikeBlender::mouseMoveEvent(QMouseEvent *event) {
 
 void MeshViewCameraLikeBlender::wheelEvent(QWheelEvent *event) {
     mDistanceFromCenter *= pow(1.02, event->delta()/20);
+
+    emit changed();
     event->accept();
 }
