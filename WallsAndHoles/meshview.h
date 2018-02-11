@@ -2,24 +2,21 @@
 #define MESHVIEW_H
 
 #include <QOpenGLWidget>
-#include <QOpenGLFunctions>
-#include <QOpenGLBuffer>
-#include <QOpenGLVertexArrayObject>
-#include <QOpenGLShaderProgram>
 #include <QMouseEvent>
 #include <QWheelEvent>
+#include <QMutex>
 
-#include "scene.h"
 #include "abstractmeshviewcamera.h"
 #include "toolmanager.h"
 #include "objtools.h"
-#include "shaderprogramonelight.h"
+
+#include "abstractrenderer.h"
 
 namespace Ui {
 class MeshView;
 }
 
-class MeshView : public QOpenGLWidget, protected QOpenGLFunctions
+class MeshView : public QOpenGLWidget
 {
     Q_OBJECT
 
@@ -27,7 +24,19 @@ public:
     explicit MeshView(QWidget *parent = 0);
     ~MeshView();
 
-    void setScene(QSharedPointer<Scene> scene);
+//    void setScene(QSharedPointer<Scene> scene);
+
+    /**
+     * @brief Makes the MeshView use a new Renderer.
+     * @param renderer  The Renderer that will be used to draw to the screen.
+     */
+    void setRenderer(QSharedPointer<AbstractRenderer> renderer);
+
+
+    /**
+     * @brief Calls mRenderer->useGL() if e->type() == QEvent::User.
+     */
+    bool event(QEvent *e) override;
 
 public slots:
     /**
@@ -38,10 +47,16 @@ public slots:
     void load(QString path);
     void save(QString path);
 
+
     /**
-     * @brief Makes buffers be reloaded before the next frame is drawn.
+     * @brief Schedules a paintGL() call on the OpenGL thread.
      */
-    void invalidateBuffers();
+    void scheduleRepaint();
+
+    /**
+     * @brief Schedules an AbstractRenderer::useGL() call on the OpenGL thread.
+     */
+    void scheduleUse();
 
 protected:
     void initializeGL() override;
@@ -53,27 +68,37 @@ protected:
     void mouseReleaseEvent(QMouseEvent *event) override;
     void wheelEvent(QWheelEvent *event) override;
 
-    // Loads the vertex data for the scene onto the GPU. Assumes mScene is not nullptr.
-    // After this, it is safe to call paintGL().
-    void loadVAO();
+
+    /**
+     * @brief This method should ONLY be called on the OpenGL thread.
+     * It returns the appropriate renderer to be used, considering the
+     * value of mNextRenderer.
+     *
+     * This function does not lock the mRendererMutex.
+     *
+     * @return The Renderer that should be used.
+     */
+    QSharedPointer<AbstractRenderer> getCurrentRenderer();
 
 
-    // Shader program.
-    ShaderProgramOneLight mShaderProgram;
 
-    // VAO and buffers for rendering.
-    QSharedPointer<QOpenGLVertexArrayObject> mVAO;
-    QSharedPointer<QOpenGLBuffer> mVertexPositions;
-    QSharedPointer<QOpenGLBuffer> mVertexNormals;
-    QSharedPointer<QOpenGLBuffer> mVertexMaterials;
-    QSharedPointer<QOpenGLBuffer> mTriangleIndices;
+    /**
+     * @brief The Renderer object that will be used to draw to the screen.
+     */
+    QSharedPointer<AbstractRenderer> mRenderer;
 
-    // Scene object that is rendered.
-    QSharedPointer<Scene> mScene;
+    /**
+     * @brief nullptr if the Renderer does not need to change, else equal
+     * to the new renderer.
+     */
+    QSharedPointer<AbstractRenderer> mNextRenderer;
 
-    // This variable is just used for synchronization. mScene should not be changed
-    // in parallel with the paint loop.
-    QSharedPointer<Scene> mNextScene;
+    /**
+     * @brief Mutex for updating the mRenderer variable. This ensures that the
+     * mRenderer is not being used when it is changed.
+     */
+    QMutex mRendererMutex;
+
 
     // The Projection*View matrix.
     QMatrix4x4 mProjectionMatrix;
@@ -85,8 +110,14 @@ protected:
     // The tool manager. This will send mouse events to the appropriate tool.
     ToolManagerP mTools;
 
-    // True when Scene related buffers need to be reloaded.
-    bool mShouldReloadScene;
+
+    /**
+     * @brief Used in scheduleUse() and event() to make scheduleUse() events unique.
+     */
+    bool useScheduled;
+
+    QMutex useScheduledMutex;
+
 
 private:
     Ui::MeshView *ui;

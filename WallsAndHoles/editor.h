@@ -35,11 +35,6 @@ public slots:
     void loadMap();
     void exportMapMesh();
 
-    /**
-     * @brief Gives a new scene to the mesh view by creating it from the data in mMap2Mesh.
-     */
-    void makeNewScene();
-
 private:
     void setUpMenuBar();
 

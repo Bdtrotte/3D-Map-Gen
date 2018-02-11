@@ -11,24 +11,16 @@ MeshViewContainer::MeshViewContainer(QWidget *parent) :
 {
     ui->setupUi(this);
 
-
-    // Create a test scene.
-    //QSharedPointer<Scene> scene = QSharedPointer<Scene>::create();
-    //scene->addObject(loadOBJ(":/assets/cube.obj"));
-
-    // Find the MeshView child widget and set the scene.
+    // Find the MeshView child widget.
     mMeshView = findChild<MeshView *>();
-    //mMeshView->setScene(scene);
-
-    mMeshView->load(":/assets/teapot.obj");
 }
 
 MeshViewContainer::~MeshViewContainer() {
     delete ui;
 }
 
-void MeshViewContainer::setScene(QSharedPointer<Scene> scene) {
-    mMeshView->setScene(scene);
+void MeshViewContainer::setRenderer(QSharedPointer<AbstractRenderer> renderer) {
+    mMeshView->setRenderer(renderer);
 }
 
 void MeshViewContainer::on_toolSelection_currentIndexChanged(int index) {

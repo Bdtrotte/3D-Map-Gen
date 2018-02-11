@@ -6,10 +6,9 @@
 #include <QMap>
 #include <QPair>
 
+#include "triplet.h"
 #include "m2mpropertyclass.h"
 
-
-template< typename X, typename Y, typename Z > struct Triplet;
 
 /**
  * @brief The M2MPropertyInstance class represents an instance of a property class in Tima's map2mesh code.
@@ -79,13 +78,6 @@ protected:
     QMap<M2MPropertyClass *, QMap<QString, double>> mParameters;
 };
 
-
-template< typename X, typename Y, typename Z >
-struct Triplet {
-    X first;
-    Y second;
-    Z third;
-};
 
 
 #endif // M2MPROPERTYINSTANCE_H
