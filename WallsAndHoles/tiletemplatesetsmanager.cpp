@@ -111,17 +111,17 @@ void TileTemplateSetsManager::saveAllTileTemplateSets()
         ts->save();
 }
 
-SavableTileTemplateSet *TileTemplateSetsManager::loadTileTemplateSet()
+SavableTileTemplateSet *TileTemplateSetsManager::loadTileTemplateSet(bool tryToRelocateOnFail)
 {
     QString path = QFileDialog::getOpenFileName(nullptr,
                                                 tr("Load Tile Template Set"),
                                                 "/home/",
                                                 tr("XML files (*.xml)"));
 
-    return loadTileTemplateSet(path);
+    return loadTileTemplateSet(path, tryToRelocateOnFail);
 }
 
-SavableTileTemplateSet *TileTemplateSetsManager::loadTileTemplateSet(QString path)
+SavableTileTemplateSet *TileTemplateSetsManager::loadTileTemplateSet(QString path, bool tryToRelocateOnFail)
 {
     for (SavableTileTemplateSet *ts : mTileTemplateSets)
         if (path == ts->savePath())
@@ -133,6 +133,17 @@ SavableTileTemplateSet *TileTemplateSetsManager::loadTileTemplateSet(QString pat
             addTileTemplateSet(newSet);
 
             return newSet;
+        } else if (tryToRelocateOnFail) {
+            QMessageBox mb;
+            mb.setText(QString("Failed to load Tile Template Set at:\n    %1\n"
+                               "Would you like to try to relocate the Tile Template Set?\n").arg(path));
+            mb.addButton("Relocate", QMessageBox::AcceptRole);
+            mb.addButton("Cancel", QMessageBox::RejectRole);
+
+            if (mb.exec() == 0) {
+                //relocate
+                return loadTileTemplateSet(true);
+            }
         }
     }
 

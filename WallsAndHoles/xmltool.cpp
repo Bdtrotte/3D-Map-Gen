@@ -9,12 +9,10 @@ TileMap *XMLTool::openTileMap(QString tileMapPath, TileTemplateSetsManager *tile
 {
     //load the file
     QFile file(tileMapPath);
-    if (!file.exists() || !file.open(QFile::ReadOnly | QFile::Text)) {
-        qDebug() << "Fail to open file:"+tileMapPath;
+    if (!file.exists() || !file.open(QFile::ReadOnly | QFile::Text))
         return nullptr;
-    }
-    QXmlStreamReader xmlReader(file.readAll());
 
+    QXmlStreamReader xmlReader(file.readAll());
     TileMap *tileMap;
 
     QVector<SavableTileTemplateSet *> loadedTileTemplateSets;
@@ -42,7 +40,7 @@ TileMap *XMLTool::openTileMap(QString tileMapPath, TileTemplateSetsManager *tile
             } else if (xmlReader.name() == "TileTemplateSet") {
                 QString path = xmlReader.attributes().first().value().toString();
 
-                SavableTileTemplateSet *templateSet = tileTemplateSetsManager->loadTileTemplateSet(path);
+                SavableTileTemplateSet *templateSet = tileTemplateSetsManager->loadTileTemplateSet(path, true);
 
                 if (templateSet == nullptr)
                     return nullptr;
@@ -76,6 +74,10 @@ TileMap *XMLTool::openTileMap(QString tileMapPath, TileTemplateSetsManager *tile
                     }
                 }
 
+                if (setId >= loadedTileTemplateSets.size()
+                        || templateId >= loadedTileTemplateSets[setId]->size())
+                    return nullptr;
+
                 TileTemplate *tileTemplate = loadedTileTemplateSets[setId]->tileTemplateAt(templateId);
 
                 Tile& tile = tileMap->tileAt(x,y);
@@ -104,10 +106,8 @@ SavableTileTemplateSet *XMLTool::openTileTemplateSet(QString templateSetPath)
 {
     //load the file
     QFile file(templateSetPath);
-    if (!file.exists() || !file.open(QFile::ReadOnly | QFile::Text)) {
-        qDebug() << "Fail to open file:"+templateSetPath;
+    if (!file.exists() || !file.open(QFile::ReadOnly | QFile::Text))
         return nullptr;
-    }
 
     QXmlStreamReader xmlReader(file.readAll());
     SavableTileTemplateSet *templateSet;

@@ -64,7 +64,7 @@ public:
      * Opens dialogs to locate the templateSet to load, then loads it
      * @return
      */
-    SavableTileTemplateSet *loadTileTemplateSet();
+    SavableTileTemplateSet *loadTileTemplateSet(bool tryToRelocateOnFail = false);
 
     /**
      * @brief loadTileTemplateSet
@@ -73,7 +73,7 @@ public:
      * the user will be given dialogs to relocate the file.
      * @param path
      */
-    SavableTileTemplateSet *loadTileTemplateSet(QString path);
+    SavableTileTemplateSet *loadTileTemplateSet(QString path, bool tryToRelocateOnFail = false);
 
     SavableTileTemplateSet *tileTemplateSetAt(int i) { return mTileTemplateSets[i]; }
     const QList<SavableTileTemplateSet *> &tileTemplateSets() { return mTileTemplateSets; }
