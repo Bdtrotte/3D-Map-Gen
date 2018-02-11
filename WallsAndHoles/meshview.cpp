@@ -96,9 +96,7 @@ void MeshView::activateTool(QString name) {
 QSharedPointer<AbstractRenderer> MeshView::getCurrentRenderer()
 {
     if (!mNextRenderer.isNull()) {
-        qDebug() << "Trying to change mRenderer.";
         mRenderer = mNextRenderer;
-        qDebug() << "Succeeded changing mRenderer.";
         mNextRenderer = nullptr;
 
         mRenderer->initializeGL();
@@ -118,8 +116,6 @@ void MeshView::scheduleUse()
     useScheduledMutex.lock();
 
     if (!useScheduled) {
-        qDebug() << "scheduleUse()";
-
         useScheduled = true;
         QCoreApplication::postEvent(this, new QEvent(QEvent::User));
     }

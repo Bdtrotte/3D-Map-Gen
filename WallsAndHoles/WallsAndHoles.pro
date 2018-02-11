@@ -30,8 +30,6 @@ SOURCES += \
     main.cpp \
     meshview.cpp \
     meshviewcameralikeblender.cpp \
-    renderableobject.cpp \
-    scene.cpp \
     tile.cpp \
     tilemap.cpp \
     tiletemplate.cpp \
@@ -42,7 +40,6 @@ SOURCES += \
     mapview.cpp \
     editor.cpp \
     newmapdialog.cpp \
-    meshmaterial.cpp \
     shaderprogramonelight.cpp \
     xmltool.cpp \
     map2mesh.cpp \
@@ -69,15 +66,11 @@ SOURCES += \
     simpletexturedobject.cpp
 
 HEADERS += \
-    renderableobject.h \
-    scene.h \
     meshview.h \
     meshviewcameralikeblender.h \
     objtools.h \
     drawableaxes.h \
     toolmanager.h \
-    renderableobject.h \
-    scene.h \
     tile.h \
     tilemap.h \
     tiletemplate.h \
@@ -89,7 +82,6 @@ HEADERS += \
     editor.h \
     newmapdialog.h \
     array2d.h \
-    meshmaterial.h \
     shaderprogramonelight.h \
     xmltool.h \
     map2mesh.h \

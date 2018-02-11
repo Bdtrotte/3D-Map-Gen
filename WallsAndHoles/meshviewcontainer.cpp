@@ -2,7 +2,6 @@
 #include "ui_meshviewcontainer.h"
 
 #include "meshview.h"
-#include "scene.h"
 #include "objtools.h"
 
 MeshViewContainer::MeshViewContainer(QWidget *parent) :

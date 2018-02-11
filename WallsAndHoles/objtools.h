@@ -1,156 +1,244 @@
 #ifndef OBJTOOLS_H
 #define OBJTOOLS_H
-#include "renderableobject.h"
 #include <QFile>
 #include <QTextStream>
 #include <cassert>
 
-typedef QSharedPointer<RenderableObject> RenderableObjectP;
 
-inline RenderableObjectP loadOBJ(QString path){
+#include "simpletexturedobject.h"
+
+typedef QSharedPointer<SimpleTexturedObject> SimpleTexturedObjectP;
+
+/* TODO
+ *
+ * 1) This method should be moved into a special class, possibly something
+ * like "SimpleTexturedObjectSaver".
+ *
+ * 2) This method does not load texture information.
+ * */
+inline SimpleTexturedObjectP loadOBJSimpleTextured(QString path)
+{
     QFile file(path);
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
         return nullptr;
 
+    // Data collected from the .obj file.
+    QVector<QVector3D> vertices;    // v
+    QVector<QVector2D> uvs;         // vt
+    QVector<QVector3D> normals;     // vn
+
+    // Data corresponding to lines starting with f.
+    QVector<SimpleTexturedObject::Triangle> vertexIndices;
+    QVector<SimpleTexturedObject::Triangle> uvIndices;
+    QVector<SimpleTexturedObject::Triangle> normalIndices;
+
+
     QTextStream in(&file);
-    QVector<QVector3D> vertices;
-    QVector<QVector2D> uvs;
-    QVector<QVector3D> normals;
-    QVector<unsigned int> vertexIndices;
-    QVector<unsigned int> uvIndices;
-    QVector<unsigned int> normalIndices;
     while (!in.atEnd()) {
         QString line = in.readLine();
-        if(line.size()<1) continue;
+
+        // Ignore empty lines.
+        if(line.size() <= 0)
+            continue;
+
+        // Split the line into its components.
         QStringList list = line.split(" ", QString::SkipEmptyParts);
 
-        if(list[0]=="v"){
-            assert(list.size()==4);
-            vertices.push_back(QVector3D{
+        // Parse the line depending on its first component.
+
+        if (list[0] == "v") {
+            // Vertex.
+            Q_ASSERT(list.size() == 4);
+
+            vertices.push_back(QVector3D(
                 list[1].toFloat(),
                 list[2].toFloat(),
                 list[3].toFloat()
-            });
+            ));
         }
 
-        if(list[0]=="vt"){
-            assert(list.size()==3);
-            uvs.push_back(QVector2D{
+        else if (list[0] == "vt") {
+            // Texture coordinates.
+            Q_ASSERT(list.size() == 3);
+
+            uvs.push_back(QVector2D(
                 list[1].toFloat(),
                 list[2].toFloat()
-            });
+            ));
         }
 
-        if(list[0]=="vn"){
-            assert(list.size()==4);
-            normals.push_back(QVector3D{
+        else if (list[0] == "vn") {
+            // Normals.
+            Q_ASSERT(list.size() == 4);
+
+            normals.push_back(QVector3D(
                 list[1].toFloat(),
                 list[2].toFloat(),
                 list[3].toFloat()
-            });
+            ));
         }
 
+        else if (list[0] == "f") {
+            // Faces. Each face must be a triangle.
+            Q_ASSERT(list.size() == 4);
 
-        if(list[0]=="f"){
-            assert(list.size()==4);
-            for(int i=1; i<list.size(); i++){
-                QStringList indexVec = list[i].split('/');
-                assert(indexVec.size()==3);
-                vertexIndices.push_back(indexVec[0].toInt()-1);
-                uvIndices.push_back(indexVec[1].toInt()-1);
-                normalIndices.push_back(indexVec[2].toInt()-1);
-            }
+            QStringList indexVec1 = list[1].split('/');
+            QStringList indexVec2 = list[2].split('/');
+            QStringList indexVec3 = list[3].split('/');
+
+            // Vertex, tex. coord, and normal info must be supplied for each vertex.
+            Q_ASSERT( indexVec1.size() == 3 );
+            Q_ASSERT( indexVec2.size() == 3 );
+            Q_ASSERT( indexVec3.size() == 3 );
+
+
+            // Subtract 1 because .obj indices are 1-based.
+
+            vertexIndices.push_back({
+                                        indexVec1[0].toUInt() - 1,
+                                        indexVec2[0].toUInt() - 1,
+                                        indexVec3[0].toUInt() - 1
+                                    });
+
+            normalIndices.push_back({
+                                        indexVec1[1].toUInt() - 1,
+                                        indexVec2[1].toUInt() - 1,
+                                        indexVec3[1].toUInt() - 1
+                                    });
+            uvIndices.push_back({
+                                    indexVec1[2].toUInt() - 1,
+                                    indexVec2[2].toUInt() - 1,
+                                    indexVec3[2].toUInt() - 1
+                                });
         }
     }
 
 
     /*
-     * In RenderableObject, each triangle index corresponds to an index into ALL of the vertex
-     * arrays simultaneously. There are no separate vertex/normal/UV indices.
-     *
-     * This part of the function may add new elements to the vertex/normal/uv arrays to
-     * accomodate for this.
+     * Reformat the .obj data to the format required by SimpleTexturedObject.
+     * That is,
+     *  1) Vertices remain the same.
+     *  2) Normals are per-triangle.
+     *  3) UVs are per-vertex-per-triangle (TriangleTexCoords structure).
+     *  4) Triangle vertex indices are given in a Triangle structure.
      * */
-    QVector<QVector3D> pVertices;
-    QVector<QVector3D> pNormals;
-//    QVector<QVector2D> pUV;
-    QVector<unsigned int> pTriangleIndices;
 
-    QVector<QPair<int, int>> indexPairToIndex;
+    QVector<QVector3D> &pVertices = vertices;
+    QVector<SimpleTexturedObject::Triangle> &pTriangles = vertexIndices;
 
-    // Loop through
-    for (int i = 0; i < vertexIndices.size(); ++i) {
-        int vidx = vertexIndices[i];
-        int nidx = normalIndices[i];
+    QVector<QVector3D> pFaceNormals;
+    QVector<SimpleTexturedObject::TriangleTexCoords> pUV;
 
-        int idx = indexPairToIndex.indexOf(QPair<int, int>(vidx, nidx));
 
-        // If this vertex/normal pair hasn't been used yet, create new entries.
-        if (idx == -1) {
-            pVertices.append(vertices[vidx]);
-            pNormals.append(normals[nidx]);
 
-            idx = indexPairToIndex.size();
-            indexPairToIndex.append(QPair<int, int>(vidx, nidx));
-        }
+    // Loop through all faces.
+    for (int triangleIdx = 0; triangleIdx < vertexIndices.size(); ++triangleIdx) {
 
-        // Note, at this point pVertices[idx] and pNormals[idx] are the position
-        // and normal of the i_th vertex.
-        pTriangleIndices.append(idx);
+        auto faceNormalIndices = normalIndices[triangleIdx];
+        QVector3D faceVertexNormals[3] = {
+            normals[faceNormalIndices.getFirst()],
+            normals[faceNormalIndices.getSecond()],
+            normals[faceNormalIndices.getThird()]
+        };
+
+        auto faceUVIndices = uvIndices[triangleIdx];
+
+        // For the face normal, just average out the vertex normals.
+        pFaceNormals.push_back((faceVertexNormals[0] + faceVertexNormals[1] + faceVertexNormals[2]).normalized());
+
+        pUV.push_back({
+                          uvs[faceUVIndices.getFirst()],
+                          uvs[faceUVIndices.getSecond()],
+                          uvs[faceUVIndices.getThird()]
+                      });
     }
 
 
-    //RenderableObject only support vertex now. Add full support in future.
-    RenderableObjectP object = RenderableObjectP::create(pVertices, pNormals, pTriangleIndices);
+    SimpleTexturedObjectP object = SimpleTexturedObjectP::create();
+
+    object->setTriangleInfo(pVertices, pFaceNormals, pTriangles);
+    object->setMaterialInfo(1, 1, 1, 1); // soft material default
+    object->setTextureInfo(pUV, nullptr);
+    object->commit();
+
     return object;
 }
 
-inline bool saveOBJ(QString path, RenderableObjectP object){
+/* TODO
+ *
+ * Just like the load function above, this should be moved to a different class
+ * and needs to be modified to handle texture information.
+ * */
+inline bool saveOBJSimpleTextured(QString path, const SimpleTexturedObject &object)
+{
     qDebug() << "Saving obj...";
+
     QFile file(path);
     if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
         return false;
+
+    const auto &vertices = object.getVertices();
+    const auto &faceNormals = object.getFaceNormals();
+    const auto &triangles = object.getTriangles();
+    const auto &faceTexCoords = object.getFaceTexCoords();
+
+
+
     QTextStream out(&file);
-    QVector<QVector3D> vertices  = object->getVertexData();
-    QVector<unsigned int> vertexIndices = object->getTriangleIndices();
-    QVector<QVector3D> normals = object->getVertexNormals();
-    QVector<unsigned int> normalIndices = object->getTriangleIndices();
-    /*uv is not supported yet*/
-    QVector<QVector2D> uvs = QVector<QVector2D>(object->getTriangleIndices().size());
-    QVector<unsigned int> uvIndices = object->getTriangleIndices();
-    //
-    assert(vertexIndices.size()%3==0);
-    for(auto const& vert: vertices){
+
+    // Write the list of vertices.
+    for (auto const &vert : vertices) {
         out << "v";
-        for(int i=0; i<3; i++){
+        for (int i = 0; i < 3; i++)
             out << " " << vert[i];
-        }
         out << endl;
     }
 
-    for(auto const& uv: uvs){
-        out << "vt";
-        for(int i=0; i<2; i++){
-            out << " " << uv[i];
+    // Write the list of texture coordinates.
+    // Note: For vertex j of triangle i, its texture coordinates are at (0-based) index
+    //              3*i + j
+    for (auto const &texCoords : faceTexCoords) {
+
+        // texCoords is a Triplet of QVector2D
+        QVector2D uvs[3] = {texCoords.getFirst(), texCoords.getSecond(), texCoords.getThird()};
+
+        for (int i = 0; i < 3; ++i) {
+            const auto &uv = uvs[i];
+
+            out << "vt";
+            for (int i = 0; i < 2; i++)
+                out << " " << uv[i];
+            out << endl;
         }
-        out << endl;
     }
 
-    for(auto const& norm: normals){
+    // Write the list of face normals.
+    for (auto const &faceNorm : faceNormals) {
         out << "vn";
-        for(int i=0; i<3; i++){
-            out << " " << norm[i];
-        }
+        for (int i = 0; i < 3; i++)
+            out << " " << faceNorm[i];
         out << endl;
     }
-    for(int i=0; i<vertexIndices.size(); i++){
-        if(i%3==0) out << "f";
-        out << ' ' << vertexIndices[i]+1;
-        out << '/' << uvIndices[i]+1;
-        out << '/' << normalIndices[i]+1;
-        if(i%3==2) out << endl;
+
+    // Write the list of faces.
+    for (int faceIdx = 0; faceIdx < triangles.size(); ++faceIdx) {
+        const auto &face = triangles[faceIdx];
+
+        out << "f";
+
+        unsigned int vertexIndices[3] = {face.getFirst(), face.getSecond(), face.getThird()};
+
+        for (int idx = 0; idx < 3; ++idx) {
+            out << " " << vertexIndices[idx];
+            out << "/" << faceIdx*3 + idx;      // texture coordinate; see tex coord output above
+            out << "/" << faceIdx;              // one normal per face
+        }
+
+        out << endl;
     }
+
     file.close();
+
     return true;
 }
 

@@ -1,8 +1,6 @@
 #include "m2mtilemesher.h"
 #include "map2mesh.h"
 
-#include "meshmaterial.h"
-
 QSharedPointer<SimpleTexturedObject> M2MTileMesher::getTopMesh(const M2MPropertySet &tileProperties, QVector3D offset, float scale) {
 
     M2MPropertyInstance propHeight = tileProperties.getProperty(Map2Mesh::Properties::Height);
@@ -82,10 +80,8 @@ QSharedPointer<SimpleTexturedObject> M2MTileMesher::getTopMesh(const M2MProperty
 
     QSharedPointer<SimpleTexturedObject> obj = QSharedPointer<SimpleTexturedObject>::create();
 
-    MeshMaterial mat = MeshMaterial::Soft;
-
     obj->setTriangleInfo(vertices, faceNormals, triangles);
-    obj->setMaterialInfo(mat.getReflAmbient(), mat.getReflDiffuse(), mat.getReflSpecular(), mat.getShininess());
+    obj->setMaterialInfo(1, 1, 1, 1); // default "soft" material
     obj->setTextureInfo(texCoords, nullptr);
     obj->commit();
 
