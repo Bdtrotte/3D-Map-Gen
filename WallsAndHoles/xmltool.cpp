@@ -49,7 +49,7 @@ TileMap *XMLTool::openTileMap(QString tileMapPath, TileTemplateSetsManager *tile
             } else if (xmlReader.name() == "Tile") {
                 float x;
                 float y;
-                int setId = -1, templateId;
+                int setId = -2, templateId;
                 float relativeThickness;
                 float relativeHeight;
                 QVector2D relativePosition;
@@ -74,11 +74,17 @@ TileMap *XMLTool::openTileMap(QString tileMapPath, TileTemplateSetsManager *tile
                     }
                 }
 
-                if (setId >= loadedTileTemplateSets.size()
-                        || templateId >= loadedTileTemplateSets[setId]->size())
-                    return nullptr;
+                TileTemplate *tileTemplate;
 
-                TileTemplate *tileTemplate = loadedTileTemplateSets[setId]->tileTemplateAt(templateId);
+                if (setId == -1) {
+                    tileTemplate = tileMap->defaultTileTemplateSet()->tileTemplateAt(templateId);
+                } else if (setId == -2
+                           || setId >= loadedTileTemplateSets.size()
+                           || templateId >= loadedTileTemplateSets[setId]->size()) {
+                    return nullptr;
+                } else {
+                    tileTemplate = loadedTileTemplateSets[setId]->tileTemplateAt(templateId);
+                }
 
                 Tile& tile = tileMap->tileAt(x,y);
                 tile.resetTile(tileTemplate);
@@ -164,6 +170,29 @@ SavableTileTemplateSet *XMLTool::openTileTemplateSet(QString templateSetPath)
     return templateSet;
 }
 
+QDomElement tileTemplateSetElement(TileTemplateSet *templateSet, QDomDocument &doc)
+{
+    QDomElement root = doc.createElement("TileTemplateSet");
+    root.setAttribute("name", templateSet->name());
+
+    const QList<TileTemplate *> templateList = templateSet->cTileTemplates();
+    for (TileTemplate *t: templateList) {
+        QDomElement templateE = doc.createElement("TileTemplate");
+
+        templateE.setAttribute("name", t->name());
+        templateE.setAttribute("height", t->height());
+        templateE.setAttribute("thickness", t->thickness());
+        templateE.setAttribute("position", QString("%1,%2").arg(
+                               QString::number(t->position()[0]),
+                               QString::number(t->position()[1])));
+        templateE.setAttribute("color", t->color().name());
+
+        root.appendChild(templateE);
+    }
+
+    return root;
+}
+
 int XMLTool::saveTileMap(TileMap *tileMap, const QList<SavableTileTemplateSet *> &tileTemplateSets)
 {
     QString tileMapPath = tileMap->savePath();
@@ -205,19 +234,24 @@ int XMLTool::saveTileMap(TileMap *tileMap, const QList<SavableTileTemplateSet *>
                                        QString::number(tile.relativePosition()[0]),
                                        QString::number(tile.relativePosition()[1])));
 
-                int setId = -1, templateId;
-                for (int i = 0; i < usedTileTemplateSets.size(); ++i) {
-                    int j = usedTileTemplateSets[i]->cTileTemplates().indexOf(tile.tileTemplate());
-                    if (j != -1) {
-                        setId = i;
-                        templateId = j;
-                        break;
+                int setId = -2, templateId;
+                int id = tileMap->defaultTileTemplateSet()->cTileTemplates().indexOf(tile.tileTemplate());
+                if (id != -1) {
+                    setId = -1, templateId = id;
+                } else {
+                    for (int i = 0; i < usedTileTemplateSets.size(); ++i) {
+                        int j = usedTileTemplateSets[i]->cTileTemplates().indexOf(tile.tileTemplate());
+                        if (j != -1) {
+                            setId = i;
+                            templateId = j;
+                            break;
+                        }
                     }
                 }
 
                 //There should be no case where a tile is assigned to a template that is not contained in any active set.
                 // TODO : This currently does not consider default templates
-                Q_ASSERT(setId != -1);
+                Q_ASSERT(setId != -2);
 
                 tileE.setAttribute("templateSetId", setId);
                 tileE.setAttribute("templateId", templateId);
@@ -245,25 +279,7 @@ int XMLTool::saveTileTemplateSet(SavableTileTemplateSet *templateSet)
     QDomProcessingInstruction instruction = doc.createProcessingInstruction( "xml", "version = \'1.0\' encoding=\'UTF-8\'" );
     doc.appendChild(instruction);
 
-    QDomElement root = doc.createElement( "TileTemplateSet" );
-    root.setAttribute("name", templateSet->name());
-
-    const QList<TileTemplate *> templateList = templateSet->cTileTemplates();
-    for (TileTemplate *t: templateList) {
-        QDomElement templateE = doc.createElement("TileTemplate");
-
-        templateE.setAttribute("name", t->name());
-        templateE.setAttribute("height", t->height());
-        templateE.setAttribute("thickness", t->thickness());
-        templateE.setAttribute("position", QString("%1,%2").arg(
-                               QString::number(t->position()[0]),
-                               QString::number(t->position()[1])));
-        templateE.setAttribute("color", t->color().name());
-
-        root.appendChild(templateE);
-    }
-
-    doc.appendChild(root);
+    doc.appendChild(tileTemplateSetElement(templateSet, doc));
 
     QTextStream out(&file);
     doc.save(out, 4);

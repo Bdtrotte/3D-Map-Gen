@@ -104,6 +104,8 @@ void TileMap::resizeMap(QSize newSize)
 
 bool TileMap::tileTemplateUsed(TileTemplate *tileTemplate)
 {
+    if (!tileTemplate) return false;
+
     mTilePingReceiveMode = SetCheck;
     mTilePinged = false;
 
@@ -122,7 +124,8 @@ bool TileMap::tileTemplateSetUsed(TileTemplateSet *tileTemplateSet)
     mTilePinged = false;
 
     for (TileTemplate *t : tileTemplateSet->cTileTemplates()) {
-        t->emitTilePing();
+        if (t)
+            t->emitTilePing();
 
         if (mTilePinged)
             break;
@@ -141,7 +144,8 @@ void TileMap::removingTileTemplateSet(TileTemplateSet *tileTemplateSet)
     mPingedTiles.clear();
 
     for (TileTemplate *t : tileTemplateSet->cTileTemplates())
-        t->emitTilePing();
+        if (t)
+            t->emitTilePing();
 
     for (QSharedPointer<Tile> t : mPingedTiles)
         t->resetTile(nullptr);
