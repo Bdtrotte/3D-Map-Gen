@@ -63,7 +63,10 @@ SOURCES += \
     rectbrushtool.cpp \
     ellipsebrushtool.cpp \
     mapoverlaycell.cpp \
-    filltool.cpp
+    filltool.cpp \
+    simpletexturedrenderer.cpp \
+    simpletexturedscene.cpp \
+    simpletexturedobject.cpp
 
 HEADERS += \
     renderableobject.h \
@@ -109,7 +112,15 @@ HEADERS += \
     rectbrushtool.h \
     ellipsebrushtool.h \
     mapoverlaycell.h \
-    filltool.h
+    filltool.h \
+    abstractrenderer.h \
+    simpletexturedrenderer.h \
+    abstractscene.h \
+    simpletexturedscene.h \
+    dereferencingiterator.h \
+    dereferencingconstiterator.h \
+    simpletexturedobject.h \
+    triplet.h
 
 FORMS += \
     meshview.ui \
