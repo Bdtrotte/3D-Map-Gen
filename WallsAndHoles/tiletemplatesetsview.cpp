@@ -7,6 +7,7 @@
 #include <QDebug>
 #include <QVBoxLayout>
 #include <QToolBar>
+#include <QSplitter>
 
 TileTemplateSetsView::TileTemplateSetsView(TileTemplateSetsManager *tileTemplateSetsManager,
                                            QWidget *parent)
@@ -28,6 +29,7 @@ TileTemplateSetsView::TileTemplateSetsView(TileTemplateSetsManager *tileTemplate
             this, &TileTemplateSetsView::selectedTileTemplateChanged);
 
     TileTemplateEditor *templateEditor = new TileTemplateEditor(this);
+    templateEditor->setSizePolicy(QSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed));
     connect(this, &TileTemplateSetsView::tileTemplateChanged,
             templateEditor, &TileTemplateEditor::tileTemplateChanged);
 
@@ -39,11 +41,41 @@ TileTemplateSetsView::TileTemplateSetsView(TileTemplateSetsManager *tileTemplate
     actionBar->addAction("Save Template Set", this, &TileTemplateSetsView::saveTemplateSet);
     actionBar->addAction("Load Template Set", this, &TileTemplateSetsView::loadTemplateSet);
 
+    //Set up default template set view
+    mDefaultTemplateView = new QListView(this);
+    mDefaultTemplateView->setSizePolicy(QSizePolicy(QSizePolicy::Preferred, QSizePolicy::Minimum));
+    mDefaultTemplateView->hide();
+
+    QSplitter *splitter = new QSplitter(this);
+    splitter->setOrientation(Qt::Vertical);
+    splitter->addWidget(mDefaultTemplateView);
+    splitter->addWidget(mTabs);
+
     QVBoxLayout *layout = new QVBoxLayout;
-    layout->addWidget(mTabs);
+    layout->addWidget(splitter);
     layout->addWidget(templateEditor);
     layout->addWidget(actionBar);
     setLayout(layout);
+}
+
+void TileTemplateSetsView::setDefaultTileTemplateSet(TileTemplateSet *tileTemplateSet)
+{
+    //No use in creating a view if the default set is empty, though there should always be at least the eraser.
+    if (tileTemplateSet && tileTemplateSet->size() == 0)
+        tileTemplateSet = nullptr;
+
+    QItemSelectionModel *m = mDefaultTemplateView->selectionModel();
+
+    mDefaultTemplateSet = tileTemplateSet;
+    mDefaultTemplateView->setModel(mDefaultTemplateSet);
+    mDefaultTemplateView->setVisible(tileTemplateSet);
+
+    delete m;
+
+    if ((m = mDefaultTemplateView->selectionModel())) {
+        connect(m, &QItemSelectionModel::currentRowChanged,
+                this, &TileTemplateSetsView::defaultTileTemplateSelected);
+    }
 }
 
 void TileTemplateSetsView::tileTemplateSetAdded(SavableTileTemplateSet *tileTemplateSet)
@@ -94,6 +126,12 @@ void TileTemplateSetsView::tileTemplateSetAboutToBeRemoved(SavableTileTemplateSe
 
 void TileTemplateSetsView::selectedTileTemplateChanged()
 {
+    if (QItemSelectionModel *m = mDefaultTemplateView->selectionModel()) {
+        m->blockSignals(true);
+        m->clear();
+        m->blockSignals(false);
+    }
+
     int curTab = mTabs->currentIndex();
     int templateId;
 
@@ -112,6 +150,17 @@ void TileTemplateSetsView::selectedTileTemplateChanged()
         emit tileTemplateChanged(mTileTemplateSetsManager->tileTemplateSetAt(curTab)->tileTemplateAt(templateId));
     else
         emit tileTemplateChanged(nullptr);
+}
+
+void TileTemplateSetsView::defaultTileTemplateSelected(const QModelIndex &current)
+{
+    for (QListView *v : mListViews) {
+        v->selectionModel()->blockSignals(true);
+        v->selectionModel()->clear();
+        v->selectionModel()->blockSignals(false);
+    }
+
+    emit tileTemplateChanged(mDefaultTemplateSet->tileTemplateAt(current.row()));
 }
 
 void TileTemplateSetsView::addTemplate()

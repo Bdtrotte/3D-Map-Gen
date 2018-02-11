@@ -56,10 +56,11 @@ void FillTool::toolTileMapChanged(TileMap *prev)
 
     // Disconnect old connections.
     if (prev != nullptr)
-        getTileMap()->disconnect(this);
+        prev->disconnect(this);
 
     // Make new connections.
-    connect(getTileMap(), &TileMap::mapChanged, this, &FillTool::invalidateSelection);
+    if (getTileMap())
+        connect(getTileMap(), &TileMap::mapChanged, this, &FillTool::invalidateSelection);
 }
 
 

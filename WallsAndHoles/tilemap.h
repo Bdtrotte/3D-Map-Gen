@@ -77,6 +77,8 @@ public:
      */
     void removingTileTemplateSet(TileTemplateSet *tileTemplateSet);
 
+    TileTemplateSet *defaultTileTemplateSet() { return mDefaultTileTemplateSet; }
+
 public slots:
     void tilePinged(int x, int y);
 
@@ -111,6 +113,8 @@ private:
     //Should be carefully be set to false elsewhere
     bool mTilePinged;
     QVector<QSharedPointer<Tile>> mPingedTiles;
+
+    TileTemplateSet *mDefaultTileTemplateSet;
 };
 
 #endif // TILEMAP_H

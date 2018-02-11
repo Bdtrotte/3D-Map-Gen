@@ -22,6 +22,8 @@ public:
     explicit TileTemplateSetsView(TileTemplateSetsManager *tileTemplateSetsManage,
                                   QWidget *parent = nullptr);
 
+    void setDefaultTileTemplateSet(TileTemplateSet *tileTemplateSet);
+
 signals:
     void tileTemplateChanged(TileTemplate *tileTemplate);
 
@@ -30,6 +32,7 @@ private slots:
     void tileTemplateSetAboutToBeRemoved(SavableTileTemplateSet *tileTemplateSet);
 
     void selectedTileTemplateChanged();
+    void defaultTileTemplateSelected(const QModelIndex &current);
 
     void addTemplate();
     void removeTemplate();
@@ -42,6 +45,8 @@ private slots:
 private:
     void tileTemplateSetSaveStatusChanged(SavableTileTemplateSet *tileTemplateSet, bool status);
 
+    TileTemplateSet *mDefaultTemplateSet;
+    QListView *mDefaultTemplateView;
     TileTemplateSetsManager *mTileTemplateSetsManager;
     QList<QListView *> mListViews;
 

@@ -9,7 +9,8 @@ TileTemplateSet::TileTemplateSet(QString name,
 
 void TileTemplateSet::addTileTemplate(TileTemplate *tileTemplate,  bool dontAffectSaveStatus)
 {
-    tileTemplate->setParent(this);
+    if (tileTemplate)
+        tileTemplate->setParent(this);
 
     if (!dontAffectSaveStatus)
         changed();
@@ -18,8 +19,10 @@ void TileTemplateSet::addTileTemplate(TileTemplate *tileTemplate,  bool dontAffe
     mTileTemplates.append(tileTemplate);
     endInsertRows();
 
-    connect(tileTemplate, &TileTemplate::changed,
-            this, &TileTemplateSet::templateChanged);
+    if (tileTemplate) {
+        connect(tileTemplate, &TileTemplate::changed,
+                this, &TileTemplateSet::templateChanged);
+    }
 }
 
 void TileTemplateSet::removeTileTemplate(int index)
@@ -71,9 +74,15 @@ QVariant TileTemplateSet::data(const QModelIndex &index, int role) const
         switch (role) {
         case Qt::EditRole:
         case Qt::DisplayRole:
-            return mTileTemplates[index.row()]->name();
+            if (TileTemplate *t = mTileTemplates[index.row()])
+                return t->name();
+            else
+                return "Ground (Eraser)";
         case Qt::DecorationRole:
-            return mTileTemplates[index.row()]->color();
+            if (TileTemplate *t = mTileTemplates[index.row()])
+                return t->color();
+            else
+                return QColor(0,0,0);
         case Qt::ToolTipRole:
             return tr("A Tile Template");
         }
@@ -87,7 +96,8 @@ bool TileTemplateSet::setData(const QModelIndex &index, const QVariant &value, i
     if (data(index, role) != value) {
         switch (role) {
         case Qt::EditRole:
-            mTileTemplates[index.row()]->setName(value.toString());
+            if (TileTemplate *t = mTileTemplates[index.row()])
+                t->setName(value.toString());
         default:
             return false;
         }
@@ -103,7 +113,11 @@ Qt::ItemFlags TileTemplateSet::flags(const QModelIndex &index) const
     if (!index.isValid() || index.parent().isValid())
         return Qt::NoItemFlags;
 
-    return Qt::ItemIsEditable
-            | Qt::ItemIsSelectable
-            | Qt::ItemIsEnabled;
+    if (mTileTemplates[index.row()]) {
+        return Qt::ItemIsEditable
+                | Qt::ItemIsSelectable
+                | Qt::ItemIsEnabled;
+    } else {
+        return Qt::ItemIsSelectable | Qt::ItemIsEnabled;
+    }
 }

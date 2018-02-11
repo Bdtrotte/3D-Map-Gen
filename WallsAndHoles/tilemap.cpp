@@ -6,6 +6,7 @@ TileMap::TileMap(QSize mapSize,
                  QObject *parent)
     : QObject(parent)
     , mMap(mapSize.width(), mapSize.height())
+    , mDefaultTileTemplateSet(new TileTemplateSet("Map Tile Templates", this))
 {
     for (int x = 0; x < mMap.size().width(); ++x) {
         for (int y = 0; y < mMap.size().height(); ++y) {
@@ -17,12 +18,14 @@ TileMap::TileMap(QSize mapSize,
         }
     }
 
-
     // tileChanged() and resized() signals should always be followed by a mapChanged() signal
-    connect(this, &TileMap::tileChanged, this, [this] () { emit mapChanged(); });
-    connect(this, &TileMap::resized, this, [this] () { emit mapChanged(); });
-}
+    connect(this, &TileMap::tileChanged, this, &TileMap::mapChanged);
+    connect(this, &TileMap::resized, this, &TileMap::mapChanged);
 
+    //set up default tile templates. TODO this should be impacted by inital map properties.
+    mDefaultTileTemplateSet->addTileTemplate(nullptr); //For an eraser
+    mDefaultTileTemplateSet->addTileTemplate(new TileTemplate(Qt::gray, "Wall", 2));
+}
 
 Tile &TileMap::tileAt(int x, int y)
 {

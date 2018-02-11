@@ -34,6 +34,7 @@ public slots:
     void newMap();
     void saveMap();
     void loadMap();
+    void closeMap();
     void exportMapMesh();
 
     /**

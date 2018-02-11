@@ -148,6 +148,11 @@ void Editor::loadMap()
     setTileMap(tileMap);
 }
 
+void Editor::closeMap()
+{
+    setTileMap(nullptr);
+}
+
 void Editor::exportMapMesh()
 {
     if (mMeshViewContainer == nullptr) {
@@ -168,13 +173,15 @@ void Editor::exportMapMesh()
 
 void Editor::setTileMap(TileMap *tileMap)
 {
-    // TODO SHOULD provide option to save old tileMap
-    delete mTileMap;
-
+    TileMap *pre = mTileMap;
     mTileMap = tileMap;
     mTileMapToolManager->setTileMap(mTileMap);
     mMapView->createMap(mTileMap);
     mTileTemplateSetManager->setTileMap(mTileMap);
+    if (mTileMap)
+        mTileTemplateSetsView->setDefaultTileTemplateSet(mTileMap->defaultTileTemplateSet());
+    else
+        mTileTemplateSetsView->setDefaultTileTemplateSet(nullptr);
 
     delete mMap2Mesh;
 
@@ -188,6 +195,9 @@ void Editor::setTileMap(TileMap *tileMap)
     // but that is BEFORE the above connection is made. Therefore, updateScene()
     // must be called manually here.
     makeNewScene();
+
+    // TODO SHOULD provide option to save old tileMap
+    delete pre;
 }
 
 void Editor::setUpMenuBar()
@@ -199,6 +209,7 @@ void Editor::setUpMenuBar()
     fileMenu->addAction(tr("New Map"), this, &Editor::newMap);
     fileMenu->addAction(tr("Save Map"), this, &Editor::saveMap);
     fileMenu->addAction(tr("Load Map"), this, &Editor::loadMap);
+    fileMenu->addAction(tr("Close Map"), this, &Editor::closeMap);
     fileMenu->addSeparator();
     fileMenu->addAction(tr("Export Map Mesh"), this, &Editor::exportMapMesh);
 }

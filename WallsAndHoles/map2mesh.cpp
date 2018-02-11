@@ -12,11 +12,13 @@ Map2Mesh::Map2Mesh(TileMap *tileMap, QObject *parent)
     : QObject(parent)
     , mTileMap(tileMap)
 {
-    remakeAll();
+    if (mTileMap) {
+        remakeAll();
 
-    // Connect the tile changed & map resized signals.
-    connect(mTileMap, &TileMap::tileChanged, this, &Map2Mesh::tileChanged);
-    connect(mTileMap, &TileMap::resized, this, &Map2Mesh::remakeAll);
+        // Connect the tile changed & map resized signals.
+        connect(mTileMap, &TileMap::tileChanged, this, &Map2Mesh::tileChanged);
+        connect(mTileMap, &TileMap::resized, this, &Map2Mesh::remakeAll);
+    }
 }
 
 
