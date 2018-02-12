@@ -65,7 +65,8 @@ SOURCES += \
     mapoverlaycell.cpp \
     filltool.cpp \
     tiletemplatesetsmanager.cpp \
-    savabletiletemplateset.cpp
+    savabletiletemplateset.cpp \
+    newmapdialogs.cpp
 
 HEADERS += \
     renderableobject.h \
@@ -113,7 +114,8 @@ HEADERS += \
     mapoverlaycell.h \
     filltool.h \
     tiletemplatesetsmanager.h \
-    savabletiletemplateset.h
+    savabletiletemplateset.h \
+    newmapdialogs.h
 
 FORMS += \
     meshview.ui \

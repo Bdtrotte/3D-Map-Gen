@@ -35,7 +35,9 @@ TileMap *XMLTool::openTileMap(QString tileMapPath, TileTemplateSetsManager *tile
                     if (attr.name() == "height")
                          size.setHeight(attr.value().toInt());
                 }
-                tileMap = new TileMap(size);
+                //COME BACK HERE AND FIX KENNY
+                Properties p;
+                tileMap = new TileMap(size, p);
                 tileMap->setSavePath(tileMapPath);
             } else if (xmlReader.name() == "TileTemplateSet") {
                 QString path = xmlReader.attributes().first().value().toString();

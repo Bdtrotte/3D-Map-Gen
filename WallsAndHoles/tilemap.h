@@ -11,12 +11,19 @@
 #include <QSharedPointer>
 #include <QMutex>
 
+struct Properties
+{
+    bool outdoorMap = 0;
+    bool indoorMap = 0;
+    bool ceiling = 0;
+};
 class TileMap : public QObject
 {
     Q_OBJECT
 
 public:
     TileMap(QSize mapSize,
+            Properties properties,
             QObject *parent = nullptr);
 
 
@@ -80,6 +87,7 @@ public:
 
     TileTemplateSet *defaultTileTemplateSet() { return mDefaultTileTemplateSet; }
 
+    Properties getProperties();
 public slots:
     void tilePinged(int x, int y);
 
@@ -118,6 +126,8 @@ private:
     TileTemplateSet *mDefaultTileTemplateSet;
 
     QMutex mPingingMutex;
+
+    Properties mProperties;
 };
 
 #endif // TILEMAP_H
