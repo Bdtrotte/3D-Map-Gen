@@ -1,11 +1,17 @@
 #ifndef NEWMAPDIALOG_H
 #define NEWMAPDIALOG_H
 
+#include <QWidget>
 #include <QDialog>
-
-namespace Ui {
-class NewMapDialog;
-}
+#include <QDialogButtonBox>
+#include <QHBoxLayout>
+#include <QAbstractButton>
+#include <QCheckBox>
+#include <QSpinBox>
+#include <QPushButton>
+#include <QLabel>
+#include <QGridLayout>
+#include <QVBoxLayout>
 
 struct NewMapData
 {
@@ -15,21 +21,23 @@ struct NewMapData
     NewMapData(int w, int h) : width(w), height(h) {}
 };
 
-class NewMapDialog : public QDialog
+class NewMapDialog : public QWidget
 {
     Q_OBJECT
-
 public:
-    explicit NewMapDialog(QWidget *parent = 0);
-    ~NewMapDialog();
+    explicit NewMapDialog(QWidget *parent = nullptr);
 
     NewMapData result;
 
-private slots:
-    void on_buttonBox_accepted();
-
 private:
-    Ui::NewMapDialog *ui;
+    QSpinBox *hSpinBox;
+    QSpinBox *wSpinBox;
+
+signals:
+
+public slots:
+protected slots:
+    void setResult();
 };
 
 #endif // NEWMAPDIALOG_H

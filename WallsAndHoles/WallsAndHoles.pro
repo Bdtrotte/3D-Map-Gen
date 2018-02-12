@@ -41,7 +41,6 @@ SOURCES += \
     meshviewcontainer.cpp \
     mapview.cpp \
     editor.cpp \
-    newmapdialog.cpp \
     meshmaterial.cpp \
     shaderprogramonelight.cpp \
     xmltool.cpp \
@@ -66,7 +65,7 @@ SOURCES += \
     filltool.cpp \
     tiletemplatesetsmanager.cpp \
     savabletiletemplateset.cpp \
-    newmapdialogs.cpp
+    newmapdialog.cpp
 
 HEADERS += \
     renderableobject.h \
@@ -87,7 +86,6 @@ HEADERS += \
     meshviewcontainer.h \
     mapview.h \
     editor.h \
-    newmapdialog.h \
     array2d.h \
     meshmaterial.h \
     shaderprogramonelight.h \
@@ -115,7 +113,7 @@ HEADERS += \
     filltool.h \
     tiletemplatesetsmanager.h \
     savabletiletemplateset.h \
-    newmapdialogs.h
+    newmapdialog.h
 
 FORMS += \
     meshview.ui \

@@ -1,7 +1,5 @@
 #include "editor.h"
 
-#include "newmapdialogs.h"
-
 #include "newmapdialog.h"
 #include "meshviewcontainer.h"
 #include "tilemapbrushtool.h"
@@ -93,11 +91,10 @@ Editor::~Editor()
 void Editor::newMap()
 {
     NewMapDialog nmd;
-    NewMapDialogs nmds;
-
-    nmds.show();
+    nmd.show();
     Properties p;
-    if (nmd.exec()) {
+
+    if (nmd.isHidden()) {
         setTileMap(new TileMap(QSize(nmd.result.width, nmd.result.height), p));
     }
 }
