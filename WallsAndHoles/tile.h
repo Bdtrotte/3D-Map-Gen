@@ -14,13 +14,13 @@ class Tile : public QObject
     Q_OBJECT
 
 public:
-    explicit Tile(SharedTileTemplate tileTemplate = nullptr,
+    explicit Tile(TileTemplate *tileTemplate = nullptr,
                   int xPos = -1,
                   int yPos = -1,
                   QObject *parent = nullptr);
 
-    bool hasTileTemplate() const { return !mTileTemplate.isNull(); }
-    SharedTileTemplate tileTemplate() const { return mTileTemplate; }
+    bool hasTileTemplate() const { return mTileTemplate != nullptr; }
+    TileTemplate *tileTemplate() const { return mTileTemplate; }
 
     float thickness() const;
     float height() const;
@@ -41,10 +41,11 @@ public:
      * Sets all relative values to zero,
      * and changes the tileTemplate to newTileTemplate
      */
-    void resetTile(SharedTileTemplate newTileTemplate);
+    void resetTile(TileTemplate *newTileTemplate);
 
 signals:
     void tileChanged(int x, int y);
+    void tilePinged(int x, int y);
 
 public slots:
     //by calling the respective set functions, it is ensured that the tile wont go out of bounds.
@@ -53,7 +54,9 @@ public slots:
     void templatePositionChanged() { setRelativeThickness(mRelativeThickness); }
 
 private:
-    SharedTileTemplate mTileTemplate;
+    void makeTemplateConnections();
+
+    TileTemplate *mTileTemplate;
 
     const int mXPos;
     const int mYPos;

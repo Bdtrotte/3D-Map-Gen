@@ -9,15 +9,16 @@
 #include "m2mtilemesher.h"
 
 Map2Mesh::Map2Mesh(TileMap *tileMap, QObject *parent)
-    : QObject(parent),
-      mTileMap(tileMap)
+    : QObject(parent)
+    , mTileMap(tileMap)
 {
-    remakeAll();
+    if (mTileMap) {
+        remakeAll();
 
-
-    // Connect the tile changed & map resized signals.
-    connect(tileMap, &TileMap::tileChanged, this, &Map2Mesh::tileChanged);
-    connect(tileMap, &TileMap::resized, this, &Map2Mesh::remakeAll);
+        // Connect the tile changed & map resized signals.
+        connect(mTileMap, &TileMap::tileChanged, this, &Map2Mesh::tileChanged);
+        connect(mTileMap, &TileMap::resized, this, &Map2Mesh::remakeAll);
+    }
 }
 
 
@@ -31,9 +32,11 @@ QVector<QSharedPointer<RenderableObject>> Map2Mesh::getMeshes() const
     return meshes;
 }
 
-
 void Map2Mesh::tileChanged(int x, int y)
 {
+    Q_UNUSED(x);
+    Q_UNUSED(y);
+
     if (!mInferScheduled) {
         mInferScheduled = true;
 

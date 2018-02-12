@@ -1,19 +1,29 @@
 #ifndef XMLTOOL_H
 #define XMLTOOL_H
+
 #include "tilemap.h"
-#include "tiletemplateset.h"
+#include "savabletiletemplateset.h"
+
 #include <QDomDocument>
 #include <QFile>
 #include <QTextStream>
 #include <QXmlStreamReader>
 
+class TileTemplateSetsManager;
+
 namespace XMLTool {
 
-    SharedTileMap openTileMap(QString tileMapPath);
-    SharedTileTemplateSet openTileTemplateSet(QString templateSetPath);
+enum SaveErrors {
+    NoError,
+    OpenFileError
+};
 
-    int saveTileMap(SharedTileMap tileMap, bool saveTemplates = true);
-    int saveTileTemplateSet(TileTemplateSet *templateSet);
+TileMap *openTileMap(QString tileMapPath, TileTemplateSetsManager *tileTemplateSetManager);
+SavableTileTemplateSet *openTileTemplateSet(QString templateSetPath);
+
+int saveTileMap(TileMap *tileMap, const QList<SavableTileTemplateSet *> &tileTemplateSets);
+int saveTileTemplateSet(SavableTileTemplateSet *templateSet);
+
 }
 
 #endif // XMLTOOL_H

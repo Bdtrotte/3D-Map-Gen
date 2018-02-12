@@ -63,7 +63,9 @@ SOURCES += \
     rectbrushtool.cpp \
     ellipsebrushtool.cpp \
     mapoverlaycell.cpp \
-    filltool.cpp
+    filltool.cpp \
+    tiletemplatesetsmanager.cpp \
+    savabletiletemplateset.cpp
 
 HEADERS += \
     renderableobject.h \
@@ -109,7 +111,9 @@ HEADERS += \
     rectbrushtool.h \
     ellipsebrushtool.h \
     mapoverlaycell.h \
-    filltool.h
+    filltool.h \
+    tiletemplatesetsmanager.h \
+    savabletiletemplateset.h
 
 FORMS += \
     meshview.ui \

@@ -25,6 +25,7 @@ Editor::Editor(QObject *parent)
     , mMainWindow(new QMainWindow())
     , mMap2Mesh(nullptr)
     , mTileMap(nullptr)
+    , mTileTemplateSetManager(new TileTemplateSetsManager(nullptr, this))
     , mMapView(new MapView(mTileMapSelectedRegion, mMainWindow))
     , mTileMapToolManager(new TileMapToolManager(this))
     , mToolBar(new QToolBar(mMainWindow))
@@ -56,9 +57,8 @@ Editor::Editor(QObject *parent)
     mMeshViewContainer = new MeshViewContainer(dw);
     dw->setWidget(mMeshViewContainer);
 
-    //TMP testing templatesets model view
     QDockWidget *tdw = new QDockWidget("Template Set View", mMainWindow);
-    mTileTemplateSetsView = new TileTemplateSetsView(tdw);
+    mTileTemplateSetsView = new TileTemplateSetsView(mTileTemplateSetManager, tdw);
     tdw->setWidget(mTileTemplateSetsView);
 
     mMainWindow->addDockWidget(Qt::RightDockWidgetArea, dw);
@@ -85,34 +85,15 @@ Editor::Editor(QObject *parent)
 Editor::~Editor()
 {
     delete mMainWindow;
+    delete mTileMap;
 }
 
 void Editor::newMap()
 {
     NewMapDialog nmd;
-    nmd.exec();
 
-    if (nmd.result.width != -1) {
-        if (mTileMap)
-            delete mTileMap;
-        mTileMap = new TileMap(QSize(nmd.result.width, nmd.result.height), this);
-        mTileMapToolManager->setTileMap(mTileMap);
-
-        mMapView->createMap(mTileMap);
-
-        if (mMap2Mesh != nullptr)
-            delete mMap2Mesh;
-
-        mMap2Mesh = new Map2Mesh(mTileMap, this);
-
-        // TODO: It is inefficient to update the entire scene when just a part
-        // of the map is updated.
-        connect(mMap2Mesh, &Map2Mesh::mapMeshUpdated, this, &Editor::makeNewScene);
-
-        // Note: Map2Mesh's mapUpdated() signal is emitted during its constructor,
-        // but that is BEFORE the above connection is made. Therefore, updateScene()
-        // must be called manually here.
-        makeNewScene();
+    if (nmd.exec()) {
+        setTileMap(new TileMap(QSize(nmd.result.width, nmd.result.height)));
     }
 }
 
@@ -128,52 +109,53 @@ void Editor::makeNewScene()
 
 void Editor::saveMap()
 {
-    if(mTileMap==nullptr){
+    // TODO : Save should be disabled if there is no map
+    if(mTileMap == nullptr){
         QMessageBox messageBox;
         messageBox.critical(0,"Error","TileMap doesn't exist!");
         messageBox.setFixedSize(500,200);
         return;
     }
-    //mTileMap->setDepend(QSharedPointer<TileTemplateSet>(mTileTemplateSets[0]));
-    //mTileMap->updateDepend();
+
     if(mTileMap->savePath().isEmpty()){
         mTileMap->setSavePath(QFileDialog::getSaveFileName(mMainWindow,
-            tr("Save Map"), "/home", tr("Save Files (*.xml)")));
+                                                           tr("Save Map"),
+                                                           "/home/",
+                                                           tr("Save Files (*.wah)")));
     }
-    for(SharedTileTemplateSet set: mTileMap->dependencies()){
-        if(set->savePath().isEmpty()){
-            set->setSavePath(QFileDialog::getSaveFileName(mMainWindow,
-                tr("Save Templates"), "/home", tr("Save Files (*.xml)")));
-        }
-    }
-    XMLTool::saveTileMap(QSharedPointer<TileMap>(mTileMap));
+
+    mTileTemplateSetManager->saveAllTileTemplateSets();
+
+    XMLTool::saveTileMap(mTileMap, mTileTemplateSetManager->tileTemplateSets());
 }
 
 void Editor::loadMap()
 {
     QString fileName = QFileDialog::getOpenFileName(mMainWindow,
-        tr("Open Map"), "/home", tr("Open Files (*.xml)"));
+                                                    tr("Open Map"),
+                                                    "/home/",
+                                                    tr("Open Files (*.wah)"));
 
-    SharedTileMap tileMap = XMLTool::openTileMap(fileName);
-    if(tileMap==nullptr){
+    TileMap *tileMap = XMLTool::openTileMap(fileName, mTileTemplateSetManager);
+
+    if (tileMap == nullptr) {
         QMessageBox messageBox;
         messageBox.critical(0,"Error","Fail to load TileMap!");
         messageBox.setFixedSize(500,200);
         return;
     }
-    mTileMap = tileMap.data();
-    if(!mTileMap->dependencies().isEmpty())
-        //mTileTemplateSets[0] = (mTileMap->dependencies()[0]);
-    mTileMapToolManager->setTileMap(mTileMap);
-    mMapView->createMap(mTileMap);
+
+    setTileMap(tileMap);
+}
+
+void Editor::closeMap()
+{
+    setTileMap(nullptr);
 }
 
 void Editor::exportMapMesh()
 {
-
-    MeshViewContainer *meshViewContainer = mMainWindow->findChild<MeshViewContainer *>();
-
-    if (meshViewContainer == nullptr) {
+    if (mMeshViewContainer == nullptr) {
         QMessageBox messageBox;
         messageBox.critical(0,"Error","MeshView doesn't exist!");
         messageBox.setFixedSize(500,200);
@@ -181,27 +163,41 @@ void Editor::exportMapMesh()
     }
 
     QString fileName = QFileDialog::getSaveFileName(mMainWindow,
-        tr("Export OBJ"), "/home", tr("Export Files (*.obj)"));
+                                                    tr("Export OBJ"),
+                                                    "/home/",
+                                                    tr("Export Files (*.obj)"));
 
     if(!fileName.isEmpty())
-        meshViewContainer->saveMesh(fileName);
+        mMeshViewContainer->saveMesh(fileName);
+}
 
-/*
-    MeshViewContainer *meshViewContainer = mMainWindow->findChild<MeshViewContainer *>();
+void Editor::setTileMap(TileMap *tileMap)
+{
+    TileMap *pre = mTileMap;
+    mTileMap = tileMap;
+    mTileMapToolManager->setTileMap(mTileMap);
+    mMapView->createMap(mTileMap);
+    mTileTemplateSetManager->setTileMap(mTileMap);
+    if (mTileMap)
+        mTileTemplateSetsView->setDefaultTileTemplateSet(mTileMap->defaultTileTemplateSet());
+    else
+        mTileTemplateSetsView->setDefaultTileTemplateSet(nullptr);
 
-    if (meshViewContainer == nullptr) {
-        QMessageBox messageBox;
-        messageBox.critical(0,"Error","MeshView doesn't exist!");
-        messageBox.setFixedSize(500,200);
-        return;
-    }
+    delete mMap2Mesh;
 
-    QString fileName = QFileDialog::getOpenFileName(mMainWindow,
-        tr("import OBJ"), "/home", tr("import Files (*.obj)"));
+    mMap2Mesh = new Map2Mesh(mTileMap, this);
 
-    if(!fileName.isEmpty())
-        meshViewContainer->loadMesh(fileName);
-*/
+    // TODO: It is inefficient to update the entire scene when just a part
+    // of the map is updated.
+    connect(mMap2Mesh, &Map2Mesh::mapMeshUpdated, this, &Editor::makeNewScene);
+
+    // Note: Map2Mesh's mapUpdated() signal is emitted during its constructor,
+    // but that is BEFORE the above connection is made. Therefore, updateScene()
+    // must be called manually here.
+    makeNewScene();
+
+    // TODO SHOULD provide option to save old tileMap
+    delete pre;
 }
 
 void Editor::setUpMenuBar()
@@ -213,6 +209,7 @@ void Editor::setUpMenuBar()
     fileMenu->addAction(tr("New Map"), this, &Editor::newMap);
     fileMenu->addAction(tr("Save Map"), this, &Editor::saveMap);
     fileMenu->addAction(tr("Load Map"), this, &Editor::loadMap);
+    fileMenu->addAction(tr("Close Map"), this, &Editor::closeMap);
     fileMenu->addSeparator();
     fileMenu->addAction(tr("Export Map Mesh"), this, &Editor::exportMapMesh);
 }

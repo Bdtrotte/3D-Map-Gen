@@ -34,7 +34,7 @@ void FillTool::cellClicked(int x, int y)
     disconnect(getTileMap(), &TileMap::mapChanged, this, &FillTool::invalidateSelection);
 
     // Fill it in.
-    SharedTileTemplate drawMaterial = getTileTemplate();
+    TileTemplate *drawMaterial = getTileTemplate();
     for (QPoint point : mSelection)
         getTileMap()->setTile(point.x(), point.y(), drawMaterial);
 
@@ -56,10 +56,11 @@ void FillTool::toolTileMapChanged(TileMap *prev)
 
     // Disconnect old connections.
     if (prev != nullptr)
-        getTileMap()->disconnect(this);
+        prev->disconnect(this);
 
     // Make new connections.
-    connect(getTileMap(), &TileMap::mapChanged, this, &FillTool::invalidateSelection);
+    if (getTileMap())
+        connect(getTileMap(), &TileMap::mapChanged, this, &FillTool::invalidateSelection);
 }
 
 
@@ -151,7 +152,12 @@ void FillTool::drawOverlay(int endX, int endY)
 
         updateSelection(endX, endY);
 
-        QColor color = getTileTemplate()->color();
+        QColor color;
+        if (TileTemplate *t = getTileTemplate())
+            color = t->color();
+        else
+            color = Qt::black;
+
         color.setAlpha(100);
 
         QGraphicsScene *scene = mMapView->scene();

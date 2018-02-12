@@ -60,13 +60,13 @@ TileTemplateEditor::TileTemplateEditor(QWidget *parent)
     setUpEditor();
 }
 
-void TileTemplateEditor::tileTemplateChanged(SharedTileTemplate tileTemplate)
+void TileTemplateEditor::tileTemplateChanged(TileTemplate *tileTemplate)
 {
-    disconnect(mTileTemplate.data());
+    disconnect(mTileTemplate);
 
     mTileTemplate = tileTemplate;
-    if (!mTileTemplate.isNull()) {
-        connect(mTileTemplate.data(), &TileTemplate::changed,
+    if (mTileTemplate != nullptr) {
+        connect(mTileTemplate, &TileTemplate::changed,
                 this, &TileTemplateEditor::tileTemplatePropertyChanged);
     }
 
@@ -81,7 +81,7 @@ void TileTemplateEditor::tileTemplatePropertyChanged()
 
 void TileTemplateEditor::nameChanged(QString value)
 {
-    if (mTileTemplate.isNull())
+    if (mTileTemplate == nullptr)
         return;
 
     mImEditing = true;
@@ -93,7 +93,7 @@ void TileTemplateEditor::nameChanged(QString value)
 
 void TileTemplateEditor::heightChanged(double value)
 {
-    if (mTileTemplate.isNull())
+    if (mTileTemplate == nullptr)
         return;
 
     mImEditing = true;
@@ -105,7 +105,7 @@ void TileTemplateEditor::heightChanged(double value)
 
 void TileTemplateEditor::thicknessChanged(double value)
 {
-    if (mTileTemplate.isNull())
+    if (mTileTemplate == nullptr)
         return;
 
     mImEditing = true;
@@ -117,7 +117,7 @@ void TileTemplateEditor::thicknessChanged(double value)
 
 void TileTemplateEditor::xPositionChanged(double value)
 {
-    if (mTileTemplate.isNull())
+    if (mTileTemplate == nullptr)
         return;
 
     mImEditing = true;
@@ -131,7 +131,7 @@ void TileTemplateEditor::xPositionChanged(double value)
 
 void TileTemplateEditor::yPositionChanged(double value)
 {
-    if (mTileTemplate.isNull())
+    if (mTileTemplate == nullptr)
         return;
 
     mImEditing = true;
@@ -145,7 +145,7 @@ void TileTemplateEditor::yPositionChanged(double value)
 
 void TileTemplateEditor::setUpEditor()
 {
-    if (mTileTemplate.isNull()) {
+    if (mTileTemplate == nullptr) {
         mName->setText("");
         mHeight->setValue(0);
         mThickness->setValue(1);

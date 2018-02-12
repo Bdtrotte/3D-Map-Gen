@@ -9,6 +9,7 @@
 #include <QObject>
 #include <QSize>
 #include <QSharedPointer>
+#include <QMutex>
 
 class TileMap : public QObject
 {
@@ -31,7 +32,7 @@ public:
      */
     const Array2D<QSharedPointer<Tile>> &getArray2D() const;
 
-    void setTile(int x, int y, SharedTileTemplate tileTemplate);
+    void setTile(int x, int y, TileTemplate *tileTemplate);
 
     //sets this tile to the default
     void clearTile(int x, int y) { setTile(x, y, nullptr); }
@@ -50,16 +51,37 @@ public:
     const QString savePath() const { return mSavePath; }
     void setSavePath(QString path){ mSavePath = path; }
 
-    //simply add a dependent templateSet for saving/reloading,
-    //run updateDepend to check if this dependent it really necessary
-    void setDepend(SharedTileTemplateSet templateSet){ mDependencies.push_back(templateSet); }
-    //remove all dependencies that are no longer used in this tilemap.
-    void updateDepend();
-
-    QVector<SharedTileTemplateSet> dependencies() const { return mDependencies; }
-
     const Array2D<QSharedPointer<Tile>> &cTiles() const { return mMap; }
 
+    /**
+     * @brief tileTemplateUsed
+     * Returns true if some tile in the map uses this tileTemplate
+     * @param tileTemplate
+     * The tile template to check.
+     */
+    bool isTileTemplateUsed(TileTemplate *tileTemplate);
+
+    /**
+     * @brief tileTemplateSetUsed
+     * Returns true if some tile in the map uses any of the tileTemplates
+     * of the given set
+     * @param tileTemplateSet
+     * The set to check
+     */
+    bool isTileTemplateSetUsed(TileTemplateSet *tileTemplateSet);
+
+    /**
+     * @brief removingTileTemplateSet
+     * Called when a tileTemplateSet is going to be removed.
+     * Any tiles using templates from the set will be cleared.
+     * @param tileTemplateSet
+     */
+    void removingTileTemplateSet(TileTemplateSet *tileTemplateSet);
+
+    TileTemplateSet *defaultTileTemplateSet() { return mDefaultTileTemplateSet; }
+
+public slots:
+    void tilePinged(int x, int y);
 
 signals:
     void tileChanged(int x, int y);
@@ -71,15 +93,31 @@ signals:
     void mapChanged();
 
 private:
+    /**
+     * @brief The TilePingReceiveMode enum
+     * How a tilePinged singnal should be received.
+     */
+    enum TilePingReceiveMode {
+        None,     //No action taken on ping reception.
+        SetCheck, //Set mTilePinged to true on ping reception.
+        Collect   //Add the pinded tile to mPingedTiles.
+    };
+
     //2D array of Tile*. If mMap[x][y]->isEmpty() then ground is shown
     Array2D<QSharedPointer<Tile>> mMap;
 
-    //holding a reference to all tileTemplateSet that this tilemap depends on
-    QVector<SharedTileTemplateSet> mDependencies;
     //default save path of this tilemap object, can be changed when using "save as" command.
     QString mSavePath;
-};
 
-typedef QSharedPointer<TileMap> SharedTileMap;
+    TilePingReceiveMode mTilePingReceiveMode;
+    //set to true when mTilePingReceiveMode == SetCheck, and a tilePinged is received.
+    //Should be carefully be set to false elsewhere
+    bool mTilePinged;
+    QVector<QSharedPointer<Tile>> mPingedTiles;
+
+    TileTemplateSet *mDefaultTileTemplateSet;
+
+    QMutex mPingingMutex;
+};
 
 #endif // TILEMAP_H

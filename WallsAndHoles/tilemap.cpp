@@ -6,21 +6,26 @@ TileMap::TileMap(QSize mapSize,
                  QObject *parent)
     : QObject(parent)
     , mMap(mapSize.width(), mapSize.height())
+    , mDefaultTileTemplateSet(new TileTemplateSet("Map Tile Templates", this))
 {
     for (int x = 0; x < mMap.size().width(); ++x) {
         for (int y = 0; y < mMap.size().height(); ++y) {
             mMap(x, y) = QSharedPointer<Tile>::create(nullptr, x, y, this);
             connect(mMap(x, y).data(), &Tile::tileChanged,
                     this, &TileMap::tileChanged);
+            connect(mMap(x, y).data(), &Tile::tilePinged,
+                    this, &TileMap::tilePinged);
         }
     }
 
-
     // tileChanged() and resized() signals should always be followed by a mapChanged() signal
-    connect(this, &TileMap::tileChanged, this, [this] () { emit mapChanged(); });
-    connect(this, &TileMap::resized, this, [this] () { emit mapChanged(); });
-}
+    connect(this, &TileMap::tileChanged, this, &TileMap::mapChanged);
+    connect(this, &TileMap::resized, this, &TileMap::mapChanged);
 
+    //set up default tile templates. TODO this should be impacted by inital map properties.
+    mDefaultTileTemplateSet->addTileTemplate(nullptr); //For an eraser
+    mDefaultTileTemplateSet->addTileTemplate(new TileTemplate(Qt::gray, "Wall", 2));
+}
 
 Tile &TileMap::tileAt(int x, int y)
 {
@@ -47,7 +52,7 @@ const Array2D<QSharedPointer<Tile>> &TileMap::getArray2D() const
     return mMap;
 }
 
-void TileMap::setTile(int x, int y, SharedTileTemplate tileTemplate)
+void TileMap::setTile(int x, int y, TileTemplate *tileTemplate)
 {
     Q_ASSERT(x >= 0);
     Q_ASSERT(y >= 0);
@@ -97,21 +102,79 @@ void TileMap::resizeMap(QSize newSize)
     emit resized();
 }
 
-void TileMap::updateDepend(){
-    QVector<bool> valid(mDependencies.size());
-    for (int x = 0; x < mMap.size().width(); ++x) {
-        for (int y = 0; y < mMap.size().height(); ++y) {
-            for(int i=0; i<mDependencies.size(); i++){
-                if(mDependencies[i]->cTileTemplates().indexOf(mMap(x, y)->tileTemplate())>=0){
-                    valid[i]=true;
-                }
-            }
-        }
+bool TileMap::isTileTemplateUsed(TileTemplate *tileTemplate)
+{
+    mPingingMutex.lock();
+
+    if (!tileTemplate) return false;
+
+    mTilePingReceiveMode = SetCheck;
+    mTilePinged = false;
+
+    tileTemplate->emitTilePing();
+
+    bool result = mTilePinged;
+    mTilePinged = false;
+    mTilePingReceiveMode = None;
+
+    mPingingMutex.unlock();
+
+    return result;
+}
+
+bool TileMap::isTileTemplateSetUsed(TileTemplateSet *tileTemplateSet)
+{
+    mPingingMutex.lock();
+
+    mTilePingReceiveMode = SetCheck;
+    mTilePinged = false;
+
+    for (TileTemplate *t : tileTemplateSet->cTileTemplates()) {
+        if (t)
+            t->emitTilePing();
+
+        if (mTilePinged)
+            break;
     }
-    QVector<SharedTileTemplateSet> newDependencies;
-    for(int i=0; i<valid.size(); i++){
-        if(valid[i])
-            newDependencies.push_back(mDependencies[i]);
+
+    bool result = mTilePinged;
+    mTilePinged = false;
+    mTilePingReceiveMode = None;
+
+    mPingingMutex.unlock();
+
+    return result;
+}
+
+void TileMap::removingTileTemplateSet(TileTemplateSet *tileTemplateSet)
+{
+    mPingingMutex.lock();
+
+    mTilePingReceiveMode = Collect;
+    mPingedTiles.clear();
+
+    for (TileTemplate *t : tileTemplateSet->cTileTemplates())
+        if (t)
+            t->emitTilePing();
+
+    for (QSharedPointer<Tile> t : mPingedTiles)
+        t->resetTile(nullptr);
+
+    mPingedTiles.clear();
+    mTilePingReceiveMode = None;
+
+    mPingingMutex.unlock();
+}
+
+void TileMap::tilePinged(int x, int y)
+{
+    switch(mTilePingReceiveMode) {
+    case SetCheck:
+        mTilePinged = true;
+        break;
+    case Collect:
+        mPingedTiles.append(mMap(x, y));
+        break;
+    default: break;
     }
-    mDependencies = newDependencies;
 }

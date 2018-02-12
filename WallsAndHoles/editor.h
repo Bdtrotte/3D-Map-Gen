@@ -9,6 +9,7 @@
 #include "map2mesh.h"
 #include "meshviewcontainer.h"
 #include "tiletemplatesetsview.h"
+#include "tiletemplatesetsmanager.h"
 
 #include <QObject>
 #include <QList>
@@ -33,6 +34,7 @@ public slots:
     void newMap();
     void saveMap();
     void loadMap();
+    void closeMap();
     void exportMapMesh();
 
     /**
@@ -41,6 +43,8 @@ public slots:
     void makeNewScene();
 
 private:
+    //sets mTileMap to tileMap, and updates everything accordingly
+    void setTileMap(TileMap *tileMap);
     void setUpMenuBar();
 
     QMainWindow *mMainWindow;
@@ -50,6 +54,7 @@ private:
 
     //TileMap data
     TileMap *mTileMap;
+    TileTemplateSetsManager *mTileTemplateSetManager;
     QRegion mTileMapSelectedRegion;
 
     //views

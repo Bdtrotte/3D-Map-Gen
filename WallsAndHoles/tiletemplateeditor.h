@@ -16,7 +16,7 @@ public:
     explicit TileTemplateEditor(QWidget *parent = nullptr);
 
 public slots:
-    void tileTemplateChanged(SharedTileTemplate tileTemplate);
+    void tileTemplateChanged(TileTemplate *tileTemplate);
 
 private slots:
     void tileTemplatePropertyChanged();
@@ -46,7 +46,7 @@ private:
     QLabel *mYPositionLabel;
     QDoubleSpinBox *mYPosition;
 
-    SharedTileTemplate mTileTemplate;
+    TileTemplate *mTileTemplate;
 
     //set to true when changes are being made within this editor
     //to avoid loops caused by signals

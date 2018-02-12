@@ -23,7 +23,7 @@ public slots:
     void cellHovered(int x, int y);
     void mouseExitedMap();
 
-    void tileTemplateChanged(SharedTileTemplate tileTemplate);
+    void tileTemplateChanged(TileTemplate *tileTemplate);
 
 private:
     using ToolManager::registerTool;
