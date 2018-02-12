@@ -8,6 +8,7 @@ TileMap::TileMap(QSize mapSize, Properties properties,
     , mMap(mapSize.width(), mapSize.height())
     , mDefaultTileTemplateSet(new TileTemplateSet("Map Tile Templates", this))
     , mProperties(properties)
+
 {
     for (int x = 0; x < mMap.size().width(); ++x) {
         for (int y = 0; y < mMap.size().height(); ++y) {

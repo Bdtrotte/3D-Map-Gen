@@ -91,11 +91,12 @@ Editor::~Editor()
 void Editor::newMap()
 {
     NewMapDialog nmd;
-    nmd.show();
-    Properties p;
+    nmd.exec();
 
-    if (nmd.isHidden()) {
-        setTileMap(new TileMap(QSize(nmd.result.width, nmd.result.height), p));
+    if (nmd.accepted) {
+        setTileMap(new TileMap(QSize(nmd.result.width, nmd.result.height), nmd.TileMapProperty));
+    }else{
+        return;
     }
 }
 
