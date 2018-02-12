@@ -105,6 +105,32 @@ bool TileTemplateSetsManager::removeTileTemplateSet(int index)
     return true;
 }
 
+bool TileTemplateSetsManager::removeTileTemplate(int templateSetIndex, int templateIndex)
+{
+    Q_ASSERT(templateSetIndex >= 0 && templateSetIndex < mTileTemplateSets.size());
+    Q_ASSERT(templateIndex >= 0 && templateIndex < mTileTemplateSets[templateSetIndex]->size());
+
+    TileTemplate *t = mTileTemplateSets[templateSetIndex]->tileTemplateAt(templateIndex);
+
+    if (mTileMap && mTileMap->isTileTemplateUsed(t)) {
+        QMessageBox mb;
+        mb.setText("The Tile Template you are attempting to remove is "
+                   "being used by the active Tile Map. Removing this Template will "
+                   "reset any tiles using this template back to the "
+                   "default.\nDo you wish to proceed?");
+        mb.addButton("Remove", QMessageBox::AcceptRole);
+        mb.addButton("Cancel", QMessageBox::RejectRole);
+
+        if (mb.exec() == 1) return false;
+
+        mTileMap->removingTileTemplate(t);
+    }
+
+    mTileTemplateSets[templateSetIndex]->removeTileTemplate(templateIndex);
+
+    return true;
+}
+
 void TileTemplateSetsManager::saveAllTileTemplateSets()
 {
     for (SavableTileTemplateSet *ts : mTileTemplateSets)

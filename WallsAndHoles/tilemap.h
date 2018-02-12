@@ -78,6 +78,14 @@ public:
      */
     void removingTileTemplateSet(TileTemplateSet *tileTemplateSet);
 
+    /**
+     * @brief removeTileTemplate
+     * Called when a tileTemplate is going to be removed.
+     * Any tiles using template will be cleared.
+     * @param tileTemplate
+     */
+    void removingTileTemplate(TileTemplate *tileTemplate);
+
     TileTemplateSet *defaultTileTemplateSet() { return mDefaultTileTemplateSet; }
 
 public slots:

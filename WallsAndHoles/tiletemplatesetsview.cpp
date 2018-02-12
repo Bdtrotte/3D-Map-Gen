@@ -3,7 +3,6 @@
 #include "newtiletemplatesetdialog.h"
 #include "tiletemplateeditor.h"
 
-#include <QAction>
 #include <QDebug>
 #include <QVBoxLayout>
 #include <QToolBar>
@@ -14,6 +13,8 @@ TileTemplateSetsView::TileTemplateSetsView(TileTemplateSetsManager *tileTemplate
     : QWidget(parent)
     , mTileTemplateSetsManager(tileTemplateSetsManager)
     , mTabs(new QTabWidget(this))
+    , mNewTemplate(new QAction("Add Template", this))
+    , mRemoveTemplate(new QAction("Remove Template", this))
 {
     //Must have a valid tileTemplateSetsManager.
     Q_ASSERT(tileTemplateSetsManager != nullptr);
@@ -22,6 +23,11 @@ TileTemplateSetsView::TileTemplateSetsView(TileTemplateSetsManager *tileTemplate
             this, &TileTemplateSetsView::tileTemplateSetAdded);
     connect(mTileTemplateSetsManager, &TileTemplateSetsManager::tileTemplateSetAboutToBeRemoved,
             this, &TileTemplateSetsView::tileTemplateSetAboutToBeRemoved);
+
+    connect(mNewTemplate, &QAction::triggered,
+            this, &TileTemplateSetsView::addTemplate);
+    connect(mRemoveTemplate, &QAction::triggered,
+            this, &TileTemplateSetsView::removeTemplate);
 
     mTabs->setTabPosition(QTabWidget::North);
 
@@ -96,8 +102,8 @@ void TileTemplateSetsView::tileTemplateSetAdded(SavableTileTemplateSet *tileTemp
     QToolBar *actionBar = new QToolBar(templateWidget);
     actionBar->setFloatable(false);
     actionBar->setMovable(false);
-    actionBar->addAction("Add Template", this, &TileTemplateSetsView::addTemplate);
-    actionBar->addAction("Remove Template", this, &TileTemplateSetsView::removeTemplate);
+    actionBar->addAction(mNewTemplate);
+    actionBar->addAction(mRemoveTemplate);
 
     QVBoxLayout *layout = new QVBoxLayout;
     layout->addWidget(templateList);
@@ -190,7 +196,7 @@ void TileTemplateSetsView::removeTemplate()
 
     int row = curIndex.row();
 
-    mTileTemplateSetsManager->tileTemplateSetAt(curTab)->removeTileTemplate(row);
+    mTileTemplateSetsManager->removeTileTemplate(curTab, row);
 
     selectedTileTemplateChanged();
 }

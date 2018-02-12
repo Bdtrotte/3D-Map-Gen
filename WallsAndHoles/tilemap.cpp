@@ -166,6 +166,26 @@ void TileMap::removingTileTemplateSet(TileTemplateSet *tileTemplateSet)
     mPingingMutex.unlock();
 }
 
+void TileMap::removingTileTemplate(TileTemplate *tileTemplate)
+{
+    if (!tileTemplate) return;
+
+    mPingingMutex.lock();
+
+    mTilePingReceiveMode = Collect;
+    mPingedTiles.clear();
+
+    tileTemplate->emitTilePing();
+
+    for (QSharedPointer<Tile> t : mPingedTiles)
+        t->resetTile(nullptr);
+
+    mPingedTiles.clear();
+    mTilePingReceiveMode = None;
+
+    mPingingMutex.unlock();
+}
+
 void TileMap::tilePinged(int x, int y)
 {
     switch(mTilePingReceiveMode) {
