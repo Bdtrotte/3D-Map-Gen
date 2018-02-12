@@ -152,7 +152,12 @@ void FillTool::drawOverlay(int endX, int endY)
 
         updateSelection(endX, endY);
 
-        QColor color = getTileTemplate()->color();
+        QColor color;
+        if (TileTemplate *t = getTileTemplate())
+            color = t->color();
+        else
+            color = Qt::black;
+
         color.setAlpha(100);
 
         QGraphicsScene *scene = mMapView->scene();

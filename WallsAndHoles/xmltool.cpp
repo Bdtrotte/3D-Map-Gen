@@ -210,7 +210,7 @@ int XMLTool::saveTileMap(TileMap *tileMap, const QList<SavableTileTemplateSet *>
 
     QVector<SavableTileTemplateSet *> usedTileTemplateSets;
     for (SavableTileTemplateSet *tts : tileTemplateSets) {
-        if (tileMap->tileTemplateSetUsed(tts)) {
+        if (tileMap->isTileTemplateSetUsed(tts)) {
             usedTileTemplateSets.append(tts);
 
             QDomElement templateSet = doc.createElement("TileTemplateSet");

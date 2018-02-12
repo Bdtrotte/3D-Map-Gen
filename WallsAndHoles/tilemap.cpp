@@ -102,8 +102,10 @@ void TileMap::resizeMap(QSize newSize)
     emit resized();
 }
 
-bool TileMap::tileTemplateUsed(TileTemplate *tileTemplate)
+bool TileMap::isTileTemplateUsed(TileTemplate *tileTemplate)
 {
+    mPingingMutex.lock();
+
     if (!tileTemplate) return false;
 
     mTilePingReceiveMode = SetCheck;
@@ -115,11 +117,15 @@ bool TileMap::tileTemplateUsed(TileTemplate *tileTemplate)
     mTilePinged = false;
     mTilePingReceiveMode = None;
 
+    mPingingMutex.unlock();
+
     return result;
 }
 
-bool TileMap::tileTemplateSetUsed(TileTemplateSet *tileTemplateSet)
+bool TileMap::isTileTemplateSetUsed(TileTemplateSet *tileTemplateSet)
 {
+    mPingingMutex.lock();
+
     mTilePingReceiveMode = SetCheck;
     mTilePinged = false;
 
@@ -135,11 +141,15 @@ bool TileMap::tileTemplateSetUsed(TileTemplateSet *tileTemplateSet)
     mTilePinged = false;
     mTilePingReceiveMode = None;
 
+    mPingingMutex.unlock();
+
     return result;
 }
 
 void TileMap::removingTileTemplateSet(TileTemplateSet *tileTemplateSet)
 {
+    mPingingMutex.lock();
+
     mTilePingReceiveMode = Collect;
     mPingedTiles.clear();
 
@@ -152,6 +162,8 @@ void TileMap::removingTileTemplateSet(TileTemplateSet *tileTemplateSet)
 
     mPingedTiles.clear();
     mTilePingReceiveMode = None;
+
+    mPingingMutex.unlock();
 }
 
 void TileMap::tilePinged(int x, int y)

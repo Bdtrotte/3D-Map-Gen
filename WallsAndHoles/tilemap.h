@@ -9,6 +9,7 @@
 #include <QObject>
 #include <QSize>
 #include <QSharedPointer>
+#include <QMutex>
 
 class TileMap : public QObject
 {
@@ -58,7 +59,7 @@ public:
      * @param tileTemplate
      * The tile template to check.
      */
-    bool tileTemplateUsed(TileTemplate *tileTemplate);
+    bool isTileTemplateUsed(TileTemplate *tileTemplate);
 
     /**
      * @brief tileTemplateSetUsed
@@ -67,7 +68,7 @@ public:
      * @param tileTemplateSet
      * The set to check
      */
-    bool tileTemplateSetUsed(TileTemplateSet *tileTemplateSet);
+    bool isTileTemplateSetUsed(TileTemplateSet *tileTemplateSet);
 
     /**
      * @brief removingTileTemplateSet
@@ -115,6 +116,8 @@ private:
     QVector<QSharedPointer<Tile>> mPingedTiles;
 
     TileTemplateSet *mDefaultTileTemplateSet;
+
+    QMutex mPingingMutex;
 };
 
 #endif // TILEMAP_H

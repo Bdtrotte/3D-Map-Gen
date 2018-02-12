@@ -56,7 +56,7 @@ bool TileTemplateSetsManager::removeTileTemplateSet(int index)
     bool removeFromMap = false;
 
     //if this template set is in use with the tileMap
-    if (mTileMap && mTileMap->tileTemplateSetUsed(tileTemplateSet)) {
+    if (mTileMap && mTileMap->isTileTemplateSetUsed(tileTemplateSet)) {
         //Prompt user saying the set is in use, and if it is removed,
         //then the tiles using templates from this set will be reset
         // TODO: They should have an option to replace with another template?

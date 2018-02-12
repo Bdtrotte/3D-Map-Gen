@@ -48,7 +48,12 @@ void AbstractShapeBrushTool::drawOverlay(int endX, int endY) {
 
     QGraphicsScene *scene = mMapView->scene();
 
-    QColor color = getTileTemplate()->color();
+    QColor color;
+    if (TileTemplate *t = getTileTemplate())
+        color = t->color();
+    else
+        color = Qt::black;
+
     color.setAlpha(100);
 
     QPoint start(mStartX, mStartY);
