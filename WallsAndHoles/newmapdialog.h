@@ -44,9 +44,9 @@ private:
     QLabel *widthLabel;
 
     //CheckBox
-    QCheckBox *outdoorMapCB;
-    QCheckBox *indoorMapCB;
-    QCheckBox *ceilingCB;
+    QCheckBox *outdoorMapChkBox;
+    QCheckBox *indoorMapChkBox;
+    QCheckBox *ceilingChkBox;
     QGroupBox *propertiesGroupBox;
     QVBoxLayout *checkboxLayout;
 

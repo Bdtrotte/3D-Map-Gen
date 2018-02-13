@@ -117,8 +117,7 @@ HEADERS += \
 
 FORMS += \
     meshview.ui \
-    meshviewcontainer.ui \
-    newmapdialog.ui
+    meshviewcontainer.ui
 
 DISTFILES += \
     basic.fsh \

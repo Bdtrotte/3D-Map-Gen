@@ -17,14 +17,18 @@ NewMapDialog::NewMapDialog(QDialog *parent)
     setupCheckBox();
     setMainLayout();
 
+
+    //Connections for the OK and Cancel buttons
     connect(dialogBtnBox, &QDialogButtonBox::accepted, this, &NewMapDialog::setResult);
     connect(dialogBtnBox, &QDialogButtonBox::rejected, this, &NewMapDialog::cancelled);
 
-    connect(outdoorMapCB, &QCheckBox::toggled, this,
+    //Connections for the check boxes
+    TileMapProperty.outdoorMap = outdoorMapChkBox->isChecked();
+    connect(outdoorMapChkBox, &QCheckBox::toggled, this,
             [this](bool checked){TileMapProperty.outdoorMap = checked;});
-    connect(indoorMapCB, &QCheckBox::toggled, this,
+    connect(indoorMapChkBox, &QCheckBox::toggled, this,
             [this](bool checked){TileMapProperty.indoorMap = checked;});
-    connect(ceilingCB, &QCheckBox::toggled, this,
+    connect(ceilingChkBox, &QCheckBox::toggled, this,
             [this](bool checked){TileMapProperty.ceiling = checked;});
 
 }
@@ -57,21 +61,21 @@ void NewMapDialog::setupCheckBox(){
     //Setup the properties checkboxes
     propertiesGroupBox = new QGroupBox(tr("Properties"));
 
-    outdoorMapCB = new QCheckBox(this);
-    indoorMapCB = new QCheckBox(this);
-    ceilingCB = new QCheckBox(this);
-    outdoorMapCB->setText("Outdoor Map");
-    indoorMapCB->setText("Indoor Map");
-    ceilingCB->setText("Ceiling");
+    outdoorMapChkBox = new QCheckBox(this);
+    indoorMapChkBox = new QCheckBox(this);
+    ceilingChkBox = new QCheckBox(this);
+    outdoorMapChkBox->setText("Outdoor Map");
+    indoorMapChkBox->setText("Indoor Map");
+    ceilingChkBox->setText("Ceiling");
 
-    outdoorMapCB->setChecked(true);
-    outdoorMapCB->setAutoExclusive(true);
-    indoorMapCB->setAutoExclusive(true);
+    outdoorMapChkBox->setChecked(true);
+    outdoorMapChkBox->setAutoExclusive(true);
+    indoorMapChkBox->setAutoExclusive(true);
 
     checkboxLayout = new QVBoxLayout;
-    checkboxLayout->addWidget(outdoorMapCB);
-    checkboxLayout->addWidget(indoorMapCB);
-    checkboxLayout->addWidget(ceilingCB);
+    checkboxLayout->addWidget(outdoorMapChkBox);
+    checkboxLayout->addWidget(indoorMapChkBox);
+    checkboxLayout->addWidget(ceilingChkBox);
 
     propertiesGroupBox->setLayout(checkboxLayout);
 }

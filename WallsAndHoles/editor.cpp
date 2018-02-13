@@ -93,7 +93,7 @@ void Editor::newMap()
     NewMapDialog nmd;
     nmd.exec();
 
-    if (nmd.accepted) {
+    if(nmd.accepted){
         setTileMap(new TileMap(QSize(nmd.result.width, nmd.result.height), nmd.TileMapProperty));
     }else{
         return;

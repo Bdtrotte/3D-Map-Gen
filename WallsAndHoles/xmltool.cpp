@@ -35,7 +35,8 @@ TileMap *XMLTool::openTileMap(QString tileMapPath, TileTemplateSetsManager *tile
                     if (attr.name() == "height")
                          size.setHeight(attr.value().toInt());
                 }
-                //COME BACK HERE AND FIX KENNY
+
+                //TODO: Get rid of this and have it save properly
                 Properties p;
                 tileMap = new TileMap(size, p);
                 tileMap->setSavePath(tileMapPath);
