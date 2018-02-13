@@ -1,6 +1,6 @@
 #version 150
 
-uniform vec3 uLightPosition;
+uniform vec3 uPointToLight;
 uniform vec3 uCameraPosition;
 
 uniform vec3 uAmbientColor;
@@ -32,7 +32,7 @@ void main(void)
 {
     vec3 normal = normalize(fNormal);
 
-    vec3 pointToLight = normalize(uLightPosition - fPosition);
+    vec3 pointToLight = uPointToLight;
     vec3 pointToCamera = normalize(uCameraPosition - fPosition);
     float dotDiffuse = max(dot(pointToLight, normal), 0);
 
@@ -43,7 +43,8 @@ void main(void)
     vec3 illumination = fMaterial.reflAmbient * uAmbientColor
                         + fMaterial.reflDiffuse * uSourceSpecularColor * dotDiffuse
                         + fMaterial.reflSpecular * uSourceSpecularColor * pow(dotSpecular, fMaterial.shininess);
-    vec3 baseColor = texture2D(uTexture, fTexCoords).xyz;
+
+    vec3 baseColor = texture(uTexture, fTexCoords).xyz;
 
     fragColor = vec4(illumination * baseColor, 1);
 }
