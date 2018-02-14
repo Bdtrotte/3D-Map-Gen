@@ -12,7 +12,8 @@ TilePropertyView::TilePropertyView(QWidget *parent)
     , mRelativeYPosition(new QDoubleSpinBox(this))
     , mTile(nullptr)
 {
-    mRelativeHeight->setRange(-100, 100);
+    mRelativeHeight->setRange(-10, 10);
+    mRelativeHeight->setSingleStep(0.1);
     mRelativeThickness->setRange(-1, 1);
     mRelativeThickness->setSingleStep(0.1);
     mRelativeXPosition->setRange(-0.49, 0.49);

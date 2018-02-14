@@ -10,11 +10,28 @@ class AbstractTileMapTool : public AbstractTool
 public:
     AbstractTileMapTool(TileMap *tileMap)
         : mTileMap(tileMap)
-        , mTileTemplate(nullptr) {}
+        , mTileTemplate(nullptr)
+    {
+        toolTileMapChanged();
+    }
 
-    void setTileMap(TileMap *tileMap) { mTileMap = tileMap; }
+    void setTileMap(TileMap *tileMap)
+    {
+        TileMap *prev = mTileMap;
+        mTileMap = tileMap;
+        toolTileMapChanged(prev);
+    }
 
-    void setTileTemplate(SharedTileTemplate tileTemplate) { mTileTemplate = tileTemplate; }
+    void setTileTemplate(TileTemplate *tileTemplate) { mTileTemplate = tileTemplate; }
+
+
+    /**
+     * @brief Called whenever mTileMap changes. Called in constructor.
+     *
+     * @param previous  The OLD mTileMap. The new one can be retreived using getTileMap().
+     */
+    virtual void toolTileMapChanged(TileMap *previous = nullptr) { Q_UNUSED(previous); }
+
 
     /**
      * @brief Called when the left mouse button is down over a new cell.
@@ -46,11 +63,31 @@ public:
      */
     virtual void cellReleased(int, int) {}
 
+
+    /**
+     * @brief Called when the mouse hovers over a new cell.
+     * @param x The cell's x position.
+     * @param y The cell's y position.
+     */
+    virtual void cellHovered(int, int) {}
+
+
+    /**
+     * @brief Called when the mouse is no longer hovering over a cell.
+     */
+    virtual void mouseExitedMap() {}
+
 protected:
-    TileMap *mTileMap;
-    SharedTileTemplate mTileTemplate;
+
+
+    TileMap *getTileMap() const { return mTileMap; }
+
+    TileTemplate *getTileTemplate() const { return mTileTemplate; }
 
 private:
+    TileMap *mTileMap;
+    TileTemplate *mTileTemplate;
+
     using AbstractTool::mousePressEvent;
     using AbstractTool::mouseReleaseEvent;
     using AbstractTool::mouseMoveEvent;

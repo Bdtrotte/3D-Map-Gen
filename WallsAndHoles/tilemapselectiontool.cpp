@@ -10,7 +10,7 @@ TileMapSelectionTool::TileMapSelectionTool(TilePropertyView *propView, MapView* 
 void TileMapSelectionTool::cellActivated(int x, int y)
 {
     clearOverlay();
-    Tile& tile = mTileMap->tileAt(x, y);
+    Tile& tile = getTileMap()->tileAt(x, y);
     if(tile.hasTileTemplate()){
         mTilePropertyView->setTile(tile);
         drawOverlay(x, y);
@@ -27,7 +27,7 @@ void TileMapSelectionTool::drawOverlay(int x, int y) {
     clearOverlay();
 
     QGraphicsScene *scene = mMapView->scene();
-    mOverlay = QSharedPointer<MapOverlayCell>::create(scene, x, y, QColor(255, 255, 255, 50));
+    mOverlay = QSharedPointer<MapOverlayCell>::create(scene, x, y, QColor(0, 0, 0, 50));
 }
 
 void TileMapSelectionTool::clearOverlay() {

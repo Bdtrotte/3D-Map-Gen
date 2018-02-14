@@ -16,35 +16,27 @@ class TileTemplateSet : public QAbstractItemModel
     Q_OBJECT
 
 public:
-    explicit TileTemplateSet(QString savePath,
-                             QString name = "New Tile Template Set",
-                             bool loadedFromFile = false,
+    explicit TileTemplateSet(QString name = "New Tile Template Set",
                              QObject *parent = nullptr);
 
     //General Items::
 
     //Adds the given tileTemplate to the end of the tileList
     //should pass new TileTemplate(...) to this
-    void addTileTemplate(SharedTileTemplate tileTemplate, bool dontAffectSaveStatus = false);
+    void addTileTemplate(TileTemplate *tileTemplate, bool dontAffectSaveStatus = false);
 
     //removes the tiletemplate at the specified index
     void removeTileTemplate(int index);
 
-    SharedTileTemplate tileTemplateAt(int i) { return mTileTemplates[i]; }
-    const SharedTileTemplate &cTileTemplateAt(int i) const { return mTileTemplates[i]; }
+    TileTemplate *tileTemplateAt(int i) { return mTileTemplates[i]; }
+    const TileTemplate *cTileTemplateAt(int i) const { return mTileTemplates[i]; }
 
     QString name() const { return mName; }
     void setName(QString name) { changed(); mName = name; }
 
     int size() const { return mTileTemplates.size(); }
 
-    const QList<SharedTileTemplate> &cTileTemplates() const { return mTileTemplates; }
-
-    const QString savePath() const { return mSavePath; }
-    void setSavePath(QString path){ mSavePath = path; }
-
-    void save();
-    bool isSaved() const { return mSaved; }
+    const QList<TileTemplate *> &cTileTemplates() const { return mTileTemplates; }
 
     //Model Functions::
     QModelIndex index(int row, int,
@@ -62,26 +54,18 @@ public:
 
     Qt::ItemFlags flags(const QModelIndex& index) const override;
 
-signals:
-    void saveStateChanged(bool state);
-
 private slots:
     void templateChanged() { changed(); }
 
-private:
+protected:
     //should be called whenever data needing to be saved changes
-    void changed();
+    //To be used in sub classes
+    virtual void changed() {}
 
+private:
     QString mName;
 
-    QList<SharedTileTemplate> mTileTemplates;
-
-    //default save path of this tileTempalteSet object
-    QString mSavePath;
-
-    //whether or not the current state of this is saved. (made false when this is changed)
-    bool mSaved;
+    QList<TileTemplate *> mTileTemplates;
 };
 
-typedef QSharedPointer<TileTemplateSet> SharedTileTemplateSet;
 #endif // TILESET_H
