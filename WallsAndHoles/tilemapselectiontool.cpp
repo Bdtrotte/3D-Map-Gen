@@ -1,18 +1,36 @@
 #include "tilemapselectiontool.h"
 
-TileMapSelectionTool::TileMapSelectionTool(TilePropertyView *view,TileMap *tileMap)
+TileMapSelectionTool::TileMapSelectionTool(TilePropertyView *propView, MapView* mapView, TileMap *tileMap)
     : AbstractTileMapTool(tileMap)
-    , mTilePropertyView(view)
+    , mTilePropertyView(propView)
+    , mMapView(mapView)
 {
 }
 
 void TileMapSelectionTool::cellActivated(int x, int y)
 {
+    clearOverlay();
     Tile& tile = mTileMap->tileAt(x, y);
-    mTilePropertyView->setTile(tile);
+    if(tile.hasTileTemplate()){
+        mTilePropertyView->setTile(tile);
+        drawOverlay(x, y);
+    }
 }
 
 void TileMapSelectionTool::deactivate()
 {
+    clearOverlay();
     mTilePropertyView->clear();
+}
+
+void TileMapSelectionTool::drawOverlay(int x, int y) {
+    clearOverlay();
+
+    QGraphicsScene *scene = mMapView->scene();
+    mOverlay = QSharedPointer<MapOverlayCell>::create(scene, x, y, QColor(255, 255, 255, 50));
+}
+
+void TileMapSelectionTool::clearOverlay() {
+    // Clears overlay.
+    mOverlay = QSharedPointer<MapOverlayCell>();
 }

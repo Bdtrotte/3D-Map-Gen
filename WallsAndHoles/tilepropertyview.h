@@ -11,7 +11,7 @@
 
 /**
  * @brief TilePropertyView display the property of Tile.
- * Whenever a tile is selected, it will be filled out.
+ * Whenever a tile is selected, it will be filled out and support modification.
  * It should blanks out when mutiple tiles are selected.
  */
 class TilePropertyView : public QWidget
@@ -20,7 +20,12 @@ class TilePropertyView : public QWidget
 
 public:
     explicit TilePropertyView(QWidget *parent = nullptr);
+
+    /**
+     * @brief set current focusing tile of this view.
+     */
     void setTile(Tile& tile);
+
     void clear();
 
 private slots:

@@ -12,10 +12,13 @@ TilePropertyView::TilePropertyView(QWidget *parent)
     , mRelativeYPosition(new QDoubleSpinBox(this))
     , mTile(nullptr)
 {
-    mRelativeHeight->setRange(-1000, 1000);
+    mRelativeHeight->setRange(-100, 100);
     mRelativeThickness->setRange(-1, 1);
-    mRelativeXPosition->setRange(-1, 1);
-    mRelativeYPosition->setRange(-1, 1);
+    mRelativeThickness->setSingleStep(0.1);
+    mRelativeXPosition->setRange(-0.49, 0.49);
+    mRelativeXPosition->setSingleStep(0.1);
+    mRelativeYPosition->setRange(-0.49, 0.49);
+    mRelativeYPosition->setSingleStep(0.1);
 
     QHBoxLayout *hLayout = new QHBoxLayout;
     QVBoxLayout *vLayout = new QVBoxLayout;
@@ -90,10 +93,8 @@ void TilePropertyView::clear(){
 
 void TilePropertyView::relativeHeightChanged(double value)
 {
-    if (mTile!=nullptr){
-        qDebug() << "now set tile relative height to:" << value;
+    if (mTile!=nullptr){      
         mTile->setRelativeHeight(value);
-        qDebug() << "result:" << mTile->relativeHeight();
     }
 }
 
@@ -107,7 +108,9 @@ void TilePropertyView::relativeXPositionChanged(double value)
     if (mTile!=nullptr){
         QVector2D pos = mTile->relativePosition();
         pos.setX(value);
+        qDebug() << "now set tile relative position x to:" << value;
         mTile->setRelativePosition(pos);
+        qDebug() << "result o:" << mTile->relativePosition().x();
     }
 }
 void TilePropertyView::relativeYPositionChanged(double value){

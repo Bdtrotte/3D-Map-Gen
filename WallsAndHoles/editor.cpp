@@ -62,7 +62,7 @@ Editor::Editor(QObject *parent)
     mTilePropertyView = new TilePropertyView(tilePropDW);
     tilePropDW->setWidget(mTilePropertyView);
     mToolBar->addAction(mTileMapToolManager->registerMapTool(
-                            QSharedPointer<TileMapSelectionTool>::create(mTilePropertyView, mTileMap)
+                            QSharedPointer<TileMapSelectionTool>::create(mTilePropertyView, mMapView, mTileMap)
                             , "Selection Tool"));
 
     mMainWindow->addDockWidget(Qt::RightDockWidgetArea, dw);
