@@ -41,6 +41,8 @@ TilePropertyView::TilePropertyView(QWidget *parent)
 
     setLayout(hLayout);
 
+    setSizePolicy(QSizePolicy(QSizePolicy::Fixed, QSizePolicy::Minimum));
+
     connect(mRelativeHeight, SIGNAL(valueChanged(double)),
             this, SLOT(relativeHeightChanged(double)));
     connect(mRelativeThickness, SIGNAL(valueChanged(double)),
@@ -52,9 +54,9 @@ TilePropertyView::TilePropertyView(QWidget *parent)
     clear();
 }
 
-void TilePropertyView::setTile(Tile& tile)
+void TilePropertyView::setTile(Tile *tile)
 {
-    mTile = &tile;
+    mTile = tile;
     if(mTile!=nullptr){
         //block signals, otherwise changed slots are called redundantly.
         mRelativeHeight->blockSignals(true);
@@ -76,6 +78,8 @@ void TilePropertyView::setTile(Tile& tile)
         mRelativeThickness->blockSignals(false);
         mRelativeXPosition->blockSignals(false);
         mRelativeYPosition->blockSignals(false);
+    } else {
+        clear();
     }
 }
 

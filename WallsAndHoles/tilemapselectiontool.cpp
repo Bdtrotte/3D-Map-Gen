@@ -12,8 +12,10 @@ void TileMapSelectionTool::cellActivated(int x, int y)
     clearOverlay();
     Tile& tile = getTileMap()->tileAt(x, y);
     if(tile.hasTileTemplate()){
-        mTilePropertyView->setTile(tile);
+        mTilePropertyView->setTile(&tile);
         drawOverlay(x, y);
+    } else {
+        mTilePropertyView->setTile(nullptr);
     }
 }
 

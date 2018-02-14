@@ -24,7 +24,7 @@ public:
     /**
      * @brief set current focusing tile of this view.
      */
-    void setTile(Tile& tile);
+    void setTile(Tile *tile);
 
     void clear();
 
