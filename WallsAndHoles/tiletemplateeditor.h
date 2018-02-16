@@ -6,7 +6,7 @@
 #include <QWidget>
 #include <QDoubleSpinBox>
 #include <QLineEdit>
-#include <QLabel>
+#include <QPushButton>
 
 class TileTemplateEditor : public QWidget
 {
@@ -26,7 +26,7 @@ private slots:
     void thicknessChanged(double value);
     void xPositionChanged(double value);
     void yPositionChanged(double value);
-    //void colorChange();
+    void colorChangeClicked();
 
 private:
     /**
@@ -35,16 +35,12 @@ private:
      */
     void setUpEditor();
 
-    QLabel *mNameLable;
     QLineEdit *mName;
-    QLabel *mHeightLable;
     QDoubleSpinBox *mHeight;
-    QLabel *mThicknessLable;
     QDoubleSpinBox *mThickness;
-    QLabel *mXPositionLabel;
     QDoubleSpinBox *mXPosition;
-    QLabel *mYPositionLabel;
     QDoubleSpinBox *mYPosition;
+    QPushButton *mColorPickButton;
 
     TileTemplate *mTileTemplate;
 

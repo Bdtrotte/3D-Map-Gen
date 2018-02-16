@@ -1,19 +1,16 @@
 #include "tiletemplateeditor.h"
 
-#include <QHBoxLayout>
-#include <QVBoxLayout>
+#include <QGridLayout>
+#include <QPixmap>
+#include <QLabel>
+#include <QColorDialog>
 
 TileTemplateEditor::TileTemplateEditor(QWidget *parent)
     : QWidget(parent)
-    , mNameLable(new QLabel(tr("Name"), this))
     , mName(new QLineEdit(this))
-    , mHeightLable(new QLabel(tr("Height"), this))
     , mHeight(new QDoubleSpinBox(this))
-    , mThicknessLable(new QLabel(tr("Thickness"), this))
     , mThickness(new QDoubleSpinBox(this))
-    , mXPositionLabel(new QLabel(tr("X Position"), this))
     , mXPosition(new QDoubleSpinBox(this))
-    , mYPositionLabel(new QLabel(tr("Y Position"), this))
     , mYPosition(new QDoubleSpinBox(this))
     , mTileTemplate(nullptr)
     , mImEditing(false)
@@ -21,30 +18,31 @@ TileTemplateEditor::TileTemplateEditor(QWidget *parent)
     // TODO define height range somewhere
     mHeight->setRange(-1000, 1000);
     mThickness->setRange(0.01, 1);
-    mXPosition->setRange(0, 1);
-    mYPosition->setRange(0, 1);
+    mXPosition->setRange(0.01, 0.99);
+    mYPosition->setRange(0.01, 0.99);
 
-    QHBoxLayout *hLayout = new QHBoxLayout;
-    QVBoxLayout *vLayout = new QVBoxLayout;
+    QPixmap color(20, 20);
+    color.fill(Qt::black);
+    mColorPickButton = new QPushButton(color, "", this);
+    mColorPickButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
-    vLayout->addWidget(mNameLable);
-    vLayout->addWidget(mHeightLable);
-    vLayout->addWidget(mThicknessLable);
-    vLayout->addWidget(mXPositionLabel);
-    vLayout->addWidget(mYPositionLabel);
+    QGridLayout *layout = new QGridLayout;
 
-    hLayout->addLayout(vLayout);
+    layout->addWidget(new QLabel(tr("Name"), this), 0, 0);
+    layout->addWidget(new QLabel(tr("Color"), this), 1, 0);
+    layout->addWidget(new QLabel(tr("Height"), this), 2, 0);
+    layout->addWidget(new QLabel(tr("Thickness"), this), 3, 0);
+    layout->addWidget(new QLabel(tr("X Position"), this), 4, 0);
+    layout->addWidget(new QLabel(tr("Y Position"), this), 5, 0);
 
-    vLayout = new QVBoxLayout;
-    vLayout->addWidget(mName);
-    vLayout->addWidget(mHeight);
-    vLayout->addWidget(mThickness);
-    vLayout->addWidget(mXPosition);
-    vLayout->addWidget(mYPosition);
+    layout->addWidget(mName, 0, 1);
+    layout->addWidget(mColorPickButton, 1, 1);
+    layout->addWidget(mHeight, 2, 1);
+    layout->addWidget(mThickness, 3, 1);
+    layout->addWidget(mXPosition, 4, 1);
+    layout->addWidget(mYPosition, 5, 1);
 
-    hLayout->addLayout(vLayout);
-
-    setLayout(hLayout);
+    setLayout(layout);
 
     connect(mName, &QLineEdit::textChanged,
             this, &TileTemplateEditor::nameChanged);
@@ -56,6 +54,8 @@ TileTemplateEditor::TileTemplateEditor(QWidget *parent)
             this, SLOT(xPositionChanged(double)));
     connect(mYPosition, SIGNAL(valueChanged(double)),
             this, SLOT(yPositionChanged(double)));
+    connect(mColorPickButton, &QPushButton::clicked,
+            this, &TileTemplateEditor::colorChangeClicked);
 
     setUpEditor();
 }
@@ -143,6 +143,20 @@ void TileTemplateEditor::yPositionChanged(double value)
     mImEditing = false;
 }
 
+void TileTemplateEditor::colorChangeClicked()
+{
+    Q_ASSERT(mTileTemplate != nullptr);
+
+    QColorDialog cd;
+    cd.setCurrentColor(mTileTemplate->color());
+
+    if (cd.exec()) {
+        mTileTemplate->setColor(cd.currentColor());
+        QPixmap color(20, 20);
+        mColorPickButton->setIcon(color);
+    }
+}
+
 void TileTemplateEditor::setUpEditor()
 {
     if (mTileTemplate == nullptr) {
@@ -151,12 +165,16 @@ void TileTemplateEditor::setUpEditor()
         mThickness->setValue(1);
         mXPosition->setValue(0.5);
         mYPosition->setValue(0.5);
+        QPixmap color(20, 20);
+        color.fill(Qt::black);
+        mColorPickButton->setIcon(color);
 
         mName->setEnabled(false);
         mHeight->setEnabled(false);
         mThickness->setEnabled(false);
         mXPosition->setEnabled(false);
         mYPosition->setEnabled(false);
+        mColorPickButton->setEnabled(false);
     } else {
         //otherwise changed slots are called redundantly.
         mName->blockSignals(true);
@@ -164,23 +182,29 @@ void TileTemplateEditor::setUpEditor()
         mThickness->blockSignals(true);
         mXPosition->blockSignals(true);
         mYPosition->blockSignals(true);
+        mColorPickButton->blockSignals(true);
 
         mName->setText(mTileTemplate->name());
         mHeight->setValue(mTileTemplate->height());
         mThickness->setValue(mTileTemplate->thickness());
         mXPosition->setValue(mTileTemplate->position().x());
         mYPosition->setValue(mTileTemplate->position().y());
+        QPixmap color(20, 20);
+        color.fill(mTileTemplate->color());
+        mColorPickButton->setIcon(color);
 
         mName->setEnabled(true);
         mHeight->setEnabled(true);
         mThickness->setEnabled(true);
         mXPosition->setEnabled(true);
         mYPosition->setEnabled(true);
+        mColorPickButton->setEnabled(true);
 
         mName->blockSignals(false);
         mHeight->blockSignals(false);
         mThickness->blockSignals(false);
         mXPosition->blockSignals(false);
         mYPosition->blockSignals(false);
+        mColorPickButton->blockSignals(false);
     }
 }

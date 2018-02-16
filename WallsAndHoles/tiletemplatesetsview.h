@@ -55,6 +55,9 @@ private:
 
     QAction *mNewTemplate;
     QAction *mRemoveTemplate;
+
+    QAction *mRemoveTemplateSet;
+    QAction *mSaveTemplateSet;
 };
 
 #endif // TILETEMPLATESETSVIEW_H
