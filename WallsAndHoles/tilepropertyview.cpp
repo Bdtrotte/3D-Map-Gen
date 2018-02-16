@@ -41,7 +41,7 @@ TilePropertyView::TilePropertyView(QWidget *parent)
 
     setLayout(hLayout);
 
-    setSizePolicy(QSizePolicy(QSizePolicy::Fixed, QSizePolicy::Minimum));
+    setSizePolicy(QSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed));
 
     connect(mRelativeHeight, SIGNAL(valueChanged(double)),
             this, SLOT(relativeHeightChanged(double)));

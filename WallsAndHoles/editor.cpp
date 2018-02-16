@@ -102,7 +102,9 @@ void Editor::newMap()
     NewMapDialog nmd;
 
     if (nmd.exec()) {
-        setTileMap(new TileMap(QSize(nmd.result.width, nmd.result.height)));
+        setTileMap(new TileMap(QSize(nmd.result.width, nmd.result.height),
+                               nmd.result.isIndoorMap,
+                               nmd.result.hasCeiling));
     }
 }
 
