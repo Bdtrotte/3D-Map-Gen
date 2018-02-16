@@ -62,6 +62,8 @@ SOURCES += \
     rectbrushtool.cpp \
     ellipsebrushtool.cpp \
     mapoverlaycell.cpp \
+    tilepropertyview.cpp \
+    tilemapselectiontool.cpp \
     filltool.cpp \
     tiletemplatesetsmanager.cpp \
     savabletiletemplateset.cpp \
@@ -110,6 +112,8 @@ HEADERS += \
     rectbrushtool.h \
     ellipsebrushtool.h \
     mapoverlaycell.h \
+    tilepropertyview.h \
+    tilemapselectiontool.h \
     filltool.h \
     tiletemplatesetsmanager.h \
     savabletiletemplateset.h \

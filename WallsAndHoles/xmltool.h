@@ -23,7 +23,6 @@ SavableTileTemplateSet *openTileTemplateSet(QString templateSetPath);
 
 int saveTileMap(TileMap *tileMap, const QList<SavableTileTemplateSet *> &tileTemplateSets);
 int saveTileTemplateSet(SavableTileTemplateSet *templateSet);
-
 }
 
 #endif // XMLTOOL_H

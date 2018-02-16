@@ -57,7 +57,6 @@ public:
 
     const QString savePath() const { return mSavePath; }
     void setSavePath(QString path){ mSavePath = path; }
-
     const Array2D<QSharedPointer<Tile>> &cTiles() const { return mMap; }
 
     /**
