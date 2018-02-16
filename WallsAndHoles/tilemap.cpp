@@ -2,12 +2,15 @@
 
 #include <QDebug>
 
-TileMap::TileMap(QSize mapSize, Properties properties,
+TileMap::TileMap(QSize mapSize,
+                 bool isIndoors,
+                 bool hasCeiling,
                  QObject *parent)
     : QObject(parent)
     , mMap(mapSize.width(), mapSize.height())
+    , mIsIndoors(isIndoors)
+    , mHasCeiling(hasCeiling)
     , mDefaultTileTemplateSet(new TileTemplateSet("Map Tile Templates", this))
-    , mProperties(properties)
 
 {
     for (int x = 0; x < mMap.size().width(); ++x) {
@@ -166,11 +169,6 @@ void TileMap::removingTileTemplateSet(TileTemplateSet *tileTemplateSet)
     mTilePingReceiveMode = None;
 
     mPingingMutex.unlock();
-}
-
-Properties TileMap::getProperties()
-{
-    return mProperties;
 }
 
 void TileMap::tilePinged(int x, int y)

@@ -100,12 +100,11 @@ Editor::~Editor()
 void Editor::newMap()
 {
     NewMapDialog nmd;
-    nmd.exec();
 
-    if(nmd.accepted){
-        setTileMap(new TileMap(QSize(nmd.result.width, nmd.result.height), nmd.TileMapProperty));
-    }else{
-        return;
+    if (nmd.exec()) {
+        setTileMap(new TileMap(QSize(nmd.result.width, nmd.result.height),
+                               nmd.result.isIndoorMap,
+                               nmd.result.hasCeiling));
     }
 }
 

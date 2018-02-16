@@ -11,21 +11,15 @@
 #include <QSharedPointer>
 #include <QMutex>
 
-struct Properties
-{
-    bool outdoorMap = 0;
-    bool indoorMap = 0;
-    bool ceiling = 0;
-};
 class TileMap : public QObject
 {
     Q_OBJECT
 
 public:
     TileMap(QSize mapSize,
-            Properties properties,
+            bool isIndoors,
+            bool hasCeiling,
             QObject *parent = nullptr);
-
 
     Tile &tileAt(int x, int y);
     const Tile &cTileAt(int x, int y) const;
@@ -51,6 +45,8 @@ public:
 
     int width() const { return mMap.size().width(); }
     int height() const { return mMap.size().height(); }
+    bool isIndoor() const { return mIsIndoors; }
+    bool hasCeiling() const { return mHasCeiling; }
 
     //changes the size of the map. If the size is reduced, tiles will be lost (resizes around top left corner)
     void resizeMap(QSize newSize);
@@ -86,7 +82,6 @@ public:
 
     TileTemplateSet *defaultTileTemplateSet() { return mDefaultTileTemplateSet; }
 
-    Properties getProperties();
 public slots:
     void tilePinged(int x, int y);
 
@@ -113,6 +108,10 @@ private:
     //2D array of Tile*. If mMap[x][y]->isEmpty() then ground is shown
     Array2D<QSharedPointer<Tile>> mMap;
 
+    //General Properties of the map:
+    bool mIsIndoors;
+    bool mHasCeiling;
+
     //default save path of this tilemap object, can be changed when using "save as" command.
     QString mSavePath;
 
@@ -125,8 +124,6 @@ private:
     TileTemplateSet *mDefaultTileTemplateSet;
 
     QMutex mPingingMutex;
-
-    Properties mProperties;
 };
 
 #endif // TILEMAP_H

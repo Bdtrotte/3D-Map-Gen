@@ -1,94 +1,79 @@
 #include "newmapdialog.h"
 
+#include <QGridLayout>
+#include <QVBoxLayout>
+#include <QGroupBox>
+#include <QLabel>
+#include <QDialogButtonBox>
+#include <QHBoxLayout>
+
 NewMapDialog::NewMapDialog(QDialog *parent)
-  : QDialog(parent),
-  result(NewMapData(-1,-1))
+    : QDialog(parent)
 {
     //Setup the dialog
     QDialog::resize(400,200);
     QDialog::setWindowTitle("New Map");
     QDialog::setModal(true);
 
-    dialogBtnBox = new QDialogButtonBox(this);
-    dialogBtnBox->addButton("OK",QDialogButtonBox::AcceptRole);
-    dialogBtnBox->addButton("Cancel",QDialogButtonBox::RejectRole);
 
-    setupSpinBox();
-    setupCheckBox();
-    setMainLayout();
+    //SpinBox Setup
+    QLabel *heightLabel = new QLabel("Height:", this);
+    QLabel *widthLabel = new QLabel("Width:", this);
+
+    mHSpinBox = new QSpinBox(this);
+    mWSpinBox = new QSpinBox(this);
+    mHSpinBox->setMinimum(1);
+    mWSpinBox->setMinimum(1);
+    mHSpinBox->setMaximum(1000);
+    mWSpinBox->setMaximum(1000);
 
 
-    //Connections for the OK and Cancel buttons
-    connect(dialogBtnBox, &QDialogButtonBox::accepted, this, &NewMapDialog::setResult);
-    connect(dialogBtnBox, &QDialogButtonBox::rejected, this, &NewMapDialog::cancelled);
+    //Properties setup
+    QGroupBox *propertiesGroupBox = new QGroupBox(tr("Properties"));
 
-    //Connections for the check boxes
-    TileMapProperty.outdoorMap = outdoorMapChkBox->isChecked();
-    connect(outdoorMapChkBox, &QCheckBox::toggled, this,
-            [this](bool checked){TileMapProperty.outdoorMap = checked;});
-    connect(indoorMapChkBox, &QCheckBox::toggled, this,
-            [this](bool checked){TileMapProperty.indoorMap = checked;});
-    connect(ceilingChkBox, &QCheckBox::toggled, this,
-            [this](bool checked){TileMapProperty.ceiling = checked;});
-
-}
-
-void NewMapDialog::setResult(){
-    result = NewMapData(wSpinBox->value(), hSpinBox->value());
-    accepted = true;
-    this->close();
-}
-
-void NewMapDialog::cancelled(){
-    accepted = false;
-    this->close();
-}
-
-void NewMapDialog::setupSpinBox(){
-    //Setup the spinbox
-    heightLabel = new QLabel(this);
-    widthLabel = new QLabel(this);
-    heightLabel->setText("Height:");
-    widthLabel->setText("Width:");
-
-    hSpinBox = new QSpinBox(this);
-    wSpinBox = new QSpinBox(this);
-    hSpinBox->setMinimum(1);
-    wSpinBox->setMinimum(1);
-}
-
-void NewMapDialog::setupCheckBox(){
-    //Setup the properties checkboxes
-    propertiesGroupBox = new QGroupBox(tr("Properties"));
-
-    outdoorMapChkBox = new QCheckBox(this);
-    indoorMapChkBox = new QCheckBox(this);
-    ceilingChkBox = new QCheckBox(this);
-    outdoorMapChkBox->setText("Outdoor Map");
-    indoorMapChkBox->setText("Indoor Map");
-    ceilingChkBox->setText("Ceiling");
+    QCheckBox *outdoorMapChkBox = new QCheckBox("Outdoor Map", this);
+    mIndoorMapChkBox = new QCheckBox("Indoor Map", this);
+    mCeilingChkBox = new QCheckBox("Ceiling", this);
 
     outdoorMapChkBox->setChecked(true);
     outdoorMapChkBox->setAutoExclusive(true);
-    indoorMapChkBox->setAutoExclusive(true);
+    mIndoorMapChkBox->setAutoExclusive(true);
 
-    checkboxLayout = new QVBoxLayout;
+    QVBoxLayout *checkboxLayout = new QVBoxLayout;
     checkboxLayout->addWidget(outdoorMapChkBox);
-    checkboxLayout->addWidget(indoorMapChkBox);
-    checkboxLayout->addWidget(ceilingChkBox);
+    checkboxLayout->addWidget(mIndoorMapChkBox);
+    checkboxLayout->addWidget(mCeilingChkBox);
 
     propertiesGroupBox->setLayout(checkboxLayout);
-}
 
-void NewMapDialog::setMainLayout(){
-    //Sets the layout of the window
-    mainLayout = new QGridLayout(this);
+
+    //Buttons
+    QDialogButtonBox *dialogBtnBox = new QDialogButtonBox(this);
+    dialogBtnBox->addButton("OK",QDialogButtonBox::AcceptRole);
+    dialogBtnBox->addButton("Cancel",QDialogButtonBox::RejectRole);
+
+
+    //Main Layout
+    QGridLayout *mainLayout = new QGridLayout(this);
     mainLayout->addWidget(widthLabel, 0, 0);
-    mainLayout->addWidget(wSpinBox, 0, 1);
+    mainLayout->addWidget(mWSpinBox, 0, 1);
     mainLayout->addWidget(heightLabel, 0, 2);
-    mainLayout->addWidget(hSpinBox, 0, 3);
+    mainLayout->addWidget(mHSpinBox, 0, 3);
     mainLayout->addWidget(propertiesGroupBox, 1, 0, 2, 0);
     mainLayout->addWidget(dialogBtnBox, 4, 0, 1, 0);
     mainLayout->setMargin(20);
-    this->setLayout(mainLayout);
+    setLayout(mainLayout);
+
+    //Connections for the OK and Cancel buttons
+    connect(dialogBtnBox, &QDialogButtonBox::accepted, this, &NewMapDialog::onAccepted);
+    connect(dialogBtnBox, &QDialogButtonBox::rejected, this, [this]{ done(0); });
+}
+
+void NewMapDialog::onAccepted()
+{
+    result = NewMapData(mWSpinBox->value(),
+                        mHSpinBox->value(),
+                        mIndoorMapChkBox->isChecked(),
+                        mCeilingChkBox->isChecked());
+    done(1);
 }

@@ -3,64 +3,46 @@
 
 #include "tilemap.h"
 
-#include <QWidget>
 #include <QDialog>
-#include <QDialogButtonBox>
-#include <QHBoxLayout>
 #include <QCheckBox>
 #include <QSpinBox>
-#include <QLabel>
-#include <QGridLayout>
-#include <QVBoxLayout>
-#include <QGroupBox>
 
 struct NewMapData
 {
     int width;
     int height;
+    bool isIndoorMap;
+    bool hasCeiling;
 
-    NewMapData(int w, int h) : width(w), height(h) {}
+    NewMapData() {}
+
+    NewMapData(int w, int h, bool indoor, bool ceiling)
+        : width(w)
+        , height(h)
+        , isIndoorMap(indoor)
+        , hasCeiling(ceiling) {}
 };
 
 class NewMapDialog : public QDialog
 {
     Q_OBJECT
+
 public:
     explicit NewMapDialog(QDialog *parent = nullptr);
 
     NewMapData result;
 
-    Properties TileMapProperty;
-
-    bool accepted;
+private slots:
+    void onAccepted();
 
 private:
-    QDialogButtonBox *dialogBtnBox;
-
     //Spin Box
-    QSpinBox *hSpinBox;
-    QSpinBox *wSpinBox;
-    QLabel *heightLabel;
-    QLabel *widthLabel;
+    QSpinBox *mHSpinBox;
+    QSpinBox *mWSpinBox;
 
     //CheckBox
-    QCheckBox *outdoorMapChkBox;
-    QCheckBox *indoorMapChkBox;
-    QCheckBox *ceilingChkBox;
-    QGroupBox *propertiesGroupBox;
-    QVBoxLayout *checkboxLayout;
-
-    //Main layout
-    QGridLayout *mainLayout;
-
-    void setupSpinBox();
-    void setupCheckBox();
-    void setMainLayout();
-signals:
-
-protected slots:
-    void setResult();
-    void cancelled();
+    QCheckBox *mIndoorMapChkBox;
+    QCheckBox *mCeilingChkBox;
 };
 
 #endif // NEWMAPDIALOG_H

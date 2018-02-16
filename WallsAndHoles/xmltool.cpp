@@ -29,16 +29,20 @@ TileMap *XMLTool::openTileMap(QString tileMapPath, TileTemplateSetsManager *tile
         if (token == QXmlStreamReader::StartElement) {
             if (xmlReader.name() == "TileMap") {
                 QSize size;
+                bool isIndoor = false;
+                bool hasCeiling = false;
                 foreach(const QXmlStreamAttribute &attr, xmlReader.attributes()) {
                     if (attr.name() == "width")
                          size.setWidth(attr.value().toInt());
                     if (attr.name() == "height")
                          size.setHeight(attr.value().toInt());
+                    if (attr.name() == "isIndoor")
+                        isIndoor = attr.value().toInt();
+                    if (attr.name() == "hasCeiling")
+                        hasCeiling = attr.value().toInt();
                 }
 
-                //TODO: Get rid of this and have it save properly
-                Properties p;
-                tileMap = new TileMap(size, p);
+                tileMap = new TileMap(size, isIndoor, hasCeiling);
                 tileMap->setSavePath(tileMapPath);
             } else if (xmlReader.name() == "TileTemplateSet") {
                 QString path = xmlReader.attributes().first().value().toString();
@@ -210,6 +214,8 @@ int XMLTool::saveTileMap(TileMap *tileMap, const QList<SavableTileTemplateSet *>
     QDomElement root = doc.createElement( "TileMap" );
     root.setAttribute("width", tileMap->mapSize().width());
     root.setAttribute("height", tileMap->mapSize().height());
+    root.setAttribute("isIndoor", tileMap->isIndoor());
+    root.setAttribute("hasCeiling", tileMap->hasCeiling());
 
     QVector<SavableTileTemplateSet *> usedTileTemplateSets;
     for (SavableTileTemplateSet *tts : tileTemplateSets) {
