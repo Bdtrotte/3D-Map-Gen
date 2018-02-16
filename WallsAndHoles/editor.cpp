@@ -3,6 +3,7 @@
 #include "newmapdialog.h"
 #include "meshviewcontainer.h"
 #include "tilemapbrushtool.h"
+#include "tilemapselectiontool.h"
 
 #include "filltool.h"
 
@@ -17,7 +18,6 @@
 #include <QMenuBar>
 #include <QMessageBox>
 #include <QFileDialog>
-
 #include <QListView>
 
 Editor::Editor(QObject *parent)
@@ -61,8 +61,17 @@ Editor::Editor(QObject *parent)
     mTileTemplateSetsView = new TileTemplateSetsView(mTileTemplateSetManager, tdw);
     tdw->setWidget(mTileTemplateSetsView);
 
+    //Temporary setup for tilePropertyView
+    QDockWidget *tilePropDW = new QDockWidget("Tile Property View", mMainWindow);
+    mTilePropertyView = new TilePropertyView(tilePropDW);
+    tilePropDW->setWidget(mTilePropertyView);
+    mToolBar->addAction(mTileMapToolManager->registerMapTool(
+                            QSharedPointer<TileMapSelectionTool>::create(mTilePropertyView, mMapView, mTileMap)
+                            , "Selection Tool"));
+
     mMainWindow->addDockWidget(Qt::RightDockWidgetArea, dw);
     mMainWindow->addDockWidget(Qt::LeftDockWidgetArea, tdw);
+    mMainWindow->addDockWidget(Qt::LeftDockWidgetArea, tilePropDW);
 
     //Create widget connections
     connect(mMapView, &MapView::cellActivated,
@@ -93,7 +102,9 @@ void Editor::newMap()
     NewMapDialog nmd;
 
     if (nmd.exec()) {
-        setTileMap(new TileMap(QSize(nmd.result.width, nmd.result.height)));
+        setTileMap(new TileMap(QSize(nmd.result.width, nmd.result.height),
+                               nmd.result.isIndoorMap,
+                               nmd.result.hasCeiling));
     }
 }
 
