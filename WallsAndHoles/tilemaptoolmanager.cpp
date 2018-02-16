@@ -8,6 +8,12 @@ inline AbstractTileMapTool *tool2TileMapTool(QSharedPointer<AbstractTool> tool)
 TileMapToolManager::TileMapToolManager(QObject *parent)
     : ToolManager(parent) {}
 
+
+QAction *TileMapToolManager::registerMapTool(QSharedPointer<AbstractTileMapTool> tool, QString name)
+{
+    return ToolManager::registerTool(tool, name);
+}
+
 void TileMapToolManager::setTileMap(TileMap *tileMap)
 {
     for (AbstractToolP tool : mTools)

@@ -4,6 +4,7 @@
 #include "array2d.h"
 #include "mapcell.h"
 #include "tilemap.h"
+#include "tilemappreviewgrpahicsitem.h"
 
 #include <QObject>
 #include <QGraphicsView>
@@ -25,6 +26,8 @@ public:
 
     void clear();
     void createMap(TileMap *tileMap);
+
+    TileMapPreviewGrpahicsItem *previewItem() { return mPreviewItem; }
 
 private slots:
     void setNoView(bool state);
@@ -90,6 +93,8 @@ private:
     int mOldY;
 
     Array2D<MapCell *> mMapCells;
+
+    TileMapPreviewGrpahicsItem *mPreviewItem;
 
     QPoint mPreMousePoint;
 
