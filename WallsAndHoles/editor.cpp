@@ -35,43 +35,45 @@ Editor::Editor(QObject *parent)
     setUpMenuBar();
     mMainWindow->addToolBar(mToolBar);
 
-    // Add tools.
-    mToolBar->addAction(mTileMapToolManager->registerMapTool(
-                            QSharedPointer<TileMapBrushTool>::create(mTileMap)
-                            , "Brush Tool"));
-    mToolBar->addAction(mTileMapToolManager->registerMapTool(
-                            QSharedPointer<FillTool>::create(mMapView, mTileMap)
-                            , "Fill Tool"));
-    mToolBar->addAction(mTileMapToolManager->registerMapTool(
-                            QSharedPointer<LineBrushTool>::create(mMapView, mTileMap)
-                            , "Line Tool"));
-    mToolBar->addAction(mTileMapToolManager->registerMapTool(
-                            QSharedPointer<RectBrushTool>::create(mMapView, mTileMap)
-                            , "Rect Tool"));
-    mToolBar->addAction(mTileMapToolManager->registerMapTool(
-                            QSharedPointer<EllipseBrushTool>::create(mMapView, mTileMap)
-                            , "Ellipse Tool"));
 
     //Set up and add all dock widgets
-    QDockWidget *dw = new QDockWidget("Mesh View", mMainWindow);
-    mMeshViewContainer = new MeshViewContainer(dw);
-    dw->setWidget(mMeshViewContainer);
+    QDockWidget *meshViewDock = new QDockWidget("Mesh View", mMainWindow);
+    mMeshViewContainer = new MeshViewContainer(meshViewDock);
+    meshViewDock->setWidget(mMeshViewContainer);
 
-    QDockWidget *tdw = new QDockWidget("Template Set View", mMainWindow);
-    mTileTemplateSetsView = new TileTemplateSetsView(mTileTemplateSetManager, tdw);
-    tdw->setWidget(mTileTemplateSetsView);
+    QDockWidget *templateDock = new QDockWidget("Template Set View", mMainWindow);
+    mTileTemplateSetsView = new TileTemplateSetsView(mTileTemplateSetManager, templateDock);
+    templateDock->setWidget(mTileTemplateSetsView);
 
-    //Temporary setup for tilePropertyView
-    QDockWidget *tilePropDW = new QDockWidget("Tile Property View", mMainWindow);
-    mTilePropertyView = new TilePropertyView(tilePropDW);
-    tilePropDW->setWidget(mTilePropertyView);
+    QDockWidget *tilePropDock = new QDockWidget("Tile Property View", mMainWindow);
+    mTilePropertyView = new TilePropertyView(tilePropDock);
+    tilePropDock->setWidget(mTilePropertyView);
+
+    mMainWindow->addDockWidget(Qt::RightDockWidgetArea, meshViewDock);
+    mMainWindow->addDockWidget(Qt::LeftDockWidgetArea, templateDock);
+    mMainWindow->addDockWidget(Qt::LeftDockWidgetArea, tilePropDock);
+
+
+    // Add tools.
     mToolBar->addAction(mTileMapToolManager->registerMapTool(
-                            QSharedPointer<TileMapSelectionTool>::create(mTilePropertyView, mMapView, mTileMap)
+                            QSharedPointer<TileMapBrushTool>::create(mMapView->previewItem())
+                            , "Brush Tool"));
+    mToolBar->addAction(mTileMapToolManager->registerMapTool(
+                            QSharedPointer<FillTool>::create(mMapView->previewItem())
+                            , "Fill Tool"));
+    mToolBar->addAction(mTileMapToolManager->registerMapTool(
+                            QSharedPointer<LineBrushTool>::create(mMapView->previewItem())
+                            , "Line Tool"));
+    mToolBar->addAction(mTileMapToolManager->registerMapTool(
+                            QSharedPointer<RectBrushTool>::create(mMapView->previewItem())
+                            , "Rect Tool"));
+    mToolBar->addAction(mTileMapToolManager->registerMapTool(
+                            QSharedPointer<EllipseBrushTool>::create(mMapView->previewItem())
+                            , "Ellipse Tool"));
+    mToolBar->addAction(mTileMapToolManager->registerMapTool(
+                            QSharedPointer<TileMapSelectionTool>::create(mTilePropertyView, mMapView->previewItem())
                             , "Selection Tool"));
 
-    mMainWindow->addDockWidget(Qt::RightDockWidgetArea, dw);
-    mMainWindow->addDockWidget(Qt::LeftDockWidgetArea, tdw);
-    mMainWindow->addDockWidget(Qt::LeftDockWidgetArea, tilePropDW);
 
     //Create widget connections
     connect(mMapView, &MapView::cellActivated,

@@ -4,12 +4,8 @@
 #include "ellipsebrushtool.h"
 
 
-EllipseBrushTool::EllipseBrushTool(MapView *mapView, TileMap *tileMap)
-    : AbstractShapeBrushTool(mapView, tileMap)
-{
-
-}
-
+EllipseBrushTool::EllipseBrushTool(TileMapPreviewGrpahicsItem *previewItem)
+    : AbstractShapeBrushTool(previewItem) {}
 
 static double getXTheta(double cs, double bestTheta, double minTheta) {
     double t1 = acos(cs);

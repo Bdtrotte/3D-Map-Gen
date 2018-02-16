@@ -9,12 +9,11 @@
 #include "tilemap.h"
 #include "tiletemplate.h"
 #include "mapview.h"
-#include "mapoverlaycell.h"
 
 class AbstractShapeBrushTool : public AbstractTileMapTool
 {
 public:
-    AbstractShapeBrushTool(MapView *mapView, TileMap *tileMap);
+    AbstractShapeBrushTool(TileMapPreviewGrpahicsItem *previewItem);
 
     void cellClicked(int x, int y) override;
     void cellActivated(int x, int y) override;
@@ -44,9 +43,6 @@ private:
 
     /// The MapView on which an overlay will be drawn.
     MapView *mMapView;
-
-    /// The overlay that is drawn over the map view.
-    Array2D<QSharedPointer<MapOverlayCell>> mOverlay;
 
     /// Draws an overlay previewing the shape that will be drawn.
     void drawOverlay(int endX, int endY);

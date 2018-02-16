@@ -23,6 +23,7 @@ class MapView : public QGraphicsView
 
 public:
     MapView(const QRegion &selectedRegion, QWidget *parent);
+    ~MapView();
 
     void clear();
     void createMap(TileMap *tileMap);
@@ -94,7 +95,8 @@ private:
 
     Array2D<MapCell *> mMapCells;
 
-    TileMapPreviewGrpahicsItem *mPreviewItem;
+    //this owns mPreviewItem
+    TileMapPreviewGrpahicsItem *const mPreviewItem;
 
     QPoint mPreMousePoint;
 

@@ -19,12 +19,20 @@ MapView::MapView(const QRegion &selectedRegion, QWidget *parent)
     setMouseTracking(true);
     QGraphicsScene *scene = new QGraphicsScene;
     scene->setBackgroundBrush(Qt::gray);
+    mPreviewItem->setZValue(100);
+    mPreviewItem->setRegion(QRect(0,0,1,1));
+    mPreviewItem->setColor(Qt::blue);
     scene->addItem(mPreviewItem);
     setScene(scene);
 
     QMatrix mat;
     mat.scale(mScale,mScale);
     setMatrix(mat);
+}
+
+MapView::~MapView()
+{
+    delete mPreviewItem;
 }
 
 void MapView::wheelEvent(QWheelEvent *event)

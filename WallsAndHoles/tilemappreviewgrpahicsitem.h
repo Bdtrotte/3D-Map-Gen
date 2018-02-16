@@ -1,9 +1,10 @@
 #ifndef TILEMAPPREVIEWGRPAHICSITEM_H
 #define TILEMAPPREVIEWGRPAHICSITEM_H
 
-#define PREVIEW_ALPHA 40
+#define PREVIEW_ALPHA 100
 
 #include <QGraphicsItem>
+#include <QTransform>
 
 class TileMapPreviewGrpahicsItem : public QGraphicsItem
 {
@@ -11,10 +12,10 @@ public:
     TileMapPreviewGrpahicsItem();
 
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *) override;
-    QRectF boundingRect() const override { return mDrawRegion.boundingRect(); }
+    QRectF boundingRect() const override;
 
-    void setRegion(const QRegion &region) { mDrawRegion = region; update(); }
-    void setColor(const QColor &color) { mColor = color; mColor.setAlpha(PREVIEW_ALPHA); update(); }
+    void setRegion(const QRegion &region);
+    void setColor(const QColor &color);
 
 private:
     QRegion mDrawRegion;

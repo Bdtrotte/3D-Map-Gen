@@ -5,8 +5,8 @@
 
 #include "linebrushtool.h"
 
-LineBrushTool::LineBrushTool(MapView *mapView, TileMap *tileMap)
-    : AbstractShapeBrushTool(mapView, tileMap)
+LineBrushTool::LineBrushTool(TileMapPreviewGrpahicsItem *previewItem)
+    : AbstractShapeBrushTool(previewItem)
 {
 
 }
