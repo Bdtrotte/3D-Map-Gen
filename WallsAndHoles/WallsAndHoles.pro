@@ -63,7 +63,8 @@ SOURCES += \
     filltool.cpp \
     simpletexturedrenderer.cpp \
     simpletexturedscene.cpp \
-    simpletexturedobject.cpp
+    simpletexturedobject.cpp \
+    simpletexturedshader.cpp
 
 HEADERS += \
     meshview.h \
@@ -112,7 +113,8 @@ HEADERS += \
     dereferencingiterator.h \
     dereferencingconstiterator.h \
     simpletexturedobject.h \
-    triplet.h
+    triplet.h \
+    simpletexturedshader.h
 
 FORMS += \
     meshview.ui \
@@ -126,4 +128,5 @@ DISTFILES += \
     onelight.fsh
 
 RESOURCES += \
-    shaders.qrc
+    shaders.qrc \
+    textures.qrc
