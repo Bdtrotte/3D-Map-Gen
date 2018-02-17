@@ -4,6 +4,7 @@
 
 #include <QVector3D>
 #include <QSharedPointer>
+#include <QImage>
 
 #include "m2mpropertyset.h"
 #include "simpletexturedobject.h"
@@ -23,6 +24,14 @@ public:
      * @return
      */
     static QSharedPointer<SimpleTexturedObject> getTopMesh(const M2MPropertySet &tileProperties, QVector3D offset, float scale = 1.0);
+
+
+private:
+
+
+    static QSharedPointer<QImage> getTestingImage();
+
+    static QSharedPointer<QImage> TestingImage;
 };
 
 #endif // M2MTILEMESHER_H

@@ -8,7 +8,7 @@
 #include <QVector2D>
 #include <QVector3D>
 
-#include <QOpenGLTexture>
+#include <QImage>
 
 
 #include "triplet.h"
@@ -82,9 +82,9 @@ public:
      *
      * Assumes setTriangleInfo() has been called.
      * @param texCoords     Texture coordinates for each triangle.
-     * @param texture       The texture for the object.
+     * @param image         The image (texture) for the object.
      */
-    void setTextureInfo(QVector<TriangleTexCoords> texCoords, QSharedPointer<QOpenGLTexture> texture);
+    void setTextureInfo(QVector<TriangleTexCoords> texCoords, QSharedPointer<QImage> image);
 
 
     bool isCommitted() const;
@@ -111,7 +111,7 @@ public:
     const QVector<float> &getVertexShininess() const;
 
     const QVector<TriangleTexCoords> &getFaceTexCoords() const;
-    QSharedPointer<QOpenGLTexture> getTexture() const;
+    const QImage &getImage() const;
 
 
 
@@ -138,7 +138,7 @@ private:
 
     // Texture information.
     QVector<TriangleTexCoords> mTriangleTextureCoordinates; /// This array is parallel to mTriangles.
-    QSharedPointer<QOpenGLTexture> mTexture;
+    QSharedPointer<QImage> mImage;
 
 
     /// True if the getter methods may be used.

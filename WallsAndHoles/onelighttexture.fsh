@@ -42,7 +42,7 @@ void main(void)
 
     vec3 illumination = fMaterial.reflAmbient * uAmbientColor
                         + fMaterial.reflDiffuse * uSourceSpecularColor * dotDiffuse
-                        + fMaterial.reflSpecular * uSourceSpecularColor * pow(dotSpecular, fMaterial.shininess);
+                        + fMaterial.reflSpecular * uSourceSpecularColor * pow(dotSpecular, 1/fMaterial.shininess);
 
     vec3 baseColor = texture(uTexture, fTexCoords).xyz;
 

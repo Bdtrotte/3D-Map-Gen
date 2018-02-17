@@ -58,6 +58,12 @@ public slots:
      */
     void scheduleUse();
 
+
+    /**
+     * @brief Cleans up all resources.
+     */
+    void cleanUp();
+
 protected:
     void initializeGL() override;
     void paintGL() override;
@@ -114,9 +120,9 @@ protected:
     /**
      * @brief Used in scheduleUse() and event() to make scheduleUse() events unique.
      */
-    bool useScheduled;
+    bool mUseScheduled;
 
-    QMutex useScheduledMutex;
+    QMutex mUseScheduledMutex;
 
 
 private:

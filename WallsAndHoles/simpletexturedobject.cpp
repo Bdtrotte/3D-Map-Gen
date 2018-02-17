@@ -73,14 +73,14 @@ void SimpleTexturedObject::setMaterialInfo(QVector<float> ambient, QVector<float
 }
 
 
-void SimpleTexturedObject::setTextureInfo(QVector<TriangleTexCoords> texCoords, QSharedPointer<QOpenGLTexture> texture)
+void SimpleTexturedObject::setTextureInfo(QVector<TriangleTexCoords> texCoords, QSharedPointer<QImage> image)
 {
     // It is assumed that setTriangleInfo() has been called and that the
     // texCoords array is parallel to the triangles array.
     Q_ASSERT(texCoords.size() == getNumTriangles());
 
     mTriangleTextureCoordinates = texCoords;
-    mTexture = texture;
+    mImage = image;
 
     mCommitted = false;
 }
@@ -151,8 +151,9 @@ const QVector<SimpleTexturedObject::TriangleTexCoords> &SimpleTexturedObject::ge
     return mTriangleTextureCoordinates;
 }
 
-QSharedPointer<QOpenGLTexture> SimpleTexturedObject::getTexture() const
+const QImage &SimpleTexturedObject::getImage() const
 {
     Q_ASSERT(isCommitted());
-    return mTexture;
+    Q_ASSERT(!mImage.isNull());
+    return *mImage;
 }

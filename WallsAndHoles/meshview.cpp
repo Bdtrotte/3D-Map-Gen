@@ -1,4 +1,6 @@
 #include <QTimer>
+#include <QMutexLocker>
+
 
 #include "meshview.h"
 #include "ui_meshview.h"
@@ -10,7 +12,7 @@
 MeshView::MeshView(QWidget *parent) :
     QOpenGLWidget(parent),
     mNextRenderer(nullptr),
-    useScheduled(false),
+    mUseScheduled(false),
     ui(new Ui::MeshView)
 {
     ui->setupUi(this);
@@ -29,7 +31,7 @@ MeshView::~MeshView() {
 
 
 void MeshView::setRenderer(QSharedPointer<AbstractRenderer> renderer) {
-    mRendererMutex.lock();
+    QMutexLocker rendererMutex(&mRendererMutex);
 
 
     // Disconnect the previous renderer's signals.
@@ -42,26 +44,25 @@ void MeshView::setRenderer(QSharedPointer<AbstractRenderer> renderer) {
 
     connect(renderer.data(), &AbstractRenderer::repaintNeeded, this, &MeshView::scheduleRepaint);
     connect(renderer.data(), &AbstractRenderer::openGLThreadNeeded, this, &MeshView::scheduleUse);
-
-    mRendererMutex.unlock();
 }
 
 
 bool MeshView::event(QEvent *e)
 {
     if (e->type() == QEvent::User) {
-        useScheduledMutex.lock();
-        useScheduled = false;
-        useScheduledMutex.unlock();
 
-        mRendererMutex.lock();
+        QMutexLocker useScheduledLocker(&mUseScheduledMutex);
+        mUseScheduled = false;
+        useScheduledLocker.unlock();
+
+        QMutexLocker rendererMutex(&mRendererMutex);
 
         auto renderer = getCurrentRenderer();
 
         if (!renderer.isNull())
             renderer->useGL();
 
-        mRendererMutex.unlock();
+        rendererMutex.unlock();
 
         e->accept();
         return true;
@@ -113,34 +114,55 @@ void MeshView::scheduleRepaint()
 
 void MeshView::scheduleUse()
 {
-    useScheduledMutex.lock();
+    QMutexLocker useScheduledLocker(&mUseScheduledMutex);
 
-    if (!useScheduled) {
-        useScheduled = true;
+    if (!mUseScheduled) {
+        mUseScheduled = true;
         QCoreApplication::postEvent(this, new QEvent(QEvent::User));
     }
+}
 
-    useScheduledMutex.unlock();
+
+void MeshView::cleanUp()
+{
+    QMutexLocker rendererMutex(&mRendererMutex);
+
+    // Make the context current. At this stage, the MeshView still has the old context,
+    // but it may not be bound here.
+    makeCurrent();
+
+
+    if (!mRenderer.isNull())
+        mRenderer->cleanUp();
+
+
+    // Release the context.
+    doneCurrent();
 }
 
 
 
-// This is called WHENEVER THERE IS A NEW CONTEXT.
-// A new context can be created if the meshview is undocked. This is important!
+// This method is called whenever there is a new context. If there was an old context
+// before, it would have been destroyed and its aboutToBeDestroyed() signal would have
+// been emitted.
+// This happens whenever the QOpenGLWidget is reparented (or docked/undocked).
 void MeshView::initializeGL()
 {
-    mRendererMutex.lock();
+    QMutexLocker rendererMutex(&mRendererMutex);
 
     auto renderer = getCurrentRenderer();
     if (!renderer.isNull())
         renderer->initializeGL();
 
-    mRendererMutex.unlock();
+
+    // Connect the context's aboutToBeDestroyed() signal to this view's cleanUp() signal
+    // so that data is cleaned up before the context is destroyed.
+    connect(context(), &QOpenGLContext::aboutToBeDestroyed, this, &MeshView::cleanUp);
 }
 
 void MeshView::paintGL()
 {
-    mRendererMutex.lock();
+    QMutexLocker rendererMutex(&mRendererMutex);
 
     auto renderer = getCurrentRenderer();
 
@@ -149,8 +171,6 @@ void MeshView::paintGL()
         QMatrix4x4 mvp = mProjectionMatrix * transform;
         renderer->paint(mvp, mCamera->getPosition());
     }
-
-    mRendererMutex.unlock();
 }
 
 void MeshView::resizeGL(int w, int h)

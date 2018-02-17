@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QQueue>
 #include <QMutex>
+#include <QMutexLocker>
 
 #include <QOpenGLFunctions>
 #include <QMatrix4x4>
@@ -54,13 +55,11 @@ public:
      */
     void useGL()
     {
-        mFunctionsForOpenGLMutex.lock();
+        QMutexLocker locker(&mFunctionsForOpenGLMutex);
 
         while (!mFunctionsForOpenGL.isEmpty())
             // Dequeues and invokes a function.
             mFunctionsForOpenGL.dequeue()();
-
-        mFunctionsForOpenGLMutex.unlock();
     }
 
 public slots:
@@ -69,6 +68,12 @@ public slots:
      * @brief Calling this slot makes the renderer update itself when possible.
      */
     void requestUpdate() { emit repaintNeeded(); }
+
+
+    /**
+     * @brief This slot should clean up all resources associated to the renderer.
+     */
+    virtual void cleanUp() = 0;
 
 signals:
     /**
@@ -97,12 +102,12 @@ protected:
     template< typename Func, typename... Args >
     void callFunctionOnOpenGL(Func&& func, Args&&... arguments)
     {
-        mFunctionsForOpenGLMutex.lock();
+        QMutexLocker locker(&mFunctionsForOpenGLMutex);
 
         std::function<void()> bound = std::bind(func, arguments...);
         mFunctionsForOpenGL.enqueue(bound);
 
-        mFunctionsForOpenGLMutex.unlock();
+        locker.unlock();
 
         emit openGLThreadNeeded();
     }
