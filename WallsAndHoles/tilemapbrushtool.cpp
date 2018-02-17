@@ -1,6 +1,6 @@
 #include "tilemapbrushtool.h"
 
-TileMapBrushTool::TileMapBrushTool(TileMapPreviewGrpahicsItem *previewItem)
+TileMapBrushTool::TileMapBrushTool(TileMapPreviewGraphicsItem *previewItem)
     : AbstractTileMapTool(previewItem) {}
 
 void TileMapBrushTool::cellActivated(int x, int y)

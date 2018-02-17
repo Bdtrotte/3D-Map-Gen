@@ -4,7 +4,7 @@
 #include "ellipsebrushtool.h"
 
 
-EllipseBrushTool::EllipseBrushTool(TileMapPreviewGrpahicsItem *previewItem)
+EllipseBrushTool::EllipseBrushTool(TileMapPreviewGraphicsItem *previewItem)
     : AbstractShapeBrushTool(previewItem) {}
 
 static double getXTheta(double cs, double bestTheta, double minTheta) {

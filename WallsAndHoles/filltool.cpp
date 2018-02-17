@@ -13,7 +13,7 @@ inline uint qHash (const QPoint & key)
 
 
 
-FillTool::FillTool(TileMapPreviewGrpahicsItem *previewItem)
+FillTool::FillTool(TileMapPreviewGraphicsItem *previewItem)
     : AbstractTileMapTool(previewItem) {}
 
 void FillTool::cellClicked(int x, int y)

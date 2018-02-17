@@ -11,7 +11,7 @@ MapView::MapView(const QRegion &selectedRegion, QWidget *parent)
     : QGraphicsView(parent)
     , mScale(0.5)
     , mMapCells(0, 0)
-    , mPreviewItem(new TileMapPreviewGrpahicsItem())
+    , mPreviewItem(new TileMapPreviewGraphicsItem())
     , mSelectedRegion(selectedRegion)
     , mToolBar(new QToolBar(this))
 {
@@ -20,8 +20,6 @@ MapView::MapView(const QRegion &selectedRegion, QWidget *parent)
     QGraphicsScene *scene = new QGraphicsScene;
     scene->setBackgroundBrush(Qt::gray);
     mPreviewItem->setZValue(100);
-    mPreviewItem->setRegion(QRect(0,0,1,1));
-    mPreviewItem->setColor(Qt::blue);
     scene->addItem(mPreviewItem);
     setScene(scene);
 

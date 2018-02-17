@@ -6,10 +6,10 @@
 #include <QGraphicsItem>
 #include <QTransform>
 
-class TileMapPreviewGrpahicsItem : public QGraphicsItem
+class TileMapPreviewGraphicsItem : public QGraphicsItem
 {
 public:
-    TileMapPreviewGrpahicsItem();
+    TileMapPreviewGraphicsItem();
 
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *) override;
     QRectF boundingRect() const override;

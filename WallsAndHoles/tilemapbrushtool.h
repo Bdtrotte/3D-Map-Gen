@@ -8,7 +8,7 @@
 class TileMapBrushTool : public AbstractTileMapTool
 {
 public:
-    TileMapBrushTool(TileMapPreviewGrpahicsItem *previewItem);
+    TileMapBrushTool(TileMapPreviewGraphicsItem *previewItem);
 
     void cellActivated(int x, int y) override;
     void cellHovered(int x, int y) override;

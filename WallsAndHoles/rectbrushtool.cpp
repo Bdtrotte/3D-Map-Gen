@@ -1,6 +1,6 @@
 #include "rectbrushtool.h"
 
-RectBrushTool::RectBrushTool(TileMapPreviewGrpahicsItem *previewItem)
+RectBrushTool::RectBrushTool(TileMapPreviewGraphicsItem *previewItem)
     : AbstractShapeBrushTool(previewItem) {}
 
 QVector<QPoint> RectBrushTool::getShape(int dx, int dy) const {

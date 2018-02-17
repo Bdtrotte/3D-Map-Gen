@@ -1,7 +1,7 @@
 #include "tilemapselectiontool.h"
 
 TileMapSelectionTool::TileMapSelectionTool(TilePropertyView *propView,
-                                           TileMapPreviewGrpahicsItem *previewItem)
+                                           TileMapPreviewGraphicsItem *previewItem)
     : AbstractTileMapTool(previewItem)
     , mTilePropertyView(propView)
 {

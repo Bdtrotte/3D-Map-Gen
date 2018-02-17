@@ -1,6 +1,6 @@
 #include "abstractshapebrushtool.h"
 
-AbstractShapeBrushTool::AbstractShapeBrushTool(TileMapPreviewGrpahicsItem *previewItem)
+AbstractShapeBrushTool::AbstractShapeBrushTool(TileMapPreviewGraphicsItem *previewItem)
     : AbstractTileMapTool(previewItem) {}
 
 void AbstractShapeBrushTool::cellClicked(int x, int y) {

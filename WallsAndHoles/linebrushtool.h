@@ -7,7 +7,7 @@
 class LineBrushTool : public AbstractShapeBrushTool
 {
 public:
-    LineBrushTool(TileMapPreviewGrpahicsItem *previewItem);
+    LineBrushTool(TileMapPreviewGraphicsItem *previewItem);
 
     /**
      * @brief Makes a 1-pixel line by intersecting a line with a grid.
