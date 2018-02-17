@@ -4,12 +4,14 @@
 #include "abstracttool.h"
 #include "tilemap.h"
 #include "tiletemplate.h"
+#include "tilemappreviewgraphicsitem.h"
 
 class AbstractTileMapTool : public AbstractTool
 {
 public:
-    AbstractTileMapTool(TileMap *tileMap)
-        : mTileMap(tileMap)
+    AbstractTileMapTool(TileMapPreviewGraphicsItem *previewItem)
+        : mPreviewItem(previewItem)
+        , mTileMap(nullptr)
         , mTileTemplate(nullptr)
     {
         toolTileMapChanged();
@@ -78,11 +80,11 @@ public:
     virtual void mouseExitedMap() {}
 
 protected:
-
-
     TileMap *getTileMap() const { return mTileMap; }
-
     TileTemplate *getTileTemplate() const { return mTileTemplate; }
+
+    //the preview item of mapView, can't be changed
+    TileMapPreviewGraphicsItem *const mPreviewItem;
 
 private:
     TileMap *mTileMap;

@@ -34,6 +34,7 @@ public:
 public slots:
     void newMap();
     void saveMap();
+    void saveMapAs();
     void loadMap();
     void closeMap();
     void exportMapMesh();
@@ -62,6 +63,14 @@ private:
     //Tools
     TileMapToolManager *mTileMapToolManager;
     QToolBar *mToolBar;
+
+    //QActions which should be disabled when there is no map.
+    QVector<QAction*> mMapDependantActions;
+    void setMapDependantActionsEnabled(bool enabled)
+    {
+        for (QAction *a : mMapDependantActions)
+            a->setEnabled(enabled);
+    }
 };
 
 #endif // EDITOR_H

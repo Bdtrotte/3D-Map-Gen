@@ -4,6 +4,7 @@
 #include "savabletiletemplateset.h"
 #include "tiletemplatesetsmanager.h"
 
+#include <QAction>
 #include <QWidget>
 #include <QTabWidget>
 #include <QListView>
@@ -51,6 +52,12 @@ private:
     QList<QListView *> mListViews;
 
     QTabWidget *mTabs;
+
+    QAction *mNewTemplate;
+    QAction *mRemoveTemplate;
+
+    QAction *mRemoveTemplateSet;
+    QAction *mSaveTemplateSet;
 };
 
 #endif // TILETEMPLATESETSVIEW_H

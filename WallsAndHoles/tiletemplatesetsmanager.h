@@ -54,6 +54,18 @@ public:
     bool removeTileTemplateSet(int index);
 
     /**
+     * @brief removeTileTemplate
+     * Attempts to remove the template specified at this index.
+     * If mTileMap uses that template, the user will be prompted that
+     * removal will alter the map.
+     * True is returned if the template is removed (the user doesn't cancel).
+     * @param templateSetIndex
+     * @param templateIndex
+     * @return
+     */
+    bool removeTileTemplate(int templateSetIndex, int templateIndex);
+
+    /**
      * @brief saveAllTileTemplateSets
      * Saves all unsaved tileTemplateSets
      */

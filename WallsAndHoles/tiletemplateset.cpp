@@ -38,7 +38,7 @@ void TileTemplateSet::removeTileTemplate(int index)
 
 QModelIndex TileTemplateSet::index(int row, int, const QModelIndex &parent) const
 {
-    if (parent.isValid())
+    if (parent.isValid() || row < 0 || row >= mTileTemplates.size())
         return QModelIndex();
 
     return createIndex(row, 0);

@@ -273,9 +273,9 @@ void SimpleTexturedRenderer::createObjectBuffers(const SimpleTexturedObject &obj
     auto vertexTexCoords = QSharedPointer<QOpenGLBuffer>::create(QOpenGLBuffer::VertexBuffer);
     vertexTexCoords->create();
     vertexTexCoords->bind();
-    vertexNormals->setUsagePattern(QOpenGLBuffer::DynamicDraw);
-    vertexNormals->allocate(texCoords.data(), texCoords.size() * sizeof(GLfloat));
-    vertexNormals->release();
+    vertexTexCoords->setUsagePattern(QOpenGLBuffer::DynamicDraw);
+    vertexTexCoords->allocate(texCoords.data(), texCoords.size() * sizeof(GLfloat));
+    vertexTexCoords->release();
 
 
     auto vao = QSharedPointer<QOpenGLVertexArrayObject>::create(nullptr);

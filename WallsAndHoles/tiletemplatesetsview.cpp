@@ -3,7 +3,6 @@
 #include "newtiletemplatesetdialog.h"
 #include "tiletemplateeditor.h"
 
-#include <QAction>
 #include <QDebug>
 #include <QVBoxLayout>
 #include <QToolBar>
@@ -14,6 +13,8 @@ TileTemplateSetsView::TileTemplateSetsView(TileTemplateSetsManager *tileTemplate
     : QWidget(parent)
     , mTileTemplateSetsManager(tileTemplateSetsManager)
     , mTabs(new QTabWidget(this))
+    , mNewTemplate(new QAction("Add Template", this))
+    , mRemoveTemplate(new QAction("Remove Template", this))
 {
     //Must have a valid tileTemplateSetsManager.
     Q_ASSERT(tileTemplateSetsManager != nullptr);
@@ -22,6 +23,11 @@ TileTemplateSetsView::TileTemplateSetsView(TileTemplateSetsManager *tileTemplate
             this, &TileTemplateSetsView::tileTemplateSetAdded);
     connect(mTileTemplateSetsManager, &TileTemplateSetsManager::tileTemplateSetAboutToBeRemoved,
             this, &TileTemplateSetsView::tileTemplateSetAboutToBeRemoved);
+
+    connect(mNewTemplate, &QAction::triggered,
+            this, &TileTemplateSetsView::addTemplate);
+    connect(mRemoveTemplate, &QAction::triggered,
+            this, &TileTemplateSetsView::removeTemplate);
 
     mTabs->setTabPosition(QTabWidget::North);
 
@@ -37,9 +43,13 @@ TileTemplateSetsView::TileTemplateSetsView(TileTemplateSetsManager *tileTemplate
     actionBar->setFloatable(false);
     actionBar->setMovable(false);
     actionBar->addAction("Add Template Set", this, &TileTemplateSetsView::addTemplateSet);
-    actionBar->addAction("Remove Template Set", this, &TileTemplateSetsView::removeTemplateSet);
-    actionBar->addAction("Save Template Set", this, &TileTemplateSetsView::saveTemplateSet);
+    mRemoveTemplateSet = actionBar->addAction("Remove Template Set", this, &TileTemplateSetsView::removeTemplateSet);
+    mSaveTemplateSet = actionBar->addAction("Save Template Set", this, &TileTemplateSetsView::saveTemplateSet);
     actionBar->addAction("Load Template Set", this, &TileTemplateSetsView::loadTemplateSet);
+
+    mRemoveTemplateSet->setEnabled(false);
+    mSaveTemplateSet->setEnabled(false);
+    mRemoveTemplate->setEnabled(false);
 
     //Set up default template set view
     mDefaultTemplateView = new QListView(this);
@@ -96,8 +106,8 @@ void TileTemplateSetsView::tileTemplateSetAdded(SavableTileTemplateSet *tileTemp
     QToolBar *actionBar = new QToolBar(templateWidget);
     actionBar->setFloatable(false);
     actionBar->setMovable(false);
-    actionBar->addAction("Add Template", this, &TileTemplateSetsView::addTemplate);
-    actionBar->addAction("Remove Template", this, &TileTemplateSetsView::removeTemplate);
+    actionBar->addAction(mNewTemplate);
+    actionBar->addAction(mRemoveTemplate);
 
     QVBoxLayout *layout = new QVBoxLayout;
     layout->addWidget(templateList);
@@ -109,6 +119,9 @@ void TileTemplateSetsView::tileTemplateSetAdded(SavableTileTemplateSet *tileTemp
     if (!tileTemplateSet->isSaved())
         name += "*";
     mTabs->setCurrentIndex(mTabs->addTab(templateWidget, name));
+
+    mRemoveTemplateSet->setEnabled(true);
+    mSaveTemplateSet->setEnabled(true);
 }
 
 void TileTemplateSetsView::tileTemplateSetAboutToBeRemoved(SavableTileTemplateSet *tileTemplateSet)
@@ -122,6 +135,11 @@ void TileTemplateSetsView::tileTemplateSetAboutToBeRemoved(SavableTileTemplateSe
     delete w;
 
     mListViews.removeAt(tab);
+
+    if (mTabs->count() == 0) {
+        mRemoveTemplateSet->setEnabled(false);
+        mSaveTemplateSet->setEnabled(false);
+    }
 }
 
 void TileTemplateSetsView::selectedTileTemplateChanged()
@@ -146,10 +164,13 @@ void TileTemplateSetsView::selectedTileTemplateChanged()
         }
     }
 
-    if (templateId != -1)
+    if (templateId != -1) {
         emit tileTemplateChanged(mTileTemplateSetsManager->tileTemplateSetAt(curTab)->tileTemplateAt(templateId));
-    else
+        mRemoveTemplate->setEnabled(true);
+    } else {
         emit tileTemplateChanged(nullptr);
+        mRemoveTemplate->setEnabled(false);
+    }
 }
 
 void TileTemplateSetsView::defaultTileTemplateSelected(const QModelIndex &current)
@@ -161,6 +182,8 @@ void TileTemplateSetsView::defaultTileTemplateSelected(const QModelIndex &curren
     }
 
     emit tileTemplateChanged(mDefaultTemplateSet->tileTemplateAt(current.row()));
+
+    mRemoveTemplate->setEnabled(false);
 }
 
 void TileTemplateSetsView::addTemplate()
@@ -177,6 +200,8 @@ void TileTemplateSetsView::addTemplate()
     mTileTemplateSetsManager->tileTemplateSetAt(curTab)->addTileTemplate(newTemplate);
     mListViews[curTab]->selectionModel()->setCurrentIndex(mTileTemplateSetsManager->tileTemplateSetAt(curTab)->index(mTileTemplateSetsManager->tileTemplateSetAt(curTab)->size() - 1, 0),
                                                           QItemSelectionModel::ClearAndSelect);
+
+    mRemoveTemplate->setEnabled(true);
 }
 
 void TileTemplateSetsView::removeTemplate()
@@ -190,9 +215,12 @@ void TileTemplateSetsView::removeTemplate()
 
     int row = curIndex.row();
 
-    mTileTemplateSetsManager->tileTemplateSetAt(curTab)->removeTileTemplate(row);
+    mTileTemplateSetsManager->removeTileTemplate(curTab, row);
 
     selectedTileTemplateChanged();
+
+    if (mTileTemplateSetsManager->tileTemplateSetAt(curTab)->size() == 0)
+        mRemoveTemplate->setEnabled(false);
 }
 
 void TileTemplateSetsView::addTemplateSet()

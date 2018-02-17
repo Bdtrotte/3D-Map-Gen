@@ -13,13 +13,8 @@ inline uint qHash (const QPoint & key)
 
 
 
-FillTool::FillTool(MapView *mapView, TileMap *tileMap)
-    : AbstractTileMapTool(tileMap),
-      mMapView(mapView)
-{
-}
-
-
+FillTool::FillTool(TileMapPreviewGraphicsItem *previewItem)
+    : AbstractTileMapTool(previewItem) {}
 
 void FillTool::cellClicked(int x, int y)
 {
@@ -141,7 +136,7 @@ void FillTool::updateSelection(int x, int y)
 
 void FillTool::clearOverlay()
 {
-    mOverlay = Array2D<QSharedPointer<MapOverlayCell>>();
+    mPreviewItem->setRegion(QRegion());
 }
 
 
@@ -152,19 +147,16 @@ void FillTool::drawOverlay(int endX, int endY)
 
         updateSelection(endX, endY);
 
-        QColor color;
+        QRegion region;
+        for (const QPoint &p : mSelection)
+            region += QRect(p, QSize(1,1));
+
+        mPreviewItem->setRegion(region);
+
         if (TileTemplate *t = getTileTemplate())
-            color = t->color();
+            mPreviewItem->setColor(t->color());
         else
-            color = Qt::black;
-
-        color.setAlpha(100);
-
-        QGraphicsScene *scene = mMapView->scene();
-
-        mOverlay.resize(getTileMap()->width(), getTileMap()->height());
-        for (QPoint p : mSelection)
-            mOverlay(p) = QSharedPointer<MapOverlayCell>::create(scene, p.x(), p.y(), color);
+            mPreviewItem->setColor(Qt::gray);
     }
 }
 
