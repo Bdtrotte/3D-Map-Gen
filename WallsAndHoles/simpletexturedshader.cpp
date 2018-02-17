@@ -1,11 +1,13 @@
 #include "simpletexturedshader.h"
 
-SimpleTexturedShader::SimpleTexturedShader() {
+SimpleTexturedShader::SimpleTexturedShader()
+{
 
 }
 
 
-void SimpleTexturedShader::create() {
+void SimpleTexturedShader::create()
+{
     mProgram = QSharedPointer<QOpenGLShaderProgram>::create(nullptr);
     mProgram->create();
     mProgram->addCacheableShaderFromSourceFile(QOpenGLShader::Vertex, ":/shaders/onelighttexture.vsh");
@@ -27,6 +29,11 @@ void SimpleTexturedShader::create() {
     mUnifSourceSpecularColor = mProgram->uniformLocation("uSourceSpecularColor");
     mUnifSourceDiffuseColor = mProgram->uniformLocation("uSourceDiffuseColor");
     mUnifTexture = mProgram->uniformLocation("uTexture");
+}
+
+void SimpleTexturedShader::destroy()
+{
+    mProgram = nullptr;
 }
 
 void SimpleTexturedShader::bind() {

@@ -23,6 +23,13 @@ public:
      */
     void create();
 
+
+    /**
+     * @brief Destroys the program. Assumes an OpenGL context is bound.
+     */
+    void destroy();
+
+
     /**
      * @brief Binds the OpenGL program.
      */
