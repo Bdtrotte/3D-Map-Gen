@@ -8,20 +8,29 @@
 #include <QSignalMapper>
 
 MapView::MapView(const QRegion &selectedRegion, QWidget *parent)
-    : QGraphicsView(parent),
-      mScale(0.5),
-      mMapCells(0, 0),
-      mSelectedRegion(selectedRegion),
-      mToolBar(new QToolBar(this))
+    : QGraphicsView(parent)
+    , mScale(0.5)
+    , mMapCells(0, 0)
+    , mPreviewItem(new TileMapPreviewGraphicsItem())
+    , mSelectedRegion(selectedRegion)
+    , mToolBar(new QToolBar(this))
 {
     setupViewToolBar();
     setMouseTracking(true);
     QGraphicsScene *scene = new QGraphicsScene;
     scene->setBackgroundBrush(Qt::gray);
+    mPreviewItem->setZValue(100);
+    scene->addItem(mPreviewItem);
     setScene(scene);
+
     QMatrix mat;
     mat.scale(mScale,mScale);
     setMatrix(mat);
+}
+
+MapView::~MapView()
+{
+    delete mPreviewItem;
 }
 
 void MapView::wheelEvent(QWheelEvent *event)

@@ -4,9 +4,10 @@
 
 #include "abstractshapebrushtool.h"
 
-class LineBrushTool : public AbstractShapeBrushTool {
+class LineBrushTool : public AbstractShapeBrushTool
+{
 public:
-    LineBrushTool(MapView *mapView, TileMap *tileMap);
+    LineBrushTool(TileMapPreviewGraphicsItem *previewItem);
 
     /**
      * @brief Makes a 1-pixel line by intersecting a line with a grid.

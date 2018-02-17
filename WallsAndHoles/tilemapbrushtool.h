@@ -8,9 +8,11 @@
 class TileMapBrushTool : public AbstractTileMapTool
 {
 public:
-    TileMapBrushTool(TileMap *tileMap);
+    TileMapBrushTool(TileMapPreviewGraphicsItem *previewItem);
 
     void cellActivated(int x, int y) override;
+    void cellHovered(int x, int y) override;
+    void mouseExitedMap();
 };
 
 #endif // TILEMAPBRUSHTOOL_H

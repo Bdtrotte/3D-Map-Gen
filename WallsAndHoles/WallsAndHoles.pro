@@ -61,13 +61,13 @@ SOURCES += \
     linebrushtool.cpp \
     rectbrushtool.cpp \
     ellipsebrushtool.cpp \
-    mapoverlaycell.cpp \
     tilepropertyview.cpp \
     tilemapselectiontool.cpp \
     filltool.cpp \
     tiletemplatesetsmanager.cpp \
     savabletiletemplateset.cpp \
-    newmapdialog.cpp
+    newmapdialog.cpp \
+    tilemappreviewgraphicsitem.cpp
 
 HEADERS += \
     renderableobject.h \
@@ -111,13 +111,13 @@ HEADERS += \
     linebrushtool.h \
     rectbrushtool.h \
     ellipsebrushtool.h \
-    mapoverlaycell.h \
     tilepropertyview.h \
     tilemapselectiontool.h \
     filltool.h \
     tiletemplatesetsmanager.h \
     savabletiletemplateset.h \
-    newmapdialog.h
+    newmapdialog.h \
+    tilemappreviewgraphicsitem.h
 
 FORMS += \
     meshview.ui \
