@@ -46,6 +46,14 @@ public slots:
      */
     void remakeAll();
 
+<<<<<<< HEAD
+=======
+signals:
+    /**
+     * @brief Emitted when the output mesh is updated.
+     */
+    void mapMeshUpdated();
+>>>>>>> master
 
 protected:
     /**
@@ -54,10 +62,13 @@ protected:
      */
     void inferProperties();
 
+<<<<<<< HEAD
 
     /**
      * @brief The TileMap that is the input to this Map2Mesh object.
      */
+=======
+>>>>>>> master
     TileMap *mTileMap;
 
 

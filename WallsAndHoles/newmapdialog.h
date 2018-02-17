@@ -1,18 +1,26 @@
 #ifndef NEWMAPDIALOG_H
 #define NEWMAPDIALOG_H
 
-#include <QDialog>
+#include "tilemap.h"
 
-namespace Ui {
-class NewMapDialog;
-}
+#include <QDialog>
+#include <QCheckBox>
+#include <QSpinBox>
 
 struct NewMapData
 {
     int width;
     int height;
+    bool isIndoorMap;
+    bool hasCeiling;
 
-    NewMapData(int w, int h) : width(w), height(h) {}
+    NewMapData() {}
+
+    NewMapData(int w, int h, bool indoor, bool ceiling)
+        : width(w)
+        , height(h)
+        , isIndoorMap(indoor)
+        , hasCeiling(ceiling) {}
 };
 
 class NewMapDialog : public QDialog
@@ -20,16 +28,21 @@ class NewMapDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit NewMapDialog(QWidget *parent = 0);
-    ~NewMapDialog();
+    explicit NewMapDialog(QDialog *parent = nullptr);
 
     NewMapData result;
 
 private slots:
-    void on_buttonBox_accepted();
+    void onAccepted();
 
 private:
-    Ui::NewMapDialog *ui;
+    //Spin Box
+    QSpinBox *mHSpinBox;
+    QSpinBox *mWSpinBox;
+
+    //CheckBox
+    QCheckBox *mIndoorMapChkBox;
+    QCheckBox *mCeilingChkBox;
 };
 
 #endif // NEWMAPDIALOG_H

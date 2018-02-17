@@ -9,16 +9,18 @@
 #include "m2mtilemesher.h"
 
 Map2Mesh::Map2Mesh(TileMap *tileMap, QObject *parent)
-    : QObject(parent),
-      mTileMap(tileMap),
-      mScene(SimpleTexturedScene::makeScene())
+    : QObject(parent)
+    , mTileMap(tileMap)
+    , mScene(SimpleTexturedScene::makeScene())
 {
-    remakeAll();
+    if (mTileMap) {
+        remakeAll();
 
 
-    // Connect the tile changed & map resized signals.
-    connect(tileMap, &TileMap::tileChanged, this, &Map2Mesh::tileChanged);
-    connect(tileMap, &TileMap::resized, this, &Map2Mesh::remakeAll);
+        // Connect the tile changed & map resized signals.
+        connect(mTileMap, &TileMap::tileChanged, this, &Map2Mesh::tileChanged);
+        connect(mTileMap, &TileMap::resized, this, &Map2Mesh::remakeAll);
+    }
 }
 
 
@@ -29,6 +31,9 @@ SharedSimpleTexturedScene Map2Mesh::getScene() const
 
 void Map2Mesh::tileChanged(int x, int y)
 {
+    Q_UNUSED(x);
+    Q_UNUSED(y);
+
     if (!mInferScheduled) {
         mInferScheduled = true;
 

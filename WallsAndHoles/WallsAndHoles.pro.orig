@@ -39,7 +39,11 @@ SOURCES += \
     meshviewcontainer.cpp \
     mapview.cpp \
     editor.cpp \
+<<<<<<< HEAD
     newmapdialog.cpp \
+=======
+    meshmaterial.cpp \
+>>>>>>> master
     shaderprogramonelight.cpp \
     xmltool.cpp \
     map2mesh.cpp \
@@ -60,15 +64,20 @@ SOURCES += \
     rectbrushtool.cpp \
     ellipsebrushtool.cpp \
     mapoverlaycell.cpp \
-	tilepropertyview.cpp \
-	tilemapselectiontool.cpp \
-	tiletemplatesetsmanager.cpp \
-	savabletiletemplateset.cpp \
+<<<<<<< HEAD
     filltool.cpp \
     simpletexturedrenderer.cpp \
     simpletexturedscene.cpp \
     simpletexturedobject.cpp \
     simpletexturedshader.cpp
+=======
+    tilepropertyview.cpp \
+    tilemapselectiontool.cpp \
+    filltool.cpp \
+    tiletemplatesetsmanager.cpp \
+    savabletiletemplateset.cpp \
+    newmapdialog.cpp
+>>>>>>> master
 
 HEADERS += \
     meshview.h \
@@ -108,6 +117,7 @@ HEADERS += \
     rectbrushtool.h \
     ellipsebrushtool.h \
     mapoverlaycell.h \
+<<<<<<< HEAD
     filltool.h \
     abstractrenderer.h \
     simpletexturedrenderer.h \
@@ -117,12 +127,15 @@ HEADERS += \
     dereferencingconstiterator.h \
     simpletexturedobject.h \
     triplet.h \
-    simpletexturedshader.h \
-	tilepropertyview.h \
-	tilemapselectiontool.h \
-	tiletemplatesetsmanager.h \
-	savabletiletemplateset.h \
-	newmapdialog.h
+    simpletexturedshader.h
+=======
+    tilepropertyview.h \
+    tilemapselectiontool.h \
+    filltool.h \
+    tiletemplatesetsmanager.h \
+    savabletiletemplateset.h \
+    newmapdialog.h
+>>>>>>> master
 
 FORMS += \
     meshview.ui \

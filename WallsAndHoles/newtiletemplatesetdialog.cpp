@@ -50,7 +50,7 @@ void NewTileTemplateSetDialog::ok()
         return;
     }
 
-    result = NewTileTemplateSetData(mName->text(), mFilePath->text() + "/" + mName->text() + ".xml");
+    result = NewTileTemplateSetData(mName->text(), mFilePath->text() + "/" + mName->text() + ".wts");
     done(1);
 }
 

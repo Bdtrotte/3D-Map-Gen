@@ -37,6 +37,14 @@ public:
 
     QColor color() const { return mColor; }
 
+    /**
+     * @brief emitTilePing
+     * Sends a signal to all tiles using this template, which will
+     * be forwarded to the containing TileMap, and handled there.
+     * Useful for gathing all tiles used by this template.
+     */
+    void emitTilePing() { emit pingTiles(); }
+
 signals:
     //a property which has no affect on other properties (ie not thickness or position)
     //but rendering should be updated
@@ -46,6 +54,8 @@ signals:
 
     //emited anytime anything which needs to be saved changes
     void changed();
+
+    void pingTiles();
 
 private:
     QString mName;
@@ -58,7 +68,5 @@ private:
     //Has no affect on evental output mesh
     QColor mColor;
 };
-
-typedef QSharedPointer<TileTemplate> SharedTileTemplate;
 
 #endif // TILETEMPLATE_H

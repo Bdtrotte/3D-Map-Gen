@@ -104,10 +104,24 @@ void Editor::newMap()
 {
     NewMapDialog nmd;
 
+<<<<<<< HEAD
+        if (mMap2Mesh != nullptr)
+            delete mMap2Mesh;
+
+        mMap2Mesh = new Map2Mesh(mTileMap, this);
+
+        SharedAbstractScene scene = mMap2Mesh->getScene();
+        QSharedPointer<AbstractRenderer> renderer = scene->getRenderer();
+
+        mMeshViewContainer->setRenderer(renderer);
+
+        renderer->requestUpdate();
+=======
     if (nmd.exec()) {
         setTileMap(new TileMap(QSize(nmd.result.width, nmd.result.height),
                                nmd.result.isIndoorMap,
                                nmd.result.hasCeiling));
+>>>>>>> master
     }
 }
 
@@ -188,17 +202,18 @@ void Editor::setTileMap(TileMap *tileMap)
     else
         mTileTemplateSetsView->setDefaultTileTemplateSet(nullptr);
 
-    if (mMap2Mesh != nullptr)
-            delete mMap2Mesh;
+    delete mMap2Mesh;
 
     mMap2Mesh = new Map2Mesh(mTileMap, this);
 
-    SharedAbstractScene scene = mMap2Mesh->getScene();
-    QSharedPointer<AbstractRenderer> renderer = scene->getRenderer();
+    // TODO: It is inefficient to update the entire scene when just a part
+    // of the map is updated.
+    connect(mMap2Mesh, &Map2Mesh::mapMeshUpdated, this, &Editor::makeNewScene);
 
-    mMeshViewContainer->setRenderer(renderer);
-
-    renderer->requestUpdate();
+    // Note: Map2Mesh's mapUpdated() signal is emitted during its constructor,
+    // but that is BEFORE the above connection is made. Therefore, updateScene()
+    // must be called manually here.
+    makeNewScene();
 
     // TODO SHOULD provide option to save old tileMap
     delete pre;

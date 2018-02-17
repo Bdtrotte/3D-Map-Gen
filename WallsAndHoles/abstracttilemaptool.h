@@ -22,7 +22,7 @@ public:
         toolTileMapChanged(prev);
     }
 
-    void setTileTemplate(SharedTileTemplate tileTemplate) { mTileTemplate = tileTemplate; }
+    void setTileTemplate(TileTemplate *tileTemplate) { mTileTemplate = tileTemplate; }
 
 
     /**
@@ -82,11 +82,11 @@ protected:
 
     TileMap *getTileMap() const { return mTileMap; }
 
-    SharedTileTemplate getTileTemplate() const { return mTileTemplate; }
+    TileTemplate *getTileTemplate() const { return mTileTemplate; }
 
 private:
     TileMap *mTileMap;
-    SharedTileTemplate mTileTemplate;
+    TileTemplate *mTileTemplate;
 
     using AbstractTool::mousePressEvent;
     using AbstractTool::mouseReleaseEvent;
