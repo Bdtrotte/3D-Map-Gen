@@ -120,24 +120,51 @@ void Editor::makeNewScene()
 
 void Editor::saveMap()
 {
-    // TODO : Save should be disabled if there is no map
-    if(mTileMap == nullptr){
-        QMessageBox messageBox;
-        messageBox.critical(0,"Error","TileMap doesn't exist!");
-        messageBox.setFixedSize(500,200);
-        return;
-    }
+    Q_ASSERT(mTileMap != nullptr);
 
-    if(mTileMap->savePath().isEmpty()){
-        mTileMap->setSavePath(QFileDialog::getSaveFileName(mMainWindow,
-                                                           tr("Save Map"),
-                                                           "/home/",
-                                                           tr("Save Files (*.wah)")));
+    if (mTileMap->savePath().isEmpty()) {
+        QString savePath = QFileDialog::getSaveFileName(mMainWindow,
+                                                        tr("Save Map"),
+                                                        "/home/",
+                                                        tr("Save Files (*.wah)"));
+
+        if (savePath.isEmpty())
+            return;
+        mTileMap->setSavePath(savePath);
     }
 
     mTileTemplateSetManager->saveAllTileTemplateSets();
 
-    XMLTool::saveTileMap(mTileMap, mTileTemplateSetManager->tileTemplateSets());
+    if (XMLTool::saveTileMap(mTileMap, mTileTemplateSetManager->tileTemplateSets()) != XMLTool::NoError) {
+        mTileMap->setSavePath("");
+        QMessageBox messageBox;
+        messageBox.critical(0,"Error","Fail to save TileMap!");
+        messageBox.setFixedSize(500,200);
+    }
+}
+
+void Editor::saveMapAs()
+{
+    Q_ASSERT(mTileMap != nullptr);
+
+    mTileTemplateSetManager->saveAllTileTemplateSets();
+
+    QString prePath = mTileMap->savePath();
+    QString savePath = QFileDialog::getSaveFileName(mMainWindow,
+                                                    tr("Save Map"),
+                                                    "/home/",
+                                                    tr("Save Files (*.wah)"));
+
+    if (savePath.isEmpty())
+        return;
+    mTileMap->setSavePath(savePath);
+
+    if (XMLTool::saveTileMap(mTileMap, mTileTemplateSetManager->tileTemplateSets()) != XMLTool::NoError) {
+        mTileMap->setSavePath(prePath);
+        QMessageBox messageBox;
+        messageBox.critical(0,"Error","Fail to save TileMap!");
+        messageBox.setFixedSize(500,200);
+    }
 }
 
 void Editor::loadMap()
@@ -184,11 +211,31 @@ void Editor::exportMapMesh()
 
 void Editor::setTileMap(TileMap *tileMap)
 {
+    // TODO : currently TileMap doesn't keep track of if it needs to be saved or not,
+    //        so in some cases this check might not be needed.
+    if (mTileMap) {
+        QMessageBox mb;
+        mb.setText("Do you want to save the current Tile Map?");
+        mb.addButton("Save", QMessageBox::AcceptRole);
+        mb.addButton("Don't Save", QMessageBox::AcceptRole);
+        mb.addButton("Cancel", QMessageBox::RejectRole);
+
+        switch (mb.exec()) {
+        case 0:
+            saveMap();
+            break;
+        case 2:
+            return;
+        }
+    }
+
     TileMap *pre = mTileMap;
     mTileMap = tileMap;
     mTileMapToolManager->setTileMap(mTileMap);
     mMapView->createMap(mTileMap);
     mTileTemplateSetManager->setTileMap(mTileMap);
+    setMapDependantActionsEnabled(mTileMap != nullptr);
+
     if (mTileMap)
         mTileTemplateSetsView->setDefaultTileTemplateSet(mTileMap->defaultTileTemplateSet());
     else
@@ -207,7 +254,6 @@ void Editor::setTileMap(TileMap *tileMap)
     // must be called manually here.
     makeNewScene();
 
-    // TODO SHOULD provide option to save old tileMap
     delete pre;
 }
 
@@ -218,9 +264,12 @@ void Editor::setUpMenuBar()
 
     QMenu *fileMenu = menuBar->addMenu(tr("File"));
     fileMenu->addAction(tr("New Map"), this, &Editor::newMap);
-    fileMenu->addAction(tr("Save Map"), this, &Editor::saveMap);
+    mMapDependantActions.append(fileMenu->addAction(tr("Save Map"), this, &Editor::saveMap));
+    mMapDependantActions.append(fileMenu->addAction(tr("Save Map As"), this, &Editor::saveMapAs));
     fileMenu->addAction(tr("Load Map"), this, &Editor::loadMap);
-    fileMenu->addAction(tr("Close Map"), this, &Editor::closeMap);
+    mMapDependantActions.append(fileMenu->addAction(tr("Close Map"), this, &Editor::closeMap));
     fileMenu->addSeparator();
-    fileMenu->addAction(tr("Export Map Mesh"), this, &Editor::exportMapMesh);
+    mMapDependantActions.append(fileMenu->addAction(tr("Export Map Mesh"), this, &Editor::exportMapMesh));
+
+    setMapDependantActionsEnabled(false);
 }
