@@ -16,7 +16,7 @@ namespace Ui {
 class MeshView;
 }
 
-class MeshView : public QOpenGLWidget
+class MeshView : public QOpenGLWidget, public QOpenGLFunctions
 {
     Q_OBJECT
 

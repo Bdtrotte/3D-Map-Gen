@@ -148,6 +148,7 @@ void MeshView::cleanUp()
 // This happens whenever the QOpenGLWidget is reparented (or docked/undocked).
 void MeshView::initializeGL()
 {
+    initializeOpenGLFunctions();
     QMutexLocker rendererMutex(&mRendererMutex);
 
     auto renderer = getCurrentRenderer();
