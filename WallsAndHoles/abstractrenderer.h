@@ -120,23 +120,19 @@ protected:
      */
     void checkGLErrors()
     {
-        GLenum error = GL_NO_ERROR;
-
-        do {
-            error = glGetError();
-            if (error != GL_NO_ERROR) {
-                switch (error) {
-                case GL_INVALID_ENUM:                   qDebug() << "GL_INVALID_ENUM"; break;
-                case GL_INVALID_VALUE:                  qDebug() << "GL_INVALID_VALUE"; break;
-                case GL_INVALID_OPERATION:              qDebug() << "GL_INVALID_OPERATION"; break;
-                case GL_INVALID_FRAMEBUFFER_OPERATION:  qDebug() << "GL_INVALID_FRAMEBUFFER_OPERATION"; break;
-                case GL_OUT_OF_MEMORY:                  qDebug() << "GL_OUT_OF_MEMORY"; break;
-                case GL_STACK_UNDERFLOW:                qDebug() << "GL_STACK_UNDERFLOW"; break;
-                case GL_STACK_OVERFLOW:                 qDebug() << "GL_STACK_OVERFLOW"; break;
-                default:                                qDebug() << "Unknown error."; break;
-                }
+        GLenum error;
+        while ((error = glGetError()) != GL_NO_ERROR) {
+            switch (error) {
+            case GL_INVALID_ENUM:                   qDebug() << "GL_INVALID_ENUM"; break;
+            case GL_INVALID_VALUE:                  qDebug() << "GL_INVALID_VALUE"; break;
+            case GL_INVALID_OPERATION:              qDebug() << "GL_INVALID_OPERATION"; break;
+            case GL_INVALID_FRAMEBUFFER_OPERATION:  qDebug() << "GL_INVALID_FRAMEBUFFER_OPERATION"; break;
+            case GL_OUT_OF_MEMORY:                  qDebug() << "GL_OUT_OF_MEMORY"; break;
+            case GL_STACK_UNDERFLOW:                qDebug() << "GL_STACK_UNDERFLOW"; break;
+            case GL_STACK_OVERFLOW:                 qDebug() << "GL_STACK_OVERFLOW"; break;
+            default:                                qDebug() << "Unknown error."; break;
             }
-        } while (error != GL_NO_ERROR);
+        }
     }
 
 
