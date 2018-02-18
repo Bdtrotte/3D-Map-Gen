@@ -2,6 +2,7 @@
 #define ABSTRACTPROPERTYMANAGER_H
 
 #include <QObject>
+#include <QVariant>
 
 /**
  * @brief The AbstractPropertyManager class

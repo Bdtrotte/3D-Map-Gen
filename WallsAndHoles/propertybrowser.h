@@ -7,6 +7,7 @@
 #include <QWidget>
 #include <QVBoxLayout>
 #include <QHBoxLayout>
+#include <QLabel>
 
 class PropertyBrowser : public QWidget
 {
@@ -34,11 +35,14 @@ public:
 private:
     void makeLine(QString propertyName, QVariant value);
     void setLine(QString propertyName, QVariant value);
-    QVariant getLineValue(QString propertyName);
-    void propertyEdited(QString propertyName, QVariant newValue);
 
+    AbstractPropertyManager *mPropertyManager;
+
+    //A line will have two components, a Label and a widget
     QMap<QString, QHBoxLayout *> mLines;
     QMap<QString, QMetaType::Type> mLineType;
+    QMap<QString, QWidget *> mLineWidget;
+    QMap<QString, QLabel *> mLineLabel;
 
     QVBoxLayout *mMainLayout;
 };
