@@ -237,9 +237,8 @@ void Editor::setTileMap(TileMap *tileMap)
     else
         mTileTemplateSetsView->setDefaultTileTemplateSet(nullptr);
 
-    if (mMap2Mesh != nullptr)
-            delete mMap2Mesh;
 
+    delete mMap2Mesh;
     mMap2Mesh = new Map2Mesh(mTileMap, this);
 
     SharedAbstractScene scene = mMap2Mesh->getScene();
