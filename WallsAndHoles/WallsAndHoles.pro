@@ -67,7 +67,8 @@ SOURCES += \
     tiletemplatesetsmanager.cpp \
     savabletiletemplateset.cpp \
     newmapdialog.cpp \
-    tilemappreviewgraphicsitem.cpp
+    tilemappreviewgraphicsitem.cpp \
+    propertybrowser.cpp
 
 HEADERS += \
     renderableobject.h \
@@ -117,7 +118,9 @@ HEADERS += \
     tiletemplatesetsmanager.h \
     savabletiletemplateset.h \
     newmapdialog.h \
-    tilemappreviewgraphicsitem.h
+    tilemappreviewgraphicsitem.h \
+    propertybrowser.h \
+    abstractpropertymanager.h
 
 FORMS += \
     meshview.ui \
