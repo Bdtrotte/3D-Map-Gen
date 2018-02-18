@@ -82,12 +82,6 @@ private:
     void createObjectBuffers(const SimpleTexturedObject &obj);
 
     /**
-     * @brief Goes through the QMaps whose keys are SimpleTexturedObjects and gets rid of
-     * objects that no longer exist. Assumes the correct OpenGL context is bound. Locks the mGLDataMutex.
-     */
-    void cleanMaps();
-
-    /**
      * @brief Unloads all textures. Assumes the correct OpenGL context is bound. Locks the mGLDataMutex.
      */
     void clearAllTextures();

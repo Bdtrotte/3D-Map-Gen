@@ -339,53 +339,6 @@ void SimpleTexturedRenderer::createObjectBuffers(const SimpleTexturedObject &obj
 }
 
 
-#define REMOVE_INVALID_KEYS(validKeys, keyItr) while (keyItr.hasNext()) if(!validKeys.contains(keyItr.next().key())) keyItr.remove();
-
-void SimpleTexturedRenderer::cleanMaps()
-{
-    QSet<const SimpleTexturedObject *> validKeys;
-
-    for (const SimpleTexturedObject &obj : *mScene)
-        validKeys.insert(&obj);
-
-
-    QMutexLocker locker(&mGLDataMutex);
-
-    auto keyItr1 = QMutableMapIterator<const SimpleTexturedObject *, decltype(mVAOs)::mapped_type>(mVAOs);
-    auto keyItr2 = QMutableMapIterator<const SimpleTexturedObject *, decltype(mObjectVertexPositions)::mapped_type>(mObjectVertexPositions);
-    auto keyItr3 = QMutableMapIterator<const SimpleTexturedObject *, decltype(mObjectVertexNormals)::mapped_type>(mObjectVertexNormals);
-    auto keyItr4 = QMutableMapIterator<const SimpleTexturedObject *, decltype(mObjectVertexMaterials)::mapped_type>(mObjectVertexMaterials);
-    auto keyItr5 = QMutableMapIterator<const SimpleTexturedObject *, decltype(mNumVertices)::mapped_type>(mNumVertices);
-    auto keyItr6 = QMutableMapIterator<const SimpleTexturedObject *, decltype(mObjectVertexTexCoords)::mapped_type>(mObjectVertexTexCoords);
-
-    // For each map, go through its keys and remove invalid ones.
-    REMOVE_INVALID_KEYS(validKeys, keyItr1);
-    REMOVE_INVALID_KEYS(validKeys, keyItr2);
-    REMOVE_INVALID_KEYS(validKeys, keyItr3);
-    REMOVE_INVALID_KEYS(validKeys, keyItr4);
-    REMOVE_INVALID_KEYS(validKeys, keyItr5);
-    REMOVE_INVALID_KEYS(validKeys, keyItr6);
-
-
-    // Also clean up mImagesToTextures and mTexturesToObjects.
-    foreach (const SimpleTexturedObject *obj, validKeys) {
-        const QImage *img = &obj->getImage();
-
-        if (mImagesToTextures.contains(img)) {
-            QSharedPointer<QOpenGLTexture> texture = mImagesToTextures[img];
-
-            mTexturesToObjects[texture.data()].remove(obj);
-
-            // If now no object is using this texture, destroy the texture.
-            if (mTexturesToObjects[texture.data()].isEmpty())
-                removeImageTexture(img);
-        }
-    }
-}
-
-#undef REMOVE_INVALID_KEYS
-
-
 void SimpleTexturedRenderer::clearAllTextures()
 {
     QMutexLocker locker(&mGLDataMutex);
