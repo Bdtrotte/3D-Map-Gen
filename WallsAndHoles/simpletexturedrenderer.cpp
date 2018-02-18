@@ -318,6 +318,9 @@ void SimpleTexturedRenderer::createObjectBuffers(const SimpleTexturedObject &obj
     mNumVertices[&obj] = vertices.size() / 3;
 
 
+    // This will point to the OpenGL texture object that contains the object's texture.
+    const QOpenGLTexture *associatedTexture;
+
     // If the image associated to the object has not yet been created, create it.
     if (!mImagesToTextures.contains(&obj.getImage())) {
         QSharedPointer<QOpenGLTexture> newTexture = QSharedPointer<QOpenGLTexture>::create(obj.getImage().mirrored());
@@ -325,10 +328,14 @@ void SimpleTexturedRenderer::createObjectBuffers(const SimpleTexturedObject &obj
 
         mImagesToTextures.insert(&obj.getImage(), newTexture);
         mTexturesToObjects.insert(newTexture.data(), QSet<const SimpleTexturedObject *>());
+
+        associatedTexture = newTexture.data();
+    } else {
+        associatedTexture = mImagesToTextures[&obj.getImage()].data();
     }
 
     // Record that the object uses the texture.
-    mTexturesToObjects[mImagesToTextures[&obj.getImage()].data()].insert(&obj);
+    mTexturesToObjects[associatedTexture].insert(&obj);
 }
 
 
