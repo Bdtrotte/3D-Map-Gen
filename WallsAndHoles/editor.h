@@ -9,8 +9,8 @@
 #include "map2mesh.h"
 #include "meshviewcontainer.h"
 #include "tiletemplatesetsview.h"
-#include "tilepropertyview.h"
 #include "tiletemplatesetsmanager.h"
+#include "propertybrowser.h"
 
 #include <QObject>
 #include <QList>
@@ -32,12 +32,16 @@ public:
     ~Editor();
 
 public slots:
+    //File:
     void newMap();
     void saveMap();
     void saveMapAs();
     void loadMap();
     void closeMap();
     void exportMapMesh();
+
+    //Map:
+    void viewMapProperties();
 
     /**
      * @brief Gives a new scene to the mesh view by creating it from the data in mMap2Mesh.
@@ -63,7 +67,7 @@ private:
     MapView *mMapView;
     MeshViewContainer *mMeshViewContainer;
     TileTemplateSetsView *mTileTemplateSetsView;
-    TilePropertyView *mTilePropertyView;
+    PropertyBrowser *mPropertyBrowser;
 
     //Tools
     TileMapToolManager *mTileMapToolManager;

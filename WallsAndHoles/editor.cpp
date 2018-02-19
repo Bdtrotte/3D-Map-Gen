@@ -5,6 +5,7 @@
 #include "tilemapbrushtool.h"
 #include "tilemapselectiontool.h"
 #include "propertybrowser.h"
+#include "mappropertymanager.h"
 
 #include "filltool.h"
 
@@ -47,8 +48,8 @@ Editor::Editor(QObject *parent)
     templateDock->setWidget(mTileTemplateSetsView);
 
     QDockWidget *propBrowserDock = new QDockWidget("Property Browser View", mMainWindow);
-    PropertyBrowser *propBrowser = new PropertyBrowser(mMainWindow);
-    propBrowserDock->setWidget(propBrowser);
+    mPropertyBrowser = new PropertyBrowser(mMainWindow);
+    propBrowserDock->setWidget(mPropertyBrowser);
 
     mMainWindow->addDockWidget(Qt::RightDockWidgetArea, meshViewDock);
     mMainWindow->addDockWidget(Qt::LeftDockWidgetArea, templateDock);
@@ -72,7 +73,7 @@ Editor::Editor(QObject *parent)
                             QSharedPointer<EllipseBrushTool>::create(mMapView->previewItem())
                             , "Ellipse Tool"));
     mToolBar->addAction(mTileMapToolManager->registerMapTool(
-                            QSharedPointer<TileMapSelectionTool>::create(propBrowser, mMapView->previewItem())
+                            QSharedPointer<TileMapSelectionTool>::create(mPropertyBrowser, mMapView->previewItem())
                             , "Selection Tool"));
 
 
@@ -212,8 +213,15 @@ void Editor::exportMapMesh()
         mMeshViewContainer->saveMesh(fileName);
 }
 
+void Editor::viewMapProperties()
+{
+    mPropertyBrowser->setPropertyManager(new MapPropertyManager(mTileMap));
+}
+
 void Editor::setTileMap(TileMap *tileMap)
 {
+    if (mTileMap == tileMap) return;
+
     // TODO : currently TileMap doesn't keep track of if it needs to be saved or not,
     //        so in some cases this check might not be needed.
     if (mTileMap) {
@@ -237,12 +245,14 @@ void Editor::setTileMap(TileMap *tileMap)
     mTileMapToolManager->setTileMap(mTileMap);
     mMapView->createMap(mTileMap);
     mTileTemplateSetManager->setTileMap(mTileMap);
+    mPropertyBrowser->clear();
     setMapDependantActionsEnabled(mTileMap != nullptr);
 
-    if (mTileMap)
+    if (mTileMap) {
         mTileTemplateSetsView->setDefaultTileTemplateSet(mTileMap->defaultTileTemplateSet());
-    else
+    } else {
         mTileTemplateSetsView->setDefaultTileTemplateSet(nullptr);
+    }
 
     delete mMap2Mesh;
 
@@ -273,6 +283,9 @@ void Editor::setUpMenuBar()
     mMapDependantActions.append(fileMenu->addAction(tr("Close Map"), this, &Editor::closeMap));
     fileMenu->addSeparator();
     mMapDependantActions.append(fileMenu->addAction(tr("Export Map Mesh"), this, &Editor::exportMapMesh));
+
+    QMenu *mapMenu = menuBar->addMenu(tr("Map"));
+    mMapDependantActions.append(mapMenu->addAction(tr("View Map Properties"), this, &Editor::viewMapProperties));
 
     setMapDependantActionsEnabled(false);
 }

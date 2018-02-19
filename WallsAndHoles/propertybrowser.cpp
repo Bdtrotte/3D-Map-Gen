@@ -5,6 +5,7 @@
 #include <QDoubleSpinBox>
 #include <QLineEdit>
 #include <QPushButton>
+#include <QCheckBox>
 
 PropertyBrowser::PropertyBrowser(QWidget *parent)
     : QWidget(parent)
@@ -20,6 +21,8 @@ void PropertyBrowser::setPropertyManager(AbstractPropertyManager *propertyManage
         clear();
 
     mPropertyManager = propertyManager;
+    if (!mPropertyManager) return;
+
     mPropertyManager->setParent(this);
 
     QVector<QVector<QVariant>> properties = mPropertyManager->properties();
@@ -32,6 +35,8 @@ void PropertyBrowser::setPropertyManager(AbstractPropertyManager *propertyManage
     {
         setLine(property, value);
     });
+
+    setVisible(true);
 }
 
 void PropertyBrowser::clear()
@@ -45,6 +50,13 @@ void PropertyBrowser::clear()
     delete mMainLayout;
 
     mMainLayout = new QVBoxLayout(this);
+
+    if (mPropertyManager)
+        delete mPropertyManager;
+
+    mPropertyManager = nullptr;
+
+    setVisible(false);
 }
 
 void PropertyBrowser::makeLine(QString propertyName, QVariant value, bool editable, QVector<QVariant> extra)
@@ -111,7 +123,19 @@ void PropertyBrowser::makeLine(QString propertyName, QVariant value, bool editab
         mLineWidget[propertyName] = w;
     }
     case QMetaType::QColor: {
-        // TODO Implement color
+
+    }
+    case QMetaType::Bool: {
+        QCheckBox *w = new QCheckBox(this);
+        w->setChecked(value.toBool());
+
+        w->setEnabled(editable);
+
+        line->addWidget(w);
+        connect(w, &QCheckBox::stateChanged,
+                this, [this, propertyName](int i) { mPropertyManager->propertyEdited(propertyName, i); });
+
+        mLineWidget[propertyName] = w;
     }
     case QMetaType::User: {
         // TODO Implement Sub property browser
@@ -146,6 +170,10 @@ void PropertyBrowser::setLine(QString propertyName, QVariant value)
         static_cast<QLineEdit *>(widget)->setText(value.toString());
         break;
     case QMetaType::QColor:
+        break;
+    case QMetaType::Bool:
+        static_cast<QCheckBox *>(widget)->setChecked(value.toBool());
+        break;
     case QMetaType::User:
         break;
     default:

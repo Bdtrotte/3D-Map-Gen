@@ -1,9 +1,7 @@
 #include "tiletemplateeditor.h"
 
 #include <QGridLayout>
-#include <QPixmap>
 #include <QLabel>
-#include <QColorDialog>
 
 TileTemplateEditor::TileTemplateEditor(QWidget *parent)
     : QWidget(parent)
@@ -21,10 +19,7 @@ TileTemplateEditor::TileTemplateEditor(QWidget *parent)
     mXPosition->setRange(0.01, 0.99);
     mYPosition->setRange(0.01, 0.99);
 
-    QPixmap color(20, 20);
-    color.fill(Qt::black);
-    mColorPickButton = new QPushButton(color, "", this);
-    mColorPickButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+    mColorPickButton = new ColorPickerButton(Qt::black, this);
 
     QGridLayout *layout = new QGridLayout;
 
@@ -54,8 +49,8 @@ TileTemplateEditor::TileTemplateEditor(QWidget *parent)
             this, SLOT(xPositionChanged(double)));
     connect(mYPosition, SIGNAL(valueChanged(double)),
             this, SLOT(yPositionChanged(double)));
-    connect(mColorPickButton, &QPushButton::clicked,
-            this, &TileTemplateEditor::colorChangeClicked);
+    connect(mColorPickButton, &ColorPickerButton::colorPicked,
+            this, &TileTemplateEditor::colorChanged);
 
     setUpEditor();
 }
@@ -143,18 +138,15 @@ void TileTemplateEditor::yPositionChanged(double value)
     mImEditing = false;
 }
 
-void TileTemplateEditor::colorChangeClicked()
+void TileTemplateEditor::colorChanged(QColor color)
 {
     Q_ASSERT(mTileTemplate != nullptr);
 
-    QColorDialog cd;
-    cd.setCurrentColor(mTileTemplate->color());
+    mImEditing = true;
 
-    if (cd.exec()) {
-        mTileTemplate->setColor(cd.currentColor());
-        QPixmap color(20, 20);
-        mColorPickButton->setIcon(color);
-    }
+    mTileTemplate->setColor(color);
+
+    mImEditing = false;
 }
 
 void TileTemplateEditor::setUpEditor()
@@ -165,9 +157,7 @@ void TileTemplateEditor::setUpEditor()
         mThickness->setValue(1);
         mXPosition->setValue(0.5);
         mYPosition->setValue(0.5);
-        QPixmap color(20, 20);
-        color.fill(Qt::black);
-        mColorPickButton->setIcon(color);
+        mColorPickButton->colorChanged(Qt::black);
 
         mName->setEnabled(false);
         mHeight->setEnabled(false);
@@ -189,9 +179,7 @@ void TileTemplateEditor::setUpEditor()
         mThickness->setValue(mTileTemplate->thickness());
         mXPosition->setValue(mTileTemplate->position().x());
         mYPosition->setValue(mTileTemplate->position().y());
-        QPixmap color(20, 20);
-        color.fill(mTileTemplate->color());
-        mColorPickButton->setIcon(color);
+        mColorPickButton->colorChanged(mTileTemplate->color());
 
         mName->setEnabled(true);
         mHeight->setEnabled(true);

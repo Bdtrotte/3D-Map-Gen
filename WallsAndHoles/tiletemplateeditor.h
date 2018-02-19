@@ -3,6 +3,8 @@
 
 #include "tiletemplate.h"
 
+#include "colorpickerbutton.h"
+
 #include <QWidget>
 #include <QDoubleSpinBox>
 #include <QLineEdit>
@@ -26,7 +28,7 @@ private slots:
     void thicknessChanged(double value);
     void xPositionChanged(double value);
     void yPositionChanged(double value);
-    void colorChangeClicked();
+    void colorChanged(QColor color);
 
 private:
     /**
@@ -40,7 +42,7 @@ private:
     QDoubleSpinBox *mThickness;
     QDoubleSpinBox *mXPosition;
     QDoubleSpinBox *mYPosition;
-    QPushButton *mColorPickButton;
+    ColorPickerButton *mColorPickButton;
 
     TileTemplate *mTileTemplate;
 

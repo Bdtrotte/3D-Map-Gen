@@ -61,7 +61,6 @@ SOURCES += \
     linebrushtool.cpp \
     rectbrushtool.cpp \
     ellipsebrushtool.cpp \
-    tilepropertyview.cpp \
     tilemapselectiontool.cpp \
     filltool.cpp \
     tiletemplatesetsmanager.cpp \
@@ -69,7 +68,9 @@ SOURCES += \
     newmapdialog.cpp \
     tilemappreviewgraphicsitem.cpp \
     propertybrowser.cpp \
-    tilepropertymanager.cpp
+    tilepropertymanager.cpp \
+    mappropertymanager.cpp \
+    colorpickerbutton.cpp
 
 HEADERS += \
     renderableobject.h \
@@ -113,7 +114,6 @@ HEADERS += \
     linebrushtool.h \
     rectbrushtool.h \
     ellipsebrushtool.h \
-    tilepropertyview.h \
     tilemapselectiontool.h \
     filltool.h \
     tiletemplatesetsmanager.h \
@@ -122,7 +122,9 @@ HEADERS += \
     tilemappreviewgraphicsitem.h \
     propertybrowser.h \
     abstractpropertymanager.h \
-    tilepropertymanager.h
+    tilepropertymanager.h \
+    mappropertymanager.h \
+    colorpickerbutton.h
 
 FORMS += \
     meshview.ui \
