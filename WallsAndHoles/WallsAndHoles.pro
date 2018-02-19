@@ -119,7 +119,6 @@ HEADERS += \
     simpletexturedobject.h \
     triplet.h \
     simpletexturedshader.h \
-    tilepropertyview.h \
     tilemapselectiontool.h \
     tilemappreviewgraphicsitem.h \
     tiletemplatesetsmanager.h \
@@ -129,7 +128,8 @@ HEADERS += \
     tilepropertymanager.h \
     mappropertymanager.h \
     colorpickerbutton.h \
-    tiletemplatepropertymanager.h
+    tiletemplatepropertymanager.h \
+    abstractpropertymanager.h
 
 FORMS += \
     meshview.ui \
