@@ -246,6 +246,7 @@ void Editor::setTileMap(TileMap *tileMap)
         mTileTemplateSetsView->setDefaultTileTemplateSet(mTileMap->defaultTileTemplateSet());
     } else {
         mTileTemplateSetsView->setDefaultTileTemplateSet(nullptr);
+        mPropertyBrowser->clear();
     }
 
 
