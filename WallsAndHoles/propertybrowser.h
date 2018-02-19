@@ -4,12 +4,12 @@
 #include "abstractpropertymanager.h"
 
 #include <QMap>
-#include <QWidget>
+#include <QScrollArea>
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QLabel>
 
-class PropertyBrowser : public QWidget
+class PropertyBrowser : public QScrollArea
 {
     Q_OBJECT
 
@@ -33,6 +33,8 @@ public:
     void clear();
 
 private:
+    QWidget *mMainWidget;
+
     void makeLine(QString propertyName, QVariant value, bool editable, QVector<QVariant> extra);
     void setLine(QString propertyName, QVariant value);
 

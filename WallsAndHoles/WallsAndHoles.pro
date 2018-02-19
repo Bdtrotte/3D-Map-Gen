@@ -55,7 +55,6 @@ SOURCES += \
     map2meshproperties.cpp \
     tiletemplatesetsview.cpp \
     newtiletemplatesetdialog.cpp \
-    tiletemplateeditor.cpp \
     mapcellgraphicsitem.cpp \
     abstractshapebrushtool.cpp \
     linebrushtool.cpp \
@@ -70,7 +69,8 @@ SOURCES += \
     propertybrowser.cpp \
     tilepropertymanager.cpp \
     mappropertymanager.cpp \
-    colorpickerbutton.cpp
+    colorpickerbutton.cpp \
+    tiletemplatepropertymanager.cpp
 
 HEADERS += \
     renderableobject.h \
@@ -108,7 +108,6 @@ HEADERS += \
     tiletemplateset.h \
     tiletemplatesetsview.h \
     newtiletemplatesetdialog.h \
-    tiletemplateeditor.h \
     mapcellgraphicsitem.h \
     abstractshapebrushtool.h \
     linebrushtool.h \
@@ -124,7 +123,8 @@ HEADERS += \
     abstractpropertymanager.h \
     tilepropertymanager.h \
     mappropertymanager.h \
-    colorpickerbutton.h
+    colorpickerbutton.h \
+    tiletemplatepropertymanager.h
 
 FORMS += \
     meshview.ui \

@@ -27,7 +27,7 @@ void ColorPickerButton::clicked()
 
     if (cd.exec()) {
         colorChanged(cd.currentColor());
-        emit colorChanged(mColor);
+        emit colorPicked(mColor);
     }
 }
 

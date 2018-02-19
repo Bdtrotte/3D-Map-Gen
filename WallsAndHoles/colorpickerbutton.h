@@ -10,6 +10,8 @@ class ColorPickerButton : public QPushButton
 public:
     ColorPickerButton(QColor color = Qt::black, QWidget *parent = nullptr);
 
+    QColor currentColor() const { return mColor; }
+
 signals:
     void colorPicked(QColor color);
 

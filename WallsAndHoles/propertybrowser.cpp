@@ -1,5 +1,7 @@
 #include "propertybrowser.h"
 
+#include "colorpickerbutton.h"
+
 #include <QVariant>
 #include <QSpinBox>
 #include <QDoubleSpinBox>
@@ -8,11 +10,14 @@
 #include <QCheckBox>
 
 PropertyBrowser::PropertyBrowser(QWidget *parent)
-    : QWidget(parent)
+    : QScrollArea(parent)
+    , mMainWidget(new QWidget(this))
     , mPropertyManager(nullptr)
-    , mMainLayout(new QVBoxLayout(this))
+    , mMainLayout(new QVBoxLayout(mMainWidget))
 {
-    setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
+    mMainWidget->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
+    setWidgetResizable(true);
+    setWidget(mMainWidget);
 }
 
 void PropertyBrowser::setPropertyManager(AbstractPropertyManager *propertyManager)
@@ -23,7 +28,7 @@ void PropertyBrowser::setPropertyManager(AbstractPropertyManager *propertyManage
     mPropertyManager = propertyManager;
     if (!mPropertyManager) return;
 
-    mPropertyManager->setParent(this);
+    mPropertyManager->setParent(mMainWidget);
 
     QVector<QVector<QVariant>> properties = mPropertyManager->properties();
 
@@ -35,8 +40,6 @@ void PropertyBrowser::setPropertyManager(AbstractPropertyManager *propertyManage
     {
         setLine(property, value);
     });
-
-    setVisible(true);
 }
 
 void PropertyBrowser::clear()
@@ -47,16 +50,14 @@ void PropertyBrowser::clear()
     for (QLabel *w : mLineLabel) delete w;
     mLineWidget.clear();
     mLineLabel.clear();
-    delete mMainLayout;
 
-    mMainLayout = new QVBoxLayout(this);
+    while (QLayoutItem *item = mMainLayout->takeAt(0))
+        delete item;
 
     if (mPropertyManager)
         delete mPropertyManager;
 
     mPropertyManager = nullptr;
-
-    setVisible(false);
 }
 
 void PropertyBrowser::makeLine(QString propertyName, QVariant value, bool editable, QVector<QVariant> extra)
@@ -65,7 +66,7 @@ void PropertyBrowser::makeLine(QString propertyName, QVariant value, bool editab
     QMetaType::Type type = (QMetaType::Type)value.type();
     mLineType[propertyName] = type;
 
-    QLabel *label = new QLabel(propertyName, this);
+    QLabel *label = new QLabel(propertyName, mMainWidget);
     line->addWidget(label);
 
     mLines[propertyName] = line;
@@ -74,7 +75,7 @@ void PropertyBrowser::makeLine(QString propertyName, QVariant value, bool editab
 
     switch(type) {
     case QMetaType::Int: {
-        QSpinBox *w = new QSpinBox(this);
+        QSpinBox *w = new QSpinBox(mMainWidget);
         if (!extra.isEmpty()) {
             w->setMinimum(extra.takeFirst().toInt());
             if (!extra.isEmpty()) {
@@ -93,7 +94,7 @@ void PropertyBrowser::makeLine(QString propertyName, QVariant value, bool editab
         break; }
     case QMetaType::Float:
     case QMetaType::Double: {
-        QDoubleSpinBox *w = new QDoubleSpinBox(this);
+        QDoubleSpinBox *w = new QDoubleSpinBox(mMainWidget);
         if (!extra.isEmpty()) {
             w->setMinimum(extra.takeFirst().toDouble());
             if (!extra.isEmpty()) {
@@ -111,7 +112,7 @@ void PropertyBrowser::makeLine(QString propertyName, QVariant value, bool editab
         mLineWidget[propertyName] = w;
         break; }
     case QMetaType::QString: {
-        QLineEdit *w = new QLineEdit(this);
+        QLineEdit *w = new QLineEdit(mMainWidget);
         w->setText(value.toString());
 
         w->setEnabled(editable);
@@ -121,12 +122,20 @@ void PropertyBrowser::makeLine(QString propertyName, QVariant value, bool editab
                 this, [this, propertyName](QString i) { mPropertyManager->propertyEdited(propertyName, i); });
 
         mLineWidget[propertyName] = w;
-    }
+        break; }
     case QMetaType::QColor: {
+        ColorPickerButton *w = new ColorPickerButton(value.value<QColor>(), mMainWidget);
 
-    }
+        w->setEnabled(editable);
+
+        line->addWidget(w);
+        connect(w, &ColorPickerButton::colorPicked,
+                this, [this, propertyName](QColor i) { mPropertyManager->propertyEdited(propertyName, QVariant::fromValue<QColor>(i)); });
+
+        mLineWidget[propertyName] = w;
+        break; }
     case QMetaType::Bool: {
-        QCheckBox *w = new QCheckBox(this);
+        QCheckBox *w = new QCheckBox(mMainWidget);
         w->setChecked(value.toBool());
 
         w->setEnabled(editable);
@@ -136,7 +145,7 @@ void PropertyBrowser::makeLine(QString propertyName, QVariant value, bool editab
                 this, [this, propertyName](int i) { mPropertyManager->propertyEdited(propertyName, i); });
 
         mLineWidget[propertyName] = w;
-    }
+        break; }
     case QMetaType::User: {
         // TODO Implement Sub property browser
         break;
