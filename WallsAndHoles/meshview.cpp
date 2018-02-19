@@ -57,10 +57,12 @@ bool MeshView::event(QEvent *e)
 
         QMutexLocker rendererMutex(&mRendererMutex);
 
+        makeCurrent();
         auto renderer = getCurrentRenderer();
 
         if (!renderer.isNull())
             renderer->useGL();
+        doneCurrent();
 
         rendererMutex.unlock();
 
