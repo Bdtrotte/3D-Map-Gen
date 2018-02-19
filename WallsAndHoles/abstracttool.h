@@ -3,6 +3,7 @@
 
 #include <QMouseEvent>
 #include <QWheelEvent>
+#include <QToolBar>
 
 /**
  * @brief The AbstractTool class represents a UI tool. A UI tool can be activated or
@@ -34,6 +35,14 @@ public:
      * @brief Deactivates the tool. This is called before the tool stops being used.
      */
     virtual void deactivate() {}
+
+    /**
+     * @brief Creates a QToolBar which contains the context actions of the tool
+     */
+    virtual QToolBar *contextActions(){
+        QToolBar *empty = new QToolBar();
+        return empty;
+    }
 
 
     virtual void mousePressEvent(QMouseEvent *) {}

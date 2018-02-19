@@ -5,6 +5,7 @@ ToolManager::ToolManager(QObject *parent)
     : QObject(parent)
 {
     mActionGroup = new QActionGroup(this);
+    mContextToolBar = new QToolBar();
 }
 
 
@@ -65,6 +66,10 @@ void ToolManager::activateTool(QString name) {
             if (!mActiveAction->isChecked())
                 mActiveAction->setChecked(true);
 
+
+            //Sets up the context ToolBar of the active tool
+            mContextToolBar->addWidget(mTools[name]->contextActions());
+
             emit toolWasActivated(mActiveTool, name);
         }
     }
@@ -82,9 +87,17 @@ void ToolManager::deactivateTool(QString name) {
             if (mActiveAction->isChecked())
                 mActiveAction->setChecked(false);
 
+            //Clears the context toolBar of the tool being deactivated
+            mContextToolBar->clear();
+
             mActiveAction = nullptr;
         }
     }
+}
+
+QToolBar *ToolManager::contextToolBar()
+{
+    return mContextToolBar;
 }
 
 

@@ -63,6 +63,10 @@ public slots:
      * @param name The name of the tool.
      */
     void deactivateTool(QString name);
+    /**
+     * @brief Returns the context toolBar of the current active tool.
+     */
+    QToolBar *contextToolBar();
 
 
     void mousePressEvent(QMouseEvent *event);
@@ -87,6 +91,8 @@ protected:
 
     AbstractToolP mActiveTool; /// The active tool.
     QAction *mActiveAction;    /// The QAction of the active tool.
+
+    QToolBar *mContextToolBar;
 };
 
 typedef QSharedPointer<ToolManager> ToolManagerP;
