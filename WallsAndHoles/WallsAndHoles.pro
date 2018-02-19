@@ -30,8 +30,6 @@ SOURCES += \
     main.cpp \
     meshview.cpp \
     meshviewcameralikeblender.cpp \
-    renderableobject.cpp \
-    scene.cpp \
     tile.cpp \
     tilemap.cpp \
     tiletemplate.cpp \
@@ -41,7 +39,6 @@ SOURCES += \
     meshviewcontainer.cpp \
     mapview.cpp \
     editor.cpp \
-    meshmaterial.cpp \
     shaderprogramonelight.cpp \
     xmltool.cpp \
     map2mesh.cpp \
@@ -62,6 +59,10 @@ SOURCES += \
     ellipsebrushtool.cpp \
     tilemapselectiontool.cpp \
     filltool.cpp \
+    simpletexturedrenderer.cpp \
+    simpletexturedscene.cpp \
+    simpletexturedobject.cpp \
+    simpletexturedshader.cpp \
     tiletemplatesetsmanager.cpp \
     savabletiletemplateset.cpp \
     newmapdialog.cpp \
@@ -73,15 +74,11 @@ SOURCES += \
     tiletemplatepropertymanager.cpp
 
 HEADERS += \
-    renderableobject.h \
-    scene.h \
     meshview.h \
     meshviewcameralikeblender.h \
     objtools.h \
     drawableaxes.h \
     toolmanager.h \
-    renderableobject.h \
-    scene.h \
     tile.h \
     tilemap.h \
     tiletemplate.h \
@@ -92,7 +89,6 @@ HEADERS += \
     mapview.h \
     editor.h \
     array2d.h \
-    meshmaterial.h \
     shaderprogramonelight.h \
     xmltool.h \
     map2mesh.h \
@@ -113,14 +109,23 @@ HEADERS += \
     linebrushtool.h \
     rectbrushtool.h \
     ellipsebrushtool.h \
-    tilemapselectiontool.h \
     filltool.h \
+    abstractrenderer.h \
+    simpletexturedrenderer.h \
+    abstractscene.h \
+    simpletexturedscene.h \
+    dereferencingiterator.h \
+    dereferencingconstiterator.h \
+    simpletexturedobject.h \
+    triplet.h \
+    simpletexturedshader.h \
+    tilepropertyview.h \
+    tilemapselectiontool.h \
+    tilemappreviewgraphicsitem.h \
     tiletemplatesetsmanager.h \
     savabletiletemplateset.h \
     newmapdialog.h \
-    tilemappreviewgraphicsitem.h \
     propertybrowser.h \
-    abstractpropertymanager.h \
     tilepropertymanager.h \
     mappropertymanager.h \
     colorpickerbutton.h \
@@ -137,4 +142,5 @@ DISTFILES += \
     onelight.fsh
 
 RESOURCES += \
-    shaders.qrc
+    shaders.qrc \
+    textures.qrc

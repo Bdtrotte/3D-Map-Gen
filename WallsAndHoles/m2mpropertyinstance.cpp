@@ -38,13 +38,13 @@ M2MPropertyInstance M2MPropertyInstance::createInstance(M2MPropertyClass *ofClas
     // Set the specified parameters.
     for (ParamTriplet t : params) {
         // This assert ensures that t.first is a parent class of the instance.
-        Q_ASSERT(inst.mParameters.contains(t.first));
+        Q_ASSERT(inst.mParameters.contains(t.getFirst()));
 
         // This assert ensures that t.second is a parameter defined in the class t.first.
-        Q_ASSERT(inst.mParameters[t.first].contains(t.second));
+        Q_ASSERT(inst.mParameters[t.getFirst()].contains(t.getSecond()));
 
 
-        inst.mParameters[t.first][t.second] = t.third;
+        inst.mParameters[t.getFirst()][t.getSecond()] = t.getThird();
     }
 
     return inst;

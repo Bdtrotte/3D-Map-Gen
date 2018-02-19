@@ -43,11 +43,6 @@ public slots:
     //Map:
     void viewMapProperties();
 
-    /**
-     * @brief Gives a new scene to the mesh view by creating it from the data in mMap2Mesh.
-     */
-    void makeNewScene();
-
 private:
     //sets mTileMap to tileMap, and updates everything accordingly
     void setTileMap(TileMap *tileMap);

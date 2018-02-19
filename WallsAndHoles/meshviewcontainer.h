@@ -19,7 +19,10 @@ public:
     void saveMesh(QString path);
     void loadMesh(QString path);
 
-    void setScene(QSharedPointer<Scene> scene);
+    /**
+     * @brief Calls setRenderer(renderer) on the mesh view.
+     */
+    void setRenderer(QSharedPointer<AbstractRenderer> renderer);
 
 private slots:
     void on_toolSelection_currentIndexChanged(int index);

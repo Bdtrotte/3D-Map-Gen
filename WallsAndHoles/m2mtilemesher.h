@@ -3,9 +3,11 @@
 
 
 #include <QVector3D>
+#include <QSharedPointer>
+#include <QImage>
 
 #include "m2mpropertyset.h"
-#include "renderableobject.h"
+#include "simpletexturedobject.h"
 
 
 /**
@@ -21,7 +23,15 @@ public:
      * @param scale             A multiplier. By default, each tile is a 1-by-1 square.
      * @return
      */
-    static RenderableObject getTopMesh(const M2MPropertySet &tileProperties, QVector3D offset, float scale = 1.0);
+    static QSharedPointer<SimpleTexturedObject> getTopMesh(const M2MPropertySet &tileProperties, QVector3D offset, float scale = 1.0);
+
+
+private:
+
+
+    static QSharedPointer<QImage> getTestingImage();
+
+    static QSharedPointer<QImage> TestingImage;
 };
 
 #endif // M2MTILEMESHER_H

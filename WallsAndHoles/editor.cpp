@@ -13,6 +13,9 @@
 #include "rectbrushtool.h"
 #include "ellipsebrushtool.h"
 
+#include "abstractscene.h"
+#include "abstractrenderer.h"
+
 #include <QDockWidget>
 #include <QApplication>
 #include <QDebug>
@@ -112,15 +115,6 @@ void Editor::newMap()
     }
 }
 
-void Editor::makeNewScene()
-{
-    QSharedPointer<Scene> scene = QSharedPointer<Scene>::create();
-
-    for (auto&& obj : mMap2Mesh->getMeshes())
-        scene->addObject(obj);
-
-    mMeshViewContainer->setScene(scene);
-}
 
 void Editor::saveMap()
 {
@@ -254,18 +248,16 @@ void Editor::setTileMap(TileMap *tileMap)
         mTileTemplateSetsView->setDefaultTileTemplateSet(nullptr);
     }
 
-    delete mMap2Mesh;
 
+    delete mMap2Mesh;
     mMap2Mesh = new Map2Mesh(mTileMap, this);
 
-    // TODO: It is inefficient to update the entire scene when just a part
-    // of the map is updated.
-    connect(mMap2Mesh, &Map2Mesh::mapMeshUpdated, this, &Editor::makeNewScene);
+    SharedAbstractScene scene = mMap2Mesh->getScene();
+    QSharedPointer<AbstractRenderer> renderer = scene->getRenderer();
 
-    // Note: Map2Mesh's mapUpdated() signal is emitted during its constructor,
-    // but that is BEFORE the above connection is made. Therefore, updateScene()
-    // must be called manually here.
-    makeNewScene();
+    mMeshViewContainer->setRenderer(renderer);
+
+    renderer->requestUpdate();
 
     delete pre;
 }
