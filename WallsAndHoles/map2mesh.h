@@ -4,7 +4,9 @@
 
 #include <QObject>
 
-#include "renderableobject.h"
+#include "simpletexturedscene.h"
+#include "simpletexturedobject.h"
+
 #include "tilemap.h"
 
 #include "m2mpropertyset.h"
@@ -25,11 +27,11 @@ public:
      */
     Map2Mesh(TileMap *tileMap, QObject *parent = nullptr);
 
+
     /**
-     * @brief Returns a list of all the tile meshes.
-     * @return The list of all tile meshes.
+     * @brief Returns the Scene that this Map2Mesh instance works with.
      */
-    QVector<QSharedPointer<RenderableObject>> getMeshes() const;
+    SharedSimpleTexturedScene getScene() const;
 
 public slots:
     /**
@@ -44,11 +46,6 @@ public slots:
      */
     void remakeAll();
 
-signals:
-    /**
-     * @brief Emitted when the output mesh is updated.
-     */
-    void mapMeshUpdated();
 
 protected:
     /**
@@ -57,14 +54,23 @@ protected:
      */
     void inferProperties();
 
+
+    /**
+     * @brief The TileMap that is the input to this Map2Mesh object.
+     */
     TileMap *mTileMap;
 
-    QSharedPointer<RenderableObject> mOutputMesh;
+
+    /**
+     * @brief The Scene which contains the output of the Map2Mesh object.
+     */
+    SharedSimpleTexturedScene mScene;
+
 
     /**
      * @brief A mesh for every tile.
      */
-    Array2D<QSharedPointer<RenderableObject>> mTileMeshes;
+    Array2D<QSharedPointer<SimpleTexturedObject>> mTileMeshes;
 
     /**
      * @brief Inferred properties for every tile.

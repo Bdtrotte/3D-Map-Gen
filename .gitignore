@@ -47,3 +47,5 @@ target_wrapper.*
 CMakeLists.txt.user*
 
 WallsAndHoles/WallsAndHoles.pro.user
+
+*.orig

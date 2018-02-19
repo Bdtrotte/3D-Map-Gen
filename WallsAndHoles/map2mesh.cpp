@@ -11,9 +11,11 @@
 Map2Mesh::Map2Mesh(TileMap *tileMap, QObject *parent)
     : QObject(parent)
     , mTileMap(tileMap)
+    , mScene(SimpleTexturedScene::makeScene())
 {
     if (mTileMap) {
         remakeAll();
+
 
         // Connect the tile changed & map resized signals.
         connect(mTileMap, &TileMap::tileChanged, this, &Map2Mesh::tileChanged);
@@ -22,14 +24,9 @@ Map2Mesh::Map2Mesh(TileMap *tileMap, QObject *parent)
 }
 
 
-QVector<QSharedPointer<RenderableObject>> Map2Mesh::getMeshes() const
+SharedSimpleTexturedScene Map2Mesh::getScene() const
 {
-    QVector<QSharedPointer<RenderableObject>> meshes;
-
-    for (QSharedPointer<RenderableObject> tileMesh : mTileMeshes)
-        meshes.append(tileMesh);
-
-    return meshes;
+    return mScene;
 }
 
 void Map2Mesh::tileChanged(int x, int y)
@@ -50,7 +47,8 @@ void Map2Mesh::tileChanged(int x, int y)
 
 void Map2Mesh::remakeAll()
 {
-    mTileMeshes = Array2D<QSharedPointer<RenderableObject>>(mTileMap->mapSize());
+    mTileMeshes = Array2D<QSharedPointer<SimpleTexturedObject>>(mTileMap->mapSize());
+    mScene->clear();
 
     // Reset tile properties to a 0x0 grid so that all meshes are changed in inferProperties.
     mTileProperties = Array2D<M2MPropertySet>();
@@ -83,7 +81,10 @@ void Map2Mesh::inferProperties()
                 }
             );
 
-            float minSurroundingHeight = (*lowestNeighborItr)->height();
+			float minSurroundingHeight = grid(x, y)->height();
+			if (lowestNeighborItr != grid.end_neighbors(x, y))
+            	minSurroundingHeight = std::min((*lowestNeighborItr)->height(), grid(x, y)->height());
+
             props.addProperty(M2MPropertyInstance::createInstance(
                                     heights, {
                                       { heights, "baseHeight", minSurroundingHeight },
@@ -99,13 +100,21 @@ void Map2Mesh::inferProperties()
 
     // In the future, extra neighbor-based property inference will go here.
 
+    bool sizeChanged = mTileProperties.size() != newProperties.size();
 
     // Remake meshes for all tiles whose properties changed.
     QVector3D center = QVector3D(mTileMap->mapSize().width()/2.0, 0, mTileMap->mapSize().height()/2.0);
     for (int x = 0; x < newProperties.width(); ++x) {
         for (int y = 0; y < newProperties.height(); ++y) {
-            if (mTileProperties.size() != newProperties.size() || mTileProperties(x, y) != newProperties(x, y)) {
-                mTileMeshes(x, y) = QSharedPointer<RenderableObject>::create(M2MTileMesher::getTopMesh(newProperties(x, y), QVector3D(x, 0, y) - center));
+            if (sizeChanged || mTileProperties(x, y) != newProperties(x, y)) {
+                auto oldObj = mTileMeshes(x, y);
+                auto newObj = M2MTileMesher::getTopMesh(newProperties(x, y), QVector3D(x, 0, y) - center);
+                mTileMeshes(x, y) = newObj;
+
+                if (oldObj != nullptr)
+                    mScene->removeObject(oldObj);
+
+                mScene->addObject(newObj);
             }
         }
     }
@@ -113,6 +122,6 @@ void Map2Mesh::inferProperties()
     mTileProperties = newProperties;
 
 
-    emit mapMeshUpdated();
+    mScene->commitChanges();
 }
 
