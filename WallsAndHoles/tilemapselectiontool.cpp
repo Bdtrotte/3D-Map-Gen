@@ -1,6 +1,8 @@
 #include "tilemapselectiontool.h"
+#include "tilepropertymanager.h"
 
-TileMapSelectionTool::TileMapSelectionTool(TilePropertyView *propView,
+
+TileMapSelectionTool::TileMapSelectionTool(PropertyBrowser *propView,
                                            TileMapPreviewGraphicsItem *previewItem)
     : AbstractTileMapTool(previewItem)
     , mTilePropertyView(propView)
@@ -10,12 +12,12 @@ TileMapSelectionTool::TileMapSelectionTool(TilePropertyView *propView,
 void TileMapSelectionTool::cellActivated(int x, int y)
 {
     clearOverlay();
-    Tile& tile = getTileMap()->tileAt(x, y);
+    Tile &tile = getTileMap()->tileAt(x, y);
     if(tile.hasTileTemplate()){
-        mTilePropertyView->setTile(&tile);
+        mTilePropertyView->setPropertyManager(new TilePropertyManager(tile));
         drawOverlay(x, y);
     } else {
-        mTilePropertyView->setTile(nullptr);
+        mTilePropertyView->clear();
     }
 }
 

@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QVariant>
+#include <QVector>
 
 /**
  * @brief The AbstractPropertyManager class
@@ -14,7 +15,7 @@ class AbstractPropertyManager : public QObject
     Q_OBJECT
 
 public:
-    AbstractPropertyManager(QObject *parent = nullptr);
+    AbstractPropertyManager() : QObject(nullptr) {}
 
     /**
      * @brief propertyEdited
@@ -27,15 +28,20 @@ public:
 
     /**
      * @brief properties
-     * returns a vector of all the properties of this object. Each int passed along should be unique.
-     * Each pair should be (propertyName, propertyValue).
-     *
-     * One can pass an AbstractPropertyManager as the value and it will work as expected!
-     *
-     * See propertybrowser.h for a list of valid types for the value to be.
+     * Returns a vector of all the properties.
+     * It must be ordered as follows:
+     * Must have at least three elements:
+     * 0 - A QString which is the name of the property
+     * 1 - The initial value of the property. Values can be of the types
+     * handled in propertybrowser.h
+     * 2 - A bool which says whether or not the value can be edited.
+     * There can be as many more elements as needed by the given type,
+     * for instance, a value of type float produces a spin box.
+     * Elements 3 and 4 will be considered the min and max of the box, respectivly, if they are present.
+     * Explore propertybrowser.h for more details on how different types are handled.
      * @return
      */
-    virtual QVector<QPair<QString, QVariant>> properties() = 0;
+    virtual QVector<QVector<QVariant>> properties() = 0;
 
 signals:
     /**

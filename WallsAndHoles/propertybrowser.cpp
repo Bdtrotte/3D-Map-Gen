@@ -11,7 +11,7 @@ PropertyBrowser::PropertyBrowser(QWidget *parent)
     , mPropertyManager(nullptr)
     , mMainLayout(new QVBoxLayout(this))
 {
-
+    setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
 }
 
 void PropertyBrowser::setPropertyManager(AbstractPropertyManager *propertyManager)
@@ -19,14 +19,15 @@ void PropertyBrowser::setPropertyManager(AbstractPropertyManager *propertyManage
     if (mPropertyManager)
         clear();
 
-    const QVector<QPair<QString, QVariant>> &properties = propertyManager->properties();
+    mPropertyManager = propertyManager;
+    mPropertyManager->setParent(this);
 
-    for (const QPair<QString, QVariant> &prop : properties)
-        makeLine(prop.first, prop.second);
+    QVector<QVector<QVariant>> properties = mPropertyManager->properties();
 
-    setLayout(mMainLayout);
+    for (QVector<QVariant> &prop : properties)
+        makeLine(prop[0].toString(), prop[1], prop[2].toBool(), prop.mid(3));
 
-    connect(propertyManager, &AbstractPropertyManager::propertyChanged,
+    connect(mPropertyManager, &AbstractPropertyManager::propertyChanged,
             this, [this](QString property, QVariant value)
     {
         setLine(property, value);
@@ -46,10 +47,11 @@ void PropertyBrowser::clear()
     mMainLayout = new QVBoxLayout(this);
 }
 
-void PropertyBrowser::makeLine(QString propertyName, QVariant value)
+void PropertyBrowser::makeLine(QString propertyName, QVariant value, bool editable, QVector<QVariant> extra)
 {
-    QHBoxLayout *line = new QHBoxLayout(this);
-    QMetaType::Type type = mLineType[propertyName] = (QMetaType::Type)value.type();
+    QHBoxLayout *line = new QHBoxLayout();
+    QMetaType::Type type = (QMetaType::Type)value.type();
+    mLineType[propertyName] = type;
 
     QLabel *label = new QLabel(propertyName, this);
     line->addWidget(label);
@@ -61,6 +63,15 @@ void PropertyBrowser::makeLine(QString propertyName, QVariant value)
     switch(type) {
     case QMetaType::Int: {
         QSpinBox *w = new QSpinBox(this);
+        if (!extra.isEmpty()) {
+            w->setMinimum(extra.takeFirst().toInt());
+            if (!extra.isEmpty()) {
+                w->setMaximum(extra.takeFirst().toInt());
+            }
+        }
+
+        w->setEnabled(editable);
+
         w->setValue(value.toInt());
         line->addWidget(w);
         connect(w, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged),
@@ -71,6 +82,15 @@ void PropertyBrowser::makeLine(QString propertyName, QVariant value)
     case QMetaType::Float:
     case QMetaType::Double: {
         QDoubleSpinBox *w = new QDoubleSpinBox(this);
+        if (!extra.isEmpty()) {
+            w->setMinimum(extra.takeFirst().toDouble());
+            if (!extra.isEmpty()) {
+                w->setMaximum(extra.takeFirst().toDouble());
+            }
+        }
+
+        w->setEnabled(editable);
+
         w->setValue(value.toDouble());
         line->addWidget(w);
         connect(w, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged),
@@ -81,6 +101,9 @@ void PropertyBrowser::makeLine(QString propertyName, QVariant value)
     case QMetaType::QString: {
         QLineEdit *w = new QLineEdit(this);
         w->setText(value.toString());
+
+        w->setEnabled(editable);
+
         line->addWidget(w);
         connect(w, &QLineEdit::textChanged,
                 this, [this, propertyName](QString i) { mPropertyManager->propertyEdited(propertyName, i); });

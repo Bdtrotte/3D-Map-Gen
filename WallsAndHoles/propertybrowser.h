@@ -33,7 +33,7 @@ public:
     void clear();
 
 private:
-    void makeLine(QString propertyName, QVariant value);
+    void makeLine(QString propertyName, QVariant value, bool editable, QVector<QVariant> extra);
     void setLine(QString propertyName, QVariant value);
 
     AbstractPropertyManager *mPropertyManager;

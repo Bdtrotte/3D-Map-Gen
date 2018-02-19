@@ -4,6 +4,7 @@
 #include "meshviewcontainer.h"
 #include "tilemapbrushtool.h"
 #include "tilemapselectiontool.h"
+#include "propertybrowser.h"
 
 #include "filltool.h"
 
@@ -45,13 +46,13 @@ Editor::Editor(QObject *parent)
     mTileTemplateSetsView = new TileTemplateSetsView(mTileTemplateSetManager, templateDock);
     templateDock->setWidget(mTileTemplateSetsView);
 
-    QDockWidget *tilePropDock = new QDockWidget("Tile Property View", mMainWindow);
-    mTilePropertyView = new TilePropertyView(tilePropDock);
-    tilePropDock->setWidget(mTilePropertyView);
+    QDockWidget *propBrowserDock = new QDockWidget("Property Browser View", mMainWindow);
+    PropertyBrowser *propBrowser = new PropertyBrowser(mMainWindow);
+    propBrowserDock->setWidget(propBrowser);
 
     mMainWindow->addDockWidget(Qt::RightDockWidgetArea, meshViewDock);
     mMainWindow->addDockWidget(Qt::LeftDockWidgetArea, templateDock);
-    mMainWindow->addDockWidget(Qt::LeftDockWidgetArea, tilePropDock);
+    mMainWindow->addDockWidget(Qt::RightDockWidgetArea, propBrowserDock);
 
 
     // Add tools.
@@ -71,7 +72,7 @@ Editor::Editor(QObject *parent)
                             QSharedPointer<EllipseBrushTool>::create(mMapView->previewItem())
                             , "Ellipse Tool"));
     mToolBar->addAction(mTileMapToolManager->registerMapTool(
-                            QSharedPointer<TileMapSelectionTool>::create(mTilePropertyView, mMapView->previewItem())
+                            QSharedPointer<TileMapSelectionTool>::create(propBrowser, mMapView->previewItem())
                             , "Selection Tool"));
 
 
