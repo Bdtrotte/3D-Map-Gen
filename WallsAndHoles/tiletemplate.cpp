@@ -92,7 +92,7 @@ QSharedPointer<QImage> TileTemplate::DefaultTexture = nullptr;
 QSharedPointer<QImage> TileTemplate::getDefaultTexture()
 {
     if (DefaultTexture == nullptr)
-        DefaultTexture = QSharedPointer<QImage>::create(":/textures/exampleTexture.png");
+        DefaultTexture = QSharedPointer<QImage>::create(":/textures/exampleTexture2.png");
 
     return DefaultTexture;
 }
