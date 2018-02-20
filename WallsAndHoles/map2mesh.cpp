@@ -6,8 +6,6 @@
 
 #include "map2mesh.h"
 
-#include "m2mtilemesher.h"
-
 Map2Mesh::Map2Mesh(TileMap *tileMap, QObject *parent)
     : QObject(parent)
     , mTileMap(tileMap)
@@ -51,7 +49,7 @@ void Map2Mesh::remakeAll()
     mScene->clear();
 
     // Reset tile properties to a 0x0 grid so that all meshes are changed in inferProperties.
-    mTileProperties = Array2D<M2MPropertySet>();
+    mTileProperties = Array2D<M2MTileMesher::Input>();
 
     inferProperties();
 }
@@ -63,14 +61,11 @@ void Map2Mesh::inferProperties()
 {
     const Array2D<QSharedPointer<Tile>> &grid = mTileMap->getArray2D();
 
-    Array2D<M2MPropertySet> newProperties = Array2D<M2MPropertySet>(mTileMap->mapSize());
+    Array2D<M2MTileMesher::Input> newProperties = Array2D<M2MTileMesher::Input>(mTileMap->mapSize());
 
-    // Set up basic properties (that depend only on vanilla Tile properties).
+    // Collect basic properties (like the base height of a tile's mesh).
     for (int x = 0; x < mTileMap->width(); ++x) {
         for (int y = 0; y < mTileMap->height(); ++y) {
-            auto props = M2MPropertySet();
-
-            M2MPropertyClass *heights = Map2Mesh::Properties::Height;
 
             // Base height will be the minimum height of all surrounding tiles.
             auto lowestNeighborItr = std::min_element(
@@ -85,15 +80,20 @@ void Map2Mesh::inferProperties()
 			if (lowestNeighborItr != grid.end_neighbors(x, y))
             	minSurroundingHeight = std::min((*lowestNeighborItr)->height(), grid(x, y)->height());
 
-            props.addProperty(M2MPropertyInstance::createInstance(
-                                    heights, {
-                                      { heights, "baseHeight", minSurroundingHeight },
-                                      { heights, "topHeight", grid(x,y)->height() }
-                                    }
-                                  )
-                              );
 
-            newProperties(x, y) = props;
+            float baseHeight = minSurroundingHeight;
+            float topHeight = grid(x,y)->height();
+
+            QSharedPointer<QImage> image =
+                    grid(x,y)->hasTileTemplate() ?
+                        grid(x,y)->material().getTexture()
+                      : nullptr;
+
+            newProperties(x, y) = {
+                    topHeight,
+                    baseHeight,
+                    image
+            };
         }
     }
 

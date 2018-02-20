@@ -25,6 +25,7 @@ public:
     float thickness() const;
     float height() const;
     QVector2D position() const;
+    const SimpleTexturedMaterial &material() const;     // Asserts that hasTileTemplate() is true.
 
     float relativeThickness() const { return mRelativeThickness; }
     float relativeHeight() const { return mRelativeHeight; }

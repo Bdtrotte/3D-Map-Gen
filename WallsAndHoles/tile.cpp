@@ -41,6 +41,12 @@ QVector2D Tile::position() const
         return mRelativePosition + mTileTemplate->position();
 }
 
+const SimpleTexturedMaterial &Tile::material() const
+{
+    Q_ASSERT(hasTileTemplate());
+    return mTileTemplate->material();
+}
+
 void Tile::setRelativeThickness(float relativeThickness)
 {
     if (mTileTemplate == nullptr) {
