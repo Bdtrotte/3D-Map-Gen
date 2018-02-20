@@ -37,7 +37,7 @@ public:
     virtual void deactivate() {}
 
     /**
-     * @brief Creates a QToolBar which contains the context actions of the tool
+     * @brief Returns a QToolBar which contains the context actions of the tool
      */
     virtual QToolBar *contextActions(){
         QToolBar *empty = new QToolBar();

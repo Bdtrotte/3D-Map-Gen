@@ -14,7 +14,7 @@ public:
     void cellHovered(int x, int y) override;
     void mouseExitedMap();
 
-    QToolBar *contextActions() override;
+    //QToolBar *contextActions() override;
 };
 
 #endif // TILEMAPBRUSHTOOL_H

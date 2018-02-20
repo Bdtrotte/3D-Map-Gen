@@ -25,17 +25,3 @@ void TileMapBrushTool::mouseExitedMap()
 {
     mPreviewItem->setRegion(QRegion());
 }
-
-QToolBar *TileMapBrushTool::contextActions()
-{
-    QToolBar *context = new QToolBar();
-    QSpinBox *spinBox = new QSpinBox(context);
-    QLabel *test = new QLabel("Brush Tool Test: ");
-
-    context->addWidget(test);
-    context->addWidget(spinBox);
-
-    return context;
-}
-
-
