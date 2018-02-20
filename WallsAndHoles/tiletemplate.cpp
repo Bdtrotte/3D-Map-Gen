@@ -1,6 +1,25 @@
+// For std::move
+#include <utility>
+
 #include "tiletemplate.h"
 
 TileTemplate::TileTemplate(QColor color,
+                           QString name,
+                           float height,
+                           float thickness,
+                           QVector2D position,
+                           QObject *parent)
+    : TileTemplate( // Forward arguments to the more general constructor.
+          std::make_unique<SimpleTexturedMaterial>(getDefaultTexture(), 1, 1, 1, 1),
+          color,
+          name,
+          height,
+          thickness,
+          position,
+          parent) {}
+
+TileTemplate::TileTemplate(std::unique_ptr<SimpleTexturedMaterial> &&material,
+                           QColor color,
                            QString name,
                            float height,
                            float thickness,
@@ -11,7 +30,8 @@ TileTemplate::TileTemplate(QColor color,
     , mHeight(height)
     , mThickness(thickness)
     , mPosition(position)
-    , mColor(color) {}
+    , mColor(color)
+    , mMaterial(std::move(material)) {}
 
 void TileTemplate::setHeight(float height)
 {
@@ -56,4 +76,23 @@ void TileTemplate::setColor(QColor color)
 
     emit exclusivePropertyChanged();
     emit changed();
+}
+
+void TileTemplate::setMaterial(std::unique_ptr<SimpleTexturedMaterial> &&material)
+{
+    mMaterial = std::move(material);
+
+    emit materialChanged();
+    emit changed();
+}
+
+
+
+QSharedPointer<QImage> TileTemplate::DefaultTexture = nullptr;
+QSharedPointer<QImage> TileTemplate::getDefaultTexture()
+{
+    if (DefaultTexture == nullptr)
+        DefaultTexture = QSharedPointer<QImage>::create(":/textures/exampleTexture.png");
+
+    return DefaultTexture;
 }

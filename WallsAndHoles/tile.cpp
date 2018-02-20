@@ -132,17 +132,15 @@ void Tile::resetTile(TileTemplate *newTileTemplate)
 void Tile::makeTemplateConnections()
 {
     if (mTileTemplate != nullptr) {
-        connect(mTileTemplate, &TileTemplate::exclusivePropertyChanged,
-                this, [this]{
+
+        auto emitTileChanged = [this] {
             emit tileChanged(mXPos, mYPos);
-        });
-        connect(mTileTemplate, &TileTemplate::thicknessChanged,
-                this, &Tile::templateThicknessChanged);
-        connect(mTileTemplate, &TileTemplate::positionChanged,
-                this, &Tile::templatePositionChanged);
-        connect(mTileTemplate, &TileTemplate::pingTiles,
-                this, [this]{
-            emit tilePinged(mXPos, mYPos);
-        });
+        };
+
+        connect(mTileTemplate, &TileTemplate::exclusivePropertyChanged, this, emitTileChanged);
+        connect(mTileTemplate, &TileTemplate::thicknessChanged, this, &Tile::templateThicknessChanged);
+        connect(mTileTemplate, &TileTemplate::positionChanged, this, &Tile::templatePositionChanged);
+        connect(mTileTemplate, &TileTemplate::materialChanged, this, emitTileChanged);
+        connect(mTileTemplate, &TileTemplate::pingTiles, this, emitTileChanged);
     }
 }
