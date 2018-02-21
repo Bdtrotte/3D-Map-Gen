@@ -7,7 +7,7 @@
 class RectBrushTool : public AbstractShapeBrushTool
 {
 public:
-    RectBrushTool(TileMapPreviewGraphicsItem *previewItem);
+    RectBrushTool(TileMapPreviewGraphicsItem *previewItem, QObject *parent = nullptr);
 
     /// @brief Draws a rectangle.
     QVector<QPoint> getShape(int dx, int dy) const override;

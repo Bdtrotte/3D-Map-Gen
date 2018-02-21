@@ -74,6 +74,14 @@ void TileMap::clear()
             clearTile(x, y);
 }
 
+bool TileMap::contains(int x, int y) const
+{
+    return x >= 0
+            && y >= 0
+            && x < mMap.width()
+            && y < mMap.height();
+}
+
 void TileMap::resizeMap(QSize newSize)
 {
     Q_ASSERT(newSize.width() >= 1);
