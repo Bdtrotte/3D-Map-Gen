@@ -52,13 +52,11 @@ SOURCES += \
     map2meshproperties.cpp \
     tiletemplatesetsview.cpp \
     newtiletemplatesetdialog.cpp \
-    tiletemplateeditor.cpp \
     mapcellgraphicsitem.cpp \
     abstractshapebrushtool.cpp \
     linebrushtool.cpp \
     rectbrushtool.cpp \
     ellipsebrushtool.cpp \
-    tilepropertyview.cpp \
     tilemapselectiontool.cpp \
     filltool.cpp \
     simpletexturedrenderer.cpp \
@@ -69,6 +67,11 @@ SOURCES += \
     savabletiletemplateset.cpp \
     newmapdialog.cpp \
     tilemappreviewgraphicsitem.cpp \
+    propertybrowser.cpp \
+    tilepropertymanager.cpp \
+    mappropertymanager.cpp \
+    colorpickerbutton.cpp \
+    tiletemplatepropertymanager.cpp \
     tilematerial.cpp
 
 HEADERS += \
@@ -102,7 +105,6 @@ HEADERS += \
     tiletemplateset.h \
     tiletemplatesetsview.h \
     newtiletemplatesetdialog.h \
-    tiletemplateeditor.h \
     mapcellgraphicsitem.h \
     abstractshapebrushtool.h \
     linebrushtool.h \
@@ -118,12 +120,17 @@ HEADERS += \
     simpletexturedobject.h \
     triplet.h \
     simpletexturedshader.h \
-	tilepropertyview.h \
-	tilemapselectiontool.h \
-	tilemappreviewgraphicsitem.h \
-	tiletemplatesetsmanager.h \
-	savabletiletemplateset.h \
-	newmapdialog.h \
+    tilemapselectiontool.h \
+    tilemappreviewgraphicsitem.h \
+    tiletemplatesetsmanager.h \
+    savabletiletemplateset.h \
+    newmapdialog.h \
+    propertybrowser.h \
+    tilepropertymanager.h \
+    mappropertymanager.h \
+    colorpickerbutton.h \
+    tiletemplatepropertymanager.h \
+    abstractpropertymanager.h \
     tilematerial.h
 
 FORMS += \

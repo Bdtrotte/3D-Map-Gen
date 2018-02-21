@@ -4,6 +4,8 @@
 #include "meshviewcontainer.h"
 #include "tilemapbrushtool.h"
 #include "tilemapselectiontool.h"
+#include "propertybrowser.h"
+#include "mappropertymanager.h"
 
 #include "filltool.h"
 
@@ -48,13 +50,13 @@ Editor::Editor(QObject *parent)
     mTileTemplateSetsView = new TileTemplateSetsView(mTileTemplateSetManager, templateDock);
     templateDock->setWidget(mTileTemplateSetsView);
 
-    QDockWidget *tilePropDock = new QDockWidget("Tile Property View", mMainWindow);
-    mTilePropertyView = new TilePropertyView(tilePropDock);
-    tilePropDock->setWidget(mTilePropertyView);
+    QDockWidget *propBrowserDock = new QDockWidget("Property Browser View", mMainWindow);
+    mPropertyBrowser = new PropertyBrowser(mMainWindow);
+    propBrowserDock->setWidget(mPropertyBrowser);
 
     mMainWindow->addDockWidget(Qt::RightDockWidgetArea, meshViewDock);
     mMainWindow->addDockWidget(Qt::LeftDockWidgetArea, templateDock);
-    mMainWindow->addDockWidget(Qt::LeftDockWidgetArea, tilePropDock);
+    mMainWindow->addDockWidget(Qt::RightDockWidgetArea, propBrowserDock);
 
 
     // Add tools.
@@ -74,7 +76,7 @@ Editor::Editor(QObject *parent)
                             QSharedPointer<EllipseBrushTool>::create(mMapView->previewItem())
                             , "Ellipse Tool"));
     mToolBar->addAction(mTileMapToolManager->registerMapTool(
-                            QSharedPointer<TileMapSelectionTool>::create(mTilePropertyView, mMapView->previewItem())
+                            QSharedPointer<TileMapSelectionTool>::create(mPropertyBrowser, mMapView->previewItem())
                             , "Selection Tool"));
 
     //Sets up the context toolBar
@@ -209,8 +211,15 @@ void Editor::exportMapMesh()
         mMeshViewContainer->saveMesh(fileName);
 }
 
+void Editor::viewMapProperties()
+{
+    mPropertyBrowser->setPropertyManager(new MapPropertyManager(mTileMap));
+}
+
 void Editor::setTileMap(TileMap *tileMap)
 {
+    if (mTileMap == tileMap) return;
+
     // TODO : currently TileMap doesn't keep track of if it needs to be saved or not,
     //        so in some cases this check might not be needed.
     if (mTileMap) {
@@ -234,12 +243,15 @@ void Editor::setTileMap(TileMap *tileMap)
     mTileMapToolManager->setTileMap(mTileMap);
     mMapView->createMap(mTileMap);
     mTileTemplateSetManager->setTileMap(mTileMap);
+    mPropertyBrowser->clear();
     setMapDependantActionsEnabled(mTileMap != nullptr);
 
-    if (mTileMap)
+    if (mTileMap) {
         mTileTemplateSetsView->setDefaultTileTemplateSet(mTileMap->defaultTileTemplateSet());
-    else
+    } else {
         mTileTemplateSetsView->setDefaultTileTemplateSet(nullptr);
+        mPropertyBrowser->clear();
+    }
 
 
     delete mMap2Mesh;
@@ -268,6 +280,9 @@ void Editor::setUpMenuBar()
     mMapDependantActions.append(fileMenu->addAction(tr("Close Map"), this, &Editor::closeMap));
     fileMenu->addSeparator();
     mMapDependantActions.append(fileMenu->addAction(tr("Export Map Mesh"), this, &Editor::exportMapMesh));
+
+    QMenu *mapMenu = menuBar->addMenu(tr("Map"));
+    mMapDependantActions.append(mapMenu->addAction(tr("View Map Properties"), this, &Editor::viewMapProperties));
 
     setMapDependantActionsEnabled(false);
 }

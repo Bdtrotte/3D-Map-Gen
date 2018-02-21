@@ -2,20 +2,20 @@
 #define TILEMAPSELECTIONTOOL_H
 
 #include "abstracttilemaptool.h"
-#include "tilepropertyview.h"
+#include "propertybrowser.h"
 #include "mapview.h"
 
 class TileMapSelectionTool : public AbstractTileMapTool
 {
 public:
-    TileMapSelectionTool(TilePropertyView *propView, TileMapPreviewGraphicsItem *previewItem, QObject *parent = nullptr);
+    TileMapSelectionTool(PropertyBrowser *propView, TileMapPreviewGraphicsItem *previewItem, QObject *parent = nullptr);
     void cellActivated(int x, int y) override;
     void deactivate() override;
 
 private:
     void drawOverlay(int endX, int endY);
     void clearOverlay();
-    TilePropertyView* mTilePropertyView;
+    PropertyBrowser* mTilePropertyView;
 };
 
 #endif // TILEMAPSELECTIONTOOL_H

@@ -1,21 +1,21 @@
 #include "tilemapselectiontool.h"
+#include "tilepropertymanager.h"
 
-TileMapSelectionTool::TileMapSelectionTool(TilePropertyView *propView,
-                                           TileMapPreviewGraphicsItem *previewItem, QObject *parent)
+TileMapSelectionTool::TileMapSelectionTool(PropertyBrowser *propView,
+                                           TileMapPreviewGraphicsItem *previewItem,
+                                           QObject *parent)
     : AbstractTileMapTool(previewItem, parent)
-    , mTilePropertyView(propView)
-{
-}
+    , mTilePropertyView(propView) {}
 
 void TileMapSelectionTool::cellActivated(int x, int y)
 {
     clearOverlay();
-    Tile& tile = getTileMap()->tileAt(x, y);
+    Tile &tile = getTileMap()->tileAt(x, y);
     if(tile.hasTileTemplate()){
-        mTilePropertyView->setTile(&tile);
+        mTilePropertyView->setPropertyManager(new TilePropertyManager(tile));
         drawOverlay(x, y);
     } else {
-        mTilePropertyView->setTile(nullptr);
+        mTilePropertyView->clear();
     }
 }
 

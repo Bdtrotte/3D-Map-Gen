@@ -1,7 +1,7 @@
 #include "tiletemplatesetsview.h"
 
 #include "newtiletemplatesetdialog.h"
-#include "tiletemplateeditor.h"
+#include "tiletemplatepropertymanager.h"
 
 #include <QDebug>
 #include <QVBoxLayout>
@@ -12,6 +12,7 @@ TileTemplateSetsView::TileTemplateSetsView(TileTemplateSetsManager *tileTemplate
                                            QWidget *parent)
     : QWidget(parent)
     , mTileTemplateSetsManager(tileTemplateSetsManager)
+    , mTemplatePropertyBrowser(new PropertyBrowser(this))
     , mTabs(new QTabWidget(this))
     , mNewTemplate(new QAction("Add Template", this))
     , mRemoveTemplate(new QAction("Remove Template", this))
@@ -34,10 +35,7 @@ TileTemplateSetsView::TileTemplateSetsView(TileTemplateSetsManager *tileTemplate
     connect(mTabs, &QTabWidget::currentChanged,
             this, &TileTemplateSetsView::selectedTileTemplateChanged);
 
-    TileTemplateEditor *templateEditor = new TileTemplateEditor(this);
-    templateEditor->setSizePolicy(QSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed));
-    connect(this, &TileTemplateSetsView::tileTemplateChanged,
-            templateEditor, &TileTemplateEditor::tileTemplateChanged);
+    connect(this, &TileTemplateSetsView::tileTemplateChanged, &TileTemplateSetsView::tileTemplateChangedSlot);
 
     QToolBar *actionBar = new QToolBar(this);
     actionBar->setFloatable(false);
@@ -60,10 +58,10 @@ TileTemplateSetsView::TileTemplateSetsView(TileTemplateSetsManager *tileTemplate
     splitter->setOrientation(Qt::Vertical);
     splitter->addWidget(mDefaultTemplateView);
     splitter->addWidget(mTabs);
+    splitter->addWidget(mTemplatePropertyBrowser);
 
     QVBoxLayout *layout = new QVBoxLayout;
     layout->addWidget(splitter);
-    layout->addWidget(templateEditor);
     layout->addWidget(actionBar);
     setLayout(layout);
 }
@@ -101,6 +99,7 @@ void TileTemplateSetsView::tileTemplateSetAdded(SavableTileTemplateSet *tileTemp
     templateList->setModel(tileTemplateSet);
     connect(templateList->selectionModel(), &QItemSelectionModel::currentRowChanged,
             this, &TileTemplateSetsView::selectedTileTemplateChanged);
+
     mListViews.append(templateList);
 
     QToolBar *actionBar = new QToolBar(templateWidget);
@@ -248,6 +247,14 @@ void TileTemplateSetsView::saveTemplateSet()
 void TileTemplateSetsView::loadTemplateSet()
 {
     mTileTemplateSetsManager->loadTileTemplateSet();
+}
+
+void TileTemplateSetsView::tileTemplateChangedSlot(TileTemplate *tileTemplate)
+{
+    if (tileTemplate)
+        mTemplatePropertyBrowser->setPropertyManager(new TileTemplatePropertyManager(tileTemplate));
+    else
+        mTemplatePropertyBrowser->clear();
 }
 
 void TileTemplateSetsView::tileTemplateSetSaveStatusChanged(SavableTileTemplateSet *tileTemplateSet, bool status)
