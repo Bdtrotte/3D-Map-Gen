@@ -8,7 +8,7 @@
 class TileMapSelectionTool : public AbstractTileMapTool
 {
 public:
-    TileMapSelectionTool(TilePropertyView *propView, TileMapPreviewGraphicsItem *previewItem);
+    TileMapSelectionTool(TilePropertyView *propView, TileMapPreviewGraphicsItem *previewItem, QObject *parent = nullptr);
     void cellActivated(int x, int y) override;
     void deactivate() override;
 

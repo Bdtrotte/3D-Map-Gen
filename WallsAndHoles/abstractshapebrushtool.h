@@ -13,7 +13,7 @@
 class AbstractShapeBrushTool : public AbstractTileMapTool
 {
 public:
-    AbstractShapeBrushTool(TileMapPreviewGraphicsItem *previewItem);
+    AbstractShapeBrushTool(TileMapPreviewGraphicsItem *previewItem, QObject *parent = nullptr);
 
     void cellClicked(int x, int y) override;
     void cellActivated(int x, int y) override;

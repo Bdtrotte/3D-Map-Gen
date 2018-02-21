@@ -3,6 +3,8 @@
 
 #include <QMouseEvent>
 #include <QWheelEvent>
+#include <QAction>
+#include <QObject>
 
 /**
  * @brief The AbstractTool class represents a UI tool. A UI tool can be activated or
@@ -19,8 +21,10 @@
  * to function. A Brush tool should have some way of accessing the TileMap
  * and some way of determining the visual parameters of the grid.
  */
-class AbstractTool {
+class AbstractTool : public QObject
+{
 public:
+    AbstractTool(QObject *parent = nullptr) : QObject(parent) {}
 
     virtual ~AbstractTool() {}
 
@@ -35,12 +39,17 @@ public:
      */
     virtual void deactivate() {}
 
+    /**
+     * @brief Returns a vector of qactions which can be used to modify the behaviour of the tool.
+     * Will be used by the tool manager to add the actions to a context tool bar.
+     */
+    virtual QList<QAction *> contextActions() { return {}; }
+
 
     virtual void mousePressEvent(QMouseEvent *) {}
     virtual void mouseReleaseEvent(QMouseEvent *) {}
     virtual void mouseMoveEvent(QMouseEvent *) {}
     virtual void wheelEvent(QWheelEvent *) {}
-
 };
 
 #endif // TOOL_H

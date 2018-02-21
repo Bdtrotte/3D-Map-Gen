@@ -1,6 +1,8 @@
 #ifndef TOOLMANAGER_H
 #define TOOLMANAGER_H
 
+#include "abstracttool.h"
+
 #include <QVector>
 #include <QMap>
 #include <QObject>
@@ -8,7 +10,7 @@
 #include <QWheelEvent>
 #include <QSharedPointer>
 #include <QAction>
-#include "abstracttool.h"
+#include <QToolBar>
 
 /**
  * @brief The ToolManager class represents a group of mutually exclusive tools
@@ -63,6 +65,10 @@ public slots:
      * @param name The name of the tool.
      */
     void deactivateTool(QString name);
+    /**
+     * @brief Returns the context toolBar of the current active tool.
+     */
+    QToolBar *contextToolBar();
 
 
     void mousePressEvent(QMouseEvent *event);
@@ -86,7 +92,8 @@ protected:
     QActionGroup *mActionGroup; /// The action group containing all of the ToolManager's actions.
 
     AbstractToolP mActiveTool; /// The active tool.
-    QAction *mActiveAction;    /// The QAction of the active tool.
+
+    QToolBar *mContextToolBar;
 };
 
 typedef QSharedPointer<ToolManager> ToolManagerP;

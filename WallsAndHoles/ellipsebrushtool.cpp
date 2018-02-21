@@ -4,8 +4,8 @@
 #include "ellipsebrushtool.h"
 
 
-EllipseBrushTool::EllipseBrushTool(TileMapPreviewGraphicsItem *previewItem)
-    : AbstractShapeBrushTool(previewItem) {}
+EllipseBrushTool::EllipseBrushTool(TileMapPreviewGraphicsItem *previewItem, QObject *parent)
+    : AbstractShapeBrushTool(previewItem, parent) {}
 
 static double getXTheta(double cs, double bestTheta, double minTheta) {
     double t1 = acos(cs);

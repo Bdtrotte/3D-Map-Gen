@@ -13,7 +13,7 @@
  * @brief The AbstractMeshViewCamera class
  * Abstract class that will determine how the camera moves based on the mouse.
  */
-class AbstractMeshViewCamera : public QObject, public AbstractTool {
+class AbstractMeshViewCamera : public AbstractTool {
     Q_OBJECT
 
 public:
