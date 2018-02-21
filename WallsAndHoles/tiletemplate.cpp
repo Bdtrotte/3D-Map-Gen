@@ -71,7 +71,7 @@ void TileTemplate::setMaterial(TileMaterial *material)
     // mMaterial should never be null--there is always some default
     // material information.
     if (material == nullptr)
-        material = new TileMaterial(this);
+        material = TileMaterial::getDefaultMaterial();
 
     mMaterial = material;
 

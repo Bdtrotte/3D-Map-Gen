@@ -30,6 +30,16 @@ void TileMaterial::setSpecular(float specular) { mSpecular = specular; emit phon
 void TileMaterial::setShininess(float shininess) { mShininess = shininess; emit phongParamsChanged(); }
 
 
+TileMaterial *TileMaterial::defaultMaterial = nullptr;
+TileMaterial *TileMaterial::getDefaultMaterial()
+{
+    if (defaultMaterial == nullptr)
+        defaultMaterial = new TileMaterial(getDefaultTexture(), 1, 1, 1, 1, nullptr);
+
+    return defaultMaterial;
+}
+
+
 QSharedPointer<QImage> TileMaterial::DefaultTexture = nullptr;
 QSharedPointer<QImage> TileMaterial::getDefaultTexture()
 {

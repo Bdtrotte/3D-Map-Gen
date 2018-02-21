@@ -37,6 +37,8 @@ public:
     void setSpecular(float specular);
     void setShininess(float shininess);
 
+    static TileMaterial *getDefaultMaterial();
+
 signals:
 
     void textureChanged();
@@ -51,6 +53,8 @@ private:
     float mShininess;
 
 
+    /* Singleton for the default material. */
+    static TileMaterial *defaultMaterial;
 
     /* Singleton for the default texture. */
     static QSharedPointer<QImage> getDefaultTexture();

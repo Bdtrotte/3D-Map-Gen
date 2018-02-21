@@ -49,8 +49,8 @@ public:
     QColor color() const { return mColor; }
 
 
-    const TileMaterial &material() const { return *mMaterial; }
-    TileMaterial &material() { return *mMaterial; }
+    const TileMaterial *material() const { return mMaterial; }
+    TileMaterial *material() { return mMaterial; }
 
     /**
      * @brief emitTilePing

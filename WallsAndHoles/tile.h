@@ -31,10 +31,10 @@ public:
      * @brief Returns the TileMaterial if there is a TileTemplate, and otherwise
      * returns nullptr.
      */
-    TileMaterial *materialPtr();
+    TileMaterial *material();
 
-    /// @copydoc Tile::materialPtr()
-    const TileMaterial *materialPtr() const;
+    /// @copydoc Tile::material()
+    const TileMaterial *material() const;
 
     float relativeThickness() const { return mRelativeThickness; }
     float relativeHeight() const { return mRelativeHeight; }
