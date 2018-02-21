@@ -1,10 +1,9 @@
 #ifndef TILEMATERIAL_H
 #define TILEMATERIAL_H
 
-#include <QObject>
-#include <QSharedPointer>
-#include <QImage>
+#include "imageandsource.h"
 
+#include <QObject>
 
 class TileMaterial : public QObject
 {
@@ -22,7 +21,7 @@ public:
      * @brief Creates a TileMaterial with the given material.
      */
     TileMaterial(QString name,
-                 QSharedPointer<QImage> texture,
+                 SharedImageAndSource texture,
                  float ambient,
                  float diffuse,
                  float specular,
@@ -30,7 +29,7 @@ public:
                  QObject *parent = nullptr);
 
     QString name() const;
-    QSharedPointer<QImage> texture() const;
+    SharedImageAndSource texture() const;
     float ambient() const;
     float diffuse() const;
     float specular() const;
@@ -38,7 +37,7 @@ public:
 
 
     void setName(QString name);
-    void setTexture(QSharedPointer<QImage> texture);
+    void setTexture(SharedImageAndSource texture);
     void setAmbient(float ambient);
     void setDiffuse(float diffuse);
     void setSpecular(float specular);
@@ -54,7 +53,7 @@ signals:
 private:
     QString mName;
 
-    QSharedPointer<QImage> mTexture;
+    SharedImageAndSource mTexture;
     float mAmbient;
     float mDiffuse;
     float mSpecular;
@@ -65,8 +64,8 @@ private:
     static TileMaterial *defaultMaterial;
 
     /* Singleton for the default texture. */
-    static QSharedPointer<QImage> getDefaultTexture();
-    static QSharedPointer<QImage> DefaultTexture;
+    static SharedImageAndSource getDefaultTexture();
+    static SharedImageAndSource DefaultTexture;
 };
 
 #endif // TILEMATERIAL_H

@@ -39,7 +39,7 @@ TileMaterialSelectionBar::TileMaterialSelectionBar(TileMaterial *tileMaterial, Q
 
 void TileMaterialSelectionBar::selectMaterial()
 {
-
+    // TODO: Add the ability to view a list of materials and select one that way.
 }
 
 void TileMaterialSelectionBar::materialsNameChanged(QString newName)

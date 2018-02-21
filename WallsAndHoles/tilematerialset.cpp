@@ -104,7 +104,7 @@ QVariant TileMaterialSet::data(const QModelIndex &index, int role) const
         if (m->texture().isNull())
             return QVariant();
         else
-            return QPixmap::fromImage(*m->texture()).scaled(20, 20);
+            return QPixmap::fromImage(*m->texture()->image()).scaled(20, 20);
     }
 
     return QVariant();

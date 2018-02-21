@@ -2,6 +2,7 @@
 #define TILEMATERIALVIEW_H
 
 #include "tilematerialset.h"
+#include "propertybrowser.h"
 
 #include <QWidget>
 #include <QListView>
@@ -17,10 +18,14 @@ private slots:
     void addMaterial();
     void removeMaterial();
 
+    void materialSelected();
+
 private:
     TileMaterialSet *mTileMaterialSet;
 
     QListView *mMaterialList;
+
+    PropertyBrowser *mPropertyBrowser;
 };
 
 #endif // TILEMATERIALVIEW_H

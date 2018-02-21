@@ -32,6 +32,9 @@ QVector<QVector<QVariant>> TileTemplatePropertyManager::properties()
 {
     TileMaterialSelectionBar *materialSelectionBar = new TileMaterialSelectionBar(mTileTemplate->material());
 
+    connect(materialSelectionBar, &TileMaterialSelectionBar::materialChanged,
+            this, &TileTemplatePropertyManager::materialChanged);
+
     return {
         {"Name",       mTileTemplate->name(),         true              },
         {"Color",      mTileTemplate->color(),        true              },
@@ -43,4 +46,9 @@ QVector<QVector<QVariant>> TileTemplatePropertyManager::properties()
                      true,
                      PropertyBrowser::LineWidget}
     };
+}
+
+void TileTemplatePropertyManager::materialChanged(TileMaterial *material)
+{
+    mTileTemplate->setMaterial(material);
 }

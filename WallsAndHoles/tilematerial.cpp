@@ -7,7 +7,7 @@ TileMaterial::TileMaterial(QObject *parent)
 
 
 TileMaterial::TileMaterial(QString name,
-                           QSharedPointer<QImage> texture,
+                           SharedImageAndSource texture,
                            float ambient,
                            float diffuse,
                            float specular,
@@ -23,7 +23,7 @@ TileMaterial::TileMaterial(QString name,
 
 
 QString TileMaterial::name() const { return mName; }
-QSharedPointer<QImage> TileMaterial::texture() const { return mTexture; }
+SharedImageAndSource TileMaterial::texture() const { return mTexture; }
 float TileMaterial::ambient() const { return mAmbient; }
 float TileMaterial::diffuse() const { return mDiffuse; }
 float TileMaterial::specular() const { return mSpecular; }
@@ -31,7 +31,7 @@ float TileMaterial::shininess() const { return mShininess; }
 
 
 void TileMaterial::setName(QString name) { mName = name; emit nameChanged(mName); }
-void TileMaterial::setTexture(QSharedPointer<QImage> texture) { mTexture = texture; emit textureChanged(); }
+void TileMaterial::setTexture(SharedImageAndSource texture) { mTexture = texture; emit textureChanged(); }
 void TileMaterial::setAmbient(float ambient) { mAmbient = ambient; emit phongParamsChanged(); }
 void TileMaterial::setDiffuse(float diffuse) { mDiffuse = diffuse; emit phongParamsChanged(); }
 void TileMaterial::setSpecular(float specular) { mSpecular = specular; emit phongParamsChanged(); }
@@ -48,11 +48,11 @@ TileMaterial *TileMaterial::getDefaultMaterial()
 }
 
 
-QSharedPointer<QImage> TileMaterial::DefaultTexture = nullptr;
-QSharedPointer<QImage> TileMaterial::getDefaultTexture()
+SharedImageAndSource TileMaterial::DefaultTexture = nullptr;
+SharedImageAndSource TileMaterial::getDefaultTexture()
 {
-    if (DefaultTexture == nullptr)
-        DefaultTexture = QSharedPointer<QImage>::create(":/textures/exampleTexture2.png");
+    if (DefaultTexture.isNull())
+        DefaultTexture = ImageAndSource::getSharedImageAndSource(":/textures/exampleTexture2.png");
 
     return DefaultTexture;
 }
