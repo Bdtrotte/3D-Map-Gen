@@ -7,22 +7,7 @@ TileTemplate::TileTemplate(QColor color,
                            QString name,
                            float height,
                            float thickness,
-                           QVector2D position,
-                           QObject *parent)
-    : TileTemplate( // Forward arguments to the more general constructor.
-          std::make_unique<SimpleTexturedMaterial>(getDefaultTexture(), 1, 1, 1, 1),
-          color,
-          name,
-          height,
-          thickness,
-          position,
-          parent) {}
-
-TileTemplate::TileTemplate(std::unique_ptr<SimpleTexturedMaterial> &&material,
-                           QColor color,
-                           QString name,
-                           float height,
-                           float thickness,
+                           TileMaterial *material,
                            QVector2D position,
                            QObject *parent)
     : QObject(parent)
@@ -31,7 +16,10 @@ TileTemplate::TileTemplate(std::unique_ptr<SimpleTexturedMaterial> &&material,
     , mThickness(thickness)
     , mPosition(position)
     , mColor(color)
-    , mMaterial(std::move(material)) {}
+{
+    setMaterial(material);
+}
+
 
 void TileTemplate::setHeight(float height)
 {
@@ -78,21 +66,22 @@ void TileTemplate::setColor(QColor color)
     emit changed();
 }
 
-void TileTemplate::setMaterial(std::unique_ptr<SimpleTexturedMaterial> &&material)
+void TileTemplate::setMaterial(TileMaterial *material)
 {
-    mMaterial = std::move(material);
+    // mMaterial should never be null--there is always some default
+    // material information.
+    if (material == nullptr)
+        material = new TileMaterial(this);
+
+    mMaterial = material;
+
+
+    // When the material's properties change, a materialChanged() signal will be emitted.
+    // The changed() signal is currently only used for saving purposes, so it does not need to be emitted.
+
+    connect(mMaterial, &TileMaterial::textureChanged, this, &TileTemplate::materialChanged);
+    connect(mMaterial, &TileMaterial::phongParamsChanged, this, &TileTemplate::materialChanged);
 
     emit materialChanged();
     emit changed();
-}
-
-
-
-QSharedPointer<QImage> TileTemplate::DefaultTexture = nullptr;
-QSharedPointer<QImage> TileTemplate::getDefaultTexture()
-{
-    if (DefaultTexture == nullptr)
-        DefaultTexture = QSharedPointer<QImage>::create(":/textures/exampleTexture2.png");
-
-    return DefaultTexture;
 }

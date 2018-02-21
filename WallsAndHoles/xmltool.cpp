@@ -159,7 +159,8 @@ SavableTileTemplateSet *XMLTool::openTileTemplateSet(QString templateSetPath)
                         color = QColor(attr.value().toString());
                 }
 
-                TileTemplate *tileTemplate = new TileTemplate(color, name, height, thickness, position, templateSet);
+                // TODO: Load and set the template's material!
+                TileTemplate *tileTemplate = new TileTemplate(color, name, height, thickness, nullptr, position, templateSet);
                 templateSet->addTileTemplate(tileTemplate, true);
             }
         }

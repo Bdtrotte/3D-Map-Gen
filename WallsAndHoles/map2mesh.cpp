@@ -84,10 +84,8 @@ void Map2Mesh::inferProperties()
             float baseHeight = minSurroundingHeight;
             float topHeight = grid(x,y)->height();
 
-            QSharedPointer<QImage> image =
-                    grid(x,y)->hasTileTemplate() ?
-                        grid(x,y)->material().getTexture()
-                      : nullptr;
+            auto tileMaterial = grid(x,y)->materialPtr();
+            QSharedPointer<QImage> image = tileMaterial == nullptr ? nullptr : tileMaterial->getTexture();
 
             newProperties(x, y) = {
                     topHeight,

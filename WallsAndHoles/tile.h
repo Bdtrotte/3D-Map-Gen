@@ -25,7 +25,16 @@ public:
     float thickness() const;
     float height() const;
     QVector2D position() const;
-    const SimpleTexturedMaterial &material() const;     // Asserts that hasTileTemplate() is true.
+
+
+    /**
+     * @brief Returns the TileMaterial if there is a TileTemplate, and otherwise
+     * returns nullptr.
+     */
+    TileMaterial *materialPtr();
+
+    /// @copydoc Tile::materialPtr()
+    const TileMaterial *materialPtr() const;
 
     float relativeThickness() const { return mRelativeThickness; }
     float relativeHeight() const { return mRelativeHeight; }

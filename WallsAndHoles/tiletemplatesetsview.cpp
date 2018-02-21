@@ -195,6 +195,7 @@ void TileTemplateSetsView::addTemplate()
                                                  "New Tile Template",
                                                  0,
                                                  1,
+                                                 nullptr,                // Default material.
                                                  QVector2D(0.5, 0.5));
 
     mTileTemplateSetsManager->tileTemplateSetAt(curTab)->addTileTemplate(newTemplate);
