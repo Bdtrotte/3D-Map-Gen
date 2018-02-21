@@ -6,7 +6,6 @@
 #include <QSharedPointer>
 #include <QImage>
 
-#include "m2mpropertyset.h"
 #include "simpletexturedobject.h"
 
 
@@ -15,6 +14,27 @@
  */
 class M2MTileMesher {
 public:
+
+    /**
+     * @brief Class to temporarily replace the M2MPropertySet parameter to getTopMesh().
+     */
+    struct Input {
+        float topHeight;
+        float baseHeight;
+        QSharedPointer<QImage> image;
+
+        bool operator ==(const Input &other) const
+        {
+            return topHeight == other.topHeight && baseHeight == other.baseHeight && image.data() == other.image.data();
+        }
+
+        bool operator !=(const Input &other) const
+        {
+            return !(*this == other);
+        }
+    };
+
+
     /**
      * @brief Generates a square for the top of the tile. The offset's Y component
      * should not depend on the tile's height because that is considered separately.
@@ -23,8 +43,7 @@ public:
      * @param scale             A multiplier. By default, each tile is a 1-by-1 square.
      * @return
      */
-    static QSharedPointer<SimpleTexturedObject> getTopMesh(const M2MPropertySet &tileProperties, QVector3D offset, float scale = 1.0);
-
+    static QSharedPointer<SimpleTexturedObject> getTopMesh(Input tileProperties, QVector3D offset, float scale = 1.0);
 
 private:
 

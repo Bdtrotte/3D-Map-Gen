@@ -79,6 +79,10 @@ Editor::Editor(QObject *parent)
                             QSharedPointer<TileMapSelectionTool>::create(mPropertyBrowser, mMapView->previewItem())
                             , "Selection Tool"));
 
+    //Sets up the context toolBar
+    mToolBar->addSeparator();
+    mToolBar->addWidget(mTileMapToolManager->contextToolBar());
+
 
     //Create widget connections
     connect(mMapView, &MapView::cellActivated,

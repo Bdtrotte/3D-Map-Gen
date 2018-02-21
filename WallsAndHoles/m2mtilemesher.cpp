@@ -1,12 +1,10 @@
 #include "m2mtilemesher.h"
 #include "map2mesh.h"
 
-QSharedPointer<SimpleTexturedObject> M2MTileMesher::getTopMesh(const M2MPropertySet &tileProperties, QVector3D offset, float scale) {
+QSharedPointer<SimpleTexturedObject> M2MTileMesher::getTopMesh(Input tileProperties, QVector3D offset, float scale) {
 
-    M2MPropertyInstance propHeight = tileProperties.getProperty(Map2Mesh::Properties::Height);
-
-    float baseHeight = propHeight.getParameter(Map2Mesh::Properties::Height, "baseHeight");
-    float topHeight = propHeight.getParameter(Map2Mesh::Properties::Height, "topHeight");
+    float baseHeight = tileProperties.baseHeight;
+    float topHeight = tileProperties.topHeight;
 
     // The height at which the sides should switch to the "dirt-to-grass" texture.
     float switchHeight = topHeight - 1;
@@ -208,11 +206,13 @@ QSharedPointer<SimpleTexturedObject> M2MTileMesher::getTopMesh(const M2MProperty
 
 
 
+    QSharedPointer<QImage> textureImage = tileProperties.image.isNull() ? getTestingImage() : tileProperties.image;
+
     QSharedPointer<SimpleTexturedObject> obj = QSharedPointer<SimpleTexturedObject>::create();
 
     obj->setTriangleInfo(vertices, faceNormals, triangles);
     obj->setMaterialInfo(1, 1.7, 0.3, 0.2); // default "soft" material
-    obj->setTextureInfo(texCoords, getTestingImage());
+    obj->setTextureInfo(texCoords, textureImage);
     obj->commit();
 
     return obj;

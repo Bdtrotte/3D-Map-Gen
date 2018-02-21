@@ -1,13 +1,11 @@
 #include "tilemapselectiontool.h"
 #include "tilepropertymanager.h"
 
-
 TileMapSelectionTool::TileMapSelectionTool(PropertyBrowser *propView,
-                                           TileMapPreviewGraphicsItem *previewItem)
-    : AbstractTileMapTool(previewItem)
-    , mTilePropertyView(propView)
-{
-}
+                                           TileMapPreviewGraphicsItem *previewItem,
+                                           QObject *parent)
+    : AbstractTileMapTool(previewItem, parent)
+    , mTilePropertyView(propView) {}
 
 void TileMapSelectionTool::cellActivated(int x, int y)
 {

@@ -71,7 +71,8 @@ SOURCES += \
     tilepropertymanager.cpp \
     mappropertymanager.cpp \
     colorpickerbutton.cpp \
-    tiletemplatepropertymanager.cpp
+    tiletemplatepropertymanager.cpp \
+    tilematerial.cpp
 
 HEADERS += \
     meshview.h \
@@ -129,7 +130,8 @@ HEADERS += \
     mappropertymanager.h \
     colorpickerbutton.h \
     tiletemplatepropertymanager.h \
-    abstractpropertymanager.h
+    abstractpropertymanager.h \
+    tilematerial.h
 
 FORMS += \
     meshview.ui \

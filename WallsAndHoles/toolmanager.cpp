@@ -1,21 +1,25 @@
-
 #include "toolmanager.h"
+
+#include <QSpinBox>
+#include <QWidgetAction>
+#include <QColorDialog>
 
 ToolManager::ToolManager(QObject *parent)
     : QObject(parent)
 {
     mActionGroup = new QActionGroup(this);
+    mContextToolBar = new QToolBar();
 }
 
 
-QAction *ToolManager::registerTool(AbstractToolP tool, QString name) {
-
+QAction *ToolManager::registerTool(AbstractToolP tool, QString name)
+{
     // This automatically adds action to mActionGroup.
     QAction *action = new QAction("Activate tool: " + name, mActionGroup);
     action->setCheckable(true);
 
-
-    connect(action, &QAction::toggled, this, [this, name] (bool checked) {
+    connect(action, &QAction::toggled,
+            this, [this, name] (bool checked) {
         if (checked)
             activateTool(name);
         else
@@ -29,82 +33,77 @@ QAction *ToolManager::registerTool(AbstractToolP tool, QString name) {
     return action;
 }
 
-QAction *ToolManager::getAction(QString name) {
+QAction *ToolManager::getAction(QString name)
+{
     if (!mToolActions.contains(name))
         return nullptr;
     else
         return mToolActions[name];
 }
 
-void ToolManager::activateTool(QString name) {
+void ToolManager::activateTool(QString name)
+{
+    //Shouldn't call this with a name not contained.
+    Q_ASSERT(mTools.contains(name));
 
-    // Do nothing if the tool is already active.
-    if (!(mTools.contains(name) && mTools[name] == mActiveTool)) {
+    auto tool = mTools[name];
 
-        // Deactivate any active tool.
-        if (mActiveTool != nullptr) {
-            mActiveTool->deactivate();
-            mActiveTool = nullptr;
+    if (tool == mActiveTool) return;
 
-            // This will invoke deactivateTool() for the corresponding tool, but deactivateTool() will not do anything.
-            mActiveAction->setChecked(false);
-            mActiveAction = nullptr;
-        }
+    if (mActiveTool != nullptr)
+        mContextToolBar->clear();
 
-        // Activate a tool if a name matches.
-        if (mTools.contains(name)) {
+    mActiveTool = tool;
+    mActiveTool->activate();
 
-            // Activate the tool.
-            mActiveTool = mTools[name];
-            mActiveTool->activate();
+    //fill context Tool bar with tools context actions.
+    mContextToolBar->addActions(mActiveTool->contextActions());
 
+    emit toolWasActivated(mActiveTool, name);
+}
 
-            // Check the corresponding action. This will invoke activateTool() which will not do anything
-            // since the tool is already active.
-            mActiveAction = mToolActions[name];
-            if (!mActiveAction->isChecked())
-                mActiveAction->setChecked(true);
+void ToolManager::deactivateTool(QString name)
+{
+    //Shouldn't call this with a name not contained.
+    Q_ASSERT(mTools.contains(name));
 
-            emit toolWasActivated(mActiveTool, name);
-        }
+    auto tool = mTools[name];
+
+    tool->deactivate();
+
+    if (mActiveTool == tool) {
+        mActiveTool = nullptr;
+
+        //Clears the context toolBar of the tool being deactivated
+        mContextToolBar->clear();
     }
 }
 
-void ToolManager::deactivateTool(QString name) {
-    if (mTools.contains(name)) {
-        if (mActiveTool == mTools[name]) {
-            // Deactivate the tool.
-            mActiveTool->deactivate();
-            mActiveTool = nullptr;
-
-            // Uncheck the action. NOTE: This will cause another deactivateTool() call with the same name,
-            // but this is not a problem since the tool will not be active.
-            if (mActiveAction->isChecked())
-                mActiveAction->setChecked(false);
-
-            mActiveAction = nullptr;
-        }
-    }
+QToolBar *ToolManager::contextToolBar()
+{
+    return mContextToolBar;
 }
 
-
-
-void ToolManager::mousePressEvent(QMouseEvent *event) {
+void ToolManager::mousePressEvent(QMouseEvent *event)
+{
     if (mActiveTool != nullptr)
         mActiveTool->mousePressEvent(event);
 }
 
-void ToolManager::mouseReleaseEvent(QMouseEvent *event) {
+void ToolManager::mouseReleaseEvent(QMouseEvent *event)
+{
     if (mActiveTool != nullptr)
         mActiveTool->mouseReleaseEvent(event);
 }
 
-void ToolManager::mouseMoveEvent(QMouseEvent *event) {
+void ToolManager::mouseMoveEvent(QMouseEvent *event)
+{
     if (mActiveTool != nullptr)
         mActiveTool->mouseMoveEvent(event);
 }
 
-void ToolManager::wheelEvent(QWheelEvent *event) {
+void ToolManager::wheelEvent(QWheelEvent *event)
+{
     if (mActiveTool != nullptr)
         mActiveTool->wheelEvent(event);
 }

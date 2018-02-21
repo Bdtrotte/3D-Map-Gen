@@ -5,8 +5,8 @@
 
 #include "linebrushtool.h"
 
-LineBrushTool::LineBrushTool(TileMapPreviewGraphicsItem *previewItem)
-    : AbstractShapeBrushTool(previewItem)
+LineBrushTool::LineBrushTool(TileMapPreviewGraphicsItem *previewItem, QObject *parent)
+    : AbstractShapeBrushTool(previewItem, parent)
 {
 
 }

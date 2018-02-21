@@ -8,6 +8,8 @@
 #include <QVector2D>
 #include <QColor>
 
+#include "tilematerial.h"
+
 class TileTemplate : public QObject
 {
     Q_OBJECT
@@ -17,8 +19,10 @@ public:
                           QString name = "New Tile Template",
                           float height = 0,
                           float thickness = 1,
+                          TileMaterial *material = nullptr,
                           QVector2D position = QVector2D(0.5, 0.5),
                           QObject *parent = nullptr);
+
 
     void setHeight(float height);
 
@@ -27,6 +31,13 @@ public:
     void setPosition(QVector2D position);
 
     void setColor(QColor color);
+
+    /**
+     * @brief Updates the material for the tile template.
+     * @param material  A pointer to the new material.
+     */
+    void setMaterial(TileMaterial *material);
+
 
     QString name() const { return mName; }
     void setName(QString name) { mName = name; emit changed(); }
@@ -37,6 +48,10 @@ public:
 
     QColor color() const { return mColor; }
 
+
+    const TileMaterial *material() const { return mMaterial; }
+    TileMaterial *material() { return mMaterial; }
+
     /**
      * @brief emitTilePing
      * Sends a signal to all tiles using this template, which will
@@ -46,13 +61,18 @@ public:
     void emitTilePing() { emit pingTiles(); }
 
 signals:
-    //a property which has no affect on other properties (ie not thickness or position)
-    //but rendering should be updated
+
+    /**
+     * @brief Emitted when a property is changed but does not affect mesh-related properties.
+     */
     void exclusivePropertyChanged();
     void thicknessChanged();
     void positionChanged();
+    void materialChanged();
 
-    //emited anytime anything which needs to be saved changes
+    /**
+     * @brief Emitted whenever something changes that needs to be saved.
+     */
     void changed();
 
     void pingTiles();
@@ -67,6 +87,9 @@ private:
     //The color the tile will be in the map view.
     //Has no affect on evental output mesh
     QColor mColor;
+
+
+    TileMaterial *mMaterial;
 };
 
 #endif // TILETEMPLATE_H
