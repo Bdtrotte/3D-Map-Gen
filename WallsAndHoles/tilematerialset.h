@@ -10,7 +10,7 @@ class TileMaterialSet : public QAbstractItemModel
     Q_OBJECT
 
 public:
-    TileMaterialSet(QObject *parent = nullptr);
+    static TileMaterialSet *getInstance();
 
     void addMaterial(TileMaterial *material);
     void removeMaterial(int index);
@@ -36,7 +36,11 @@ public:
     Qt::ItemFlags flags(const QModelIndex &index) const override;
 
 private:
+    TileMaterialSet();
+
     QList<TileMaterial *> mMaterials;
+
+    static TileMaterialSet *tileMaterialSet;
 };
 
 #endif // TILEMATERIALSET_H

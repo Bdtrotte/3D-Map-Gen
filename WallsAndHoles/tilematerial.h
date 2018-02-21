@@ -47,7 +47,7 @@ public:
     static TileMaterial *getDefaultMaterial();
 
 signals:
-
+    void nameChanged(QString newName);
     void textureChanged();
     void phongParamsChanged();
 

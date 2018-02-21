@@ -3,10 +3,16 @@
 #include <QPixmap>
 #include <QMimeData>
 
-TileMaterialSet::TileMaterialSet(QObject *parent)
-    : QAbstractItemModel(parent)
-{
+TileMaterialSet::TileMaterialSet()
+    : QAbstractItemModel() {}
 
+TileMaterialSet *TileMaterialSet::tileMaterialSet = nullptr;
+
+TileMaterialSet *TileMaterialSet::getInstance()
+{
+    if (!tileMaterialSet)
+        tileMaterialSet = new TileMaterialSet();
+    return tileMaterialSet;
 }
 
 void TileMaterialSet::addMaterial(TileMaterial *material)
@@ -125,7 +131,7 @@ QMimeData *TileMaterialSet::mimeData(const QModelIndexList &indexes) const
 
     QMimeData *mimeData = new QMimeData();
 
-    mimeData->setText("TileMaterial: " + indexes[0].row());
+    mimeData->setText("TileMaterial: " + QString::number(indexes[0].row()));
 
     return mimeData;
 }

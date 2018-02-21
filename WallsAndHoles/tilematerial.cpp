@@ -30,7 +30,7 @@ float TileMaterial::specular() const { return mSpecular; }
 float TileMaterial::shininess() const { return mShininess; }
 
 
-void TileMaterial::setName(QString name) { mName = name; }
+void TileMaterial::setName(QString name) { mName = name; emit nameChanged(mName); }
 void TileMaterial::setTexture(QSharedPointer<QImage> texture) { mTexture = texture; emit textureChanged(); }
 void TileMaterial::setAmbient(float ambient) { mAmbient = ambient; emit phongParamsChanged(); }
 void TileMaterial::setDiffuse(float diffuse) { mDiffuse = diffuse; emit phongParamsChanged(); }

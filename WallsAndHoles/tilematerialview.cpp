@@ -6,7 +6,7 @@
 
 TileMaterialView::TileMaterialView(QWidget *parent)
     : QWidget(parent)
-    , mTileMaterialSet(new TileMaterialSet(this))
+    , mTileMaterialSet(TileMaterialSet::getInstance())
     , mMaterialList(new QListView(this))
 {
     mMaterialList->setModel(mTileMaterialSet);

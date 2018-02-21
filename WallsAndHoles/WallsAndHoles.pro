@@ -74,7 +74,8 @@ SOURCES += \
     tiletemplatepropertymanager.cpp \
     tilematerial.cpp \
     tilematerialview.cpp \
-    tilematerialset.cpp
+    tilematerialset.cpp \
+    tilematerialselectionbar.cpp
 
 HEADERS += \
     meshview.h \
@@ -135,7 +136,8 @@ HEADERS += \
     abstractpropertymanager.h \
     tilematerial.h \
     tilematerialview.h \
-    tilematerialset.h
+    tilematerialset.h \
+    tilematerialselectionbar.h
 
 FORMS += \
     meshview.ui \
