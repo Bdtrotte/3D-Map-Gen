@@ -9,7 +9,8 @@
 
 #include "tilemap.h"
 
-#include "m2mpropertyset.h"
+#include "m2mpropertyclass.h"
+#include "m2mtilemesher.h"
 
 #include "array2d.h"
 
@@ -75,7 +76,7 @@ protected:
     /**
      * @brief Inferred properties for every tile.
      */
-    Array2D<M2MPropertySet> mTileProperties;
+    Array2D<M2MTileMesher::Input> mTileProperties;
 
 
     /**

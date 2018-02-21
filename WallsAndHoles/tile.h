@@ -26,6 +26,16 @@ public:
     float height() const;
     QVector2D position() const;
 
+
+    /**
+     * @brief Returns the TileMaterial if there is a TileTemplate, and otherwise
+     * returns nullptr.
+     */
+    TileMaterial *material();
+
+    /// @copydoc Tile::material()
+    const TileMaterial *material() const;
+
     float relativeThickness() const { return mRelativeThickness; }
     float relativeHeight() const { return mRelativeHeight; }
     QVector2D relativePosition() const { return mRelativePosition; }
