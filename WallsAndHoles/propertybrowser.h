@@ -9,11 +9,22 @@
 #include <QHBoxLayout>
 #include <QLabel>
 
+// TODO : Provide good full documentation about how to create a propertyManager
+
+/**
+ * @brief The PropertyBrowser class
+ */
 class PropertyBrowser : public QScrollArea
 {
     Q_OBJECT
 
 public:
+    enum CustomType {
+        LineWidget,      //A one line widget
+        BlockWidget,     //A multi line widget which will apear bellow the label
+        PropertyManager  //Another property manager, which will create a nested propertyBrowser (most fun)
+    };
+
     explicit PropertyBrowser(QWidget *parent = nullptr);
 
     /**
@@ -41,7 +52,7 @@ private:
     AbstractPropertyManager *mPropertyManager;
 
     //A line will have two components, a Label and a widget
-    QMap<QString, QHBoxLayout *> mLines;
+    QMap<QString, QBoxLayout *> mLines;
     QMap<QString, QMetaType::Type> mLineType;
     QMap<QString, QWidget *> mLineWidget;
     QMap<QString, QLabel *> mLineLabel;

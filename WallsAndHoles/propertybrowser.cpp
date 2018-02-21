@@ -62,14 +62,13 @@ void PropertyBrowser::clear()
 
 void PropertyBrowser::makeLine(QString propertyName, QVariant value, bool editable, QVector<QVariant> extra)
 {
-    QHBoxLayout *line = new QHBoxLayout();
+    QBoxLayout *line = new QHBoxLayout();
     QMetaType::Type type = (QMetaType::Type)value.type();
     mLineType[propertyName] = type;
 
     QLabel *label = new QLabel(propertyName, mMainWidget);
     line->addWidget(label);
 
-    mLines[propertyName] = line;
     mLineType[propertyName] = type;
     mLineLabel[propertyName] = label;
 
@@ -147,7 +146,40 @@ void PropertyBrowser::makeLine(QString propertyName, QVariant value, bool editab
         mLineWidget[propertyName] = w;
         break; }
     case QMetaType::User: {
-        // TODO Implement Sub property browser
+        int customType = extra.takeFirst().toInt();
+        switch (customType) {
+        case LineWidget: {
+            QWidget *w = value.value<QWidget *>();
+
+            line->addWidget(w);
+
+            mLineWidget[propertyName] = w;
+        break; }
+        case BlockWidget: {
+            QHBoxLayout *top = static_cast<QHBoxLayout *>(line);
+            line = new QVBoxLayout;
+            line->addLayout(top);
+
+            QWidget *w = value.value<QWidget *>();
+
+            line->addWidget(w);
+
+            mLineWidget[propertyName] = w;
+        break; }
+        case PropertyManager: {
+            QHBoxLayout *top = static_cast<QHBoxLayout *>(line);
+            line = new QVBoxLayout;
+            line->addLayout(top);
+
+            PropertyBrowser *w = new PropertyBrowser(this);
+            w->setPropertyManager(value.value<AbstractPropertyManager *>());
+
+            line->addWidget(w);
+
+            mLineWidget[propertyName] = w;
+        break; }
+        }
+
         break;
     }
     default:
@@ -155,6 +187,7 @@ void PropertyBrowser::makeLine(QString propertyName, QVariant value, bool editab
         Q_ASSERT(false);
     }
 
+    mLines[propertyName] = line;
     mMainLayout->addLayout(line);
 }
 
@@ -182,8 +215,6 @@ void PropertyBrowser::setLine(QString propertyName, QVariant value)
         break;
     case QMetaType::Bool:
         static_cast<QCheckBox *>(widget)->setChecked(value.toBool());
-        break;
-    case QMetaType::User:
         break;
     default:
         //Must have a delt with type!

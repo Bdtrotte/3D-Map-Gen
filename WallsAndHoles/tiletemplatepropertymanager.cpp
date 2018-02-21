@@ -25,7 +25,7 @@ void TileTemplatePropertyManager::propertyEdited(QString propertyName, QVariant 
     }
 }
 
-QVector<QVector<QVariant> > TileTemplatePropertyManager::properties()
+QVector<QVector<QVariant>> TileTemplatePropertyManager::properties()
 {
     return {
         {"Name",       mTileTemplate->name(),         true              },
