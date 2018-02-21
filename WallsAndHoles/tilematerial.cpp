@@ -1,13 +1,20 @@
 #include "tilematerial.h"
 
 TileMaterial::TileMaterial(QObject *parent)
-    : TileMaterial(getDefaultTexture(), 1, 1, 1, 1, parent)
+    : TileMaterial("new Tile Material", getDefaultTexture(), 1, 1, 1, 1, parent)
 {
 }
 
 
-TileMaterial::TileMaterial(QSharedPointer<QImage> texture, float ambient, float diffuse, float specular, float shininess, QObject *parent)
+TileMaterial::TileMaterial(QString name,
+                           QSharedPointer<QImage> texture,
+                           float ambient,
+                           float diffuse,
+                           float specular,
+                           float shininess,
+                           QObject *parent)
     : QObject(parent)
+    , mName(name)
     , mTexture(texture)
     , mAmbient(ambient)
     , mDiffuse(diffuse)
@@ -15,14 +22,15 @@ TileMaterial::TileMaterial(QSharedPointer<QImage> texture, float ambient, float 
     , mShininess(shininess) {}
 
 
+QString TileMaterial::name() const { return mName; }
+QSharedPointer<QImage> TileMaterial::texture() const { return mTexture; }
+float TileMaterial::ambient() const { return mAmbient; }
+float TileMaterial::diffuse() const { return mDiffuse; }
+float TileMaterial::specular() const { return mSpecular; }
+float TileMaterial::shininess() const { return mShininess; }
 
-QSharedPointer<QImage> TileMaterial::getTexture() const { return mTexture; }
-float TileMaterial::getAmbient() const { return mAmbient; }
-float TileMaterial::getDiffuse() const { return mDiffuse; }
-float TileMaterial::getSpecular() const { return mSpecular; }
-float TileMaterial::getShininess() const { return mShininess; }
 
-
+void TileMaterial::setName(QString name) { mName = name; }
 void TileMaterial::setTexture(QSharedPointer<QImage> texture) { mTexture = texture; emit textureChanged(); }
 void TileMaterial::setAmbient(float ambient) { mAmbient = ambient; emit phongParamsChanged(); }
 void TileMaterial::setDiffuse(float diffuse) { mDiffuse = diffuse; emit phongParamsChanged(); }
@@ -34,7 +42,7 @@ TileMaterial *TileMaterial::defaultMaterial = nullptr;
 TileMaterial *TileMaterial::getDefaultMaterial()
 {
     if (defaultMaterial == nullptr)
-        defaultMaterial = new TileMaterial(getDefaultTexture(), 1, 1, 1, 1, nullptr);
+        defaultMaterial = new TileMaterial("Default", getDefaultTexture(), 1, 1, 1, 1, nullptr);
 
     return defaultMaterial;
 }

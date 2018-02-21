@@ -21,16 +21,23 @@ public:
     /**
      * @brief Creates a TileMaterial with the given material.
      */
-    TileMaterial(QSharedPointer<QImage> texture, float ambient, float diffuse, float specular, float shininess, QObject *parent = nullptr);
+    TileMaterial(QString name,
+                 QSharedPointer<QImage> texture,
+                 float ambient,
+                 float diffuse,
+                 float specular,
+                 float shininess,
+                 QObject *parent = nullptr);
+
+    QString name() const;
+    QSharedPointer<QImage> texture() const;
+    float ambient() const;
+    float diffuse() const;
+    float specular() const;
+    float shininess() const;
 
 
-    QSharedPointer<QImage> getTexture() const;
-    float getAmbient() const;
-    float getDiffuse() const;
-    float getSpecular() const;
-    float getShininess() const;
-
-
+    void setName(QString name);
     void setTexture(QSharedPointer<QImage> texture);
     void setAmbient(float ambient);
     void setDiffuse(float diffuse);
@@ -45,6 +52,7 @@ signals:
     void phongParamsChanged();
 
 private:
+    QString mName;
 
     QSharedPointer<QImage> mTexture;
     float mAmbient;
