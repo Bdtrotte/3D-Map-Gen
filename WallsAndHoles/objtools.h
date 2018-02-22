@@ -115,15 +115,13 @@ inline SimpleTexturedObjectP loadOBJSimpleTextured(QString path)
     }
 
 
-    /*
      * Reformat the .obj data to the format required by SimpleTexturedObject.
      * That is,
      *  1) Vertices remain the same.
      *  2) Normals are per-triangle.
      *  3) UVs are per-vertex-per-triangle (TriangleTexCoords structure).
      *  4) Triangle vertex indices are given in a Triangle structure.
-     * */
-/*
+
     QVector<QVector3D> &pVertices = vertices;
     QVector<SimpleTexturedObject::Triangle> &pTriangles = vertexIndices;
 
