@@ -200,8 +200,10 @@ void MeshView::save(QString path){
 //        qDebug() << "Fail to save mesh: scene is empty";
 //    }
 //    saveOBJ(path, object[0]);
-
-    qDebug() << "MeshView::save() is deprecated. Nothing is done.";
+    auto renderer = getCurrentRenderer();
+    SharedOBJModel obj = renderer->exportOBJ();
+    obj->saveOBJ(path);
+//qDebug() << "MeshView::save() is deprecated. Nothing is done.";
 }
 
 

@@ -362,3 +362,12 @@ void SimpleTexturedRenderer::removeImageTexture(const QImage *image)
     mTexturesToObjects.remove(texture.data());
     mImagesToTextures.remove(image);
 }
+
+SharedOBJModel SimpleTexturedRenderer::exportOBJ()
+{
+    SharedOBJModel objModel = SharedOBJModel::create();
+    foreach(const SimpleTexturedObject *obj, mVAOs.keys()){
+        objModel->addSimpleTextured(obj);
+    }
+    return objModel;
+}

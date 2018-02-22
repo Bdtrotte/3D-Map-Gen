@@ -4,10 +4,10 @@
 #include <QTextStream>
 #include <cassert>
 
-
 #include "simpletexturedobject.h"
 
-typedef QSharedPointer<SimpleTexturedObject> SimpleTexturedObjectP;
+typedef QSharedPointer<SimpleTexturedObject> SharedSimpleTexturedObject;
+
 
 /* TODO
  *
@@ -16,6 +16,7 @@ typedef QSharedPointer<SimpleTexturedObject> SimpleTexturedObjectP;
  *
  * 2) This method does not load texture information.
  * */
+/*
 inline SimpleTexturedObjectP loadOBJSimpleTextured(QString path)
 {
     QFile file(path);
@@ -122,7 +123,7 @@ inline SimpleTexturedObjectP loadOBJSimpleTextured(QString path)
      *  3) UVs are per-vertex-per-triangle (TriangleTexCoords structure).
      *  4) Triangle vertex indices are given in a Triangle structure.
      * */
-
+/*
     QVector<QVector3D> &pVertices = vertices;
     QVector<SimpleTexturedObject::Triangle> &pTriangles = vertexIndices;
 
@@ -163,13 +164,15 @@ inline SimpleTexturedObjectP loadOBJSimpleTextured(QString path)
 
     return object;
 }
+*/
 
 /* TODO
  *
  * Just like the load function above, this should be moved to a different class
  * and needs to be modified to handle texture information.
  * */
-inline bool saveOBJSimpleTextured(QString path, const SimpleTexturedObject &object)
+/*
+inline bool saveOBJSimpleTextured(QString path, const SimpleTexturedRenderer &object)
 {
     qDebug() << "Saving obj...";
 
@@ -241,5 +244,110 @@ inline bool saveOBJSimpleTextured(QString path, const SimpleTexturedObject &obje
 
     return true;
 }
+*/
+/*
+namespace obj
+{
+    // Structure: Vertex
+    //
+    // Description: Model Vertex object that holds
+    //	a Position, Normal, and Texture Coordinate
+    struct Vertex
+    {
+        // Position Vector
+        QVector3D position;
+
+        // Normal Vector
+        QVector3D normal;
+
+        // Texture Coordinate Vector
+        QVector2D textureCoordinate;
+    };
+
+    struct Material
+    {
+        Material()
+        {
+            name;
+            Ns = 0.0f;
+            Ni = 0.0f;
+            d = 0.0f;
+            illum = 0;
+        }
+
+        // Material Name
+        QString name;
+        // Ambient Color
+        QVector3D Ka;
+        // Diffuse Color
+        QVector3D Kd;
+        // Specular Color
+        QVector3D Ks;
+        // Specular Exponent
+        float Ns;
+        // Optical Density
+        float Ni;
+        // Dissolve
+        float d;
+        // Illumination
+        int illum;
+        // Ambient Texture Map
+        QString map_Ka;
+        // Diffuse Texture Map
+        QString map_Kd;
+        // Specular Texture Map
+        QString map_Ks;
+        // Specular Hightlight Map
+        QString map_Ns;
+        // Alpha Texture Map
+        QString map_d;
+        // Bump Map
+        QString map_bump;
+    };
+
+    // Structure: Mesh
+    //
+    // Description: A Simple Mesh Object that holds
+    //	a name, a vertex list, and an index list
+    struct Mesh
+    {
+        // Default Constructor
+        Mesh()
+        {
+
+        }
+        // Variable Set Constructor
+        Mesh(std::vector<Vertex>& _Vertices, std::vector<unsigned int>& _Indices)
+        {
+            Vertices = _Vertices;
+            Indices = _Indices;
+        }
+        // Mesh Name
+        QString meshName;
+        // Vertex List
+        QVector<Vertex> vertices;
+        // Index List
+        QVector<unsigned int> indices;
+
+        // Material
+        QString materialName;
+    };
+}
+*/
+
+class OBJModel
+{
+public:
+    ~OBJModel(){
+        mObjects.clear();
+    }
+    void addSimpleTextured(const SimpleTexturedObject *object);
+    void saveOBJ(QString path);
+
+private:
+    QVector<const SimpleTexturedObject*> mObjects;
+};
+
+typedef QSharedPointer<OBJModel> SharedOBJModel;
 
 #endif // OBJTOOLS_H
