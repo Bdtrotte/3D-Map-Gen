@@ -23,9 +23,20 @@ public:
         float baseHeight;
         QSharedPointer<QImage> image;
 
+        float ambient;
+        float diffuse;
+        float specular;
+        float shininess;
+
         bool operator ==(const Input &other) const
         {
-            return topHeight == other.topHeight && baseHeight == other.baseHeight && image.data() == other.image.data();
+            return topHeight == other.topHeight
+                    && baseHeight == other.baseHeight
+                    && image.data() == other.image.data()
+                    && ambient == other.ambient
+                    && diffuse == other.diffuse
+                    && specular == other.specular
+                    && shininess == other.shininess;
         }
 
         bool operator !=(const Input &other) const

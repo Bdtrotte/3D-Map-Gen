@@ -30,7 +30,7 @@ void ImageFinderBar::findImage()
     QString path = QFileDialog::getOpenFileName(this,
                                                 tr("Open Image"),
                                                 "/home/",
-                                                tr("Image Files (*.png, *.jpg)")); //TODO Add more supported image formats
+                                                tr("Image Files (*.png *.jpg)")); //TODO Add more supported image formats
 
     if (path.isEmpty()) return;
 

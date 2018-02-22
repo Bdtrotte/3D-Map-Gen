@@ -49,7 +49,7 @@ signals:
      * Should be emited whenever the source data is changed from a place other than the property browser.
      * @param propertyId
      */
-    propertyChanged(QString propertyName, QVariant value);
+    void propertyChanged(QString propertyName, QVariant value);
 };
 
 #endif // ABSTRACTPROPERTYMANAGER_H

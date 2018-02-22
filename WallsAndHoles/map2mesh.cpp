@@ -85,12 +85,32 @@ void Map2Mesh::inferProperties()
             float topHeight = grid(x,y)->height();
 
             auto tileMaterial = grid(x,y)->material();
-            QSharedPointer<QImage> image = tileMaterial == nullptr ? nullptr : tileMaterial->texture()->image();
+
+            QSharedPointer<QImage> image;
+            float ambient, diffuse, specular, shininess;
+
+            if (tileMaterial == nullptr) {
+                image = nullptr;
+                ambient = 1;
+                diffuse = 1;
+                specular = 1;
+                shininess = 1;
+            } else {
+                image = tileMaterial->texture()->image();
+                ambient = tileMaterial->ambient();
+                diffuse = tileMaterial->diffuse();
+                specular = tileMaterial->specular();
+                shininess = tileMaterial->shininess();
+            }
 
             newProperties(x, y) = {
                     topHeight,
                     baseHeight,
-                    image
+                    image,
+                    ambient,
+                    diffuse,
+                    specular,
+                    shininess
             };
         }
     }

@@ -36,10 +36,10 @@ QVector<QVector<QVariant> > MaterialPropertyManager::properties()
 
     return {
         {"Name", mMaterial->name(), true},
-        {"Ambient", mMaterial->ambient(), true, 0, 1},
-        {"Diffuse", mMaterial->diffuse(), true, 0, 1},
-        {"Specular", mMaterial->specular(), true, 0, 1},
-        {"Shininess", mMaterial->shininess(), true, 0, 1},
+        {"Ambient", mMaterial->ambient(), true, 0, 10},
+        {"Diffuse", mMaterial->diffuse(), true, 0, 10},
+        {"Specular", mMaterial->specular(), true, 0, 10},
+        {"Shininess", mMaterial->shininess(), true, 0, 100},
         {"Texture", QVariant::fromValue<ImageFinderBar *>(imageFindBar), true, PropertyBrowser::LineWidget}
     };
 }
