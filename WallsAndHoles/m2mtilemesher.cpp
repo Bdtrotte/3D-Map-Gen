@@ -211,7 +211,11 @@ QSharedPointer<SimpleTexturedObject> M2MTileMesher::getTopMesh(Input tilePropert
     QSharedPointer<SimpleTexturedObject> obj = QSharedPointer<SimpleTexturedObject>::create();
 
     obj->setTriangleInfo(vertices, faceNormals, triangles);
-    obj->setMaterialInfo(1, 1.7, 0.3, 0.2); // default "soft" material
+    obj->setMaterialInfo(
+                tileProperties.ambient,
+                tileProperties.diffuse,
+                tileProperties.specular,
+                tileProperties.shininess);
     obj->setTextureInfo(texCoords, textureImage);
     obj->commit();
 
