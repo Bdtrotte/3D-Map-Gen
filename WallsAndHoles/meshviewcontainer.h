@@ -16,8 +16,6 @@ class MeshViewContainer : public QWidget
 public:
     explicit MeshViewContainer(QWidget *parent = 0);
     ~MeshViewContainer();
-    void saveMesh(QString path);
-    void loadMesh(QString path);
 
     /**
      * @brief Calls setRenderer(renderer) on the mesh view.

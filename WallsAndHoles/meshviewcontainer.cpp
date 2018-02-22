@@ -32,12 +32,3 @@ void MeshViewContainer::on_toolSelection_currentIndexChanged(int index) {
         break;
     }
 }
-
-void MeshViewContainer::saveMesh(QString path){
-    mMeshView = findChild<MeshView *>();
-    mMeshView->save(path);
-}
-void MeshViewContainer::loadMesh(QString path){
-    mMeshView = findChild<MeshView *>();
-    mMeshView->load(path);
-}

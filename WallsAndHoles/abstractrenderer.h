@@ -12,8 +12,6 @@
 // For std::function
 #include <functional>
 
-#include "objtools.h"
-
 /**
  * @brief Something that renders a 3D scene to the screen using OpenGL.
  */
@@ -62,8 +60,6 @@ public:
             // Dequeues and invokes a function.
             mFunctionsForOpenGL.dequeue()();
     }
-
-    virtual SharedOBJModel exportOBJ()=0;
 
 public slots:
 

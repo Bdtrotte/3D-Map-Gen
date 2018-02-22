@@ -4,7 +4,7 @@
 using Triangle = Triplet<unsigned int, unsigned int, unsigned int>;
 using TriangleTexCoords = Triplet<QVector2D, QVector2D, QVector2D>;
 
-void OBJModel::addSimpleTextured(const SimpleTexturedObject *object)
+void OBJModel::addSimpleTextured(SharedSimpleTexturedObject object)
 {
     /* interface of SimpleTexturedObject
     int getNumVertices() const;

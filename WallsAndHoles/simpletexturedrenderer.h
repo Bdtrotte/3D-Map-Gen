@@ -14,8 +14,6 @@
 #include "simpletexturedscene.h"
 #include "simpletexturedobject.h"
 
-#include "objtools.h"
-
 
 /**
  * @brief The SimpleTexturedRenderer class renders a SimpleTexturedScene.
@@ -61,11 +59,6 @@ public slots:
      * and all data is cleaned immediately. Locks the mGLDataMutex.
      */
     void cleanUp() override;
-
-    /**
-     * @brief export all rendered object into a single OBJModel
-     */
-    SharedOBJModel exportOBJ() override;
 
 
 protected:

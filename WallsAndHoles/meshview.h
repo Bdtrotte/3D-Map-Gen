@@ -44,8 +44,6 @@ public slots:
      * @param name The name of the tool.
      */
     void activateTool(QString name);
-    void load(QString path);
-    void save(QString path);
 
 
     /**

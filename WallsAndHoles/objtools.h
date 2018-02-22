@@ -341,11 +341,11 @@ public:
     ~OBJModel(){
         mObjects.clear();
     }
-    void addSimpleTextured(const SimpleTexturedObject *object);
+    void addSimpleTextured(SharedSimpleTexturedObject object);
     void saveOBJ(QString path);
 
 private:
-    QVector<const SimpleTexturedObject*> mObjects;
+    QVector<SharedSimpleTexturedObject> mObjects;
 };
 
 typedef QSharedPointer<OBJModel> SharedOBJModel;
