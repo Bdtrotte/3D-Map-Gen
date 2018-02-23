@@ -145,4 +145,5 @@ DISTFILES += \
 
 RESOURCES += \
     shaders.qrc \
-    textures.qrc
+    textures.qrc \
+    icons.qrc

@@ -15,7 +15,7 @@ ToolManager::ToolManager(QObject *parent)
 QAction *ToolManager::registerTool(AbstractToolP tool, QString name)
 {
     // This automatically adds action to mActionGroup.
-    QAction *action = new QAction("Activate tool: " + name, mActionGroup);
+    QAction *action = new QAction(name, mActionGroup);
     action->setCheckable(true);
 
     connect(action, &QAction::toggled,
