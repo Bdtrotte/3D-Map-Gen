@@ -7,7 +7,6 @@
 
 class TileMaterial : public QObject
 {
-
     Q_OBJECT
 
 public:
@@ -49,6 +48,7 @@ signals:
     void nameChanged(QString newName);
     void textureChanged();
     void phongParamsChanged();
+    void aboutToBeRemoved();
 
 private:
     QString mName;

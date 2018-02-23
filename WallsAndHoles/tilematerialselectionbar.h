@@ -13,12 +13,14 @@ class TileMaterialSelectionBar : public QWidget
 public:
     explicit TileMaterialSelectionBar(TileMaterial *tileMaterial, QWidget *parent = nullptr);
 
+    TileMaterial *material() const { return mMaterial; }
+    void setMaterial(TileMaterial *material);
+
 signals:
     void materialChanged(TileMaterial *material);
 
 private slots:
     void selectMaterial();
-
     void materialsNameChanged(QString newName);
 
 protected:
@@ -26,8 +28,6 @@ protected:
     void dropEvent(QDropEvent *event) override;
 
 private:
-    void setMaterial(TileMaterial *material);
-
     QLineEdit *mLine;
 
     TileMaterial *mMaterial;

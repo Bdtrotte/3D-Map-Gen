@@ -4,7 +4,6 @@
 
 #include <QVBoxLayout>
 #include <QHBoxLayout>
-#include <QPushButton>
 #include <QSplitter>
 
 TileMaterialView::TileMaterialView(QWidget *parent)
@@ -24,9 +23,9 @@ TileMaterialView::TileMaterialView(QWidget *parent)
 
     QHBoxLayout *hLayout = new QHBoxLayout;
     QPushButton *addMaterial = new QPushButton("Add Material", this);
-    QPushButton *removeMaterial = new QPushButton("Remove Material", this);
+    mRemoveMaterialButton = new QPushButton("Remove Material", this);
     hLayout->addWidget(addMaterial);
-    hLayout->addWidget(removeMaterial);
+    hLayout->addWidget(mRemoveMaterialButton);
 
     layout->addLayout(hLayout);
 
@@ -44,7 +43,7 @@ TileMaterialView::TileMaterialView(QWidget *parent)
 
     connect(addMaterial, &QPushButton::clicked,
             this, &TileMaterialView::addMaterial);
-    connect(removeMaterial, &QPushButton::clicked,
+    connect(mRemoveMaterialButton, &QPushButton::clicked,
             this, &TileMaterialView::removeMaterial);
 
     connect(mMaterialList->selectionModel(), &QItemSelectionModel::currentChanged,
@@ -58,15 +57,20 @@ void TileMaterialView::addMaterial()
 
 void TileMaterialView::removeMaterial()
 {
-    // TODO implement material removal!
+    int ind = mMaterialList->selectionModel()->currentIndex().row();
+
+    mTileMaterialSet->removeMaterial(ind);
 }
 
 void TileMaterialView::materialSelected()
 {
     int ind = mMaterialList->selectionModel()->currentIndex().row();
 
-    if (ind == -1)
+    if (ind < 1) {
         mPropertyBrowser->clear();
-    else
+        mRemoveMaterialButton->setEnabled(false);
+    } else {
         mPropertyBrowser->setPropertyManager(new MaterialPropertyManager(mTileMaterialSet->materialAt(ind)));
+        mRemoveMaterialButton->setEnabled(true);
+    }
 }

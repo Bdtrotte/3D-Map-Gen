@@ -1,5 +1,7 @@
 #include "tilematerialselectionbar.h"
 
+#include "tilematerialselectiondialog.h"
+
 #include <QPushButton>
 #include <QHBoxLayout>
 #include <QDragEnterEvent>
@@ -39,7 +41,10 @@ TileMaterialSelectionBar::TileMaterialSelectionBar(TileMaterial *tileMaterial, Q
 
 void TileMaterialSelectionBar::selectMaterial()
 {
-    // TODO: Add the ability to view a list of materials and select one that way.
+    TileMaterialSelectionDialog tmsd;
+
+    if (tmsd.exec())
+        setMaterial(TileMaterialSet::getInstance()->materialAt(tmsd.result));
 }
 
 void TileMaterialSelectionBar::materialsNameChanged(QString newName)

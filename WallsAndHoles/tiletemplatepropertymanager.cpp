@@ -34,6 +34,11 @@ QVector<QVector<QVariant>> TileTemplatePropertyManager::properties()
 
     connect(materialSelectionBar, &TileMaterialSelectionBar::materialChanged,
             this, &TileTemplatePropertyManager::materialChanged);
+    connect(mTileTemplate, &TileTemplate::materialChanged,
+            materialSelectionBar, [this, materialSelectionBar]() {
+        if (materialSelectionBar->material() != mTileTemplate->material())
+            materialSelectionBar->setMaterial(mTileTemplate->material());
+    });
 
     return {
         {"Name",       mTileTemplate->name(),         true              },

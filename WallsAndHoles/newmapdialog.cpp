@@ -5,7 +5,6 @@
 #include <QGroupBox>
 #include <QLabel>
 #include <QDialogButtonBox>
-#include <QHBoxLayout>
 
 NewMapDialog::NewMapDialog(QDialog *parent)
     : QDialog(parent)

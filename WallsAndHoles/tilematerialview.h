@@ -6,6 +6,7 @@
 
 #include <QWidget>
 #include <QListView>
+#include <QPushButton>
 
 class TileMaterialView : public QWidget
 {
@@ -24,6 +25,7 @@ private:
     TileMaterialSet *mTileMaterialSet;
 
     QListView *mMaterialList;
+    QPushButton *mRemoveMaterialButton;
 
     PropertyBrowser *mPropertyBrowser;
 };

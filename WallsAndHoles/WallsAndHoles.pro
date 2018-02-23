@@ -77,7 +77,8 @@ SOURCES += \
     tilematerialset.cpp \
     tilematerialselectionbar.cpp \
     materialpropertymanager.cpp \
-    imagefinderbar.cpp
+    imagefinderbar.cpp \
+    tilematerialselectiondialog.cpp
 
 HEADERS += \
     meshview.h \
@@ -142,7 +143,8 @@ HEADERS += \
     tilematerialselectionbar.h \
     materialpropertymanager.h \
     imagefinderbar.h \
-    imageandsource.h
+    imageandsource.h \
+    tilematerialselectiondialog.h
 
 FORMS += \
     meshview.ui \

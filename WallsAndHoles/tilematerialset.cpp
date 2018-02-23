@@ -31,7 +31,7 @@ void TileMaterialSet::removeMaterial(int index)
     //can't remove the default
     Q_ASSERT(index > 0 && index <= size());
 
-    // TODO: Needs to handle anything currently using this material
+    emit mMaterials[index - 1]->aboutToBeRemoved();
 
     beginRemoveRows(QModelIndex(), index, index);
     TileMaterial *tm = mMaterials.takeAt(index - 1);
