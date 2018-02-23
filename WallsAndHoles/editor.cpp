@@ -79,10 +79,16 @@ Editor::Editor(QObject *parent)
                             QSharedPointer<TileMapSelectionTool>::create(mPropertyBrowser, mMapView->previewItem())
                             , "Selection Tool"));
 
+    mToolBar->actions().at(0)->setIcon(QIcon("://icons/22x22/brush.png"));
+    mToolBar->actions().at(1)->setIcon(QIcon("://icons/22x22/stock-tool-bucket-fill.png"));
+    mToolBar->actions().at(2)->setIcon(QIcon("://icons/22x22/line.png"));
+    mToolBar->actions().at(3)->setIcon(QIcon(":/icons/22x22/rectangle-fill.png"));
+    mToolBar->actions().at(4)->setIcon(QIcon(":/icons/22x22/ellipse-fill.png"));
+    mToolBar->actions().at(5)->setIcon(QIcon("://icons/22x22/mouse.png"));
+
     //Sets up the context toolBar
     mToolBar->addSeparator();
     mToolBar->addWidget(mTileMapToolManager->contextToolBar());
-
 
     //Create widget connections
     connect(mMapView, &MapView::cellActivated,

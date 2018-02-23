@@ -49,6 +49,12 @@ TileTemplateSetsView::TileTemplateSetsView(TileTemplateSetsManager *tileTemplate
     mSaveTemplateSet->setEnabled(false);
     mRemoveTemplate->setEnabled(false);
 
+    //Sets icons for the action bar
+    actionBar->actions().at(0)->setIcon(QIcon("://icons/22x22/add.png"));
+    actionBar->actions().at(1)->setIcon(QIcon("://icons/22x22/remove.png"));
+    actionBar->actions().at(2)->setIcon(QIcon("://icons/22x22/save.png"));
+    actionBar->actions().at(3)->setIcon(QIcon("://icons/22x22/load.png"));
+
     //Set up default template set view
     mDefaultTemplateView = new QListView(this);
     mDefaultTemplateView->setSizePolicy(QSizePolicy(QSizePolicy::Preferred, QSizePolicy::Minimum));
