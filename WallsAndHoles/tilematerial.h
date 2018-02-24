@@ -44,6 +44,16 @@ public:
 
     static TileMaterial *getDefaultMaterial();
 
+    bool operator ==(const TileMaterial &other)
+    {
+        return mAmbient == other.mAmbient
+                && mDiffuse == other.mDiffuse
+                && mSpecular == other.mSpecular
+                && mShininess == other.mShininess
+                && mTexture == other.mTexture
+                && mName == other.mName;
+    }
+
 signals:
     void nameChanged(QString newName);
     void textureChanged();

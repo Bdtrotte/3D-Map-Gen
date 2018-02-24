@@ -18,6 +18,15 @@ public:
     TileMaterial *materialAt(int index);
     const TileMaterial *materialAt(int index) const;
 
+    /**
+     * @brief materialInSet
+     * If the given material is equal to one already in the set, then a pointer
+     * to the one in the set is returned, otherwise a nullptr is returned.
+     * @param material
+     * @return
+     */
+    TileMaterial *materialInSet(const TileMaterial &material);
+
     int size() const { return mMaterials.size(); }
 
     //Model Functions:

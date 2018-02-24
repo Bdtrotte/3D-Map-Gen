@@ -56,6 +56,15 @@ const TileMaterial *TileMaterialSet::materialAt(int index) const
         return mMaterials[index - 1];
 }
 
+TileMaterial *TileMaterialSet::materialInSet(const TileMaterial &material)
+{
+    for (TileMaterial *tm : mMaterials)
+        if ((*tm) == material)
+            return tm;
+
+    return nullptr;
+}
+
 QModelIndex TileMaterialSet::index(int row, int, const QModelIndex &parent) const
 {
     if (parent.isValid() || row < 0 || row > size())
