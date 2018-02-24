@@ -1,8 +1,5 @@
 Acknowledgements:
 
-Icons were taken from Tiled at:
-https://github.com/bjorn/tiled/tree/master/src/tiled/images
-
 Most of the icons are from the GNOME and GIMP icon themes (GPL)
 
 Crystal Clear Icon Set:
