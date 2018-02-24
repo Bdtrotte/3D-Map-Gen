@@ -6,6 +6,7 @@
 #include "tilemapselectiontool.h"
 #include "propertybrowser.h"
 #include "mappropertymanager.h"
+#include "tilematerialview.h"
 
 #include "filltool.h"
 
@@ -54,9 +55,14 @@ Editor::Editor(QObject *parent)
     mPropertyBrowser = new PropertyBrowser(mMainWindow);
     propBrowserDock->setWidget(mPropertyBrowser);
 
+    QDockWidget *materialDock = new QDockWidget("Material View", mMainWindow);
+    TileMaterialView *materialView = new TileMaterialView(mMainWindow);
+    materialDock->setWidget(materialView);
+
     mMainWindow->addDockWidget(Qt::RightDockWidgetArea, meshViewDock);
     mMainWindow->addDockWidget(Qt::LeftDockWidgetArea, templateDock);
     mMainWindow->addDockWidget(Qt::RightDockWidgetArea, propBrowserDock);
+    mMainWindow->addDockWidget(Qt::RightDockWidgetArea, materialDock);
 
 
     // Add tools.

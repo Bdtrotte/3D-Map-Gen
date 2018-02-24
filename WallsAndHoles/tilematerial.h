@@ -1,14 +1,12 @@
 #ifndef TILEMATERIAL_H
 #define TILEMATERIAL_H
 
-#include <QObject>
-#include <QSharedPointer>
-#include <QImage>
+#include "imageandsource.h"
 
+#include <QObject>
 
 class TileMaterial : public QObject
 {
-
     Q_OBJECT
 
 public:
@@ -21,17 +19,24 @@ public:
     /**
      * @brief Creates a TileMaterial with the given material.
      */
-    TileMaterial(QSharedPointer<QImage> texture, float ambient, float diffuse, float specular, float shininess, QObject *parent = nullptr);
+    TileMaterial(QString name,
+                 SharedImageAndSource texture,
+                 float ambient,
+                 float diffuse,
+                 float specular,
+                 float shininess,
+                 QObject *parent = nullptr);
+
+    QString name() const;
+    SharedImageAndSource texture() const;
+    float ambient() const;
+    float diffuse() const;
+    float specular() const;
+    float shininess() const;
 
 
-    QSharedPointer<QImage> getTexture() const;
-    float getAmbient() const;
-    float getDiffuse() const;
-    float getSpecular() const;
-    float getShininess() const;
-
-
-    void setTexture(QSharedPointer<QImage> texture);
+    void setName(QString name);
+    void setTexture(SharedImageAndSource texture);
     void setAmbient(float ambient);
     void setDiffuse(float diffuse);
     void setSpecular(float specular);
@@ -39,14 +44,26 @@ public:
 
     static TileMaterial *getDefaultMaterial();
 
-signals:
+    bool operator ==(const TileMaterial &other)
+    {
+        return mAmbient == other.mAmbient
+                && mDiffuse == other.mDiffuse
+                && mSpecular == other.mSpecular
+                && mShininess == other.mShininess
+                && mTexture == other.mTexture
+                && mName == other.mName;
+    }
 
+signals:
+    void nameChanged(QString newName);
     void textureChanged();
     void phongParamsChanged();
+    void aboutToBeRemoved();
 
 private:
+    QString mName;
 
-    QSharedPointer<QImage> mTexture;
+    SharedImageAndSource mTexture;
     float mAmbient;
     float mDiffuse;
     float mSpecular;
@@ -57,8 +74,8 @@ private:
     static TileMaterial *defaultMaterial;
 
     /* Singleton for the default texture. */
-    static QSharedPointer<QImage> getDefaultTexture();
-    static QSharedPointer<QImage> DefaultTexture;
+    static SharedImageAndSource getDefaultTexture();
+    static SharedImageAndSource DefaultTexture;
 };
 
 #endif // TILEMATERIAL_H

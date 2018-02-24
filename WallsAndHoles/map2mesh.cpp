@@ -96,11 +96,11 @@ void Map2Mesh::inferProperties()
                 specular = 1;
                 shininess = 1;
             } else {
-                image = tileMaterial->getTexture();
-                ambient = tileMaterial->getAmbient();
-                diffuse = tileMaterial->getDiffuse();
-                specular = tileMaterial->getSpecular();
-                shininess = tileMaterial->getShininess();
+                image = tileMaterial->texture()->image();
+                ambient = tileMaterial->ambient();
+                diffuse = tileMaterial->diffuse();
+                specular = tileMaterial->specular();
+                shininess = tileMaterial->shininess();
             }
 
             newProperties(x, y) = {
