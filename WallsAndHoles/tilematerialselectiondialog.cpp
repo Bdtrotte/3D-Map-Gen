@@ -34,5 +34,5 @@ TileMaterialSelectionDialog::TileMaterialSelectionDialog(QWidget *parent)
 
 void TileMaterialSelectionDialog::selectedChanged()
 {
-    result = mMaterialList->selectionModel()->currentIndex().row();
+    mResult = mMaterialList->selectionModel()->currentIndex().row();
 }

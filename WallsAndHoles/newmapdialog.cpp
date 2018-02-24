@@ -70,7 +70,7 @@ NewMapDialog::NewMapDialog(QDialog *parent)
 
 void NewMapDialog::onAccepted()
 {
-    result = NewMapData(mWSpinBox->value(),
+    mResult = NewMapData(mWSpinBox->value(),
                         mHSpinBox->value(),
                         mIndoorMapChkBox->isChecked(),
                         mCeilingChkBox->isChecked());

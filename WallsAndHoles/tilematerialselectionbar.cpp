@@ -44,7 +44,7 @@ void TileMaterialSelectionBar::selectMaterial()
     TileMaterialSelectionDialog tmsd;
 
     if (tmsd.exec())
-        setMaterial(TileMaterialSet::getInstance()->materialAt(tmsd.result));
+        setMaterial(TileMaterialSet::getInstance()->materialAt(tmsd.result()));
 }
 
 void TileMaterialSelectionBar::materialsNameChanged(QString newName)

@@ -17,7 +17,7 @@ void TileTemplateSetsManager::newTileTemplateSet()
     NewTileTemplateSetDialog dia;
     if (dia.exec()) {
         for (SavableTileTemplateSet *ts : mTileTemplateSets) {
-            if (dia.result.fileLocation == ts->savePath()) {
+            if (dia.result().fileLocation == ts->savePath()) {
                 QMessageBox mb;
                 mb.setText(tr("Tile Template Set already open at requested location."));
                 mb.exec();
@@ -25,7 +25,7 @@ void TileTemplateSetsManager::newTileTemplateSet()
             }
         }
 
-        SavableTileTemplateSet *newTTS = new SavableTileTemplateSet(dia.result.fileLocation, dia.result.name);
+        SavableTileTemplateSet *newTTS = new SavableTileTemplateSet(dia.result().fileLocation, dia.result().name);
         addTileTemplateSet(newTTS);
     }
 }

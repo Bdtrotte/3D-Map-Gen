@@ -11,12 +11,14 @@ class TileMaterialSelectionDialog : public QDialog
 public:
     explicit TileMaterialSelectionDialog(QWidget *parent = nullptr);
 
-    int result = 0; //default material
+    int result() const { return mResult; }
 
 private slots:
     void selectedChanged();
 
 private:
+    int mResult = 0; //default material
+
     QListView *mMaterialList;
 };
 
