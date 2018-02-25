@@ -12,10 +12,15 @@ ToolManager::ToolManager(QObject *parent)
 }
 
 
-QAction *ToolManager::registerTool(AbstractToolP tool, QString name)
+QAction *ToolManager::registerTool(AbstractToolP tool, QString name, QIcon icon)
 {
     // This automatically adds action to mActionGroup.
     QAction *action = new QAction(name, mActionGroup);
+
+    if(!icon.isNull()){
+        action->setIcon(icon);
+    }
+
     action->setCheckable(true);
 
     connect(action, &QAction::toggled,

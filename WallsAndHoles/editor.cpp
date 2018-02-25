@@ -24,6 +24,7 @@
 #include <QMessageBox>
 #include <QFileDialog>
 #include <QListView>
+#include <QShortcut>
 
 Editor::Editor(QObject *parent)
     : QObject(parent)
@@ -62,29 +63,27 @@ Editor::Editor(QObject *parent)
     // Add tools.
     mToolBar->addAction(mTileMapToolManager->registerMapTool(
                             QSharedPointer<TileMapBrushTool>::create(mMapView->previewItem())
-                            , "Brush Tool"));
+                            , "Brush Tool"
+                            , QIcon("://icons/22x22/brush.png")));
     mToolBar->addAction(mTileMapToolManager->registerMapTool(
                             QSharedPointer<FillTool>::create(mMapView->previewItem())
-                            , "Fill Tool"));
+                            , "Fill Tool"
+                            , QIcon("://icons/22x22/stock-tool-bucket-fill.png")));
     mToolBar->addAction(mTileMapToolManager->registerMapTool(
                             QSharedPointer<LineBrushTool>::create(mMapView->previewItem())
-                            , "Line Tool"));
+                            , "Line Tool", QIcon("://icons/22x22/line.png")));
     mToolBar->addAction(mTileMapToolManager->registerMapTool(
                             QSharedPointer<RectBrushTool>::create(mMapView->previewItem())
-                            , "Rect Tool"));
+                            , "Rect Tool"
+                            , QIcon(":/icons/22x22/rectangle-fill.png")));
     mToolBar->addAction(mTileMapToolManager->registerMapTool(
                             QSharedPointer<EllipseBrushTool>::create(mMapView->previewItem())
-                            , "Ellipse Tool"));
+                            , "Ellipse Tool"
+                            , QIcon(":/icons/22x22/ellipse-fill.png")));
     mToolBar->addAction(mTileMapToolManager->registerMapTool(
                             QSharedPointer<TileMapSelectionTool>::create(mPropertyBrowser, mMapView->previewItem())
-                            , "Selection Tool"));
-
-    mToolBar->actions().at(0)->setIcon(QIcon("://icons/22x22/brush.png"));
-    mToolBar->actions().at(1)->setIcon(QIcon("://icons/22x22/stock-tool-bucket-fill.png"));
-    mToolBar->actions().at(2)->setIcon(QIcon("://icons/22x22/line.png"));
-    mToolBar->actions().at(3)->setIcon(QIcon(":/icons/22x22/rectangle-fill.png"));
-    mToolBar->actions().at(4)->setIcon(QIcon(":/icons/22x22/ellipse-fill.png"));
-    mToolBar->actions().at(5)->setIcon(QIcon("://icons/22x22/mouse.png"));
+                            , "Selection Tool"
+                            , QIcon("://icons/22x22/mouse.png")));
 
     //Sets up the context toolBar
     mToolBar->addSeparator();
