@@ -32,7 +32,7 @@ Editor::Editor(QObject *parent)
     , mMap2Mesh(nullptr)
     , mTileMap(nullptr)
     , mTileTemplateSetManager(new TileTemplateSetsManager(nullptr, this))
-    , mMapView(new MapView(mTileMapSelectedRegion, mMainWindow))
+    , mMapView(new MapView(mMainWindow))
     , mTileMapToolManager(new TileMapToolManager(this))
     , mToolBar(new QToolBar(mMainWindow))
 {

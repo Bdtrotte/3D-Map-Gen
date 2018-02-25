@@ -22,7 +22,7 @@ class MapView : public QGraphicsView
     Q_OBJECT
 
 public:
-    MapView(const QRegion &selectedRegion, QWidget *parent);
+    MapView(QWidget *parent);
     ~MapView();
 
     void clear();
@@ -95,12 +95,12 @@ private:
 
     Array2D<MapCell *> mMapCells;
 
+    QGraphicsRectItem *mMouseHoverRect;
+
     //this owns mPreviewItem
     TileMapPreviewGraphicsItem *const mPreviewItem;
 
     QPoint mPreMousePoint;
-
-    const QRegion &mSelectedRegion;
 
     QToolBar *mToolBar;
     QAction *mNoView;
