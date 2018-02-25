@@ -285,13 +285,14 @@ void Editor::setUpMenuBar()
     menuBar->clear();
 
     QMenu *fileMenu = menuBar->addMenu(tr("File"));
-    fileMenu->addAction(tr("New Map"), this, &Editor::newMap);
-    mMapDependantActions.append(fileMenu->addAction(tr("Save Map"), this, &Editor::saveMap));
+    fileMenu->addAction(tr("New Map"), this, &Editor::newMap, Qt::CTRL + Qt::Key_N);
+    mMapDependantActions.append(fileMenu->addAction(tr("Save Map"), this, &Editor::saveMap, Qt::CTRL + Qt::Key_S));
     mMapDependantActions.append(fileMenu->addAction(tr("Save Map As"), this, &Editor::saveMapAs));
-    fileMenu->addAction(tr("Load Map"), this, &Editor::loadMap);
-    mMapDependantActions.append(fileMenu->addAction(tr("Close Map"), this, &Editor::closeMap));
+    fileMenu->addAction(tr("Load Map"), this, &Editor::loadMap, Qt::CTRL + Qt::Key_O);
+    mMapDependantActions.append(fileMenu->addAction(tr("Close Map"), this, &Editor::closeMap, Qt::CTRL + Qt::Key_W));
     fileMenu->addSeparator();
     mMapDependantActions.append(fileMenu->addAction(tr("Export Map Mesh"), this, &Editor::exportMapMesh));
+
 
     QMenu *mapMenu = menuBar->addMenu(tr("Map"));
     mMapDependantActions.append(mapMenu->addAction(tr("View Map Properties"), this, &Editor::viewMapProperties));
