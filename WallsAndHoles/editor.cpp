@@ -71,7 +71,8 @@ Editor::Editor(QObject *parent)
                             , QIcon("://icons/22x22/stock-tool-bucket-fill.png")));
     mToolBar->addAction(mTileMapToolManager->registerMapTool(
                             QSharedPointer<LineBrushTool>::create(mMapView->previewItem())
-                            , "Line Tool", QIcon("://icons/22x22/line.png")));
+                            , "Line Tool"
+                            , QIcon("://icons/22x22/line.png")));
     mToolBar->addAction(mTileMapToolManager->registerMapTool(
                             QSharedPointer<RectBrushTool>::create(mMapView->previewItem())
                             , "Rect Tool"
