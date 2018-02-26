@@ -149,8 +149,7 @@ HEADERS += \
     m2mpartialmesh.h
 
 FORMS += \
-    meshview.ui \
-    meshviewcontainer.ui
+    meshview.ui
 
 DISTFILES += \
     basic.fsh \
