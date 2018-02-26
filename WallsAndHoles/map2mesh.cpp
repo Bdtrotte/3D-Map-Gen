@@ -45,11 +45,10 @@ void Map2Mesh::tileChanged(int x, int y)
 
 void Map2Mesh::remakeAll()
 {
-    mTileMeshes = Array2D<QSharedPointer<SimpleTexturedObject>>(mTileMap->mapSize());
+    mTileObjects = Array2D<QVector<QSharedPointer<SimpleTexturedObject>>>(mTileMap->mapSize());
     mScene->clear();
 
-    // Reset tile properties to a 0x0 grid so that all meshes are changed in inferProperties.
-    mTileProperties = Array2D<M2MTileMesher::Input>();
+    mTileMeshers = Array2D<QSharedPointer<M2M::TileMesher>>(mTileMap->mapSize());
 
     inferProperties();
 }
@@ -61,83 +60,56 @@ void Map2Mesh::inferProperties()
 {
     const Array2D<QSharedPointer<Tile>> &grid = mTileMap->getArray2D();
 
-    Array2D<M2MTileMesher::Input> newProperties = Array2D<M2MTileMesher::Input>(mTileMap->mapSize());
+    QVector2D mapCenter(mTileMap->width() * 0.5, mTileMap->height() * 0.5);
 
-    // Collect basic properties (like the base height of a tile's mesh).
+
     for (int x = 0; x < mTileMap->width(); ++x) {
         for (int y = 0; y < mTileMap->height(); ++y) {
 
-            // Base height will be the minimum height of all surrounding tiles.
-            auto lowestNeighborItr = std::min_element(
-                grid.begin_neighbors(x, y),
-                grid.end_neighbors(x, y),
-                [](const QSharedPointer<Tile> &t1, const QSharedPointer<Tile> &t2) {
-                    return t1->height() < t2->height();
-                }
-            );
+            Array2D<const Tile *> neighborhood(3, 3);
 
-			float minSurroundingHeight = grid(x, y)->height();
-			if (lowestNeighborItr != grid.end_neighbors(x, y))
-            	minSurroundingHeight = std::min((*lowestNeighborItr)->height(), grid(x, y)->height());
+            bool hasLeft = x > 0;
+            bool hasRight = x < grid.width()-1;
+            bool hasDown = y > 0;
+            bool hasUp = y < grid.height()-1;
+
+            neighborhood(0, 0) = hasLeft  && hasDown ? grid(x-1,y-1).data() : nullptr;
+            neighborhood(1, 0) =             hasDown ? grid( x ,y-1).data() : nullptr;
+            neighborhood(2, 0) = hasRight && hasDown ? grid(x+1,y-1).data() : nullptr;
+
+            neighborhood(0, 1) = hasLeft             ? grid(x-1, y ).data() : nullptr;
+            neighborhood(1, 1) =                       grid( x , y ).data();
+            neighborhood(2, 1) = hasRight            ? grid(x+1, y ).data() : nullptr;
+
+            neighborhood(0, 2) = hasLeft  && hasUp   ? grid(x-1,y+1).data() : nullptr;
+            neighborhood(1, 2) =             hasUp   ? grid( x ,y+1).data() : nullptr;
+            neighborhood(2, 2) = hasRight && hasUp   ? grid(x+1,y+1).data() : nullptr;
 
 
-            float baseHeight = minSurroundingHeight;
-            float topHeight = grid(x,y)->height();
 
-            auto tileMaterial = grid(x,y)->material();
+            auto newMesher = M2M::TileMesher::getMesherForTile(
+                        neighborhood,
+                        mTileMeshers(x, y).data());
 
-            QSharedPointer<QImage> image;
-            float ambient, diffuse, specular, shininess;
 
-            if (tileMaterial == nullptr) {
-                image = nullptr;
-                ambient = 1;
-                diffuse = 1;
-                specular = 1;
-                shininess = 1;
-            } else {
-                image = tileMaterial->getTexture();
-                ambient = tileMaterial->getAmbient();
-                diffuse = tileMaterial->getDiffuse();
-                specular = tileMaterial->getSpecular();
-                shininess = tileMaterial->getShininess();
+            // If the tile's mesh should be updated, update it.
+            if (newMesher != nullptr) {
+                auto oldObjects = mTileObjects(x, y);
+
+                for (auto obj : oldObjects)
+                    mScene->removeObject(obj);
+
+                auto newObjects = newMesher->makeMesh(QVector2D(x, y) - mapCenter);
+
+                for (auto obj : newObjects)
+                    mScene->addObject(obj);
+
+                mTileObjects(x, y) = newObjects;
+                mTileMeshers(x, y) = newMesher;
             }
 
-            newProperties(x, y) = {
-                    topHeight,
-                    baseHeight,
-                    image,
-                    ambient,
-                    diffuse,
-                    specular,
-                    shininess
-            };
         }
     }
-
-
-    // In the future, extra neighbor-based property inference will go here.
-
-    bool sizeChanged = mTileProperties.size() != newProperties.size();
-
-    // Remake meshes for all tiles whose properties changed.
-    QVector3D center = QVector3D(mTileMap->mapSize().width()/2.0, 0, mTileMap->mapSize().height()/2.0);
-    for (int x = 0; x < newProperties.width(); ++x) {
-        for (int y = 0; y < newProperties.height(); ++y) {
-            if (sizeChanged || mTileProperties(x, y) != newProperties(x, y)) {
-                auto oldObj = mTileMeshes(x, y);
-                auto newObj = M2MTileMesher::getTopMesh(newProperties(x, y), QVector3D(x, 0, y) - center);
-                mTileMeshes(x, y) = newObj;
-
-                if (oldObj != nullptr)
-                    mScene->removeObject(oldObj);
-
-                mScene->addObject(newObj);
-            }
-        }
-    }
-
-    mTileProperties = newProperties;
 
 
     mScene->commitChanges();

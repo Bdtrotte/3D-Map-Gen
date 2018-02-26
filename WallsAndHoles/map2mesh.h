@@ -69,14 +69,15 @@ protected:
 
 
     /**
-     * @brief A mesh for every tile.
+     * @brief Mesh data for every tile. A tile's mesh may consist of multiple objects.
      */
-    Array2D<QSharedPointer<SimpleTexturedObject>> mTileMeshes;
+    Array2D<QVector<QSharedPointer<SimpleTexturedObject>>> mTileObjects;
 
     /**
-     * @brief Inferred properties for every tile.
+     * @brief A mesher for every tile. These are also used to determine
+     * whether a tile has changed.
      */
-    Array2D<M2MTileMesher::Input> mTileProperties;
+    Array2D<QSharedPointer<M2M::TileMesher>> mTileMeshers;
 
 
     /**

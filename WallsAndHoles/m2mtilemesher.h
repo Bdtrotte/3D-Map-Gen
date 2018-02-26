@@ -2,66 +2,202 @@
 #define M2MTILEMESHER_H
 
 
+#include <QVector2D>
 #include <QVector3D>
 #include <QSharedPointer>
 #include <QImage>
 
+#include "array2d.h"
+
+#include "m2mpartialmesh.h"
+
+#include "tile.h"
 #include "simpletexturedobject.h"
+
+namespace M2M {
+
+class TileMesher;
+
+
+struct GroundInfo {
+    float groundHeight;
+    ImageInfo groundImage;
+    PhongInfo groundMaterial;
+
+    bool operator ==(const GroundInfo &other) const
+    {
+        return groundHeight == other.groundHeight
+                && groundImage == other.groundImage
+                && groundMaterial == other.groundMaterial;
+    }
+
+    bool operator !=(const GroundInfo &other) const
+    {
+        return !(*this == other);
+    }
+};
+
+
+class TileInfo {
+public:
+    TileInfo();                     /// Creates a null tile info.
+    TileInfo(const Tile &tile);     /// Creates a tile info for the given tile.
+
+
+    bool isNull() const { return mIsNull; }
+    bool isGround() const { return mIsGround; }
+
+    float topHeight() const { return mTopHeight; }
+    float thickness() const { return mThickness;}
+
+    QVector2D offsetFromCenter() const { return mOffsetFromCenter; }
+
+    GroundInfo groundInfo() const { return mGround; }
+
+    ImageInfo topImage() const { return mTopImage; }
+    ImageInfo sideImage() const { return mSideImage; }
+
+    PhongInfo topMaterial() const { return mTopMaterial; }
+    PhongInfo sideMaterial() const { return mSideMaterial; }
+
+
+    bool operator ==(const TileInfo &other) const;
+    bool operator !=(const TileInfo &other) const;
+
+private:
+
+
+    /// If this is true, the TileInfo object does not represent any tile.
+    bool mIsNull;
+
+    /// If this is true, then this is a ground tile.
+    bool mIsGround;
+
+    float mTopHeight;
+    float mThickness;
+    QVector2D mOffsetFromCenter;
+
+    GroundInfo mGround;
+
+    ImageInfo mTopImage;
+    ImageInfo mSideImage;
+
+    PhongInfo mTopMaterial;
+    PhongInfo mSideMaterial;
+
+
+
+
+    static QSharedPointer<QImage> getDefaultImage();
+    static QSharedPointer<QImage> DefaultImage;
+};
+
+
+
+class TileNeighborhoodInfo {
+public:
+
+    TileNeighborhoodInfo(Array2D<const Tile *> nbhd);
+
+    bool operator ==(const TileNeighborhoodInfo &other) const;
+    bool operator !=(const TileNeighborhoodInfo &other) const;
+
+    const TileInfo &operator ()(int x, int y) const;
+
+    const TileInfo &centerTile() const;
+
+
+    QSharedPointer<TileMesher> makeMesher() const;
+
+private:
+    Array2D<TileInfo> mTileInfos;        /// Mesh-relevant information for every tile.
+
+};
 
 
 /**
  * @brief A collection of methods for generating tile mesh data.
  */
-class M2MTileMesher {
+class TileMesher {
 public:
 
+    virtual ~TileMesher() {}
+
     /**
-     * @brief Class to temporarily replace the M2MPropertySet parameter to getTopMesh().
+     * @brief Returns a TileMesher instance that will create the mesh for the given tile,
+     * or, if the tile has not changed (determined by oldMesher), returns nullptr.
      */
-    struct Input {
-        float topHeight;
-        float baseHeight;
-        QSharedPointer<QImage> image;
+    static QSharedPointer<TileMesher> getMesherForTile(
+            Array2D<const Tile*> neighborhood,
+            const TileMesher *oldMesher = nullptr);
 
-        float ambient;
-        float diffuse;
-        float specular;
-        float shininess;
 
-        bool operator ==(const Input &other) const
-        {
-            return topHeight == other.topHeight
-                    && baseHeight == other.baseHeight
-                    && image.data() == other.image.data()
-                    && ambient == other.ambient
-                    && diffuse == other.diffuse
-                    && specular == other.specular
-                    && shininess == other.shininess;
-        }
+    /**
+     * @brief makeMesh  Creates the mesh for this tile.
+     * @return          A list of objects that contain the mesh info for the tile.
+     */
+    virtual QVector<QSharedPointer<SimpleTexturedObject>> makeMesh(QVector2D offset) = 0;
 
-        bool operator !=(const Input &other) const
-        {
-            return !(*this == other);
-        }
+
+    enum Direction {
+        NORTH, SOUTH, EAST, WEST
     };
 
 
+protected:
+    TileMesher(TileNeighborhoodInfo nbhd);
+
     /**
-     * @brief Generates a square for the top of the tile. The offset's Y component
-     * should not depend on the tile's height because that is considered separately.
-     * @param tileProperties    The properties of the tile that is to be converted.
-     * @param offset            The position of the center of the tile (at height 0).
-     * @param scale             A multiplier. By default, each tile is a 1-by-1 square.
-     * @return
+     * @brief Information for each tile in the 3x3 neighborhood of the tile to which this mesher is associated.
      */
-    static QSharedPointer<SimpleTexturedObject> getTopMesh(Input tileProperties, QVector3D offset, float scale = 1.0);
+    TileNeighborhoodInfo mTileNeighborhood;
 
-private:
+    /**
+     * @brief makeTopMesh           Creates the top quad for a tile.
+     * @param meshData              The data will be put here.
+     * @param offset                The offset of the tile.
+     */
+    void makeTopMesh(PartialMeshData &meshData,
+                     QVector2D offset);
 
 
-    static QSharedPointer<QImage> getTestingImage();
-
-    static QSharedPointer<QImage> TestingImage;
+    /**
+     * @brief makeVerticalSideMesh  Creates a vertical side for the tile.
+     * @param meshData              The mesh goes into this variable.
+     * @param sideDirection         Which side should be made.
+     * @param offset                The offset of the tile.
+     */
+    void makeVerticalSideMesh(PartialMeshData &meshData,
+                              Direction sideDirection,
+                              QVector2D offset);
 };
+
+
+class TileBlockyMesher : public TileMesher {
+public:
+    TileBlockyMesher(TileNeighborhoodInfo nbhd);
+
+    QVector<QSharedPointer<SimpleTexturedObject>> makeMesh(QVector2D offset);
+};
+
+//class TileDiagonalMesher : public TileMesher {
+//public:
+//    TileDiagonalMesher(TileNeighborhoodInfo nbhd);
+
+//protected:
+//    /**
+//     * @brief makeDiagonalSideMesh  Creates the diagonal mesh for a side. May create part of the bridge.
+//     * @param meshData              Where to put the output.
+//     * @param sideDirection         Which side to do this for.
+//     * @param diagonalConnection    To which tile are we connecting diagonally? Should be in the square between (0,0) and (2,2).
+//     */
+//    void makeDiagonalSideMesh(PartialMeshData &meshData,
+//                              Direction sideDirection,
+//                              QPoint diagonalConnection);
+//};
+
+
+
+}
 
 #endif // M2MTILEMESHER_H
