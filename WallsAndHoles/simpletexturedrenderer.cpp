@@ -52,11 +52,12 @@ void SimpleTexturedRenderer::objectRemoved(const SimpleTexturedObject &obj)
 
         // If the texture has no users, unload it.
         if (textureUsageSet.size() <= 0) {
-            // It is important to unlock and relock the mutex here, just in case
-            // callFunctionOnOpenGL() happens in this thread.
-            locker.unlock();
-            callFunctionOnOpenGL(&SimpleTexturedRenderer::removeImageTexture, this, &obj.getImage());
-            locker.relock();
+            callFunctionOnOpenGL([texturePtr] () {
+                texturePtr->destroy();
+            });
+
+            mTexturesToObjects.remove(texturePtr.data());
+            mImagesToTextures.remove(&obj.getImage());
         }
     }
 }
@@ -349,16 +350,4 @@ void SimpleTexturedRenderer::clearAllTextures()
         texture->destroy();
 
     mImagesToTextures.clear();
-}
-
-
-void SimpleTexturedRenderer::removeImageTexture(const QImage *image)
-{
-    QMutexLocker locker(&mGLDataMutex);
-
-    QSharedPointer<QOpenGLTexture> texture = mImagesToTextures[image];
-    texture->destroy();
-
-    mTexturesToObjects.remove(texture.data());
-    mImagesToTextures.remove(image);
 }
