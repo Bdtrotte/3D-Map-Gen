@@ -54,10 +54,10 @@ void M2M::TileMesher::makeTopMesh(PartialMeshData &meshData, QVector2D offset)
      * This method just creates a single textured quad for the mesher's center tile.
      * */
 
-    QVector2D t1(0, 1);
-    QVector2D t2(1, 1);
-    QVector2D t3(1, 0);
-    QVector2D t4(0, 0);
+    QVector2D t1(0, 0);
+    QVector2D t2(1, 0);
+    QVector2D t3(1, 1);
+    QVector2D t4(0, 1);
 
     QVector2D offsetFromCenter = mTileNeighborhood.centerTile().offsetFromCenter();
     float thickness = mTileNeighborhood.centerTile().thickness();
@@ -272,6 +272,9 @@ void M2M::TileMesher::makeVerticalSideMesh(PartialMeshData &meshData, Direction 
         QVector2D gt4;
 
 
+        gt1.setY(1 - gt1.y());
+        gt2.setY(1 - gt2.y());
+
         switch (sideDirection) {
         case NORTH:
             gv3 = QVector3D(offset.x() + 0.5, groundHeight, offset.y() + 0.5);
@@ -452,7 +455,7 @@ SharedImageAndSource M2M::TileInfo::DefaultImage = nullptr;
 SharedImageAndSource M2M::TileInfo::getDefaultImage()
 {
     if (DefaultImage.isNull())
-        DefaultImage = ImageAndSource::getSharedImageAndSource(":/textures/exampleTexture.png");
+        DefaultImage = ImageAndSource::getSharedImageAndSource(":/textures/grassTexture.jpg");
 
     return DefaultImage;
 }
