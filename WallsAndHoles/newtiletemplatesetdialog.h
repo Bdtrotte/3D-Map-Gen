@@ -20,7 +20,7 @@ class NewTileTemplateSetDialog : public QDialog
 public:
     explicit NewTileTemplateSetDialog(QWidget *parent = 0);
 
-    NewTileTemplateSetData result;
+    NewTileTemplateSetData result() const { return mResult; }
 
 private slots:
     void ok();
@@ -28,6 +28,8 @@ private slots:
     void findFile();
 
 private:
+    NewTileTemplateSetData mResult;
+
     QPushButton *mOk;
     QPushButton *mCancel;
     QPushButton *mFindFile;

@@ -207,6 +207,7 @@ void M2M::TileMesher::makeVerticalSideMesh(PartialMeshData &meshData, Direction 
         break;
     }
 
+    isOtherNull = otherTile->isNull();
 
     isThisFullThickness = thisTile.thickness() >= 1;
     isOtherFullThickness = otherTile->thickness() >= 1;
@@ -344,15 +345,15 @@ M2M::TileInfo::TileInfo(const Tile &tile)
 
         const auto &mat = *tile.material();
 
-        if (!mat.getTexture().isNull())
-            mTopImage.image = mSideImage.image = mat.getTexture();
+        if (!mat.texture().isNull())
+            mTopImage.image = mSideImage.image = mat.texture();
         else
             mTopImage.image = mSideImage.image = getDefaultImage();
 
-        mTopMaterial.ambient = mSideMaterial.ambient = mat.getAmbient();
-        mTopMaterial.diffuse = mSideMaterial.diffuse = mat.getDiffuse();
-        mTopMaterial.specular = mSideMaterial.specular = mat.getSpecular();
-        mTopMaterial.shininess = mSideMaterial.shininess = mat.getShininess();
+        mTopMaterial.ambient = mSideMaterial.ambient = mat.ambient();
+        mTopMaterial.diffuse = mSideMaterial.diffuse = mat.diffuse();
+        mTopMaterial.specular = mSideMaterial.specular = mat.specular();
+        mTopMaterial.shininess = mSideMaterial.shininess = mat.shininess();
     } else {
         mIsGround = true;
 
@@ -447,11 +448,11 @@ QSharedPointer<M2M::TileMesher> M2M::TileNeighborhoodInfo::makeMesher() const
 
 
 
-QSharedPointer<QImage> M2M::TileInfo::DefaultImage = nullptr;
-QSharedPointer<QImage> M2M::TileInfo::getDefaultImage()
+SharedImageAndSource M2M::TileInfo::DefaultImage = nullptr;
+SharedImageAndSource M2M::TileInfo::getDefaultImage()
 {
     if (DefaultImage.isNull())
-        DefaultImage = QSharedPointer<QImage>::create(":/textures/exampleTexture.png");
+        DefaultImage = ImageAndSource::getSharedImageAndSource(":/textures/exampleTexture.png");
 
     return DefaultImage;
 }

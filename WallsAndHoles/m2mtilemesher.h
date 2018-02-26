@@ -88,8 +88,8 @@ private:
 
 
 
-    static QSharedPointer<QImage> getDefaultImage();
-    static QSharedPointer<QImage> DefaultImage;
+    static SharedImageAndSource getDefaultImage();
+    static SharedImageAndSource DefaultImage;
 };
 
 

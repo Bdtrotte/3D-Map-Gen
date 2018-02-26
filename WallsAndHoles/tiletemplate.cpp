@@ -16,6 +16,7 @@ TileTemplate::TileTemplate(QColor color,
     , mThickness(thickness)
     , mPosition(position)
     , mColor(color)
+    , mMaterial(nullptr)
 {
     setMaterial(material);
 }
@@ -73,14 +74,20 @@ void TileTemplate::setMaterial(TileMaterial *material)
     if (material == nullptr)
         material = TileMaterial::getDefaultMaterial();
 
-    mMaterial = material;
+    if (mMaterial)
+        disconnect(mMaterial);
 
+    mMaterial = material;
 
     // When the material's properties change, a materialChanged() signal will be emitted.
     // The changed() signal is currently only used for saving purposes, so it does not need to be emitted.
 
     connect(mMaterial, &TileMaterial::textureChanged, this, &TileTemplate::materialChanged);
     connect(mMaterial, &TileMaterial::phongParamsChanged, this, &TileTemplate::materialChanged);
+    connect(mMaterial, &TileMaterial::aboutToBeRemoved,
+            this, [this]() {
+        setMaterial(TileMaterial::getDefaultMaterial());
+    });
 
     emit materialChanged();
     emit changed();

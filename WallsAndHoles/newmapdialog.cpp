@@ -5,7 +5,6 @@
 #include <QGroupBox>
 #include <QLabel>
 #include <QDialogButtonBox>
-#include <QHBoxLayout>
 
 NewMapDialog::NewMapDialog(QDialog *parent)
     : QDialog(parent)
@@ -71,7 +70,7 @@ NewMapDialog::NewMapDialog(QDialog *parent)
 
 void NewMapDialog::onAccepted()
 {
-    result = NewMapData(mWSpinBox->value(),
+    mResult = NewMapData(mWSpinBox->value(),
                         mHSpinBox->value(),
                         mIndoorMapChkBox->isChecked(),
                         mCeilingChkBox->isChecked());

@@ -73,6 +73,12 @@ SOURCES += \
     colorpickerbutton.cpp \
     tiletemplatepropertymanager.cpp \
     tilematerial.cpp \
+    tilematerialview.cpp \
+    tilematerialset.cpp \
+    tilematerialselectionbar.cpp \
+    materialpropertymanager.cpp \
+    imagefinderbar.cpp \
+    tilematerialselectiondialog.cpp \
     m2mpartialmesh.cpp
 
 HEADERS += \
@@ -133,6 +139,13 @@ HEADERS += \
     tiletemplatepropertymanager.h \
     abstractpropertymanager.h \
     tilematerial.h \
+    tilematerialview.h \
+    tilematerialset.h \
+    tilematerialselectionbar.h \
+    materialpropertymanager.h \
+    imagefinderbar.h \
+    imageandsource.h \
+    tilematerialselectiondialog.h \
     m2mpartialmesh.h
 
 FORMS += \
@@ -147,4 +160,5 @@ DISTFILES += \
 
 RESOURCES += \
     shaders.qrc \
-    textures.qrc
+    textures.qrc \
+    icons.qrc

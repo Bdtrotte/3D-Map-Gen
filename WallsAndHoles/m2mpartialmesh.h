@@ -7,6 +7,7 @@
 #include <QMap>
 
 
+#include "imageandsource.h"
 #include "simpletexturedobject.h"
 
 namespace M2M {
@@ -14,11 +15,12 @@ namespace M2M {
 
 /// Class to wrap image info. This will be changed to use SharedImageAndSource when possible.
 struct ImageInfo {
-    QSharedPointer<QImage> image;
+    SharedImageAndSource image;
 
     bool operator ==(const ImageInfo &other) const
     {
         return image.data() == other.image.data();
+//        return *image == *other.image;
     }
 
     bool operator !=(const ImageInfo &other) const
@@ -138,7 +140,7 @@ private:
 
         // Texture information.
         QVector<SimpleTexturedObject::TriangleTexCoords> mTriangleTextureCoordinates;
-        QSharedPointer<QImage> mImage;
+        SharedImageAndSource mImage;
     };
 
 

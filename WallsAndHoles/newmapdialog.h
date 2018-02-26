@@ -30,12 +30,14 @@ class NewMapDialog : public QDialog
 public:
     explicit NewMapDialog(QDialog *parent = nullptr);
 
-    NewMapData result;
+    NewMapData result() const { return mResult; }
 
 private slots:
     void onAccepted();
 
 private:
+    NewMapData mResult;
+
     //Spin Box
     QSpinBox *mHSpinBox;
     QSpinBox *mWSpinBox;

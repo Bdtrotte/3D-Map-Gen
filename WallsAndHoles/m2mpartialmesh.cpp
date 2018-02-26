@@ -53,7 +53,7 @@ PhongInfo Quad::phongInfo() const
 /* BEGIN PartialMeshData */
 void PartialMeshData::addQuad(Quad q)
 {
-    const QImage *quadImage = q.imageInfo().image.data();
+    const QImage *quadImage = q.imageInfo().image->image().data();
 
     auto itr = mTexturesToObjects.find(quadImage);
 
