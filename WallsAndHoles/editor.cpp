@@ -70,27 +70,34 @@ Editor::Editor(QObject *parent)
     mToolBar->addAction(mTileMapToolManager->registerMapTool(
                             QSharedPointer<TileMapBrushTool>::create(mMapView->previewItem())
                             , "Brush Tool"
-                            , QIcon("://icons/22x22/brush.png")));
+                            , QIcon("://icons/22x22/brush.png")
+                            , QKeySequence(Qt::Key_B)));
     mToolBar->addAction(mTileMapToolManager->registerMapTool(
                             QSharedPointer<FillTool>::create(mMapView->previewItem())
                             , "Fill Tool"
-                            , QIcon("://icons/22x22/stock-tool-bucket-fill.png")));
+                            , QIcon("://icons/22x22/stock-tool-bucket-fill.png")
+                            , QKeySequence(Qt::Key_F)));
     mToolBar->addAction(mTileMapToolManager->registerMapTool(
                             QSharedPointer<LineBrushTool>::create(mMapView->previewItem())
                             , "Line Tool"
-                            , QIcon("://icons/22x22/line.png")));
+                            , QIcon("://icons/22x22/line.png")
+                            , QKeySequence(Qt::Key_L)));
     mToolBar->addAction(mTileMapToolManager->registerMapTool(
                             QSharedPointer<RectBrushTool>::create(mMapView->previewItem())
                             , "Rect Tool"
-                            , QIcon(":/icons/22x22/rectangle-fill.png")));
+                            , QIcon(":/icons/22x22/rectangle-fill.png")
+                            , QKeySequence(Qt::Key_R)));
     mToolBar->addAction(mTileMapToolManager->registerMapTool(
                             QSharedPointer<EllipseBrushTool>::create(mMapView->previewItem())
                             , "Ellipse Tool"
-                            , QIcon(":/icons/22x22/ellipse-fill.png")));
+                            , QIcon(":/icons/22x22/ellipse-fill.png")
+                            , QKeySequence(Qt::Key_E)));
     mToolBar->addAction(mTileMapToolManager->registerMapTool(
                             QSharedPointer<TileMapSelectionTool>::create(mPropertyBrowser, mMapView->previewItem())
                             , "Selection Tool"
-                            , QIcon("://icons/22x22/mouse.png")));
+                            , QIcon("://icons/22x22/mouse.png")
+                            , QKeySequence(Qt::Key_S)));
+
 
     //Sets up the context toolBar
     mToolBar->addSeparator();
@@ -285,13 +292,20 @@ void Editor::setUpMenuBar()
     menuBar->clear();
 
     QMenu *fileMenu = menuBar->addMenu(tr("File"));
-    fileMenu->addAction(tr("New Map"), this, &Editor::newMap);
-    mMapDependantActions.append(fileMenu->addAction(tr("Save Map"), this, &Editor::saveMap));
-    mMapDependantActions.append(fileMenu->addAction(tr("Save Map As"), this, &Editor::saveMapAs));
-    fileMenu->addAction(tr("Load Map"), this, &Editor::loadMap);
-    mMapDependantActions.append(fileMenu->addAction(tr("Close Map"), this, &Editor::closeMap));
+                                fileMenu->addAction(tr("New Map"), this, &Editor::newMap
+                                                    , Qt::CTRL + Qt::Key_N);
+    mMapDependantActions.append(fileMenu->addAction(tr("Save Map"), this, &Editor::saveMap
+                                                    , Qt::CTRL + Qt::Key_S));
+    mMapDependantActions.append(fileMenu->addAction(tr("Save Map As"), this, &Editor::saveMapAs
+                                                    , Qt::CTRL + Qt::SHIFT + Qt::Key_S));
+                                fileMenu->addAction(tr("Load Map"), this, &Editor::loadMap
+                                                    , Qt::CTRL + Qt::Key_O);
+    mMapDependantActions.append(fileMenu->addAction(tr("Close Map"), this, &Editor::closeMap
+                                                    , Qt::CTRL + Qt::Key_W));
     fileMenu->addSeparator();
-    mMapDependantActions.append(fileMenu->addAction(tr("Export Map Mesh"), this, &Editor::exportMapMesh));
+    mMapDependantActions.append(fileMenu->addAction(tr("Export Map Mesh"), this, &Editor::exportMapMesh
+                                                    , Qt::CTRL + Qt::Key_E));
+
 
     QMenu *mapMenu = menuBar->addMenu(tr("Map"));
     mMapDependantActions.append(mapMenu->addAction(tr("View Map Properties"), this, &Editor::viewMapProperties));
