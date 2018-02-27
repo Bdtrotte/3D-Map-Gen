@@ -9,9 +9,10 @@ TileMapToolManager::TileMapToolManager(QObject *parent)
     : ToolManager(parent) {}
 
 
-QAction *TileMapToolManager::registerMapTool(QSharedPointer<AbstractTileMapTool> tool, QString name, QIcon icon)
+QAction *TileMapToolManager::registerMapTool(QSharedPointer<AbstractTileMapTool> tool, QString name, QIcon icon,
+                                             QKeySequence ks)
 {
-    return ToolManager::registerTool(tool, name, icon);
+    return ToolManager::registerTool(tool, name, icon, ks);
 }
 
 void TileMapToolManager::setTileMap(TileMap *tileMap)
