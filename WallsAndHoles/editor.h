@@ -11,10 +11,13 @@
 #include "tiletemplatesetsview.h"
 #include "tiletemplatesetsmanager.h"
 #include "propertybrowser.h"
+#include "tilematerialview.h"
 
 #include <QObject>
 #include <QList>
 #include <QToolBar>
+#include <QSettings>
+#include <QMainWindow>
 
 /**
  * @brief The Editor class
@@ -43,6 +46,7 @@ public slots:
     //Map:
     void viewMapProperties();
 
+
 private:
     //sets mTileMap to tileMap, and updates everything accordingly
     void setTileMap(TileMap *tileMap);
@@ -63,6 +67,7 @@ private:
     MeshViewContainer *mMeshViewContainer;
     TileTemplateSetsView *mTileTemplateSetsView;
     PropertyBrowser *mPropertyBrowser;
+    TileMaterialView *mMaterialView;
 
     //Tools
     TileMapToolManager *mTileMapToolManager;
@@ -75,6 +80,10 @@ private:
         for (QAction *a : mMapDependantActions)
             a->setEnabled(enabled);
     }
+
+    //Saving and loading settings
+    void loadSettings();
+    void saveSettings();
 };
 
 #endif // EDITOR_H

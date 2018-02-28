@@ -6,7 +6,6 @@
 #include "tilemapselectiontool.h"
 #include "propertybrowser.h"
 #include "mappropertymanager.h"
-#include "tilematerialview.h"
 
 #include "filltool.h"
 
@@ -26,6 +25,8 @@
 #include <QFileDialog>
 #include <QListView>
 #include <QShortcut>
+#include <QCloseEvent>
+#include <algorithm>
 
 Editor::Editor(QObject *parent)
     : QObject(parent)
@@ -37,11 +38,14 @@ Editor::Editor(QObject *parent)
     , mTileMapToolManager(new TileMapToolManager(this))
     , mToolBar(new QToolBar(mMainWindow))
 {
+    //Set the application name
+    QCoreApplication::setOrganizationName("WAH");
+    QCoreApplication::setApplicationName("Walls and Holes");
+
     //Initiallize mMainWindow
     mMainWindow->setCentralWidget(mMapView);
     setUpMenuBar();
     mMainWindow->addToolBar(mToolBar);
-
 
     //Set up and add all dock widgets
     QDockWidget *meshViewDock = new QDockWidget("Mesh View", mMainWindow);
@@ -57,14 +61,13 @@ Editor::Editor(QObject *parent)
     propBrowserDock->setWidget(mPropertyBrowser);
 
     QDockWidget *materialDock = new QDockWidget("Material View", mMainWindow);
-    TileMaterialView *materialView = new TileMaterialView(mMainWindow);
-    materialDock->setWidget(materialView);
+    mMaterialView = new TileMaterialView(mMainWindow);
+    materialDock->setWidget(mMaterialView);
 
     mMainWindow->addDockWidget(Qt::RightDockWidgetArea, meshViewDock);
     mMainWindow->addDockWidget(Qt::LeftDockWidgetArea, templateDock);
     mMainWindow->addDockWidget(Qt::RightDockWidgetArea, propBrowserDock);
     mMainWindow->addDockWidget(Qt::RightDockWidgetArea, materialDock);
-
 
     // Add tools.
     mToolBar->addAction(mTileMapToolManager->registerMapTool(
@@ -118,7 +121,13 @@ Editor::Editor(QObject *parent)
     connect(mTileTemplateSetsView, &TileTemplateSetsView::tileTemplateChanged,
             mTileMapToolManager, &TileMapToolManager::tileTemplateChanged);
 
+    loadSettings();
+
     mMainWindow->showMaximized();
+
+    //Save Settings
+    connect(mMainWindow, &QMainWindow::destroyed, this, &Editor::saveSettings);
+
 }
 
 Editor::~Editor()
@@ -311,4 +320,81 @@ void Editor::setUpMenuBar()
     mMapDependantActions.append(mapMenu->addAction(tr("View Map Properties"), this, &Editor::viewMapProperties));
 
     setMapDependantActionsEnabled(false);
+}
+
+void Editor::loadSettings()
+{
+    QSettings settings;
+
+    //Loading for meshViewDock
+    QDockWidget *mvd = qobject_cast<QDockWidget *>(mMeshViewContainer->parentWidget());
+    mvd->setHidden(settings.value("meshViewDock/hidden").toBool());
+    mvd->setFloating(settings.value("meshViewDock/floating").toBool());
+    mvd->move(settings.value("meshViewDock/pos").toPoint());
+    mvd->resize(settings.value("meshViewDock/size").toSize());
+    //mMainWindow->addDockWidget(settings.value("meshViewDock/dockWidgetArea"), mvd);
+
+    //Loading for templateDock
+    QDockWidget *td = qobject_cast<QDockWidget *>(mTileTemplateSetsView->parentWidget());
+    td->setHidden(settings.value("templateDock/hidden").toBool());
+    td->setFloating(settings.value("templateDock/floating").toBool());
+    td->move(settings.value("templateDock/pos").toPoint());
+    td->resize(settings.value("templateDock/size").toSize());
+
+    //Loading for propBrowserDock
+    QDockWidget *pbd = qobject_cast<QDockWidget *>(mPropertyBrowser->parentWidget());
+    pbd->setHidden(settings.value("propBrowserDock/hidden").toBool());
+    pbd->setFloating(settings.value("propBrowserDock/floating").toBool());
+    pbd->move(settings.value("propBrowserDock/pos").toPoint());
+    pbd->resize(settings.value("propBrowserDock/size").toSize());
+
+    //Loading for materialDock
+    QDockWidget *md = qobject_cast<QDockWidget *>(mMaterialView->parentWidget());
+    md->setHidden(settings.value("materialDock/hidden").toBool());
+    md->setFloating(settings.value("materialDock/floating").toBool());
+    md->move(settings.value("materialDock/pos").toPoint());
+    md->resize(settings.value("materialDock/size").toSize());
+
+}
+
+void Editor::saveSettings()
+{
+    QSettings settings;
+
+    //MeshViewDock settings
+    QDockWidget *mvd = qobject_cast<QDockWidget *>(mMeshViewContainer->parentWidget());
+    settings.beginGroup("meshViewDock");
+    settings.setValue("pos", mvd->pos());
+    settings.setValue("floating", mvd->isFloating());
+    settings.setValue("hidden", mvd->isHidden());
+    settings.setValue("size", mvd->size());
+    settings.endGroup();
+
+    //templateDock settings
+    QDockWidget *td = qobject_cast<QDockWidget *>(mTileTemplateSetsView->parentWidget());
+    settings.beginGroup("templateDock");
+    settings.setValue("pos", td->pos());
+    settings.setValue("floating", td->isFloating());
+    settings.setValue("hidden", td->isHidden());
+    settings.setValue("size", td->size());
+    settings.endGroup();
+
+    //propBrowserDock settings
+    QDockWidget *pbd = qobject_cast<QDockWidget *>(mPropertyBrowser->parentWidget());
+    settings.beginGroup("propBrowserDock");
+    settings.setValue("pos", pbd->pos());
+    settings.setValue("floating", pbd->isFloating());
+    settings.setValue("hidden", pbd->isHidden());
+    settings.setValue("size", pbd->size());
+    settings.endGroup();
+
+    //materialDock settings
+    QDockWidget *md = qobject_cast<QDockWidget *>(mMaterialView->parentWidget());
+    settings.beginGroup("materialDock");
+    settings.setValue("pos", md->pos());
+    settings.setValue("floating", md->isFloating());
+    settings.setValue("hidden", md->isHidden());
+    settings.setValue("size", md->size());
+    settings.endGroup();
+
 }
