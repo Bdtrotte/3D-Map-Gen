@@ -1,10 +1,16 @@
 #include "tilemapselectiontool.h"
+
+#include "tilemaphelpers.h"
 #include "tilepropertymanager.h"
+
+#include <QDebug>
 
 TileMapSelectionTool::TileMapSelectionTool(PropertyBrowser *propertyBrowser,
                                            TileMapPreviewGraphicsItem *previewItem,
                                            QObject *parent)
-    : AbstractTileSelectionTool(propertyBrowser, previewItem, parent) {}
+    : AbstractTileSelectionTool(propertyBrowser, previewItem, parent)
+    , mClickCount(0)
+    , mLastClickTime(0) {}
 
 void TileMapSelectionTool::cellClicked(int x, int y, QMouseEvent *)
 {
@@ -21,18 +27,45 @@ void TileMapSelectionTool::cellActivated(int x, int y, QMouseEvent *)
 
 void TileMapSelectionTool::cellReleased(int, int, QMouseEvent *event)
 {
+    if (mCurrentRect.width() == 1 && mCurrentRect.height() == 1) {
+        if (event->timestamp() - mLastClickTime < MULTI_CLICK_TIME)
+            ++mClickCount;
+        else
+            mClickCount = 0;
+
+        mLastClickTime = event->timestamp();
+    } else {
+        mClickCount = 0;
+    }
+
+    if (mClickCount > 2)
+        mClickCount = 2;
+
+    QRegion newSelectionRegion;
+    switch (mClickCount) {
+    case 0:
+        newSelectionRegion = mCurrentRect;
+        break;
+    case 1:
+        newSelectionRegion = TileMapHelper::getFillRegion(getTileMap(), mCurrentRect.left(), mCurrentRect.top());
+        break;
+    case 2:
+        newSelectionRegion = TileMapHelper::getAllOfTemplateAtTile(getTileMap(), mCurrentRect.left(), mCurrentRect.top());
+        break;
+    }
+
     switch (event->modifiers()) {
     case Qt::ShiftModifier:
-        mSelection = mOriginalSelection + mCurrentRect;
+        mSelection = mOriginalSelection + newSelectionRegion;
         break;
     case Qt::ControlModifier:
-        mSelection = mOriginalSelection - mCurrentRect;
+        mSelection = mOriginalSelection - newSelectionRegion;
         break;
     case Qt::ShiftModifier | Qt::ControlModifier:
-        mSelection = mOriginalSelection & mCurrentRect;
+        mSelection = mOriginalSelection & newSelectionRegion;
         break;
     case Qt::NoModifier:
-        mSelection = mCurrentRect;
+        mSelection = newSelectionRegion;
         break;
     }
 
