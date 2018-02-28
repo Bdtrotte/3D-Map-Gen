@@ -12,7 +12,9 @@ AbstractTileSelectionTool::AbstractTileSelectionTool(PropertyBrowser *propertyBr
 
 void AbstractTileSelectionTool::deactivate()
 {
+    mSelection = QRegion();
     mPreviewItem->setRegion(QRegion());
+    mPropertyBrowser->clear();
 }
 
 void AbstractTileSelectionTool::activateSelection()

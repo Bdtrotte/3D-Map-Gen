@@ -91,6 +91,8 @@ void MapView::createMap(TileMap *tileMap)
             mMapCells(x, y) = new MapCell(scene(), x, y, tileMap->cTileAt(x, y));
         }
     }
+
+    mPreviewItem->setClipRect(QRect(QPoint(0, 0), tileMap->mapSize()));
 }
 
 void MapView::mouseMoveEvent(QMouseEvent *event)
@@ -98,26 +100,29 @@ void MapView::mouseMoveEvent(QMouseEvent *event)
     QPointF curMousePoint = mapToScene(event->pos()) / 30;
     QPoint curMouseCell(curMousePoint.x(), curMousePoint.y());
 
-    if (curMousePoint.x() < 0) curMouseCell.setX(-1);
-    if (curMousePoint.y() < 0) curMouseCell.setY(-1);
+    if (curMousePoint.x() < 0) curMouseCell.setX(curMousePoint.x() - 1);
+    if (curMousePoint.y() < 0) curMouseCell.setY(curMousePoint.y() - 1);
 
     if (curMouseCell != mPreMousePoint) {
+        if (event->buttons() & Qt::LeftButton) {
+            //entered a new cell while holding leftclick
+            emit cellActivated(curMouseCell.x(), curMouseCell.y(), event);
+        }
+
         if (curMouseCell.x() >= 0 && curMouseCell.x() < mMapCells.size().width()
                 && curMouseCell.y() >= 0 && curMouseCell.y() < mMapCells.size().height()) {
             mMouseHoverRect->setPos(curMouseCell.x() * 30, curMouseCell.y() * 30);
             mMouseHoverRect->show();
 
             // Emit a hovered signal for this cell.
-            emit cellHovered(curMouseCell.x(), curMouseCell.y());
+            emit cellHovered(curMouseCell.x(), curMouseCell.y(), event);
+        } else if (mPreMousePoint.x() >= 0 && mPreMousePoint.x() < mMapCells.size().width()
+                   && mPreMousePoint.y() >= 0 && mPreMousePoint.y() < mMapCells.size().height()) {
+            //if the current cell is outside the map, and the previous cell was inside the map
 
-            if (event->buttons() & Qt::LeftButton) {
-                //entered a new cell while holding leftclick
-                emit cellActivated(curMouseCell.x(), curMouseCell.y());
-            }
-        } else {
             mMouseHoverRect->hide();
 
-            emit mouseExitedMap();
+            emit mouseExitedMap(event);
         }
 
         mPreMousePoint = curMouseCell;
@@ -143,11 +148,8 @@ void MapView::mouseMoveEvent(QMouseEvent *event)
 void MapView::mousePressEvent(QMouseEvent *event)
 {
     if (event->button() == Qt::LeftButton) {
-        if (mPreMousePoint.x() >= 0 && mPreMousePoint.x() < mMapCells.size().width()
-                && mPreMousePoint.y() >= 0 && mPreMousePoint.y() < mMapCells.size().height()) {
-            emit cellClicked(mPreMousePoint.x(), mPreMousePoint.y());
-            emit cellActivated(mPreMousePoint.x(), mPreMousePoint.y());
-        }
+        emit cellClicked(mPreMousePoint.x(), mPreMousePoint.y(), event);
+        emit cellActivated(mPreMousePoint.x(), mPreMousePoint.y(), event);
     } else {
         QGraphicsView::mousePressEvent(event);
     }
@@ -156,9 +158,7 @@ void MapView::mousePressEvent(QMouseEvent *event)
 void MapView::mouseReleaseEvent(QMouseEvent *event)
 {
     if (event->button() == Qt::LeftButton) {
-        if (mPreMousePoint.x() >= 0 && mPreMousePoint.x() < mMapCells.size().width()
-                && mPreMousePoint.y() >= 0 && mPreMousePoint.y() < mMapCells.size().height())
-            emit cellReleased(mPreMousePoint.x(), mPreMousePoint.y());
+        emit cellReleased(mPreMousePoint.x(), mPreMousePoint.y(), event);
     } else {
         QGraphicsView::mouseReleaseEvent(event);
     }

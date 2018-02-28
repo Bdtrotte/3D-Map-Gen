@@ -3,32 +3,25 @@
 AbstractShapeBrushTool::AbstractShapeBrushTool(TileMapPreviewGraphicsItem *previewItem, QObject *parent)
     : AbstractTileMapTool(previewItem, parent) {}
 
-void AbstractShapeBrushTool::cellClicked(int x, int y) {
+void AbstractShapeBrushTool::cellClicked(int x, int y, QMouseEvent *)
+{
     mStartX = x;
     mStartY = y;
 
-    Q_ASSERT( mStartX >= 0 && mStartX < getTileMap()->width() );
-    Q_ASSERT( mStartY >= 0 && mStartY < getTileMap()->height() );
-
     drawOverlay(x, y);
 }
 
 
-void AbstractShapeBrushTool::cellActivated(int x, int y)
+void AbstractShapeBrushTool::cellActivated(int x, int y, QMouseEvent *)
 {
     drawOverlay(x, y);
 }
 
 
-void AbstractShapeBrushTool::cellReleased(int x, int y)
+void AbstractShapeBrushTool::cellReleased(int x, int y, QMouseEvent *)
 {
     clearOverlay();
     placeShape(x, y);
-}
-
-void AbstractShapeBrushTool::mouseExitedMap()
-{
-    clearOverlay();
 }
 
 void AbstractShapeBrushTool::deactivate()
@@ -61,9 +54,6 @@ void AbstractShapeBrushTool::clearOverlay() {
 
 void AbstractShapeBrushTool::placeShape(int endX, int endY) {
     QVector<QPoint> shape = getShape(endX - mStartX, endY - mStartY);
-
-    Q_ASSERT( endX >= 0 && endX < getTileMap()->width() );
-    Q_ASSERT( endY >= 0 && endY < getTileMap()->height() );
 
     for (QPoint p : shape) {
         int x = mStartX + p.x();

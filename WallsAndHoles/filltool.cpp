@@ -16,7 +16,7 @@ inline uint qHash (const QPoint & key)
 FillTool::FillTool(TileMapPreviewGraphicsItem *previewItem, QObject *parent)
     : AbstractTileMapTool(previewItem, parent) {}
 
-void FillTool::cellClicked(int x, int y)
+void FillTool::cellClicked(int x, int y, QMouseEvent *)
 {
     // Clear the overlay.
     clearOverlay();
@@ -38,7 +38,7 @@ void FillTool::cellClicked(int x, int y)
 }
 
 
-void FillTool::cellHovered(int x, int y)
+void FillTool::cellHovered(int x, int y, QMouseEvent *)
 {
     drawOverlay(x, y);
 }
@@ -160,7 +160,7 @@ void FillTool::drawOverlay(int endX, int endY)
     }
 }
 
-void FillTool::mouseExitedMap()
+void FillTool::mouseExitedMap(QMouseEvent *)
 {
     mSelection.clear();
     clearOverlay();

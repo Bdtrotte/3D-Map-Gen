@@ -17,11 +17,11 @@ public:
     QAction *registerMapTool(QSharedPointer<AbstractTileMapTool> tool, QString name);
 
 public slots:
-    void cellActivated(int x, int y);
-    void cellClicked(int x, int y);
-    void cellReleased(int x, int y);
-    void cellHovered(int x, int y);
-    void mouseExitedMap();
+    void cellActivated(int x, int y, QMouseEvent *event);
+    void cellClicked(int x, int y, QMouseEvent *event);
+    void cellReleased(int x, int y, QMouseEvent *event);
+    void cellHovered(int x, int y, QMouseEvent *event);
+    void mouseExitedMap(QMouseEvent *event);
 
     void tileTemplateChanged(TileTemplate *tileTemplate);
 

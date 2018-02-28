@@ -23,19 +23,12 @@ protected:
      * such as updating the graphics and property browser.
      */
     void activateSelection();
+    void drawPreview();
 
     //all selection tools should share the same selection region.
     static QRegion mSelection;
 
     PropertyBrowser *mPropertyBrowser;
-
-private:
-    /**
-     * @brief drawPreview
-     *
-     * Draw the selected region
-     */
-    void drawPreview();
 };
 
 #endif // ABSTRACTTILESELECTIONTOOL_H

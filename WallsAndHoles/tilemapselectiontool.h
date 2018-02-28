@@ -10,7 +10,16 @@ public:
                          TileMapPreviewGraphicsItem *previewItem,
                          QObject *parent = nullptr);
 
-    void cellActivated(int x, int y) override;
+    void cellClicked(int x, int y, QMouseEvent *) override;
+    void cellActivated(int x, int y, QMouseEvent *) override;
+    void cellReleased(int, int, QMouseEvent *event) override;
+
+private:
+    void updatePreview(QPoint end);
+
+    QPoint mStartPoint;
+    QRect mCurrentRect;
+    QRegion mOriginalSelection;
 };
 
 #endif // TILEMAPSELECTIONTOOL_H
