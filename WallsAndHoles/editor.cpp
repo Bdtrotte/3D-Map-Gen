@@ -69,6 +69,11 @@ Editor::Editor(QObject *parent)
     mMainWindow->addDockWidget(Qt::RightDockWidgetArea, propBrowserDock);
     mMainWindow->addDockWidget(Qt::RightDockWidgetArea, materialDock);
 
+    connect(meshViewDock, &QDockWidget::dockLocationChanged, this, &Editor::saveSettings);
+    connect(templateDock, &QDockWidget::dockLocationChanged, this, &Editor::saveSettings);
+    connect(propBrowserDock, &QDockWidget::dockLocationChanged, this, &Editor::saveSettings);
+    connect(materialDock, &QDockWidget::dockLocationChanged, this, &Editor::saveSettings);
+
     // Add tools.
     mToolBar->addAction(mTileMapToolManager->registerMapTool(
                             QSharedPointer<TileMapBrushTool>::create(mMapView->previewItem())
@@ -368,6 +373,10 @@ void Editor::saveSettings()
     settings.setValue("floating", mvd->isFloating());
     settings.setValue("hidden", mvd->isHidden());
     settings.setValue("size", mvd->size());
+    if(mMainWindow){
+        int i = mMainWindow->dockWidgetArea(mvd);
+        settings.setValue("dockArea", i);
+    }
     settings.endGroup();
 
     //templateDock settings

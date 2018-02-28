@@ -160,4 +160,3 @@ RESOURCES += \
     shaders.qrc \
     textures.qrc \
     icons.qrc \
-    settings.qrc
