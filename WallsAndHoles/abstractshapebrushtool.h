@@ -33,7 +33,7 @@ public:
      * @param dx  The X offset from the start of drawing.
      * @param dy  The Y offset from the start of drawing.
      */
-    virtual QVector<QPoint> getShape(int dx, int dy) const = 0;
+    virtual QRegion getShape(QPoint start, QPoint end) const = 0;
 
 private:
     int mStartX;  /// The X position of the first click.

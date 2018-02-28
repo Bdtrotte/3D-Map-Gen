@@ -1,5 +1,6 @@
 #include "tilemapselectiontool.h"
 
+#include "shaperegion.h"
 #include "tilemaphelpers.h"
 #include "tilepropertymanager.h"
 
@@ -27,7 +28,7 @@ void TileMapSelectionTool::cellActivated(int x, int y, QMouseEvent *)
 
 void TileMapSelectionTool::cellReleased(int, int, QMouseEvent *event)
 {
-    if (mCurrentRect.width() == 1 && mCurrentRect.height() == 1) {
+    if (mCurrentRect.boundingRect().width() == 1 && mCurrentRect.boundingRect().height() == 1) {
         if (event->timestamp() - mLastClickTime < MULTI_CLICK_TIME)
             ++mClickCount;
         else
@@ -47,10 +48,10 @@ void TileMapSelectionTool::cellReleased(int, int, QMouseEvent *event)
         newSelectionRegion = mCurrentRect;
         break;
     case 1:
-        newSelectionRegion = TileMapHelper::getFillRegion(getTileMap(), mCurrentRect.left(), mCurrentRect.top());
+        newSelectionRegion = TileMapHelper::getFillRegion(getTileMap(), mCurrentRect.boundingRect().left(), mCurrentRect.boundingRect().top());
         break;
     case 2:
-        newSelectionRegion = TileMapHelper::getAllOfTemplateAtTile(getTileMap(), mCurrentRect.left(), mCurrentRect.top());
+        newSelectionRegion = TileMapHelper::getAllOfTemplateAtTile(getTileMap(), mCurrentRect.boundingRect().left(), mCurrentRect.boundingRect().top());
         break;
     }
 
@@ -74,20 +75,7 @@ void TileMapSelectionTool::cellReleased(int, int, QMouseEvent *event)
 
 void TileMapSelectionTool::updatePreview(QPoint end)
 {
-    int width = std::abs(end.x() - mStartPoint.x()) + 1;
-    int height = std::abs(end.y() - mStartPoint.y()) + 1;
-    int left, top;
-    if (end.x() > mStartPoint.x())
-        left = mStartPoint.x();
-    else
-        left = end.x();
-
-    if (end.y() > mStartPoint.y())
-        top = mStartPoint.y();
-    else
-        top = end.y();
-
-    mCurrentRect = QRect(left, top, width, height) & QRect(QPoint(0, 0), getTileMap()->mapSize());
+    mCurrentRect = ShapeRegion::rect(mStartPoint, end) & QRect(QPoint(0, 0), getTileMap()->mapSize());
     mSelection = mOriginalSelection + mCurrentRect;
 
     drawPreview();

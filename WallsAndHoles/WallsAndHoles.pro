@@ -80,7 +80,8 @@ SOURCES += \
     imagefinderbar.cpp \
     tilematerialselectiondialog.cpp \
     abstracttileselectiontool.cpp \
-    tilemaphelpers.cpp
+    tilemaphelpers.cpp \
+    shaperegion.cpp
 
 HEADERS += \
     meshview.h \
@@ -148,7 +149,8 @@ HEADERS += \
     imageandsource.h \
     tilematerialselectiondialog.h \
     abstracttileselectiontool.h \
-    tilemaphelpers.h
+    tilemaphelpers.h \
+    shaperegion.h
 
 FORMS += \
     meshview.ui \

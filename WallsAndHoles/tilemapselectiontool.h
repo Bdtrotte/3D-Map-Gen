@@ -20,7 +20,7 @@ private:
     void updatePreview(QPoint end);
 
     QPoint mStartPoint;
-    QRect mCurrentRect;
+    QRegion mCurrentRect;
     QRegion mOriginalSelection;
 
     int mClickCount;
