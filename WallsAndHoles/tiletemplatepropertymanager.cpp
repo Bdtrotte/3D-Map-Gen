@@ -1,7 +1,7 @@
 #include "tiletemplatepropertymanager.h"
 
-#include "tilematerialselectionbar.h"
 #include "propertybrowser.h"
+#include "templatematerialselector.h"
 
 TileTemplatePropertyManager::TileTemplatePropertyManager(TileTemplate *tileTemplate)
     : AbstractPropertyManager()
@@ -30,15 +30,7 @@ void TileTemplatePropertyManager::propertyEdited(QString propertyName, QVariant 
 
 QVector<QVector<QVariant>> TileTemplatePropertyManager::properties()
 {
-    TileMaterialSelectionBar *materialSelectionBar = new TileMaterialSelectionBar(mTileTemplate->material());
-
-    connect(materialSelectionBar, &TileMaterialSelectionBar::materialChanged,
-            this, &TileTemplatePropertyManager::materialChanged);
-    connect(mTileTemplate, &TileTemplate::materialChanged,
-            materialSelectionBar, [this, materialSelectionBar]() {
-        if (materialSelectionBar->material() != mTileTemplate->material())
-            materialSelectionBar->setMaterial(mTileTemplate->material());
-    });
+    TemplateMaterialSelector *materialSelector = new TemplateMaterialSelector(mTileTemplate);
 
     return {
         {"Name",       mTileTemplate->name(),         true              },
@@ -47,13 +39,8 @@ QVector<QVector<QVariant>> TileTemplatePropertyManager::properties()
         {"Thickness",  mTileTemplate->thickness(),    false,   0.1,    1},
         {"X Position", mTileTemplate->position().x(), false, -0.49, 0.49},
         {"Y Position", mTileTemplate->position().y(), false, -0.49, 0.49},
-        {"Material", QVariant::fromValue<TileMaterialSelectionBar *>(materialSelectionBar),
+        {"Material:", QVariant::fromValue<TemplateMaterialSelector *>(materialSelector),
                      true,
-                     PropertyBrowser::LineWidget}
+                     PropertyBrowser::BlockWidget}
     };
-}
-
-void TileTemplatePropertyManager::materialChanged(TileMaterial *material)
-{
-    mTileTemplate->setMaterial(material);
 }

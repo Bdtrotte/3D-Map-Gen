@@ -44,7 +44,7 @@ QVector2D Tile::position() const
 TileMaterial *Tile::material()
 {
     if (mTileTemplate != nullptr)
-        return mTileTemplate->material();
+        return mTileTemplate->topMaterial();
     else
         return nullptr;
 }
@@ -52,7 +52,7 @@ TileMaterial *Tile::material()
 const TileMaterial *Tile::material() const
 {
     if (mTileTemplate != nullptr)
-        return mTileTemplate->material();
+        return mTileTemplate->topMaterial();
     else
         return nullptr;
 }
