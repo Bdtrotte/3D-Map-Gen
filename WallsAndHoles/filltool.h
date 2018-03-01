@@ -1,7 +1,6 @@
 #ifndef FILLTOOL_H
 #define FILLTOOL_H
 
-
 #include <QSet>
 #include <QPoint>
 
@@ -19,18 +18,18 @@ public:
      * @param x  The X position of the clicked tile.
      * @param y  The Y position of the clicked tile.
      */
-    void cellClicked(int x, int y) override;
+    void cellClicked(int x, int y, QMouseEvent *) override;
 
 
     /**
      * @brief This will show a preview for the selected area.
      */
-    void cellHovered(int x, int y) override;
+    void cellHovered(int x, int y, QMouseEvent *) override;
 
     void toolTileMapChanged(TileMap *prev) override;
 
 
-    void mouseExitedMap() override;
+    void mouseExitedMap(QMouseEvent *) override;
     void deactivate() override;
 
 public slots:

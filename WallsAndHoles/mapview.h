@@ -22,7 +22,7 @@ class MapView : public QGraphicsView
     Q_OBJECT
 
 public:
-    MapView(const QRegion &selectedRegion, QWidget *parent);
+    MapView(QWidget *parent);
     ~MapView();
 
     void clear();
@@ -48,10 +48,12 @@ signals:
      * This signal is sent out when the mouse button is pressed down or when the mouse
      * moves over a new cell while pressed down.
      *
+     * x and y are NOT required to be contained within the map!
+     *
      * @param x The cell's x position.
      * @param y The cell's y position.
      */
-    void cellActivated(int x, int y);
+    void cellActivated(int x, int y, QMouseEvent *event);
 
     /**
      * @brief Emitted the first time the left mouse button is pressed over a cell.
@@ -59,32 +61,40 @@ signals:
      * Unlike cellActivated(), this signal is sent out when the mouse button is first pressed
      * and not sent out for other cells if the mouse is dragged afterward.
      *
-     * @param x The cell's x position.
-     * @param y The cell's y position.
-     */
-    void cellClicked(int x, int y);
-
-    /**
-     * @brief Emitted when the left mouse button is released over a cell.
+     * x and y are NOT required to be contained within the map!
      *
      * @param x The cell's x position.
      * @param y The cell's y position.
      */
-    void cellReleased(int x, int y);
+    void cellClicked(int x, int y, QMouseEvent *event);
+
+    /**
+     * @brief Emitted when the left mouse button is released over a cell.
+     *
+     * x and y are NOT required to be contained within the map!
+     *
+     * @param x The cell's x position.
+     * @param y The cell's y position.
+     */
+    void cellReleased(int x, int y, QMouseEvent *event);
 
 
     /**
      * @brief Emitted when the mouse hovers over a new cell.
+     *
+     *
+     * x and y ARE required to be contained within the map!
+     *
      * @param x The cell's x position.
      * @param y The cell's y position.
      */
-    void cellHovered(int x, int y);
+    void cellHovered(int x, int y, QMouseEvent *event);
 
 
     /**
      * @brief Emitted when the mouse exits the map.
      */
-    void mouseExitedMap();
+    void mouseExitedMap(QMouseEvent *event);
 
 private:
     void setupViewToolBar();
@@ -95,12 +105,12 @@ private:
 
     Array2D<MapCell *> mMapCells;
 
+    QGraphicsRectItem *mMouseHoverRect;
+
     //this owns mPreviewItem
     TileMapPreviewGraphicsItem *const mPreviewItem;
 
     QPoint mPreMousePoint;
-
-    const QRegion &mSelectedRegion;
 
     QToolBar *mToolBar;
     QAction *mNoView;
