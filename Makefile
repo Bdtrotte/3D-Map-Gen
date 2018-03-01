@@ -1,7 +1,7 @@
 DMGMaker = ./tools/create-dmg
 ICON = ./tools/W.icns
 DMG_Background = ./tools/W.icns
-DMGSource = ./build-release
+DMGSource = ./release
 
 dmg: $(DMGSource)
 	$(DMGMaker) \
