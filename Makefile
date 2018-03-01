@@ -1,9 +1,9 @@
 DMGMaker = ./tools/create-dmg
 ICON = ./tools/W.icns
 DMG_Background = ./tools/W.icns
-Release = ./build-release
+DMGSource = ./build-release
 
-dmg: ./dmg-release
+dmg: $(DMGSource)
 	$(DMGMaker) \
 	--volicon $(ICON) \
 	--background $(DMG_Background) \
@@ -14,8 +14,8 @@ dmg: ./dmg-release
 	--icon WallsAndHoles.app 100 100 \
 	--hide-extension WallsAndHoles.app \
 	--app-drop-link 200 200 \
-	$(Release)/WallsAndHoles.dmg \
-	./dmg-release
+	WallsAndHoles.dmg \
+	$(DMGSource)
 
 clean:
-	rm $(Release)/*
+	rm WallsAndHoles.dmg
