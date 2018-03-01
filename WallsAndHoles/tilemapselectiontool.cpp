@@ -1,37 +1,82 @@
 #include "tilemapselectiontool.h"
+
+#include "shaperegion.h"
+#include "tilemaphelpers.h"
 #include "tilepropertymanager.h"
 
-TileMapSelectionTool::TileMapSelectionTool(PropertyBrowser *propView,
+#include <QDebug>
+
+TileMapSelectionTool::TileMapSelectionTool(PropertyBrowser *propertyBrowser,
                                            TileMapPreviewGraphicsItem *previewItem,
                                            QObject *parent)
-    : AbstractTileMapTool(previewItem, parent)
-    , mTilePropertyView(propView) {}
+    : AbstractTileSelectionTool(propertyBrowser, previewItem, parent)
+    , mClickCount(0)
+    , mLastClickTime(0) {}
 
-void TileMapSelectionTool::cellActivated(int x, int y)
+void TileMapSelectionTool::cellClicked(int x, int y, QMouseEvent *)
 {
-    clearOverlay();
-    Tile &tile = getTileMap()->tileAt(x, y);
-    if(tile.hasTileTemplate()){
-        mTilePropertyView->setPropertyManager(new TilePropertyManager(tile));
-        drawOverlay(x, y);
+    mOriginalSelection = AbstractTileSelectionTool::selection();
+
+    mStartPoint = QPoint(x, y);
+    updatePreview(QPoint(x, y));
+}
+
+void TileMapSelectionTool::cellActivated(int x, int y, QMouseEvent *)
+{
+    updatePreview(QPoint(x, y));
+}
+
+void TileMapSelectionTool::cellReleased(int, int, QMouseEvent *event)
+{
+    if (mCurrentRect.boundingRect().width() == 1 && mCurrentRect.boundingRect().height() == 1) {
+        if (event->timestamp() - mLastClickTime < MULTI_CLICK_TIME)
+            ++mClickCount;
+        else
+            mClickCount = 0;
+
+        mLastClickTime = event->timestamp();
     } else {
-        mTilePropertyView->clear();
+        mClickCount = 0;
     }
+
+    if (mClickCount > 2)
+        mClickCount = 2;
+
+    QRegion newSelectionRegion;
+    switch (mClickCount) {
+    case 0:
+        newSelectionRegion = mCurrentRect;
+        break;
+    case 1:
+        newSelectionRegion = TileMapHelper::getFillRegion(getTileMap(), mCurrentRect.boundingRect().left(), mCurrentRect.boundingRect().top());
+        break;
+    case 2:
+        newSelectionRegion = TileMapHelper::getAllOfTemplateAtTile(getTileMap(), mCurrentRect.boundingRect().left(), mCurrentRect.boundingRect().top());
+        break;
+    }
+
+    switch (event->modifiers()) {
+    case Qt::ShiftModifier:
+        mSelection = mOriginalSelection + newSelectionRegion;
+        break;
+    case Qt::ControlModifier:
+        mSelection = mOriginalSelection - newSelectionRegion;
+        break;
+    case Qt::ShiftModifier | Qt::ControlModifier:
+        mSelection = mOriginalSelection & newSelectionRegion;
+        break;
+    case Qt::NoModifier:
+        mSelection = newSelectionRegion;
+        break;
+    }
+
+    activateSelection();
 }
 
-void TileMapSelectionTool::deactivate()
+void TileMapSelectionTool::updatePreview(QPoint end)
 {
-    clearOverlay();
-    mTilePropertyView->clear();
-}
+    mCurrentRect = ShapeRegion::rect(mStartPoint, end) & QRect(QPoint(0, 0), getTileMap()->mapSize());
+    mSelection = mOriginalSelection + mCurrentRect;
 
-void TileMapSelectionTool::drawOverlay(int x, int y)
-{
-    mPreviewItem->setRegion(QRect(x, y, 1, 1));
-    mPreviewItem->setColor(Qt::gray);
-}
-
-void TileMapSelectionTool::clearOverlay()
-{
-    mPreviewItem->setRegion(QRegion());
+    drawPreview();
 }

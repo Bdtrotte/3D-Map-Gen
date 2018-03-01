@@ -79,34 +79,63 @@ void PropertyBrowser::makeLine(QString propertyName, QVariant value, bool editab
             w->setMinimum(extra.takeFirst().toInt());
             if (!extra.isEmpty()) {
                 w->setMaximum(extra.takeFirst().toInt());
+                if (!extra.isEmpty() && extra.takeFirst().toBool()) {
+                    w->setMinimum(w->minimum() - 1);
+                    w->setValue(w->minimum());
+                    w->setSpecialValueText("--");
+                }
             }
         }
 
         w->setEnabled(editable);
 
-        w->setValue(value.toInt());
+        if (w->specialValueText().isEmpty())
+            w->setValue(value.toInt());
         line->addWidget(w);
         connect(w, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged),
-                this, [this, propertyName](int i) { mPropertyManager->propertyEdited(propertyName, i); });
+                this, [this, propertyName, w](int i) {
+            if (!w->specialValueText().isEmpty()) {
+                w->setMinimum(w->minimum() + 1);
+                w->setSpecialValueText("");
+            }
+
+            mPropertyManager->propertyEdited(propertyName, i);
+        });
 
         mLineWidget[propertyName] = w;
         break; }
     case QMetaType::Float:
     case QMetaType::Double: {
         QDoubleSpinBox *w = new QDoubleSpinBox(mMainWidget);
+        bool blank = false;
         if (!extra.isEmpty()) {
             w->setMinimum(extra.takeFirst().toDouble());
             if (!extra.isEmpty()) {
                 w->setMaximum(extra.takeFirst().toDouble());
+                if (!extra.isEmpty() && extra.takeFirst().toBool()) {
+                    w->setMinimum(w->minimum() - 1);
+                    w->setValue(w->minimum());
+                    w->setSpecialValueText("--");
+
+                    blank = true;
+                }
             }
         }
 
         w->setEnabled(editable);
 
-        w->setValue(value.toDouble());
+        if (!blank)
+            w->setValue(value.toDouble());
         line->addWidget(w);
         connect(w, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged),
-                this, [this, propertyName](double i) { mPropertyManager->propertyEdited(propertyName, i); });
+                this, [this, propertyName, w](double i) {
+            if (!w->specialValueText().isEmpty()) {
+                w->setMinimum(w->minimum() + 1);
+                w->setSpecialValueText("");
+            }
+
+            mPropertyManager->propertyEdited(propertyName, i);
+        });
 
         mLineWidget[propertyName] = w;
         break; }

@@ -10,7 +10,7 @@ public:
     RectBrushTool(TileMapPreviewGraphicsItem *previewItem, QObject *parent = nullptr);
 
     /// @brief Draws a rectangle.
-    QVector<QPoint> getShape(int dx, int dy) const override;
+   QRegion getShape(QPoint start, QPoint end) const override;
 };
 
 #endif // RECTBRUSHTOOL_H
