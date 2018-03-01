@@ -22,8 +22,9 @@ TileMaterialView::TileMaterialView(QWidget *parent)
     layout->addWidget(mMaterialList);
 
     QHBoxLayout *hLayout = new QHBoxLayout;
-    QPushButton *addMaterial = new QPushButton("Add Material", this);
-    mRemoveMaterialButton = new QPushButton("Remove Material", this);
+    QPushButton *addMaterial = new QPushButton(QIcon(":/icons/22x22/add.png"), "Add Material", this);
+    mRemoveMaterialButton = new QPushButton(QIcon(":/icons/22x22/remove.png"), "Remove Material", this);
+    mRemoveMaterialButton->setEnabled(false);
     hLayout->addWidget(addMaterial);
     hLayout->addWidget(mRemoveMaterialButton);
 

@@ -39,9 +39,10 @@ public:
      * @param tool The tool to be registered.
      * @param name The identifier to be given to the tool.
      * @param Icon of the tool, an icon is not necessary
+     * @param Key Sequence for the tool, not necessary
      * @return A QAction that, when toggled, will call either activateTool(name) or deactivateTool(name).
      */
-    QAction *registerTool(AbstractToolP tool, QString name, QIcon icon = QIcon());
+    QAction *registerTool(AbstractToolP tool, QString name, QIcon icon = QIcon(), QKeySequence ks = QKeySequence());
 
     /**
      * @brief Finds the action associated with the name.

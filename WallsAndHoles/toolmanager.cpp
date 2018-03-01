@@ -12,13 +12,18 @@ ToolManager::ToolManager(QObject *parent)
 }
 
 
-QAction *ToolManager::registerTool(AbstractToolP tool, QString name, QIcon icon)
+QAction *ToolManager::registerTool(AbstractToolP tool, QString name, QIcon icon, QKeySequence ks)
 {
     // This automatically adds action to mActionGroup.
     QAction *action = new QAction(name, mActionGroup);
 
     if(!icon.isNull()){
         action->setIcon(icon);
+    }
+
+    if(!ks.isEmpty()){
+        action->setShortcut(ks);
+        action->setToolTip(name+" ("+ks.toString()+ ")");
     }
 
     action->setCheckable(true);
