@@ -161,4 +161,4 @@ RESOURCES += \
     textures.qrc \
     icons.qrc
 
-ICON = W.icns
+ICON = WAH.icns
