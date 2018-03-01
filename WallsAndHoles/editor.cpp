@@ -69,6 +69,7 @@ Editor::Editor(QObject *parent)
     mMainWindow->addDockWidget(Qt::RightDockWidgetArea, propBrowserDock);
     mMainWindow->addDockWidget(Qt::RightDockWidgetArea, materialDock);
 
+    //Save keep track of where the dockWidgets are
     connect(meshViewDock, &QDockWidget::dockLocationChanged, this, &Editor::saveSettings);
     connect(templateDock, &QDockWidget::dockLocationChanged, this, &Editor::saveSettings);
     connect(propBrowserDock, &QDockWidget::dockLocationChanged, this, &Editor::saveSettings);
@@ -160,7 +161,7 @@ void Editor::saveMap()
     if (mTileMap->savePath().isEmpty()) {
         QString savePath = QFileDialog::getSaveFileName(mMainWindow,
                                                         tr("Save Map"),
-                                                        "/home/",
+                                                        mSavePath,
                                                         tr("Save Files (*.wah)"));
 
         if (savePath.isEmpty())
@@ -187,7 +188,7 @@ void Editor::saveMapAs()
     QString prePath = mTileMap->savePath();
     QString savePath = QFileDialog::getSaveFileName(mMainWindow,
                                                     tr("Save Map"),
-                                                    "/home/",
+                                                    mSavePath,
                                                     tr("Save Files (*.wah)"));
 
     if (savePath.isEmpty())
@@ -206,7 +207,7 @@ void Editor::loadMap()
 {
     QString fileName = QFileDialog::getOpenFileName(mMainWindow,
                                                     tr("Open Map"),
-                                                    "/home/",
+                                                    mSavePath,
                                                     tr("Open Files (*.wah)"));
 
     TileMap *tileMap = XMLTool::openTileMap(fileName, mTileTemplateSetManager);
@@ -237,7 +238,7 @@ void Editor::exportMapMesh()
 
     QString fileName = QFileDialog::getSaveFileName(mMainWindow,
                                                     tr("Export OBJ"),
-                                                    "/home/",
+                                                    mExportPath,
                                                     tr("Export Files (*.obj)"));
 
     if(!fileName.isEmpty())
@@ -333,32 +334,55 @@ void Editor::loadSettings()
 
     //Loading for meshViewDock
     QDockWidget *mvd = qobject_cast<QDockWidget *>(mMeshViewContainer->parentWidget());
-    mvd->setHidden(settings.value("meshViewDock/hidden").toBool());
-    mvd->setFloating(settings.value("meshViewDock/floating").toBool());
+    mvd->setHidden(settings.value("meshViewDock/hidden", false).toBool());
+    mvd->setFloating(settings.value("meshViewDock/floating", false).toBool());
     mvd->move(settings.value("meshViewDock/pos").toPoint());
     mvd->resize(settings.value("meshViewDock/size").toSize());
-    //mMainWindow->addDockWidget(settings.value("meshViewDock/dockWidgetArea"), mvd);
+    if(!settings.value("meshViewDock/floating").toBool(), false){
+        mMainWindow->addDockWidget(
+                    (Qt::DockWidgetArea)settings.value("meshViewDock/dockArea", Qt::RightDockWidgetArea).toInt()
+                    , mvd);
+    }
 
     //Loading for templateDock
     QDockWidget *td = qobject_cast<QDockWidget *>(mTileTemplateSetsView->parentWidget());
-    td->setHidden(settings.value("templateDock/hidden").toBool());
-    td->setFloating(settings.value("templateDock/floating").toBool());
+    td->setHidden(settings.value("templateDock/hidden", false).toBool());
+    td->setFloating(settings.value("templateDock/floating", false).toBool());
     td->move(settings.value("templateDock/pos").toPoint());
     td->resize(settings.value("templateDock/size").toSize());
+    if(!settings.value("templateDock/floating", false).toBool()){
+        mMainWindow->addDockWidget(
+                    (Qt::DockWidgetArea)settings.value("templateDock/dockArea", Qt::LeftDockWidgetArea).toInt()
+                    , td);
+    }
 
     //Loading for propBrowserDock
     QDockWidget *pbd = qobject_cast<QDockWidget *>(mPropertyBrowser->parentWidget());
-    pbd->setHidden(settings.value("propBrowserDock/hidden").toBool());
-    pbd->setFloating(settings.value("propBrowserDock/floating").toBool());
+    pbd->setHidden(settings.value("propBrowserDock/hidden", false).toBool());
+    pbd->setFloating(settings.value("propBrowserDock/floating", false).toBool());
     pbd->move(settings.value("propBrowserDock/pos").toPoint());
     pbd->resize(settings.value("propBrowserDock/size").toSize());
+    if(!settings.value("propBrowserDock/floating", false).toBool()){
+        mMainWindow->addDockWidget(
+                    (Qt::DockWidgetArea)settings.value("propBrowserDock/dockArea", Qt::RightDockWidgetArea).toInt()
+                    , pbd);
+    }
 
     //Loading for materialDock
     QDockWidget *md = qobject_cast<QDockWidget *>(mMaterialView->parentWidget());
-    md->setHidden(settings.value("materialDock/hidden").toBool());
-    md->setFloating(settings.value("materialDock/floating").toBool());
+    md->setHidden(settings.value("materialDock/hidden", false).toBool());
+    md->setFloating(settings.value("materialDock/floating", false).toBool());
     md->move(settings.value("materialDock/pos").toPoint());
     md->resize(settings.value("materialDock/size").toSize());
+    if(!settings.value("materialDock/floating", false).toBool()){
+        mMainWindow->addDockWidget(
+                    (Qt::DockWidgetArea)settings.value("materialDock/dockArea", Qt::RightDockWidgetArea).toInt()
+                    , md);
+    }
+
+    //Loading saving and export paths
+    mSavePath = settings.value("savePath", QString("/home/")).toString();
+    mExportPath = settings.value("exportPath", QString("/home/")).toString();
 
 }
 
@@ -373,7 +397,7 @@ void Editor::saveSettings()
     settings.setValue("floating", mvd->isFloating());
     settings.setValue("hidden", mvd->isHidden());
     settings.setValue("size", mvd->size());
-    if(mMainWindow){
+    if(mMainWindow->isVisible()){
         int i = mMainWindow->dockWidgetArea(mvd);
         settings.setValue("dockArea", i);
     }
@@ -386,6 +410,10 @@ void Editor::saveSettings()
     settings.setValue("floating", td->isFloating());
     settings.setValue("hidden", td->isHidden());
     settings.setValue("size", td->size());
+    if(mMainWindow->isVisible()){
+        int i = mMainWindow->dockWidgetArea(td);
+        settings.setValue("dockArea", i);
+    }
     settings.endGroup();
 
     //propBrowserDock settings
@@ -395,6 +423,10 @@ void Editor::saveSettings()
     settings.setValue("floating", pbd->isFloating());
     settings.setValue("hidden", pbd->isHidden());
     settings.setValue("size", pbd->size());
+    if(mMainWindow->isVisible()){
+        int i = mMainWindow->dockWidgetArea(pbd);
+        settings.setValue("dockArea", i);
+    }
     settings.endGroup();
 
     //materialDock settings
@@ -404,6 +436,14 @@ void Editor::saveSettings()
     settings.setValue("floating", md->isFloating());
     settings.setValue("hidden", md->isHidden());
     settings.setValue("size", md->size());
+    if(mMainWindow->isVisible()){
+        int i = mMainWindow->dockWidgetArea(md);
+        settings.setValue("dockArea", i);
+    }
     settings.endGroup();
+
+    //Save and Export paths
+    settings.setValue("savePath", mSavePath);
+    settings.setValue("exportPath", mExportPath);
 
 }

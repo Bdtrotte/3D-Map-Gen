@@ -82,6 +82,8 @@ private:
     }
 
     //Saving and loading settings
+    QString mSavePath = "/home/";
+    QString mExportPath = "/home/";
     void loadSettings();
     void saveSettings();
 };
