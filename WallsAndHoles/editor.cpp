@@ -44,7 +44,6 @@ Editor::Editor(QObject *parent)
     mMainWindow->setCentralWidget(mMapView);
     setUpMenuBar();
     mMainWindow->addToolBar(mToolBar);
-    mToolBar->setObjectName("Tool Bar");
 
     //Set up and add all dock widgets
     QDockWidget *meshViewDock = new QDockWidget("Mesh View", mMainWindow);
@@ -108,6 +107,7 @@ Editor::Editor(QObject *parent)
     //Sets up the context toolBar
     mToolBar->addSeparator();
     mToolBar->addWidget(mTileMapToolManager->contextToolBar());
+    mToolBar->setObjectName("Tool Bar");
 
     //Create widget connections
     connect(mMapView, &MapView::cellActivated,
@@ -330,9 +330,10 @@ void Editor::loadSettings()
 
     mMainWindow->restoreState(settings.value("windowState").toByteArray());
 
-    //TODO: Saving and loading templatesets
     if(!settings.value("tileMap").toString().isNull())
         setTileMap(XMLTool::openTileMap(settings.value("tileMap").toString(), mTileTemplateSetManager));
+    else
+        setTileMap(nullptr);
 
     //Loading saving and export paths
     mSavePath = settings.value("savePath", QString("/home/")).toString();
@@ -344,11 +345,15 @@ void Editor::saveSettings()
 {
     QSettings settings;
 
+    //Saves the windowstate
     if(mMainWindow != nullptr)
         settings.setValue("windowState", mMainWindow->saveState());
 
-    if(mTileMap != nullptr)
+    //Saves the open Tilemap
+    if(mTileMap)
         settings.setValue("tileMap", mTileMap->savePath());
+    else
+        settings.setValue("tileMap", QString());
 
     //Save and Export paths
     settings.setValue("savePath", mSavePath);
