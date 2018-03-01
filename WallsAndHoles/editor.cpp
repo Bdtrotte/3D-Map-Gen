@@ -25,8 +25,6 @@
 #include <QFileDialog>
 #include <QListView>
 #include <QShortcut>
-#include <QCloseEvent>
-#include <algorithm>
 
 Editor::Editor(QObject *parent)
     : QObject(parent)
@@ -46,34 +44,33 @@ Editor::Editor(QObject *parent)
     mMainWindow->setCentralWidget(mMapView);
     setUpMenuBar();
     mMainWindow->addToolBar(mToolBar);
+    mToolBar->setObjectName("Tool Bar");
 
     //Set up and add all dock widgets
     QDockWidget *meshViewDock = new QDockWidget("Mesh View", mMainWindow);
     mMeshViewContainer = new MeshViewContainer(meshViewDock);
     meshViewDock->setWidget(mMeshViewContainer);
+    meshViewDock->setObjectName("Mesh View Dock");
 
     QDockWidget *templateDock = new QDockWidget("Template Set View", mMainWindow);
     mTileTemplateSetsView = new TileTemplateSetsView(mTileTemplateSetManager, templateDock);
     templateDock->setWidget(mTileTemplateSetsView);
+    templateDock->setObjectName("Template Dock");
 
     QDockWidget *propBrowserDock = new QDockWidget("Property Browser View", mMainWindow);
     mPropertyBrowser = new PropertyBrowser(mMainWindow);
     propBrowserDock->setWidget(mPropertyBrowser);
+    propBrowserDock->setObjectName("Prop Browser Dock");
 
     QDockWidget *materialDock = new QDockWidget("Material View", mMainWindow);
     mMaterialView = new TileMaterialView(mMainWindow);
     materialDock->setWidget(mMaterialView);
+    materialDock->setObjectName("Material Dock");
 
     mMainWindow->addDockWidget(Qt::RightDockWidgetArea, meshViewDock);
     mMainWindow->addDockWidget(Qt::LeftDockWidgetArea, templateDock);
     mMainWindow->addDockWidget(Qt::RightDockWidgetArea, propBrowserDock);
     mMainWindow->addDockWidget(Qt::RightDockWidgetArea, materialDock);
-
-    //Save keep track of where the dockWidgets are
-    connect(meshViewDock, &QDockWidget::dockLocationChanged, this, &Editor::saveSettings);
-    connect(templateDock, &QDockWidget::dockLocationChanged, this, &Editor::saveSettings);
-    connect(propBrowserDock, &QDockWidget::dockLocationChanged, this, &Editor::saveSettings);
-    connect(materialDock, &QDockWidget::dockLocationChanged, this, &Editor::saveSettings);
 
     // Add tools.
     mToolBar->addAction(mTileMapToolManager->registerMapTool(
@@ -127,17 +124,13 @@ Editor::Editor(QObject *parent)
     connect(mTileTemplateSetsView, &TileTemplateSetsView::tileTemplateChanged,
             mTileMapToolManager, &TileMapToolManager::tileTemplateChanged);
 
-    loadSettings();
-
     mMainWindow->showMaximized();
-
-    //Save Settings
-    connect(mMainWindow, &QMainWindow::destroyed, this, &Editor::saveSettings);
-
+    loadSettings();
 }
 
 Editor::~Editor()
 {
+    saveSettings();
     delete mMainWindow;
     delete mTileMap;
 }
@@ -167,6 +160,7 @@ void Editor::saveMap()
         if (savePath.isEmpty())
             return;
         mTileMap->setSavePath(savePath);
+        mSavePath = savePath;
     }
 
     mTileTemplateSetManager->saveAllTileTemplateSets();
@@ -194,6 +188,7 @@ void Editor::saveMapAs()
     if (savePath.isEmpty())
         return;
     mTileMap->setSavePath(savePath);
+    mSavePath = savePath;
 
     if (XMLTool::saveTileMap(mTileMap, mTileTemplateSetManager->tileTemplateSets()) != XMLTool::NoError) {
         mTileMap->setSavePath(prePath);
@@ -218,7 +213,7 @@ void Editor::loadMap()
         messageBox.setFixedSize(500,200);
         return;
     }
-
+    mSavePath = fileName;
     setTileMap(tileMap);
 }
 
@@ -243,6 +238,7 @@ void Editor::exportMapMesh()
 
     if(!fileName.isEmpty())
         mMeshViewContainer->saveMesh(fileName);
+    mExportPath = fileName;
 }
 
 void Editor::viewMapProperties()
@@ -332,53 +328,7 @@ void Editor::loadSettings()
 {
     QSettings settings;
 
-    //Loading for meshViewDock
-    QDockWidget *mvd = qobject_cast<QDockWidget *>(mMeshViewContainer->parentWidget());
-    mvd->setHidden(settings.value("meshViewDock/hidden", false).toBool());
-    mvd->setFloating(settings.value("meshViewDock/floating", false).toBool());
-    mvd->move(settings.value("meshViewDock/pos").toPoint());
-    mvd->resize(settings.value("meshViewDock/size").toSize());
-    if(!settings.value("meshViewDock/floating").toBool(), false){
-        mMainWindow->addDockWidget(
-                    (Qt::DockWidgetArea)settings.value("meshViewDock/dockArea", Qt::RightDockWidgetArea).toInt()
-                    , mvd);
-    }
-
-    //Loading for templateDock
-    QDockWidget *td = qobject_cast<QDockWidget *>(mTileTemplateSetsView->parentWidget());
-    td->setHidden(settings.value("templateDock/hidden", false).toBool());
-    td->setFloating(settings.value("templateDock/floating", false).toBool());
-    td->move(settings.value("templateDock/pos").toPoint());
-    td->resize(settings.value("templateDock/size").toSize());
-    if(!settings.value("templateDock/floating", false).toBool()){
-        mMainWindow->addDockWidget(
-                    (Qt::DockWidgetArea)settings.value("templateDock/dockArea", Qt::LeftDockWidgetArea).toInt()
-                    , td);
-    }
-
-    //Loading for propBrowserDock
-    QDockWidget *pbd = qobject_cast<QDockWidget *>(mPropertyBrowser->parentWidget());
-    pbd->setHidden(settings.value("propBrowserDock/hidden", false).toBool());
-    pbd->setFloating(settings.value("propBrowserDock/floating", false).toBool());
-    pbd->move(settings.value("propBrowserDock/pos").toPoint());
-    pbd->resize(settings.value("propBrowserDock/size").toSize());
-    if(!settings.value("propBrowserDock/floating", false).toBool()){
-        mMainWindow->addDockWidget(
-                    (Qt::DockWidgetArea)settings.value("propBrowserDock/dockArea", Qt::RightDockWidgetArea).toInt()
-                    , pbd);
-    }
-
-    //Loading for materialDock
-    QDockWidget *md = qobject_cast<QDockWidget *>(mMaterialView->parentWidget());
-    md->setHidden(settings.value("materialDock/hidden", false).toBool());
-    md->setFloating(settings.value("materialDock/floating", false).toBool());
-    md->move(settings.value("materialDock/pos").toPoint());
-    md->resize(settings.value("materialDock/size").toSize());
-    if(!settings.value("materialDock/floating", false).toBool()){
-        mMainWindow->addDockWidget(
-                    (Qt::DockWidgetArea)settings.value("materialDock/dockArea", Qt::RightDockWidgetArea).toInt()
-                    , md);
-    }
+    mMainWindow->restoreState(settings.value("windowState").toByteArray());
 
     //Loading saving and export paths
     mSavePath = settings.value("savePath", QString("/home/")).toString();
@@ -390,57 +340,8 @@ void Editor::saveSettings()
 {
     QSettings settings;
 
-    //MeshViewDock settings
-    QDockWidget *mvd = qobject_cast<QDockWidget *>(mMeshViewContainer->parentWidget());
-    settings.beginGroup("meshViewDock");
-    settings.setValue("pos", mvd->pos());
-    settings.setValue("floating", mvd->isFloating());
-    settings.setValue("hidden", mvd->isHidden());
-    settings.setValue("size", mvd->size());
-    if(mMainWindow->isVisible()){
-        int i = mMainWindow->dockWidgetArea(mvd);
-        settings.setValue("dockArea", i);
-    }
-    settings.endGroup();
-
-    //templateDock settings
-    QDockWidget *td = qobject_cast<QDockWidget *>(mTileTemplateSetsView->parentWidget());
-    settings.beginGroup("templateDock");
-    settings.setValue("pos", td->pos());
-    settings.setValue("floating", td->isFloating());
-    settings.setValue("hidden", td->isHidden());
-    settings.setValue("size", td->size());
-    if(mMainWindow->isVisible()){
-        int i = mMainWindow->dockWidgetArea(td);
-        settings.setValue("dockArea", i);
-    }
-    settings.endGroup();
-
-    //propBrowserDock settings
-    QDockWidget *pbd = qobject_cast<QDockWidget *>(mPropertyBrowser->parentWidget());
-    settings.beginGroup("propBrowserDock");
-    settings.setValue("pos", pbd->pos());
-    settings.setValue("floating", pbd->isFloating());
-    settings.setValue("hidden", pbd->isHidden());
-    settings.setValue("size", pbd->size());
-    if(mMainWindow->isVisible()){
-        int i = mMainWindow->dockWidgetArea(pbd);
-        settings.setValue("dockArea", i);
-    }
-    settings.endGroup();
-
-    //materialDock settings
-    QDockWidget *md = qobject_cast<QDockWidget *>(mMaterialView->parentWidget());
-    settings.beginGroup("materialDock");
-    settings.setValue("pos", md->pos());
-    settings.setValue("floating", md->isFloating());
-    settings.setValue("hidden", md->isHidden());
-    settings.setValue("size", md->size());
-    if(mMainWindow->isVisible()){
-        int i = mMainWindow->dockWidgetArea(md);
-        settings.setValue("dockArea", i);
-    }
-    settings.endGroup();
+    if(mMainWindow != nullptr)
+        settings.setValue("windowState", mMainWindow->saveState());
 
     //Save and Export paths
     settings.setValue("savePath", mSavePath);

@@ -12,6 +12,7 @@
 #include "tiletemplatesetsmanager.h"
 #include "propertybrowser.h"
 #include "tilematerialview.h"
+#include "qmainwindow.h"
 
 #include <QObject>
 #include <QList>
