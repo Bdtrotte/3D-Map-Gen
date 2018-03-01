@@ -6,6 +6,7 @@
 #include <QDebug>
 #include <QVBoxLayout>
 #include <QToolBar>
+#include <QToolButton>
 #include <QSplitter>
 
 TileTemplateSetsView::TileTemplateSetsView(TileTemplateSetsManager *tileTemplateSetsManager,
@@ -44,7 +45,6 @@ TileTemplateSetsView::TileTemplateSetsView(TileTemplateSetsManager *tileTemplate
     mRemoveTemplateSet = actionBar->addAction("Remove Template Set", this, &TileTemplateSetsView::removeTemplateSet);
     mSaveTemplateSet = actionBar->addAction("Save Template Set", this, &TileTemplateSetsView::saveTemplateSet);
     actionBar->addAction("Load Template Set", this, &TileTemplateSetsView::loadTemplateSet);
-
     mRemoveTemplateSet->setEnabled(false);
     mSaveTemplateSet->setEnabled(false);
     mRemoveTemplate->setEnabled(false);

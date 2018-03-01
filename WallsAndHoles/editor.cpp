@@ -330,6 +330,10 @@ void Editor::loadSettings()
 
     mMainWindow->restoreState(settings.value("windowState").toByteArray());
 
+    //TODO: Saving and loading templatesets
+    if(!settings.value("tileMap").toString().isNull())
+        setTileMap(XMLTool::openTileMap(settings.value("tileMap").toString(), mTileTemplateSetManager));
+
     //Loading saving and export paths
     mSavePath = settings.value("savePath", QString("/home/")).toString();
     mExportPath = settings.value("exportPath", QString("/home/")).toString();
@@ -342,6 +346,9 @@ void Editor::saveSettings()
 
     if(mMainWindow != nullptr)
         settings.setValue("windowState", mMainWindow->saveState());
+
+    if(mTileMap != nullptr)
+        settings.setValue("tileMap", mTileMap->savePath());
 
     //Save and Export paths
     settings.setValue("savePath", mSavePath);
