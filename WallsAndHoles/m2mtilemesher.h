@@ -9,6 +9,7 @@
 
 #include "array2d.h"
 
+#include "m2mtilemesher_private.h"
 #include "m2mpartialmesh.h"
 
 #include "tile.h"
@@ -103,11 +104,12 @@ public:
     bool operator !=(const TileNeighborhoodInfo &other) const;
 
     const TileInfo &operator ()(int x, int y) const;
+    const TileInfo &operator ()(QPoint pt) const;
 
     const TileInfo &centerTile() const;
 
-
     QSharedPointer<TileMesher> makeMesher() const;
+
 
 private:
     Array2D<TileInfo> mTileInfos;        /// Mesh-relevant information for every tile.
@@ -139,11 +141,6 @@ public:
     virtual QVector<QSharedPointer<SimpleTexturedObject>> makeMesh(QVector2D offset) = 0;
 
 
-    enum Direction {
-        NORTH, SOUTH, EAST, WEST
-    };
-
-
 protected:
     TileMesher(TileNeighborhoodInfo nbhd);
 
@@ -168,7 +165,7 @@ protected:
      * @param offset                The offset of the tile.
      */
     void makeVerticalSideMesh(PartialMeshData &meshData,
-                              Direction sideDirection,
+                              M2M_Private::SideDirection sideDirection,
                               QVector2D offset);
 };
 

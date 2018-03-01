@@ -1,10 +1,9 @@
-
-// For std::min_element
-#include <algorithm>
-
+#include <QMutexLocker>
 #include <QTimer>
 
 #include "map2mesh.h"
+#include "array2dtools.h"
+
 
 Map2Mesh::Map2Mesh(TileMap *tileMap, QObject *parent)
     : QObject(parent)
@@ -12,6 +11,7 @@ Map2Mesh::Map2Mesh(TileMap *tileMap, QObject *parent)
     , mScene(SimpleTexturedScene::makeScene())
 {
     if (mTileMap) {
+        // This will set up and initialize all output-related variables.
         remakeAll();
 
 
@@ -29,15 +29,19 @@ SharedSimpleTexturedScene Map2Mesh::getScene() const
 
 void Map2Mesh::tileChanged(int x, int y)
 {
-    Q_UNUSED(x);
-    Q_UNUSED(y);
+    // Update this tile and its neighboring tiles.
+    QMutexLocker sceneLocker(&mSceneUpdateMutex);
+    mTilesToUpdate += {x, y};
+    mTilesToUpdate += getValidNeighbors(x, y, mTileMap->mapSize());
+    sceneLocker.unlock();
 
-    if (!mInferScheduled) {
-        mInferScheduled = true;
+
+    if (!mSceneUpdateScheduled) {
+        mSceneUpdateScheduled = true;
 
         QTimer::singleShot(500, this, [this] () {
-            mInferScheduled = false;
-            inferProperties();
+            mSceneUpdateScheduled = false;
+            updateScene();
         });
     }
 }
@@ -45,72 +49,87 @@ void Map2Mesh::tileChanged(int x, int y)
 
 void Map2Mesh::remakeAll()
 {
-    mTileObjects = Array2D<QVector<QSharedPointer<SimpleTexturedObject>>>(mTileMap->mapSize());
+    mTileObjects = TileObjectGrid(mTileMap->mapSize());
+    mTileMeshers = TileMesherGrid(mTileMap->mapSize());
     mScene->clear();
 
-    mTileMeshers = Array2D<QSharedPointer<M2M::TileMesher>>(mTileMap->mapSize());
 
-    inferProperties();
+    // Update all points.
+    QMutexLocker locker(&mSceneUpdateMutex);
+    for (const QPoint &pt : mTileMap->getArray2D().indices())
+        mTilesToUpdate.insert(pt);
+    locker.unlock();
+
+
+    updateScene();
 }
 
 
-
-// TODO: There may be threading issues here! What if mTileMap changes while we are processing?
-void Map2Mesh::inferProperties()
+void Map2Mesh::updateScene()
 {
+    QMutexLocker locker(&mSceneUpdateMutex);
+
+
+    // Using the grid representation of mTileMap for convenience.
     const Array2D<QSharedPointer<Tile>> &grid = mTileMap->getArray2D();
 
-    QVector2D mapCenter(mTileMap->width() * 0.5, mTileMap->height() * 0.5);
+    // This point on the map should be at (0,y,0) in 3D space (for some appropriate y).
+    QVector2D mapCenter(-mTileMap->width() * 0.5, mTileMap->height() * 0.5);
 
 
-    for (int x = 0; x < mTileMap->width(); ++x) {
-        for (int y = 0; y < mTileMap->height(); ++y) {
-
-            Array2D<const Tile *> neighborhood(3, 3);
-
-            bool hasLeft = x > 0;
-            bool hasRight = x < grid.width()-1;
-            bool hasDown = y > 0;
-            bool hasUp = y < grid.height()-1;
-
-            neighborhood(0, 0) = hasLeft  && hasDown ? grid(x-1,y-1).data() : nullptr;
-            neighborhood(1, 0) =             hasDown ? grid( x ,y-1).data() : nullptr;
-            neighborhood(2, 0) = hasRight && hasDown ? grid(x+1,y-1).data() : nullptr;
-
-            neighborhood(0, 1) = hasLeft             ? grid(x-1, y ).data() : nullptr;
-            neighborhood(1, 1) =                       grid( x , y ).data();
-            neighborhood(2, 1) = hasRight            ? grid(x+1, y ).data() : nullptr;
-
-            neighborhood(0, 2) = hasLeft  && hasUp   ? grid(x-1,y+1).data() : nullptr;
-            neighborhood(1, 2) =             hasUp   ? grid( x ,y+1).data() : nullptr;
-            neighborhood(2, 2) = hasRight && hasUp   ? grid(x+1,y+1).data() : nullptr;
+    // Update every point that needs updating.
+    for (const QPoint &point : mTilesToUpdate) {
+        int x = point.x();
+        int y = point.y();
 
 
+        /*
+         * Compute the 3x3 neighborhood of the point.
+         * The point should be at (1, 1), and nonexistent neighbors should be nullptr.
+         * */
+        Array2D<const Tile *> neighborhood(3, 3, nullptr);
 
-            auto newMesher = M2M::TileMesher::getMesherForTile(
-                        neighborhood,
-                        mTileMeshers(x, y).data());
+        neighborhood(1, 1) = grid(x, y).data();
+        for (const QPoint &neighbor : getValidNeighbors(point, mTileMap->mapSize()))
+            neighborhood(neighbor - point + QPoint(1, 1)) = grid(neighbor).data();
 
 
-            // If the tile's mesh should be updated, update it.
-            if (newMesher != nullptr) {
-                auto oldObjects = mTileObjects(x, y);
+        // Get a new mesher for the tile. If this is nullptr,
+        // that means that the tile's mesh does not need an update.
+        auto newMesher = M2M::TileMesher::getMesherForTile(
+                    neighborhood,
+                    mTileMeshers(x, y).data());
 
-                for (auto obj : oldObjects)
-                    mScene->removeObject(obj);
 
-                auto newObjects = newMesher->makeMesh(QVector2D(x, y) - mapCenter);
+        // If the tile's mesh should be updated, update it.
+        if (newMesher != nullptr) {
 
-                for (auto obj : newObjects)
-                    mScene->addObject(obj);
+            /*
+             * NOTE: The way this is currently set up, a TileMesher will not be
+             * able to keep and modify a reference to an object. This part of
+             * the code may be subject to change later (although currently, it
+             * is sufficiently efficient).
+             * */
 
-                mTileObjects(x, y) = newObjects;
-                mTileMeshers(x, y) = newMesher;
-            }
 
+            auto oldObjects = mTileObjects(x, y);
+
+            for (auto obj : oldObjects)
+                mScene->removeObject(obj);
+
+            // TODO: Add comment about -x.
+            auto newObjects = newMesher->makeMesh(QVector2D(-x, y) - mapCenter);
+
+            for (auto obj : newObjects)
+                mScene->addObject(obj);
+
+            mTileObjects(x, y) = newObjects;
+            mTileMeshers(x, y) = newMesher;
         }
     }
 
+
+    mTilesToUpdate.clear();
 
     mScene->commitChanges();
 }

@@ -78,6 +78,33 @@ public:
     PhongInfo phongInfo() const;
 
 
+    /**
+     * @brief makeVerticalQuad  Creates a vertical quad.
+     * @param center            The center point of the quad in 3D space.
+     * @param xzDirection       The normal direction of the quad -- this vector is assumed to be normalized.
+     *                          A vertical quad's normal always has a Y component of 0.
+     * @param width             The "width" of the quad (the other dimension of the quad, as opposed to height).
+     * @param height            The "height" of the quad (size along Y axis).
+     * @param texture           The texture of the quad.
+     * @param material          The material of the quad.
+     * @param upsideDown        If this is "false," the quad's vertices will be output in the order
+     *                              4 3
+     *                              1 2
+     *                          when looking at the quad. Otherwise, the vertices are output in the order
+     *                              2 1
+     *                              4 3
+     *                          Texture coordinates are always (0,0), (1,0), (1,1), (0,1).
+     * @return                  The specified quad.
+     */
+    static Quad makeVerticalQuad(QVector3D center,
+                                 QVector2D xzDirection,
+                                 float width,
+                                 float height,
+                                 ImageInfo texture,
+                                 PhongInfo material,
+                                 bool upsideDown = false);
+
+
 private:
     QVector3D mV1, mV2, mV3, mV4;
     QVector2D mT1, mT2, mT3, mT4;

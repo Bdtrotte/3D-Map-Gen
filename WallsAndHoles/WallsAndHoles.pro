@@ -79,7 +79,8 @@ SOURCES += \
     materialpropertymanager.cpp \
     imagefinderbar.cpp \
     tilematerialselectiondialog.cpp \
-    m2mpartialmesh.cpp
+    m2mpartialmesh.cpp \
+    m2mtilemesher_private.cpp
 
 HEADERS += \
     meshview.h \
@@ -146,7 +147,10 @@ HEADERS += \
     imagefinderbar.h \
     imageandsource.h \
     tilematerialselectiondialog.h \
-    m2mpartialmesh.h
+    m2mpartialmesh.h \
+    array2dtools.h \
+    array2d_private.h \
+    m2mtilemesher_private.h
 
 FORMS += \
     meshview.ui

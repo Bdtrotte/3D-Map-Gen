@@ -46,6 +46,46 @@ PhongInfo Quad::phongInfo() const
 {
     return mMaterial;
 }
+
+
+Quad Quad::makeVerticalQuad(QVector3D center,
+                            QVector2D xzDirection,
+                            float width,
+                            float height,
+                            ImageInfo texture,
+                            PhongInfo material,
+                            bool upsideDown)
+{
+    QVector2D t1(0, 0);
+    QVector2D t2(1, 0);
+    QVector2D t3(1, 1);
+    QVector2D t4(0, 1);
+
+
+    // "Left" direction when looking at the quad from the front.
+    // Magnitude is such that center + left is on the left edge of the quad.
+    QVector3D left(-xzDirection.y() * width * 0.5, 0, xzDirection.x() * width * 0.5);
+    QVector3D down(0, -height*0.5, 0);
+
+    if (upsideDown) {
+        left = -left;
+        down = -down;
+    }
+
+    QVector3D v1 = center + left + down;
+    QVector3D v2 = center - left + down;
+    QVector3D v3 = center - left - down;
+    QVector3D v4 = center + left - down;
+
+    QVector3D normal(xzDirection.x(), 0, xzDirection.y());
+
+    return Quad(normal, texture, material,
+                v1, t1,
+                v2, t2,
+                v3, t3,
+                v4, t4);
+}
+
 /* END Quad */
 
 
