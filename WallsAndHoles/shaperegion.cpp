@@ -1,5 +1,6 @@
 #include "shaperegion.h"
 
+#include <QtMath>
 #include <QTransform>
 
 void ShapeRegion::findBounds(const QPoint &start, const QPoint &end, QPoint &topLeft, QPoint &bottomRight)
