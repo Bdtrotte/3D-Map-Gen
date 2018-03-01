@@ -160,3 +160,5 @@ RESOURCES += \
     shaders.qrc \
     textures.qrc \
     icons.qrc
+
+ICON = W.icns
