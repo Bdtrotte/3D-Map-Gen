@@ -3,9 +3,6 @@
 
 #include "tilemap.h"
 
-#include <QStack>
-#include <QSet>
-
 // QPoints are not hashable in Qt by default!
 inline uint qHash (const QPoint & key)
 {

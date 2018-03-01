@@ -1,7 +1,6 @@
 #ifndef FILLTOOL_H
 #define FILLTOOL_H
 
-
 #include <QSet>
 #include <QPoint>
 

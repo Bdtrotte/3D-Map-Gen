@@ -1,5 +1,8 @@
 #include "tilemaphelpers.h"
 
+#include <QStack>
+#include <QSet>
+
 QRegion TileMapHelper::getFillRegion(TileMap *tileMap, int x, int y)
 {
     if (!tileMap || !tileMap->contains(x, y)) return QRegion();
