@@ -20,9 +20,11 @@ QRectF TileMapPreviewGraphicsItem::boundingRect() const
     return mDrawRegion.boundingRect();
 }
 
-void TileMapPreviewGraphicsItem::setRegion(const QRegion &region)
+void TileMapPreviewGraphicsItem::setRegion(QRegion region)
 {
     prepareGeometryChange();
+
+    region &= mClipRect;
 
     QTransform t;
     t.scale(30, 30);
