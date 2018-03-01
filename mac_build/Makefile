@@ -4,6 +4,7 @@ DMG_Background = ./tools/WAH.png
 DMGSource = ./release
 
 dmg: $(DMGSource)
+	cp ./tools/example.Info.plist $(DMGSource)/WallsAndHoles.app/Contents/Info.plist
 	$(DMGMaker) \
 	--volicon $(ICON) \
 	--background $(DMG_Background) \
