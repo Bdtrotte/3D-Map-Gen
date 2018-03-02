@@ -29,7 +29,6 @@ qrc_*.cpp
 ui_*.h
 *.qmlc
 *.jsc
-Makefile*
 *build-*
 
 # Qt unit tests
@@ -47,5 +46,6 @@ target_wrapper.*
 CMakeLists.txt.user*
 
 WallsAndHoles/WallsAndHoles.pro.user
+release
 
 *.orig

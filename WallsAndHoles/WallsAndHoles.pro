@@ -165,4 +165,6 @@ DISTFILES += \
 RESOURCES += \
     shaders.qrc \
     textures.qrc \
-    icons.qrc \
+    icons.qrc
+
+ICON = WAH.icns
