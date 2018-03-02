@@ -271,7 +271,7 @@ void Editor::setTileMap(TileMap *tileMap)
     TileMap *pre = mTileMap;
     mTileMap = tileMap;
     mTileMapToolManager->setTileMap(mTileMap);
-    mMapView->createMap(mTileMap);
+    mMapView->setMap(mTileMap);
     mTileTemplateSetManager->setTileMap(mTileMap);
     mPropertyBrowser->clear();
     setMapDependantActionsEnabled(mTileMap != nullptr);

@@ -29,7 +29,7 @@ public:
     ~MapView();
 
     void clear();
-    void createMap(TileMap *tileMap);
+    void setMap(TileMap *tileMap);
 
     TileMapPreviewGraphicsItem *previewItem() { return mPreviewItem; }
 
@@ -38,13 +38,13 @@ private slots:
     void setDefaultView(bool state);
     void setHeightMap(bool state);
 
+    void mapSizeChanged();
+
 protected:
     void wheelEvent(QWheelEvent *event) override;
     void mouseMoveEvent(QMouseEvent *event) override;
     void mousePressEvent(QMouseEvent *event) override;
     void mouseReleaseEvent(QMouseEvent *event) override;
-
-    void resizeEvent(QResizeEvent *event) override;
 
 signals:
     /**
@@ -104,9 +104,18 @@ signals:
 private:
     void setupViewToolBar();
 
+    /**
+     * @brief reMakeMap
+     * Deletes the old map, and if mTileMap isn't null,
+     * makes the map.
+     */
+    void reMakeMap();
+
     float mScale;
     int mOldX;
     int mOldY;
+
+    const TileMap *mTileMap;
 
     Array2D<MapCell *> mMapCells;
 

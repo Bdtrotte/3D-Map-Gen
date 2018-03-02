@@ -11,6 +11,7 @@
 MapView::MapView(QWidget *parent)
     : QGraphicsView(parent)
     , mScale(15)
+    , mTileMap(nullptr)
     , mMapCells(0, 0)
     , mMouseHoverRect(new QGraphicsRectItem(0, 0, 1, 1))
     , mPreviewItem(new TileMapPreviewGraphicsItem())
@@ -65,38 +66,24 @@ void MapView::clear()
     mMapCells.resize(0, 0);
 }
 
-void MapView::createMap(TileMap *tileMap)
+void MapView::setMap(TileMap *tileMap)
 {
     clear();
 
-    if (!tileMap) return;
+    if (mTileMap)
+        disconnect(mTileMap);
 
-    QSize mapSize = tileMap->mapSize();
-    mMapCells.resize(mapSize.width(), mapSize.height());
+    mTileMap = tileMap;
 
-    for(int y = 0; y < tileMap->mapSize().height(); ++y) {
-        for(int x = 0; x < tileMap->mapSize().width(); ++x) {
-            mMapCells(x, y) = new MapCell(scene(), x, y, tileMap->cTileAt(x, y));
-        }
-    }
+    reMakeMap();
 
-    mPreviewItem->setClipRect(QRect(QPoint(0, 0), tileMap->mapSize()));
+    connect(mTileMap, &TileMap::resized,
+            this, &MapView::mapSizeChanged);
+}
 
-    setSceneRect(-MAP_BUFFER,
-                 -MAP_BUFFER,
-                 tileMap->width() + MAP_BUFFER * 2,
-                 tileMap->height() + MAP_BUFFER * 2);
-
-    float vertScale = geometry().height() / sceneRect().height();
-    float horScale = geometry().width() / sceneRect().width();
-
-    float s = std::min(vertScale, horScale);
-
-    QTransform t;
-    t.scale(s, s);
-    setTransform(t);
-
-    mScale = qLn(s);
+void MapView::mapSizeChanged()
+{
+    reMakeMap();
 }
 
 void MapView::mouseMoveEvent(QMouseEvent *event)
@@ -168,11 +155,6 @@ void MapView::mouseReleaseEvent(QMouseEvent *event)
     }
 }
 
-void MapView::resizeEvent(QResizeEvent *event)
-{
-
-}
-
 void MapView::setupViewToolBar()
 {
     mNoView = new QAction("No View", this);
@@ -235,4 +217,38 @@ void MapView::setHeightMap(bool state)
     for(int x = 0; x<mMapCells.size().width(); ++x)
         for(int y = 0; y<mMapCells.size().height(); ++y)
             mMapCells(x,y)->setGraphics(HeightMapView, state);
+}
+
+void MapView::reMakeMap()
+{
+    clear();
+
+    if (!mTileMap) return;
+
+    QSize mapSize = mTileMap->mapSize();
+    mMapCells.resize(mapSize.width(), mapSize.height());
+
+    for(int y = 0; y < mTileMap->mapSize().height(); ++y) {
+        for(int x = 0; x < mTileMap->mapSize().width(); ++x) {
+            mMapCells(x, y) = new MapCell(scene(), x, y, mTileMap->cTileAt(x, y));
+        }
+    }
+
+    mPreviewItem->setClipRect(QRect(QPoint(0, 0), mTileMap->mapSize()));
+
+    setSceneRect(-MAP_BUFFER,
+                 -MAP_BUFFER,
+                 mTileMap->width() + MAP_BUFFER * 2,
+                 mTileMap->height() + MAP_BUFFER * 2);
+
+    float vertScale = geometry().height() / sceneRect().height();
+    float horScale = geometry().width() / sceneRect().width();
+
+    float s = std::min(vertScale, horScale);
+
+    QTransform t;
+    t.scale(s, s);
+    setTransform(t);
+
+    mScale = qLn(s);
 }
