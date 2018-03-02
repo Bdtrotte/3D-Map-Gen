@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Package>
+    <DisplayName>The Application</DisplayName>
+    <Description>The core application and all it's components.</Description>
+    <Version>1.0</Version>
+    <ReleaseDate>2017-03-01</ReleaseDate>
+    <Default>true</Default>
+</Package>

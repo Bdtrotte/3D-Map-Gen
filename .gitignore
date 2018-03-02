@@ -22,7 +22,6 @@ object_script.*.Debug
 *.qbs.user
 *.qbs.user.*
 *.moc
-*.xml
 moc_*.cpp
 moc_*.h
 qrc_*.cpp
