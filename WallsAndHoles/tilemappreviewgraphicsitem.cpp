@@ -25,10 +25,7 @@ void TileMapPreviewGraphicsItem::setRegion(QRegion region)
     prepareGeometryChange();
 
     region &= mClipRect;
-
-    QTransform t;
-    t.scale(30, 30);
-    mDrawRegion = t.map(region);
+    mDrawRegion = region;
 }
 
 void TileMapPreviewGraphicsItem::setColor(const QColor &color)

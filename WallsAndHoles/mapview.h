@@ -1,6 +1,8 @@
 #ifndef MAPVIEW_H
 #define MAPVIEW_H
 
+#define MAP_BUFFER 5 //Tiles kept around the map for the purpose of scrolling.
+
 #include "array2d.h"
 #include "mapcell.h"
 #include "tilemap.h"
@@ -9,6 +11,7 @@
 #include <QObject>
 #include <QGraphicsView>
 #include <QKeyEvent>
+#include <QResizeEvent>
 #include <QWidget>
 #include <QRegion>
 #include <QToolBar>
@@ -40,6 +43,8 @@ protected:
     void mouseMoveEvent(QMouseEvent *event) override;
     void mousePressEvent(QMouseEvent *event) override;
     void mouseReleaseEvent(QMouseEvent *event) override;
+
+    void resizeEvent(QResizeEvent *event) override;
 
 signals:
     /**

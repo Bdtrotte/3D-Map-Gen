@@ -1,6 +1,7 @@
 #include "mapview.h"
 #include "mapcell.h"
 
+#include <QtMath>
 #include <QGraphicsView>
 #include <QDebug>
 #include <QKeyEvent>
@@ -9,12 +10,14 @@
 
 MapView::MapView(QWidget *parent)
     : QGraphicsView(parent)
-    , mScale(0.5)
+    , mScale(15)
     , mMapCells(0, 0)
-    , mMouseHoverRect(new QGraphicsRectItem(0, 0, 30, 30))
+    , mMouseHoverRect(new QGraphicsRectItem(0, 0, 1, 1))
     , mPreviewItem(new TileMapPreviewGraphicsItem())
     , mToolBar(new QToolBar(this))
 {
+    setTransformationAnchor(QGraphicsView::AnchorUnderMouse);
+
     mMouseHoverRect->setPen(Qt::NoPen);
     mMouseHoverRect->setBrush(QColor(100, 100, 100, 50));
     mMouseHoverRect->setZValue(200);
@@ -41,29 +44,14 @@ MapView::~MapView()
 
 void MapView::wheelEvent(QWheelEvent *event)
 {
-    // TODO: make this tied to
-    //the MapHeight and MapWidth numbers
-
-    float d = event->delta();
-
-    //on alt pan
-    if (event->modifiers() & Qt::AltModifier) horizontalScrollBar()->setValue(horizontalScrollBar()->value() + d);
-    //on ctrl zoom
-    else if (event->modifiers() & Qt::ControlModifier) mScale += (d/1000);
-    //otherwise normal scroll
+    float d = event->angleDelta().y();
+    if (event->modifiers() & Qt::ControlModifier) mScale += d / 1200;
     else QGraphicsView::wheelEvent(event);//else normal behavior
 
-    if (mScale < 0.2) {
-       //afformentioned basis changing code goes here
-       mScale = 0.2;
-    } else if (mScale > 5) {
-       //afforemention basis changing code goes here
-       mScale = 5;
-    }
-
-    QMatrix mat;
-    mat.scale(mScale,mScale);
-    setMatrix(mat);
+    QTransform t;
+    float s = qPow(M_E, mScale);
+    t.scale(s, s);
+    setTransform(t);
 }
 
 void MapView::clear()
@@ -93,11 +81,27 @@ void MapView::createMap(TileMap *tileMap)
     }
 
     mPreviewItem->setClipRect(QRect(QPoint(0, 0), tileMap->mapSize()));
+
+    setSceneRect(-MAP_BUFFER,
+                 -MAP_BUFFER,
+                 tileMap->width() + MAP_BUFFER * 2,
+                 tileMap->height() + MAP_BUFFER * 2);
+
+    float vertScale = geometry().height() / sceneRect().height();
+    float horScale = geometry().width() / sceneRect().width();
+
+    float s = std::min(vertScale, horScale);
+
+    QTransform t;
+    t.scale(s, s);
+    setTransform(t);
+
+    mScale = qLn(s);
 }
 
 void MapView::mouseMoveEvent(QMouseEvent *event)
 {
-    QPointF curMousePoint = mapToScene(event->pos()) / 30;
+    QPointF curMousePoint = mapToScene(event->pos());
     QPoint curMouseCell(curMousePoint.x(), curMousePoint.y());
 
     if (curMousePoint.x() < 0) curMouseCell.setX(curMousePoint.x() - 1);
@@ -111,7 +115,7 @@ void MapView::mouseMoveEvent(QMouseEvent *event)
 
         if (curMouseCell.x() >= 0 && curMouseCell.x() < mMapCells.size().width()
                 && curMouseCell.y() >= 0 && curMouseCell.y() < mMapCells.size().height()) {
-            mMouseHoverRect->setPos(curMouseCell.x() * 30, curMouseCell.y() * 30);
+            mMouseHoverRect->setPos(curMouseCell.x(), curMouseCell.y());
             mMouseHoverRect->show();
 
             // Emit a hovered signal for this cell.
@@ -162,6 +166,11 @@ void MapView::mouseReleaseEvent(QMouseEvent *event)
     } else {
         QGraphicsView::mouseReleaseEvent(event);
     }
+}
+
+void MapView::resizeEvent(QResizeEvent *event)
+{
+
 }
 
 void MapView::setupViewToolBar()
