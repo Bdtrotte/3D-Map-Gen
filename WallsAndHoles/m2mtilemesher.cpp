@@ -227,7 +227,7 @@ QSharedPointer<QImage> M2MTileMesher::TestingImage = nullptr;
 QSharedPointer<QImage> M2MTileMesher::getTestingImage()
 {
     if (TestingImage.isNull())
-        TestingImage = QSharedPointer<QImage>::create(":/textures/exampleTexture.png");
+        TestingImage = QSharedPointer<QImage>::create("://images/textures/exampleTexture.png");
 
     return TestingImage;
 }
