@@ -12,9 +12,6 @@
 
 #include "abstractrenderer.h"
 
-namespace Ui {
-class MeshView;
-}
 
 class MeshView : public QOpenGLWidget, public QOpenGLFunctions
 {
@@ -116,7 +113,6 @@ protected:
     // The tool manager. This will send mouse events to the appropriate tool.
     ToolManagerP mTools;
 
-
     /**
      * @brief Used in scheduleUse() and event() to make scheduleUse() events unique.
      */
@@ -125,8 +121,14 @@ protected:
     QMutex mUseScheduledMutex;
 
 
-private:
-    Ui::MeshView *ui;
+    /**
+     * @brief The context this MeshView was initialized with. This variable is only
+     * stored to disconnect its aboutToBeDestroyed() signal when the MeshView is
+     * itself destroyed. This pointer is not owned by the MeshView, but should
+     * still be valid in ~MeshView() (although this cannot be guaranteed---darn you,
+     * Qt's lack of shared pointers!).
+     */
+    QOpenGLContext *mContext;
 };
 
 #endif // MESHVIEW_H

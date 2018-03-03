@@ -73,7 +73,7 @@ void SimpleTexturedObject::setMaterialInfo(QVector<float> ambient, QVector<float
 }
 
 
-void SimpleTexturedObject::setTextureInfo(QVector<TriangleTexCoords> texCoords, QSharedPointer<QImage> image)
+void SimpleTexturedObject::setTextureInfo(QVector<TriangleTexCoords> texCoords, SharedImageAndSource image)
 {
     // It is assumed that setTriangleInfo() has been called and that the
     // texCoords array is parallel to the triangles array.
@@ -155,5 +155,5 @@ const QImage &SimpleTexturedObject::getImage() const
 {
     Q_ASSERT(isCommitted());
     Q_ASSERT(!mImage.isNull());
-    return *mImage;
+    return *mImage->image();
 }
