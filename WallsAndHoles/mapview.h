@@ -12,9 +12,6 @@
 #include <QGraphicsView>
 #include <QKeyEvent>
 #include <QResizeEvent>
-#include <QWidget>
-#include <QRegion>
-#include <QToolBar>
 
 /**
  * @brief The MapView class
@@ -34,10 +31,6 @@ public:
     TileMapPreviewGraphicsItem *previewItem() { return mPreviewItem; }
 
 private slots:
-    void setNoView(bool state);
-    void setDefaultView(bool state);
-    void setHeightMap(bool state);
-
     void mapSizeChanged();
 
 protected:
@@ -102,8 +95,6 @@ signals:
     void mouseExitedMap(QMouseEvent *event);
 
 private:
-    void setupViewToolBar();
-
     /**
      * @brief reMakeMap
      * Deletes the old map, and if mTileMap isn't null,
@@ -125,11 +116,6 @@ private:
     TileMapPreviewGraphicsItem *const mPreviewItem;
 
     QPoint mPreMousePoint;
-
-    QToolBar *mToolBar;
-    QAction *mNoView;
-    QAction *mDefaultView;
-    QAction *mHeightView;
 };
 
 #endif // MAPVIEW_H

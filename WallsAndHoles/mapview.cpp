@@ -15,7 +15,6 @@ MapView::MapView(QWidget *parent)
     , mMapCells(0, 0)
     , mMouseHoverRect(new QGraphicsRectItem(0, 0, 1, 1))
     , mPreviewItem(new TileMapPreviewGraphicsItem())
-    , mToolBar(new QToolBar(this))
 {
     setTransformationAnchor(QGraphicsView::AnchorUnderMouse);
 
@@ -24,7 +23,6 @@ MapView::MapView(QWidget *parent)
     mMouseHoverRect->setZValue(200);
     mMouseHoverRect->hide();
 
-    setupViewToolBar();
     setMouseTracking(true);
     QGraphicsScene *scene = new QGraphicsScene;
     scene->setBackgroundBrush(Qt::gray);
@@ -153,70 +151,6 @@ void MapView::mouseReleaseEvent(QMouseEvent *event)
     } else {
         QGraphicsView::mouseReleaseEvent(event);
     }
-}
-
-void MapView::setupViewToolBar()
-{
-    mNoView = new QAction("No View", this);
-    mDefaultView = new QAction("Default View", this);
-    mHeightView = new QAction("Height Map", this);
-
-    mNoView->setCheckable(true);
-    mDefaultView->setCheckable(true);
-    mHeightView->setCheckable(true);
-
-    mDefaultView->setChecked(true);
-
-    connect(mNoView, &QAction::toggled, this, &MapView::setNoView);
-    connect(mDefaultView, &QAction::toggled, this, &MapView::setDefaultView);
-    connect(mHeightView,  &QAction::toggled, this, &MapView::setHeightMap);
-
-    mToolBar->addAction(mNoView);
-    mToolBar->addAction(mDefaultView);
-    mToolBar->addAction(mHeightView);
-    mToolBar->setAutoFillBackground(true);
-    mToolBar->show();
-}
-
-void MapView::setNoView(bool state)
-{
-    if (state) {
-        if (mDefaultView->isChecked())
-            mDefaultView->setChecked(false);
-        if (mHeightView->isChecked())
-            mHeightView->setChecked(false);
-    } else {
-        if (!mHeightView->isChecked() && !mDefaultView->isChecked())
-            mDefaultView->setChecked(true);
-    }
-}
-
-void MapView::setDefaultView(bool state)
-{
-    if (state) {
-        mNoView->setChecked(false);
-    } else {
-        if (!mHeightView->isChecked())
-            mNoView->setChecked(true);
-    }
-
-    for(int x = 0; x<mMapCells.size().width(); ++x)
-        for(int y = 0; y<mMapCells.size().height(); ++y)
-            mMapCells(x,y)->setGraphics(DefaultView, state);
-}
-
-void MapView::setHeightMap(bool state)
-{
-    if (state) {
-        mNoView->setChecked(false);
-    } else {
-        if (!mDefaultView->isChecked())
-            mNoView->setChecked(true);
-    }
-
-    for(int x = 0; x<mMapCells.size().width(); ++x)
-        for(int y = 0; y<mMapCells.size().height(); ++y)
-            mMapCells(x,y)->setGraphics(HeightMapView, state);
 }
 
 void MapView::reMakeMap()
