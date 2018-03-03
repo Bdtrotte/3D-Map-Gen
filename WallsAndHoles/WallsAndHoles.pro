@@ -82,7 +82,9 @@ SOURCES += \
     abstracttileselectiontool.cpp \
     tilemaphelpers.cpp \
     shaperegion.cpp \
-    mapviewcontainer.cpp
+    mapviewcontainer.cpp\
+    m2mpartialmesh.cpp \
+    m2mtilemesher_private.cpp
 
 HEADERS += \
     meshview.h \
@@ -152,11 +154,13 @@ HEADERS += \
     abstracttileselectiontool.h \
     tilemaphelpers.h \
     shaperegion.h \
-    mapviewcontainer.h
+    mapviewcontainer.h \
+    m2mpartialmesh.h \
+    array2dtools.h \
+    array2d_private.h \
+    m2mtilemesher_private.h
 
-FORMS += \
-    meshview.ui \
-    meshviewcontainer.ui
+FORMS +=
 
 DISTFILES += \
     basic.fsh \
