@@ -7,7 +7,7 @@
 	<key>CFBundleGetInfoString</key>
 	<string>Created by Qt/QMake</string>
 	<key>CFBundleIconFile</key>
-	<string>WAH</string>
+	<string>wahicon</string>
 	<key>CFBundleIdentifier</key>
 	<string>anonymous.WallsAndHoles</string>
 	<key>CFBundlePackageType</key>
@@ -18,7 +18,7 @@
 			<key>CFBundleTypeName</key>
 			<string>Walls And Holes</string>
 			<key>CFBundleTypeIconFile</key>
-			<string>WAH</string>
+			<string>wahicon</string>
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
 			<key>CFBundleTypeExtensions</key>
