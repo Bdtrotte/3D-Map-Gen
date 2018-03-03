@@ -26,7 +26,7 @@ TileMapBrushTool::TileMapBrushTool(TileMapPreviewGraphicsItem *previewItem, QObj
             this, [this](int i) { mRadius = i; });
 }
 
-void TileMapBrushTool::cellActivated(int x, int y)
+void TileMapBrushTool::cellActivated(int x, int y, QMouseEvent *)
 {
     TileMap *tileMap = getTileMap();
 
@@ -42,7 +42,7 @@ void TileMapBrushTool::cellActivated(int x, int y)
                 tileMap->setTile(w, h, getTileTemplate());
 }
 
-void TileMapBrushTool::cellHovered(int x, int y)
+void TileMapBrushTool::cellHovered(int x, int y, QMouseEvent *)
 {
     int r = mRadius - 1;
     int d = r * 2 + 1;
@@ -57,7 +57,7 @@ void TileMapBrushTool::cellHovered(int x, int y)
     }
 }
 
-void TileMapBrushTool::mouseExitedMap()
+void TileMapBrushTool::mouseExitedMap(QMouseEvent *)
 {
     mPreviewItem->setRegion(QRegion());
 }

@@ -3,32 +3,25 @@
 AbstractShapeBrushTool::AbstractShapeBrushTool(TileMapPreviewGraphicsItem *previewItem, QObject *parent)
     : AbstractTileMapTool(previewItem, parent) {}
 
-void AbstractShapeBrushTool::cellClicked(int x, int y) {
+void AbstractShapeBrushTool::cellClicked(int x, int y, QMouseEvent *)
+{
     mStartX = x;
     mStartY = y;
 
-    Q_ASSERT( mStartX >= 0 && mStartX < getTileMap()->width() );
-    Q_ASSERT( mStartY >= 0 && mStartY < getTileMap()->height() );
-
     drawOverlay(x, y);
 }
 
 
-void AbstractShapeBrushTool::cellActivated(int x, int y)
+void AbstractShapeBrushTool::cellActivated(int x, int y, QMouseEvent *)
 {
     drawOverlay(x, y);
 }
 
 
-void AbstractShapeBrushTool::cellReleased(int x, int y)
+void AbstractShapeBrushTool::cellReleased(int x, int y, QMouseEvent *)
 {
     clearOverlay();
     placeShape(x, y);
-}
-
-void AbstractShapeBrushTool::mouseExitedMap()
-{
-    clearOverlay();
 }
 
 void AbstractShapeBrushTool::deactivate()
@@ -40,12 +33,7 @@ void AbstractShapeBrushTool::deactivate()
 void AbstractShapeBrushTool::drawOverlay(int endX, int endY) {
     clearOverlay();
 
-    QVector<QPoint> shape = getShape(endX - mStartX, endY - mStartY);
-
-    QRegion region;
-
-    for (const QPoint &p : shape)
-        region += QRect(p.x() + mStartX, p.y() + mStartY, 1, 1);
+    QRegion region = getShape(QPoint(mStartX, mStartY), QPoint(endX, endY));
 
     mPreviewItem->setRegion(region);
     if (TileTemplate *t = getTileTemplate())
@@ -60,16 +48,11 @@ void AbstractShapeBrushTool::clearOverlay() {
 }
 
 void AbstractShapeBrushTool::placeShape(int endX, int endY) {
-    QVector<QPoint> shape = getShape(endX - mStartX, endY - mStartY);
+    QRegion region = getShape(QPoint(mStartX, mStartY), QPoint(endX, endY));
 
-    Q_ASSERT( endX >= 0 && endX < getTileMap()->width() );
-    Q_ASSERT( endY >= 0 && endY < getTileMap()->height() );
-
-    for (QPoint p : shape) {
-        int x = mStartX + p.x();
-        int y = mStartY + p.y();
-
-        if (x >= 0 && x < getTileMap()->width() && y >= 0 && y < getTileMap()->height())
-            getTileMap()->setTile(x, y, getTileTemplate());
-    }
+    for (const QRect &r : region)
+        for (int x = r.left(); x <= r.right(); ++x)
+            for (int y = r.top(); y <= r.bottom(); ++y)
+                if (getTileMap()->contains(x, y))
+                    getTileMap()->setTile(x, y, getTileTemplate());
 }

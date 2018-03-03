@@ -79,6 +79,9 @@ SOURCES += \
     materialpropertymanager.cpp \
     imagefinderbar.cpp \
     tilematerialselectiondialog.cpp \
+    abstracttileselectiontool.cpp \
+    tilemaphelpers.cpp \
+    shaperegion.cpp \
     m2mpartialmesh.cpp \
     m2mtilemesher_private.cpp
 
@@ -147,6 +150,9 @@ HEADERS += \
     imagefinderbar.h \
     imageandsource.h \
     tilematerialselectiondialog.h \
+    abstracttileselectiontool.h \
+    tilemaphelpers.h \
+    shaperegion.h \
     m2mpartialmesh.h \
     array2dtools.h \
     array2d_private.h \
@@ -165,3 +171,5 @@ RESOURCES += \
     shaders.qrc \
     textures.qrc \
     icons.qrc
+
+ICON = WAH.icns

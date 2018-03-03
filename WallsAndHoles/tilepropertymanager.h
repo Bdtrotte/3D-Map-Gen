@@ -17,18 +17,14 @@ class TilePropertyManager : public AbstractPropertyManager
     Q_OBJECT
 
 public:
-    TilePropertyManager(Tile &tile);
+    TilePropertyManager(QVector<Tile *> tiles);
 
     void propertyEdited(QString propertyName, QVariant value) override;
 
     QVector<QVector<QVariant>> properties() override;
 
-private slots:
-    void tileChanged();
-
 private:
-
-    Tile &mTile;
+    QVector<Tile *> mTiles;
 };
 
 #endif // TILEPROPERTYMANAGER_H

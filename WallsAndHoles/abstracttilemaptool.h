@@ -45,7 +45,7 @@ public:
      * @param x The cell's x position.
      * @param y The cell's y position.
      */
-    virtual void cellActivated(int, int) {}
+    virtual void cellActivated(int, int, QMouseEvent *) {}
 
     /**
      * @brief Called the first time the left mouse button is pressed over a cell.
@@ -56,7 +56,7 @@ public:
      * @param x The cell's x position.
      * @param y The cell's y position.
      */
-    virtual void cellClicked(int, int) {}
+    virtual void cellClicked(int, int, QMouseEvent *) {}
 
     /**
      * @brief Called when the left mouse button is released over a cell.
@@ -64,7 +64,7 @@ public:
      * @param x The cell's x position.
      * @param y The cell's y position.
      */
-    virtual void cellReleased(int, int) {}
+    virtual void cellReleased(int, int, QMouseEvent *) {}
 
 
     /**
@@ -72,13 +72,13 @@ public:
      * @param x The cell's x position.
      * @param y The cell's y position.
      */
-    virtual void cellHovered(int, int) {}
+    virtual void cellHovered(int, int, QMouseEvent *) {}
 
 
     /**
      * @brief Called when the mouse is no longer hovering over a cell.
      */
-    virtual void mouseExitedMap() {}
+    virtual void mouseExitedMap(QMouseEvent *) {}
 
 protected:
     TileMap *getTileMap() const { return mTileMap; }
