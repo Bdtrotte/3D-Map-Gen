@@ -129,7 +129,7 @@ void M2M::AbstractTileMesher::makeVerticalSideMesh(PartialMeshData &meshData, M2
 
 
     bool shouldOutputGround = !isThisFullThickness;
-    bool shouldOutputWall = !isOtherNull && (
+    bool shouldOutputWall = (!isOtherNull || !isThisFullThickness) && (
                     (!isThisGround && (endHeight < startHeight || isEndAtGround))
                 ||  (endHeight < startHeight && isEndAtGround)
                 );
