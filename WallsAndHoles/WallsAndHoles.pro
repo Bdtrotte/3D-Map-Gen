@@ -158,8 +158,7 @@ HEADERS += \
     array2d_private.h \
     m2mtilemesher_private.h
 
-FORMS += \
-    meshview.ui
+FORMS +=
 
 DISTFILES += \
     basic.fsh \
