@@ -4,9 +4,9 @@
 #include "m2mtilemesher_private.h"
 
 
-QSharedPointer<M2M::TileMesher> M2M::TileMesher::getMesherForTile(
+QSharedPointer<M2M::AbstractTileMesher> M2M::AbstractTileMesher::getMesherForTile(
         Array2D<const Tile *> neighborhood,
-        const TileMesher *oldMesher)
+        const AbstractTileMesher *oldMesher)
 {
     TileNeighborhoodInfo newNeighborhood(neighborhood);
 
@@ -21,14 +21,14 @@ QSharedPointer<M2M::TileMesher> M2M::TileMesher::getMesherForTile(
 }
 
 
-M2M::TileMesher::TileMesher(TileNeighborhoodInfo nbhd)
+M2M::AbstractTileMesher::AbstractTileMesher(TileNeighborhoodInfo nbhd)
     : mTileNeighborhood(nbhd) {}
 
 
 
 
 M2M::TileBlockyMesher::TileBlockyMesher(TileNeighborhoodInfo nbhd)
-    : M2M::TileMesher(nbhd) {}
+    : M2M::AbstractTileMesher(nbhd) {}
 
 
 QVector<QSharedPointer<SimpleTexturedObject>> M2M::TileBlockyMesher::makeMesh(QVector2D offset)
@@ -49,7 +49,7 @@ QVector<QSharedPointer<SimpleTexturedObject>> M2M::TileBlockyMesher::makeMesh(QV
 
 
 
-void M2M::TileMesher::makeTopMesh(PartialMeshData &meshData, QVector2D offset)
+void M2M::AbstractTileMesher::makeTopMesh(PartialMeshData &meshData, QVector2D offset)
 {
     /*
      * This method just creates a single textured quad for the mesher's center tile.
@@ -78,7 +78,7 @@ void M2M::TileMesher::makeTopMesh(PartialMeshData &meshData, QVector2D offset)
 }
 
 
-void M2M::TileMesher::makeVerticalSideMesh(PartialMeshData &meshData, M2M_Private::SideDirection sideDirection, QVector2D offset)
+void M2M::AbstractTileMesher::makeVerticalSideMesh(PartialMeshData &meshData, M2M_Private::SideDirection sideDirection, QVector2D offset)
 {
     using namespace M2M_Private;
 
@@ -337,7 +337,7 @@ const M2M::TileInfo &M2M::TileNeighborhoodInfo::centerTile() const
     return mTileInfos(1, 1);
 }
 
-QSharedPointer<M2M::TileMesher> M2M::TileNeighborhoodInfo::makeMesher() const
+QSharedPointer<M2M::AbstractTileMesher> M2M::TileNeighborhoodInfo::makeMesher() const
 {
     // TODO: Analyze neighborhood and return appropriate mesher.
     // TODO: For now, return an instance of the blocky mesher.

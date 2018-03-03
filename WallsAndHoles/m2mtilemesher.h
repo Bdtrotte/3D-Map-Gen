@@ -17,7 +17,7 @@
 
 namespace M2M {
 
-class TileMesher;
+class AbstractTileMesher;
 
 
 struct GroundInfo {
@@ -108,7 +108,7 @@ public:
 
     const TileInfo &centerTile() const;
 
-    QSharedPointer<TileMesher> makeMesher() const;
+    QSharedPointer<AbstractTileMesher> makeMesher() const;
 
 
 private:
@@ -120,18 +120,18 @@ private:
 /**
  * @brief A collection of methods for generating tile mesh data.
  */
-class TileMesher {
+class AbstractTileMesher {
 public:
 
-    virtual ~TileMesher() {}
+    virtual ~AbstractTileMesher() {}
 
     /**
      * @brief Returns a TileMesher instance that will create the mesh for the given tile,
      * or, if the tile has not changed (determined by oldMesher), returns nullptr.
      */
-    static QSharedPointer<TileMesher> getMesherForTile(
+    static QSharedPointer<AbstractTileMesher> getMesherForTile(
             Array2D<const Tile*> neighborhood,
-            const TileMesher *oldMesher = nullptr);
+            const AbstractTileMesher *oldMesher = nullptr);
 
 
     /**
@@ -142,7 +142,7 @@ public:
 
 
 protected:
-    TileMesher(TileNeighborhoodInfo nbhd);
+    AbstractTileMesher(TileNeighborhoodInfo nbhd);
 
     /**
      * @brief Information for each tile in the 3x3 neighborhood of the tile to which this mesher is associated.
@@ -170,7 +170,7 @@ protected:
 };
 
 
-class TileBlockyMesher : public TileMesher {
+class TileBlockyMesher : public AbstractTileMesher {
 public:
     TileBlockyMesher(TileNeighborhoodInfo nbhd);
 

@@ -77,7 +77,7 @@ protected:
     /// a tile's mesh *really* needs to be updated. In addition, they allow for
     /// reuse---a TileMesher may keep some reference to its last output, and
     /// then modify that instead of creating new output.
-    using TileMesherGrid = Array2D<QSharedPointer<M2M::TileMesher>>;
+    using TileMesherGrid = Array2D<QSharedPointer<M2M::AbstractTileMesher>>;
 
 
     /**

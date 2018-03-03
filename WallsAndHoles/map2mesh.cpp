@@ -96,7 +96,7 @@ void Map2Mesh::updateScene()
 
         // Get a new mesher for the tile. If this is nullptr,
         // that means that the tile's mesh does not need an update.
-        auto newMesher = M2M::TileMesher::getMesherForTile(
+        auto newMesher = M2M::AbstractTileMesher::getMesherForTile(
                     neighborhood,
                     mTileMeshers(x, y).data());
 
