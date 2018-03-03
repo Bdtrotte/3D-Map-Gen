@@ -10,7 +10,7 @@ void MapPropertyManager::propertyEdited(QString name, QVariant value)
         QSize size = mTileMap->mapSize();
         size.setWidth(value.toInt());
         mTileMap->resizeMap(size);
-    } else if (name == "Width") {
+    } else if (name == "Height") {
         QSize size = mTileMap->mapSize();
         size.setHeight(value.toInt());
         mTileMap->resizeMap(size);

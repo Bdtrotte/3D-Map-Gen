@@ -51,7 +51,14 @@ void Map2Mesh::remakeAll()
     // Reset tile properties to a 0x0 grid so that all meshes are changed in inferProperties.
     mTileProperties = Array2D<M2MTileMesher::Input>();
 
-    inferProperties();
+    if (!mInferScheduled) {
+        mInferScheduled = true;
+
+        QTimer::singleShot(500, this, [this] () {
+            mInferScheduled = false;
+            inferProperties();
+        });
+    }
 }
 
 
