@@ -9,12 +9,16 @@
 #include "map2mesh.h"
 #include "meshviewcontainer.h"
 #include "tiletemplatesetsview.h"
-#include "tilepropertyview.h"
 #include "tiletemplatesetsmanager.h"
+#include "propertybrowser.h"
+#include "tilematerialview.h"
+#include "qmainwindow.h"
 
 #include <QObject>
 #include <QList>
 #include <QToolBar>
+#include <QSettings>
+#include <QMainWindow>
 
 /**
  * @brief The Editor class
@@ -32,12 +36,17 @@ public:
     ~Editor();
 
 public slots:
+    //File:
     void newMap();
     void saveMap();
     void saveMapAs();
     void loadMap();
     void closeMap();
     void exportMapMesh();
+
+    //Map:
+    void viewMapProperties();
+
 
 private:
     //sets mTileMap to tileMap, and updates everything accordingly
@@ -58,7 +67,8 @@ private:
     MapView *mMapView;
     MeshViewContainer *mMeshViewContainer;
     TileTemplateSetsView *mTileTemplateSetsView;
-    TilePropertyView *mTilePropertyView;
+    PropertyBrowser *mPropertyBrowser;
+    TileMaterialView *mMaterialView;
 
     //Tools
     TileMapToolManager *mTileMapToolManager;
@@ -71,6 +81,12 @@ private:
         for (QAction *a : mMapDependantActions)
             a->setEnabled(enabled);
     }
+
+    //Saving and loading settings
+    QString mSavePath = "/home/";
+    QString mExportPath = "/home/";
+    void loadSettings();
+    void saveSettings();
 };
 
 #endif // EDITOR_H

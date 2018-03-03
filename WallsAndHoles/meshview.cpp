@@ -13,10 +13,8 @@ MeshView::MeshView(QWidget *parent) :
     QOpenGLWidget(parent),
     mNextRenderer(nullptr),
     mUseScheduled(false),
-    ui(new Ui::MeshView)
+    mContext(nullptr)
 {
-    ui->setupUi(this);
-
     mCamera = QSharedPointer<MeshViewCameraLikeBlender>::create();
 
     connect(mCamera.data(), &AbstractMeshViewCamera::changed, this, &MeshView::scheduleRepaint);
@@ -25,8 +23,13 @@ MeshView::MeshView(QWidget *parent) :
     mTools->registerTool(mCamera, "camera");
 }
 
-MeshView::~MeshView() {
-    delete ui;
+
+MeshView::~MeshView()
+{
+    if (mContext != nullptr)
+        // Disconnect the context so that it does not send an aboutToBeDestroyed()
+        // signal after this MeshView has been destructed..
+        mContext->disconnect(this);
 }
 
 
@@ -140,6 +143,9 @@ void MeshView::cleanUp()
 
     // Release the context.
     doneCurrent();
+
+    // Forget the context.
+    mContext = nullptr;
 }
 
 
@@ -160,7 +166,9 @@ void MeshView::initializeGL()
 
     // Connect the context's aboutToBeDestroyed() signal to this view's cleanUp() signal
     // so that data is cleaned up before the context is destroyed.
-    connect(context(), &QOpenGLContext::aboutToBeDestroyed, this, &MeshView::cleanUp);
+    // Also remember what the context is so that it can be disconnected.
+    mContext = context();
+    connect(mContext, &QOpenGLContext::aboutToBeDestroyed, this, &MeshView::cleanUp);
 }
 
 void MeshView::paintGL()

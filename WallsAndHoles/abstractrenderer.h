@@ -116,9 +116,13 @@ protected:
      * @brief Helper method to loop glGetError() and print out all current errors.
      *
      * Prints nothing if there are no errors, but otherwise prints the names of the errors.
+     *
+     * @return Returns true if an error was detected and false otherwise.
      */
-    void checkGLErrors()
+    bool checkGLErrors()
     {
+        bool hadError = false;
+
         GLenum error;
         while ((error = glGetError()) != GL_NO_ERROR) {
             switch (error) {
@@ -131,7 +135,11 @@ protected:
             case GL_STACK_OVERFLOW:                 qDebug() << "GL_STACK_OVERFLOW"; break;
             default:                                qDebug() << "Unknown error."; break;
             }
+
+            hadError = true;
         }
+
+        return hadError;
     }
 
 

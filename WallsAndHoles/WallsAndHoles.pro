@@ -52,13 +52,11 @@ SOURCES += \
     map2meshproperties.cpp \
     tiletemplatesetsview.cpp \
     newtiletemplatesetdialog.cpp \
-    tiletemplateeditor.cpp \
     mapcellgraphicsitem.cpp \
     abstractshapebrushtool.cpp \
     linebrushtool.cpp \
     rectbrushtool.cpp \
     ellipsebrushtool.cpp \
-    tilepropertyview.cpp \
     tilemapselectiontool.cpp \
     filltool.cpp \
     simpletexturedrenderer.cpp \
@@ -70,6 +68,23 @@ SOURCES += \
     newmapdialog.cpp \
     tilemappreviewgraphicsitem.cpp \
     objtools.cpp
+    propertybrowser.cpp \
+    tilepropertymanager.cpp \
+    mappropertymanager.cpp \
+    colorpickerbutton.cpp \
+    tiletemplatepropertymanager.cpp \
+    tilematerial.cpp \
+    tilematerialview.cpp \
+    tilematerialset.cpp \
+    tilematerialselectionbar.cpp \
+    materialpropertymanager.cpp \
+    imagefinderbar.cpp \
+    tilematerialselectiondialog.cpp \
+    abstracttileselectiontool.cpp \
+    tilemaphelpers.cpp \
+    shaperegion.cpp \
+    m2mpartialmesh.cpp \
+    m2mtilemesher_private.cpp
 
 HEADERS += \
     meshview.h \
@@ -102,7 +117,6 @@ HEADERS += \
     tiletemplateset.h \
     tiletemplatesetsview.h \
     newtiletemplatesetdialog.h \
-    tiletemplateeditor.h \
     mapcellgraphicsitem.h \
     abstractshapebrushtool.h \
     linebrushtool.h \
@@ -118,16 +132,34 @@ HEADERS += \
     simpletexturedobject.h \
     triplet.h \
     simpletexturedshader.h \
-	tilepropertyview.h \
-	tilemapselectiontool.h \
-	tilemappreviewgraphicsitem.h \
-	tiletemplatesetsmanager.h \
-	savabletiletemplateset.h \
-	newmapdialog.h
+    tilemapselectiontool.h \
+    tilemappreviewgraphicsitem.h \
+    tiletemplatesetsmanager.h \
+    savabletiletemplateset.h \
+    newmapdialog.h \
+    propertybrowser.h \
+    tilepropertymanager.h \
+    mappropertymanager.h \
+    colorpickerbutton.h \
+    tiletemplatepropertymanager.h \
+    abstractpropertymanager.h \
+    tilematerial.h \
+    tilematerialview.h \
+    tilematerialset.h \
+    tilematerialselectionbar.h \
+    materialpropertymanager.h \
+    imagefinderbar.h \
+    imageandsource.h \
+    tilematerialselectiondialog.h \
+    abstracttileselectiontool.h \
+    tilemaphelpers.h \
+    shaperegion.h \
+    m2mpartialmesh.h \
+    array2dtools.h \
+    array2d_private.h \
+    m2mtilemesher_private.h
 
-FORMS += \
-    meshview.ui \
-    meshviewcontainer.ui
+FORMS +=
 
 DISTFILES += \
     basic.fsh \
@@ -137,4 +169,7 @@ DISTFILES += \
 
 RESOURCES += \
     shaders.qrc \
-    textures.qrc
+    textures.qrc \
+    icons.qrc
+
+ICON = WAH.icns

@@ -43,6 +43,8 @@ public:
 
     QSize mapSize() const { return mMap.size(); }
 
+    bool contains(int x, int y) const;
+
     int width() const { return mMap.size().width(); }
     int height() const { return mMap.size().height(); }
     bool isIndoor() const { return mIsIndoors; }

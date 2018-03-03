@@ -41,6 +41,22 @@ QVector2D Tile::position() const
         return mRelativePosition + mTileTemplate->position();
 }
 
+TileMaterial *Tile::material()
+{
+    if (mTileTemplate != nullptr)
+        return mTileTemplate->material();
+    else
+        return nullptr;
+}
+
+const TileMaterial *Tile::material() const
+{
+    if (mTileTemplate != nullptr)
+        return mTileTemplate->material();
+    else
+        return nullptr;
+}
+
 void Tile::setRelativeThickness(float relativeThickness)
 {
     if (mTileTemplate == nullptr) {
@@ -132,17 +148,19 @@ void Tile::resetTile(TileTemplate *newTileTemplate)
 void Tile::makeTemplateConnections()
 {
     if (mTileTemplate != nullptr) {
-        connect(mTileTemplate, &TileTemplate::exclusivePropertyChanged,
-                this, [this]{
+
+        auto emitTileChanged = [this] {
             emit tileChanged(mXPos, mYPos);
-        });
-        connect(mTileTemplate, &TileTemplate::thicknessChanged,
-                this, &Tile::templateThicknessChanged);
-        connect(mTileTemplate, &TileTemplate::positionChanged,
-                this, &Tile::templatePositionChanged);
-        connect(mTileTemplate, &TileTemplate::pingTiles,
-                this, [this]{
+        };
+
+        auto emitTilePinged = [this] () {
             emit tilePinged(mXPos, mYPos);
-        });
+        };
+
+        connect(mTileTemplate, &TileTemplate::exclusivePropertyChanged, this, emitTileChanged);
+        connect(mTileTemplate, &TileTemplate::thicknessChanged, this, &Tile::templateThicknessChanged);
+        connect(mTileTemplate, &TileTemplate::positionChanged, this, &Tile::templatePositionChanged);
+        connect(mTileTemplate, &TileTemplate::materialChanged, this, emitTileChanged);
+        connect(mTileTemplate, &TileTemplate::pingTiles, this, emitTilePinged);
     }
 }

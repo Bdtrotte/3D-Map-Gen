@@ -1,34 +1,25 @@
+#include <QVBoxLayout>
+
 #include "meshviewcontainer.h"
 #include "ui_meshviewcontainer.h"
 
 #include "meshview.h"
 #include "objtools.h"
 
-MeshViewContainer::MeshViewContainer(QWidget *parent) :
-    QWidget(parent),
-    ui(new Ui::MeshViewContainer)
+MeshViewContainer::MeshViewContainer(QWidget *parent)
+    : QWidget(parent)
 {
-    ui->setupUi(this);
+    QVBoxLayout *layout = new QVBoxLayout(this);
+    setLayout(layout);
 
-    // Find the MeshView child widget.
-    mMeshView = findChild<MeshView *>();
-}
+    // Create the MeshView.
+    mMeshView = new MeshView(this);
+    mMeshView->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    layout->addWidget(mMeshView);
 
-MeshViewContainer::~MeshViewContainer() {
-    delete ui;
+    mMeshView->activateTool("camera");
 }
 
 void MeshViewContainer::setRenderer(QSharedPointer<AbstractRenderer> renderer) {
     mMeshView->setRenderer(renderer);
-}
-
-void MeshViewContainer::on_toolSelection_currentIndexChanged(int index) {
-    switch (index) {
-    case 0:
-        mMeshView->activateTool("nothing");
-        break;
-    case 1:
-        mMeshView->activateTool("camera");
-        break;
-    }
 }

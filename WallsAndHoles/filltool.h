@@ -1,36 +1,35 @@
 #ifndef FILLTOOL_H
 #define FILLTOOL_H
 
-
 #include <QSet>
 #include <QPoint>
 
 #include "abstracttilemaptool.h"
 #include "mapview.h"
 
-class FillTool : public QObject, public AbstractTileMapTool {
+class FillTool : public AbstractTileMapTool {
     Q_OBJECT
 
 public:
-    FillTool(TileMapPreviewGraphicsItem *previewItem);
+    FillTool(TileMapPreviewGraphicsItem *previewItem, QObject *parent = nullptr);
 
     /**
      * @brief This will immediately fill an area.
      * @param x  The X position of the clicked tile.
      * @param y  The Y position of the clicked tile.
      */
-    void cellClicked(int x, int y) override;
+    void cellClicked(int x, int y, QMouseEvent *) override;
 
 
     /**
      * @brief This will show a preview for the selected area.
      */
-    void cellHovered(int x, int y) override;
+    void cellHovered(int x, int y, QMouseEvent *) override;
 
     void toolTileMapChanged(TileMap *prev) override;
 
 
-    void mouseExitedMap() override;
+    void mouseExitedMap(QMouseEvent *) override;
     void deactivate() override;
 
 public slots:

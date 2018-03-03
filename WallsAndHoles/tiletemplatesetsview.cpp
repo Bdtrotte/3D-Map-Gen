@@ -1,17 +1,19 @@
 #include "tiletemplatesetsview.h"
 
 #include "newtiletemplatesetdialog.h"
-#include "tiletemplateeditor.h"
+#include "tiletemplatepropertymanager.h"
 
 #include <QDebug>
 #include <QVBoxLayout>
 #include <QToolBar>
+#include <QToolButton>
 #include <QSplitter>
 
 TileTemplateSetsView::TileTemplateSetsView(TileTemplateSetsManager *tileTemplateSetsManager,
                                            QWidget *parent)
     : QWidget(parent)
     , mTileTemplateSetsManager(tileTemplateSetsManager)
+    , mTemplatePropertyBrowser(new PropertyBrowser(this))
     , mTabs(new QTabWidget(this))
     , mNewTemplate(new QAction("Add Template", this))
     , mRemoveTemplate(new QAction("Remove Template", this))
@@ -34,10 +36,7 @@ TileTemplateSetsView::TileTemplateSetsView(TileTemplateSetsManager *tileTemplate
     connect(mTabs, &QTabWidget::currentChanged,
             this, &TileTemplateSetsView::selectedTileTemplateChanged);
 
-    TileTemplateEditor *templateEditor = new TileTemplateEditor(this);
-    templateEditor->setSizePolicy(QSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed));
-    connect(this, &TileTemplateSetsView::tileTemplateChanged,
-            templateEditor, &TileTemplateEditor::tileTemplateChanged);
+    connect(this, &TileTemplateSetsView::tileTemplateChanged, &TileTemplateSetsView::tileTemplateChangedSlot);
 
     QToolBar *actionBar = new QToolBar(this);
     actionBar->setFloatable(false);
@@ -46,10 +45,15 @@ TileTemplateSetsView::TileTemplateSetsView(TileTemplateSetsManager *tileTemplate
     mRemoveTemplateSet = actionBar->addAction("Remove Template Set", this, &TileTemplateSetsView::removeTemplateSet);
     mSaveTemplateSet = actionBar->addAction("Save Template Set", this, &TileTemplateSetsView::saveTemplateSet);
     actionBar->addAction("Load Template Set", this, &TileTemplateSetsView::loadTemplateSet);
-
     mRemoveTemplateSet->setEnabled(false);
     mSaveTemplateSet->setEnabled(false);
     mRemoveTemplate->setEnabled(false);
+
+    //Sets icons for the action bar
+    actionBar->actions().at(0)->setIcon(QIcon("://icons/22x22/add.png"));
+    actionBar->actions().at(1)->setIcon(QIcon("://icons/22x22/remove.png"));
+    actionBar->actions().at(2)->setIcon(QIcon("://icons/22x22/save.png"));
+    actionBar->actions().at(3)->setIcon(QIcon("://icons/22x22/load.png"));
 
     //Set up default template set view
     mDefaultTemplateView = new QListView(this);
@@ -60,10 +64,10 @@ TileTemplateSetsView::TileTemplateSetsView(TileTemplateSetsManager *tileTemplate
     splitter->setOrientation(Qt::Vertical);
     splitter->addWidget(mDefaultTemplateView);
     splitter->addWidget(mTabs);
+    splitter->addWidget(mTemplatePropertyBrowser);
 
     QVBoxLayout *layout = new QVBoxLayout;
     layout->addWidget(splitter);
-    layout->addWidget(templateEditor);
     layout->addWidget(actionBar);
     setLayout(layout);
 }
@@ -101,6 +105,7 @@ void TileTemplateSetsView::tileTemplateSetAdded(SavableTileTemplateSet *tileTemp
     templateList->setModel(tileTemplateSet);
     connect(templateList->selectionModel(), &QItemSelectionModel::currentRowChanged,
             this, &TileTemplateSetsView::selectedTileTemplateChanged);
+
     mListViews.append(templateList);
 
     QToolBar *actionBar = new QToolBar(templateWidget);
@@ -195,6 +200,7 @@ void TileTemplateSetsView::addTemplate()
                                                  "New Tile Template",
                                                  0,
                                                  1,
+                                                 nullptr,                // Default material.
                                                  QVector2D(0.5, 0.5));
 
     mTileTemplateSetsManager->tileTemplateSetAt(curTab)->addTileTemplate(newTemplate);
@@ -247,6 +253,14 @@ void TileTemplateSetsView::saveTemplateSet()
 void TileTemplateSetsView::loadTemplateSet()
 {
     mTileTemplateSetsManager->loadTileTemplateSet();
+}
+
+void TileTemplateSetsView::tileTemplateChangedSlot(TileTemplate *tileTemplate)
+{
+    if (tileTemplate)
+        mTemplatePropertyBrowser->setPropertyManager(new TileTemplatePropertyManager(tileTemplate));
+    else
+        mTemplatePropertyBrowser->clear();
 }
 
 void TileTemplateSetsView::tileTemplateSetSaveStatusChanged(SavableTileTemplateSet *tileTemplateSet, bool status)

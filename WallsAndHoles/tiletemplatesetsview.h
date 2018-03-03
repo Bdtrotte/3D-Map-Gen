@@ -3,6 +3,7 @@
 
 #include "savabletiletemplateset.h"
 #include "tiletemplatesetsmanager.h"
+#include "propertybrowser.h"
 
 #include <QAction>
 #include <QWidget>
@@ -43,6 +44,8 @@ private slots:
     void saveTemplateSet();
     void loadTemplateSet();
 
+    void tileTemplateChangedSlot(TileTemplate *tileTemplate);
+
 private:
     void tileTemplateSetSaveStatusChanged(SavableTileTemplateSet *tileTemplateSet, bool status);
 
@@ -50,6 +53,7 @@ private:
     QListView *mDefaultTemplateView;
     TileTemplateSetsManager *mTileTemplateSetsManager;
     QList<QListView *> mListViews;
+    PropertyBrowser *mTemplatePropertyBrowser;
 
     QTabWidget *mTabs;
 

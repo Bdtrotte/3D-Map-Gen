@@ -9,9 +9,10 @@ TileMapToolManager::TileMapToolManager(QObject *parent)
     : ToolManager(parent) {}
 
 
-QAction *TileMapToolManager::registerMapTool(QSharedPointer<AbstractTileMapTool> tool, QString name)
+QAction *TileMapToolManager::registerMapTool(QSharedPointer<AbstractTileMapTool> tool, QString name, QIcon icon,
+                                             QKeySequence ks)
 {
-    return ToolManager::registerTool(tool, name);
+    return ToolManager::registerTool(tool, name, icon, ks);
 }
 
 void TileMapToolManager::setTileMap(TileMap *tileMap)
@@ -20,29 +21,29 @@ void TileMapToolManager::setTileMap(TileMap *tileMap)
         tool2TileMapTool(tool)->setTileMap(tileMap);
 }
 
-void TileMapToolManager::cellActivated(int x, int y)
+void TileMapToolManager::cellActivated(int x, int y, QMouseEvent *event)
 {
-    if (!mActiveTool.isNull()) tool2TileMapTool(mActiveTool)->cellActivated(x, y);
+    if (!mActiveTool.isNull()) tool2TileMapTool(mActiveTool)->cellActivated(x, y, event);
 }
 
-void TileMapToolManager::cellClicked(int x, int y)
+void TileMapToolManager::cellClicked(int x, int y, QMouseEvent *event)
 {
-    if (!mActiveTool.isNull()) tool2TileMapTool(mActiveTool)->cellClicked(x, y);
+    if (!mActiveTool.isNull()) tool2TileMapTool(mActiveTool)->cellClicked(x, y, event);
 }
 
-void TileMapToolManager::cellReleased(int x, int y)
+void TileMapToolManager::cellReleased(int x, int y, QMouseEvent *event)
 {
-    if (!mActiveTool.isNull()) tool2TileMapTool(mActiveTool)->cellReleased(x, y);
+    if (!mActiveTool.isNull()) tool2TileMapTool(mActiveTool)->cellReleased(x, y, event);
 }
 
-void TileMapToolManager::cellHovered(int x, int y)
+void TileMapToolManager::cellHovered(int x, int y, QMouseEvent *event)
 {
-    if (!mActiveTool.isNull()) tool2TileMapTool(mActiveTool)->cellHovered(x, y);
+    if (!mActiveTool.isNull()) tool2TileMapTool(mActiveTool)->cellHovered(x, y, event);
 }
 
-void TileMapToolManager::mouseExitedMap()
+void TileMapToolManager::mouseExitedMap(QMouseEvent *event)
 {
-    if (!mActiveTool.isNull()) tool2TileMapTool(mActiveTool)->mouseExitedMap();
+    if (!mActiveTool.isNull()) tool2TileMapTool(mActiveTool)->mouseExitedMap(event);
 }
 
 void TileMapToolManager::tileTemplateChanged(TileTemplate *tileTemplate)
