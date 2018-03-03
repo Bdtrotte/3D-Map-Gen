@@ -157,3 +157,8 @@ const QImage &SimpleTexturedObject::getImage() const
     Q_ASSERT(!mImage.isNull());
     return *mImage->image();
 }
+
+SharedImageAndSource SimpleTexturedObject::getImageAndSource() const
+{
+    return mImage;
+}

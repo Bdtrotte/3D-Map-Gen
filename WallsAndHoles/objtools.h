@@ -262,47 +262,6 @@ namespace obj
         QVector2D textureCoordinate;
     };
 
-    struct Material
-    {
-        Material()
-        {
-            name;
-            Ns = 0.0f;
-            Ni = 0.0f;
-            d = 0.0f;
-            illum = 0;
-        }
-
-        // Material Name
-        QString name;
-        // Ambient Color
-        QVector3D Ka;
-        // Diffuse Color
-        QVector3D Kd;
-        // Specular Color
-        QVector3D Ks;
-        // Specular Exponent
-        float Ns;
-        // Optical Density
-        float Ni;
-        // Dissolve
-        float d;
-        // Illumination
-        int illum;
-        // Ambient Texture Map
-        QString map_Ka;
-        // Diffuse Texture Map
-        QString map_Kd;
-        // Specular Texture Map
-        QString map_Ks;
-        // Specular Hightlight Map
-        QString map_Ns;
-        // Alpha Texture Map
-        QString map_d;
-        // Bump Map
-        QString map_bump;
-    };
-
     // Structure: Mesh
     //
     // Description: A Simple Mesh Object that holds
@@ -332,6 +291,33 @@ namespace obj
     };
 }
 */
+class Material
+{
+    Material(QString _name, int _Ns, int _illum)
+    {
+        name = _name;
+        Ns = _Ns;
+        illum = _illum;
+    }
+
+private:
+    // Material Name
+    QString name;
+    // Ambient Color
+    QVector3D Ka;
+    // Diffuse Color
+    QVector3D Kd;
+    // Specular Color
+    QVector3D Ks;
+    // Specular Exponent
+    float Ns;
+    // Illumination
+    int illum;
+    // Name of Ambient Texture Map
+    QString map_Ka;
+    // Name of Diffuse Texture Map
+    QString map_Kd;
+};
 
 class OBJModel
 {
@@ -344,6 +330,7 @@ public:
 
 private:
     QVector<SharedSimpleTexturedObject> mObjects;
+    QString mSaveDirectory;
 };
 
 typedef QSharedPointer<OBJModel> SharedOBJModel;

@@ -112,6 +112,7 @@ public:
 
     const QVector<TriangleTexCoords> &getFaceTexCoords() const;
     const QImage &getImage() const;
+    SharedImageAndSource getImageAndSource() const;
 
 
 

@@ -12,8 +12,6 @@ class MeshViewContainer : public QWidget
 public:
     explicit MeshViewContainer(QWidget *parent = 0);
 
-    ~MeshViewContainer();
-
     /**
      * @brief Calls setRenderer(renderer) on the mesh view.
      */

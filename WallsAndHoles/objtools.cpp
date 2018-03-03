@@ -34,21 +34,23 @@ void OBJModel::saveOBJ(QString path)
 
     QVector<QVector3D> vertices;
     QVector<QVector3D> faceNormals;
-    QVector<Triangle> triangles;
-    QVector<TriangleTexCoords> faceTexCoords ;
+    QVector<QVector<Triangle>> meshs;
+    QVector<TriangleTexCoords> faceTexCoords;
 
     int numVertices=1;
     //int numTriangles=0;
     for(auto object: mObjects){
         vertices += object->getVertices();
         faceNormals += object->getFaceNormals();
+        QVector<Triangle> mesh;
         for(auto triangle: object->getTriangles()){
             Triangle newTriangle(
                         numVertices+triangle.getFirst(),
                         numVertices+triangle.getSecond(),
                         numVertices+triangle.getThird());
-            triangles.append(newTriangle);
+            mesh.append(newTriangle);
         }
+        meshs.append(mesh);
         faceTexCoords += object->getFaceTexCoords();
         numVertices += object->getNumVertices();
     }
@@ -90,6 +92,7 @@ void OBJModel::saveOBJ(QString path)
     }
 
     // Write the list of faces.
+    /*
     for (int faceIdx = 0; faceIdx < triangles.size(); ++faceIdx) {
         const auto &face = triangles[faceIdx];
 
@@ -105,6 +108,7 @@ void OBJModel::saveOBJ(QString path)
 
         out << endl;
     }
+    */
 
     file.close();
 }
