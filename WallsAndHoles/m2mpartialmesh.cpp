@@ -93,7 +93,7 @@ Quad Quad::makeVerticalQuad(QVector3D center,
 /* BEGIN PartialMeshData */
 void PartialMeshData::addQuad(Quad q)
 {
-    const QImage *quadImage = q.imageInfo().image->image().data();
+    const QImage *quadImage = q.imageInfo().image()->image().data();
 
     auto itr = mTexturesToObjects.find(quadImage);
 
@@ -125,7 +125,7 @@ QVector<QSharedPointer<SimpleTexturedObject>> PartialMeshData::constructObjects(
 
 /* BEGIN PartialMeshData::PreObject */
 PartialMeshData::PreObject::PreObject(ImageInfo img)
-    : mImage(img.image) {}
+    : mImage(img.image()) {}
 
 
 void PartialMeshData::PreObject::addQuad(Quad q)

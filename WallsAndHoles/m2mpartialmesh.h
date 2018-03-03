@@ -14,19 +14,26 @@ namespace M2M {
 
 
 /// Class to wrap image info. This will be changed to use SharedImageAndSource when possible.
-struct ImageInfo {
-    SharedImageAndSource image;
+class ImageInfo {
+public:
+    ImageInfo() : mImage(nullptr) {}
+    ImageInfo(const ImageInfo &other) = default;
+    ImageInfo(SharedImageAndSource img) : mImage(img) {}
+
+    SharedImageAndSource image() const { return mImage; }
 
     bool operator ==(const ImageInfo &other) const
     {
-        return image.data() == other.image.data();
-//        return *image == *other.image;
+        return mImage.data() == other.mImage.data();
     }
 
     bool operator !=(const ImageInfo &other) const
     {
         return !(*this == other);
     }
+
+private:
+    SharedImageAndSource mImage;
 };
 
 /// Class to wrap Phong reflection info.

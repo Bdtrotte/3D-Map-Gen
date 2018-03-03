@@ -237,7 +237,7 @@ M2M::TileInfo::TileInfo(const Tile &tile)
     mGround.groundMaterial.diffuse = 1;
     mGround.groundMaterial.specular = 1;
     mGround.groundMaterial.shininess = 1;
-    mGround.groundImage.image = getDefaultImage();
+    mGround.groundImage = ImageInfo(getDefaultImage());
 
 
     if (tile.hasTileTemplate()) {
@@ -246,9 +246,9 @@ M2M::TileInfo::TileInfo(const Tile &tile)
         const auto &mat = *tile.material();
 
         if (!mat.texture().isNull())
-            mTopImage.image = mSideImage.image = mat.texture();
+            mTopImage = mSideImage = ImageInfo(mat.texture());
         else
-            mTopImage.image = mSideImage.image = getDefaultImage();
+            mTopImage = mSideImage = ImageInfo(getDefaultImage());
 
         mTopMaterial.ambient = mSideMaterial.ambient = mat.ambient();
         mTopMaterial.diffuse = mSideMaterial.diffuse = mat.diffuse();
@@ -257,7 +257,7 @@ M2M::TileInfo::TileInfo(const Tile &tile)
     } else {
         mIsGround = true;
 
-        mTopImage.image = mSideImage.image = getDefaultImage();
+        mTopImage = mSideImage = ImageInfo(getDefaultImage());
 
         mTopMaterial.ambient = mSideMaterial.ambient
                 = mTopMaterial.diffuse = mSideMaterial.diffuse
