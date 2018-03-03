@@ -1,7 +1,7 @@
 #ifndef TILETEMPLATE_H
 #define TILETEMPLATE_H
 
-#define MIN_TILE_THICKNESS 0.001
+#define MIN_TILE_THICKNESS 0.1
 
 #include <QSharedPointer>
 #include <QObject>
@@ -26,9 +26,36 @@ public:
 
     void setHeight(float height);
 
-    // TODO: these should ensure the resulting tile stays inbounds
-    void setThickness(float thickness);
-    void setPosition(QVector2D position);
+    // TODO : Might be nice to pop up a message when the user tries to change the thickness or height,
+    //        but it doesn't change because of the restraintes. The message would explain why, and how
+    //        to make it change, and have a checkbox to not show up again?
+    //        Maybe this could be implemented in a tutorial system?
+
+    /**
+     * @brief setThickness
+     *
+     * Tries to set the thickness of this template.
+     * If increasing thickness, it is possible that it would make the bounds of the tile go outside
+     * the grid bounds (for example if the position is not centered). If this is the case, the thickness
+     * actually set will be less than that requested. The thickness value actually set is returned.
+     *
+     * @param thickness
+     * @return
+     */
+    float setThickness(float thickness);
+
+    /**
+     * @brief setPosition
+     *
+     * Tries to set the position of this template.
+     * If moving position away from the center, it is possible that it would make the bounds of the tile go outside
+     * the grid bounds. If this is the case, the position actually set will be different
+     * than that requested. The position value actually set is returned.
+     *
+     * @param position
+     * @return
+     */
+    QVector2D setPosition(QVector2D position);
 
     void setColor(QColor color);
 
