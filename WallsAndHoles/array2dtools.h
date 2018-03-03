@@ -5,14 +5,11 @@
 #include <QSet>
 #include <QPoint>
 
-
-
 // QPoints are not hashable in Qt by default.
-uint qHash (const QPoint & key)
+inline uint qHash (const QPoint & key)
 {
     return qHash (QPair<int,int>(key.x(), key.y()) );
 }
-
 
 /**
  * @brief Returns true if the point is in bounds, false otherwise.
