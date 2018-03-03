@@ -79,7 +79,10 @@ SOURCES += \
     materialpropertymanager.cpp \
     imagefinderbar.cpp \
     tilematerialselectiondialog.cpp \
-    templatematerialselector.cpp
+    templatematerialselector.cpp \
+    abstracttileselectiontool.cpp \
+    tilemaphelpers.cpp \
+    shaperegion.cpp
 
 HEADERS += \
     meshview.h \
@@ -146,7 +149,10 @@ HEADERS += \
     imagefinderbar.h \
     imageandsource.h \
     tilematerialselectiondialog.h \
-    templatematerialselector.h
+    templatematerialselector.h \
+    abstracttileselectiontool.h \
+    tilemaphelpers.h \
+    shaperegion.h
 
 FORMS += \
     meshview.ui \
@@ -162,3 +168,5 @@ RESOURCES += \
     shaders.qrc \
     textures.qrc \
     icons.qrc
+
+ICON = WAH.icns

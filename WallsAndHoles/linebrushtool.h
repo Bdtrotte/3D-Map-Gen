@@ -15,7 +15,7 @@ public:
      * Note: this strategy produces "thick" looking lines usually. There is
      * another way that could be implemented that produces "thin" lines.
      */
-    QVector<QPoint>getShape(int dx, int dy) const override;
+   QRegion getShape(QPoint start, QPoint end) const override;
 };
 
 #endif // LINEBRUSHTOOL_H

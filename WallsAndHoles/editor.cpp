@@ -6,7 +6,6 @@
 #include "tilemapselectiontool.h"
 #include "propertybrowser.h"
 #include "mappropertymanager.h"
-#include "tilematerialview.h"
 
 #include "filltool.h"
 
@@ -33,38 +32,44 @@ Editor::Editor(QObject *parent)
     , mMap2Mesh(nullptr)
     , mTileMap(nullptr)
     , mTileTemplateSetManager(new TileTemplateSetsManager(nullptr, this))
-    , mMapView(new MapView(mTileMapSelectedRegion, mMainWindow))
+    , mMapView(new MapView(mMainWindow))
     , mTileMapToolManager(new TileMapToolManager(this))
     , mToolBar(new QToolBar(mMainWindow))
 {
+    //Set the application name
+    QCoreApplication::setOrganizationName("WAH");
+    QCoreApplication::setApplicationName("Walls and Holes");
+
     //Initiallize mMainWindow
     mMainWindow->setCentralWidget(mMapView);
     setUpMenuBar();
     mMainWindow->addToolBar(mToolBar);
 
-
     //Set up and add all dock widgets
     QDockWidget *meshViewDock = new QDockWidget("Mesh View", mMainWindow);
     mMeshViewContainer = new MeshViewContainer(meshViewDock);
     meshViewDock->setWidget(mMeshViewContainer);
+    meshViewDock->setObjectName("Mesh View Dock");
 
     QDockWidget *templateDock = new QDockWidget("Template Set View", mMainWindow);
     mTileTemplateSetsView = new TileTemplateSetsView(mTileTemplateSetManager, templateDock);
     templateDock->setWidget(mTileTemplateSetsView);
+    templateDock->setObjectName("Template Dock");
 
     QDockWidget *propBrowserDock = new QDockWidget("Property Browser View", mMainWindow);
     mPropertyBrowser = new PropertyBrowser(mMainWindow);
     propBrowserDock->setWidget(mPropertyBrowser);
+    propBrowserDock->setObjectName("Prop Browser Dock");
 
     QDockWidget *materialDock = new QDockWidget("Material View", mMainWindow);
-    TileMaterialView *materialView = new TileMaterialView(mMainWindow);
-    materialDock->setWidget(materialView);
+    mMaterialView = new TileMaterialView(mMainWindow);
+    materialDock->setWidget(mMaterialView);
+    materialDock->setObjectName("Material Dock");
 
     mMainWindow->addDockWidget(Qt::RightDockWidgetArea, meshViewDock);
     mMainWindow->addDockWidget(Qt::LeftDockWidgetArea, templateDock);
     mMainWindow->addDockWidget(Qt::RightDockWidgetArea, propBrowserDock);
     mMainWindow->addDockWidget(Qt::RightDockWidgetArea, materialDock);
-
 
     // Add tools.
     mToolBar->addAction(mTileMapToolManager->registerMapTool(
@@ -102,6 +107,7 @@ Editor::Editor(QObject *parent)
     //Sets up the context toolBar
     mToolBar->addSeparator();
     mToolBar->addWidget(mTileMapToolManager->contextToolBar());
+    mToolBar->setObjectName("Tool Bar");
 
     //Create widget connections
     connect(mMapView, &MapView::cellActivated,
@@ -119,10 +125,12 @@ Editor::Editor(QObject *parent)
             mTileMapToolManager, &TileMapToolManager::tileTemplateChanged);
 
     mMainWindow->showMaximized();
+    loadSettings();
 }
 
 Editor::~Editor()
 {
+    saveSettings();
     delete mMainWindow;
     delete mTileMap;
 }
@@ -146,12 +154,13 @@ void Editor::saveMap()
     if (mTileMap->savePath().isEmpty()) {
         QString savePath = QFileDialog::getSaveFileName(mMainWindow,
                                                         tr("Save Map"),
-                                                        "/home/",
+                                                        mSavePath,
                                                         tr("Save Files (*.wah)"));
 
         if (savePath.isEmpty())
             return;
         mTileMap->setSavePath(savePath);
+        mSavePath = savePath;
     }
 
     mTileTemplateSetManager->saveAllTileTemplateSets();
@@ -173,12 +182,13 @@ void Editor::saveMapAs()
     QString prePath = mTileMap->savePath();
     QString savePath = QFileDialog::getSaveFileName(mMainWindow,
                                                     tr("Save Map"),
-                                                    "/home/",
+                                                    mSavePath,
                                                     tr("Save Files (*.wah)"));
 
     if (savePath.isEmpty())
         return;
     mTileMap->setSavePath(savePath);
+    mSavePath = savePath;
 
     if (XMLTool::saveTileMap(mTileMap, mTileTemplateSetManager->tileTemplateSets()) != XMLTool::NoError) {
         mTileMap->setSavePath(prePath);
@@ -192,7 +202,7 @@ void Editor::loadMap()
 {
     QString fileName = QFileDialog::getOpenFileName(mMainWindow,
                                                     tr("Open Map"),
-                                                    "/home/",
+                                                    mSavePath,
                                                     tr("Open Files (*.wah)"));
 
     TileMap *tileMap = XMLTool::openTileMap(fileName, mTileTemplateSetManager);
@@ -203,7 +213,7 @@ void Editor::loadMap()
         messageBox.setFixedSize(500,200);
         return;
     }
-
+    mSavePath = fileName;
     setTileMap(tileMap);
 }
 
@@ -223,11 +233,12 @@ void Editor::exportMapMesh()
 
     QString fileName = QFileDialog::getSaveFileName(mMainWindow,
                                                     tr("Export OBJ"),
-                                                    "/home/",
+                                                    mExportPath,
                                                     tr("Export Files (*.obj)"));
 
     if(!fileName.isEmpty())
         mMeshViewContainer->saveMesh(fileName);
+    mExportPath = fileName;
 }
 
 void Editor::viewMapProperties()
@@ -311,4 +322,41 @@ void Editor::setUpMenuBar()
     mMapDependantActions.append(mapMenu->addAction(tr("View Map Properties"), this, &Editor::viewMapProperties));
 
     setMapDependantActionsEnabled(false);
+}
+
+void Editor::loadSettings()
+{
+    QSettings settings;
+
+    mMainWindow->restoreState(settings.value("windowState").toByteArray());
+
+    if(!settings.value("tileMap").toString().isNull())
+        setTileMap(XMLTool::openTileMap(settings.value("tileMap").toString(), mTileTemplateSetManager));
+    else
+        setTileMap(nullptr);
+
+    //Loading saving and export paths
+    mSavePath = settings.value("savePath", QString("/home/")).toString();
+    mExportPath = settings.value("exportPath", QString("/home/")).toString();
+
+}
+
+void Editor::saveSettings()
+{
+    QSettings settings;
+
+    //Saves the windowstate
+    if(mMainWindow != nullptr)
+        settings.setValue("windowState", mMainWindow->saveState());
+
+    //Saves the open Tilemap
+    if(mTileMap)
+        settings.setValue("tileMap", mTileMap->savePath());
+    else
+        settings.setValue("tileMap", QString());
+
+    //Save and Export paths
+    settings.setValue("savePath", mSavePath);
+    settings.setValue("exportPath", mExportPath);
+
 }
