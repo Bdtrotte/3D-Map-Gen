@@ -24,7 +24,8 @@ void SimpleTexturedRenderer::objectAdded(const SimpleTexturedObject &obj)
 {
     // obj must be wrapped in a reference_wrapper because references are not
     // otherwise copy-constructible
-    callFunctionOnOpenGL(&SimpleTexturedRenderer::createObjectBuffers, this, std::reference_wrapper<const SimpleTexturedObject>(obj));
+    emit openGLThreadNeeded();
+    createObjectBuffers(obj);
 }
 
 
@@ -52,9 +53,8 @@ void SimpleTexturedRenderer::objectRemoved(const SimpleTexturedObject &obj)
 
         // If the texture has no users, unload it.
         if (textureUsageSet.size() <= 0) {
-            callFunctionOnOpenGL([texturePtr] () {
-                texturePtr->destroy();
-            });
+            emit openGLThreadNeeded();
+            texturePtr->destroy();
 
             mTexturesToObjects.remove(texturePtr.data());
             mImagesToTextures.remove(&obj.getImage());
@@ -67,6 +67,7 @@ void SimpleTexturedRenderer::clearAll()
 {
     QMutexLocker locker(&mGLDataMutex);
 
+    emit openGLThreadNeeded();
     mVAOs.clear();
     mObjectVertexPositions.clear();
     mObjectVertexNormals.clear();
@@ -77,10 +78,8 @@ void SimpleTexturedRenderer::clearAll()
 
     // destroy() the textures on the OpenGL thread.
     auto allTextures = mImagesToTextures.values();
-    callFunctionOnOpenGL([allTextures] () {
-        for (const auto &texture : allTextures)
-            texture->destroy();
-    });
+    for (const auto &texture : allTextures)
+        texture->destroy();
 
     mTexturesToObjects.clear();
     mImagesToTextures.clear();

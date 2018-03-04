@@ -29,12 +29,6 @@ public:
      */
     void setRenderer(QSharedPointer<AbstractRenderer> renderer);
 
-
-    /**
-     * @brief Calls mRenderer->useGL() if e->type() == QEvent::User.
-     */
-    bool event(QEvent *e) override;
-
 public slots:
     /**
      * @brief Activates the given tool in the tool manager.

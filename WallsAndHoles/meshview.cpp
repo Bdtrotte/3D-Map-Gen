@@ -49,34 +49,6 @@ void MeshView::setRenderer(QSharedPointer<AbstractRenderer> renderer) {
     connect(renderer.data(), &AbstractRenderer::openGLThreadNeeded, this, &MeshView::scheduleUse);
 }
 
-
-bool MeshView::event(QEvent *e)
-{
-    if (e->type() == QEvent::User) {
-
-        QMutexLocker useScheduledLocker(&mUseScheduledMutex);
-        mUseScheduled = false;
-        useScheduledLocker.unlock();
-
-        QMutexLocker rendererMutex(&mRendererMutex);
-
-        makeCurrent();
-        auto renderer = getCurrentRenderer();
-
-        if (!renderer.isNull())
-            renderer->useGL();
-        doneCurrent();
-
-        rendererMutex.unlock();
-
-        e->accept();
-        return true;
-    }
-
-    return QOpenGLWidget::event(e);
-}
-
-
 void MeshView::mousePressEvent(QMouseEvent *event) {
     mTools->mousePressEvent(event);
 }
@@ -119,12 +91,7 @@ void MeshView::scheduleRepaint()
 
 void MeshView::scheduleUse()
 {
-    QMutexLocker useScheduledLocker(&mUseScheduledMutex);
-
-    if (!mUseScheduled) {
-        mUseScheduled = true;
-        QCoreApplication::postEvent(this, new QEvent(QEvent::User));
-    }
+    makeCurrent();
 }
 
 
@@ -139,7 +106,6 @@ void MeshView::cleanUp()
     if (!mRenderer.isNull()) {
         // Calling useGL() is important to clear the renderer's OpenGL action queue.
         // Otherwise, these actions could get called on the new context (or on a destroyed context!).
-        mRenderer->useGL();
         mRenderer->cleanUp();
     }
 

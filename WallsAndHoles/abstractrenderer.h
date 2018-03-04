@@ -48,20 +48,6 @@ public:
         initializeRenderer();
     }
 
-
-    /**
-     * @brief Called sometime after the openGLThreadNeeded() signal is emitted.
-     * It is assumed that the correct OpenGL context is current.
-     */
-    void useGL()
-    {
-        QMutexLocker locker(&mFunctionsForOpenGLMutex);
-
-        while (!mFunctionsForOpenGL.isEmpty())
-            // Dequeues and invokes a function.
-            mFunctionsForOpenGL.dequeue()();
-    }
-
 public slots:
 
     /**
@@ -89,30 +75,6 @@ signals:
     void openGLThreadNeeded();
 
 protected:
-
-
-    /**
-     * @brief Queues the given function to be called on a thread with the correct OpenGL
-     * context. Arguments may optionally be passed.
-     *
-     * Example: callFunctionOnOpenGL(&MySubtype::myFunction, this, 1, 2);
-     *
-     * Note that "this" needs to be passed as the first argument to member functions.
-     */
-    template< typename Func, typename... Args >
-    void callFunctionOnOpenGL(Func&& func, Args&&... arguments)
-    {
-        QMutexLocker locker(&mFunctionsForOpenGLMutex);
-
-        std::function<void()> bound = std::bind(func, arguments...);
-        mFunctionsForOpenGL.enqueue(bound);
-
-        locker.unlock();
-
-        emit openGLThreadNeeded();
-    }
-
-
     /**
      * @brief Helper method to loop glGetError() and print out all current errors.
      *
@@ -149,19 +111,6 @@ protected:
      * to be bound.
      */
     virtual void initializeRenderer() = 0;
-
-
-
-private:
-    /**
-     * @brief A queue of functions that need to be invoked on an OpenGL thread.
-     */
-    QQueue<std::function<void()>> mFunctionsForOpenGL;
-
-    /**
-     * @brief A mutex for adding functions to the above queue in a thread-safe manner.
-     */
-    QMutex mFunctionsForOpenGLMutex;
 
 };
 
