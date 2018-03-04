@@ -57,12 +57,14 @@ const TileMaterial *Tile::material() const
         return nullptr;
 }
 
-void Tile::setRelativeThickness(float relativeThickness)
+float Tile::setRelativeThickness(float relativeThickness)
 {
+    if (relativeThickness == mRelativeThickness) return mRelativeThickness;
+
     if (mTileTemplate == nullptr) {
         mRelativeThickness = 0;
         emit tileChanged(mXPos, mYPos);
-        return;
+        return 0;
     }
 
     if (relativeThickness + mTileTemplate->thickness() > 1)
@@ -88,6 +90,8 @@ void Tile::setRelativeThickness(float relativeThickness)
     mRelativeThickness = relativeThickness;
 
     emit tileChanged(mXPos, mYPos);
+
+    return mRelativeThickness;
 }
 
 void Tile::setRelativeHeight(float relativeHeight)
@@ -100,17 +104,12 @@ void Tile::setRelativeHeight(float relativeHeight)
     emit tileChanged(mXPos, mYPos);
 }
 
-void Tile::setRelativePosition(QVector2D relavtivePosition)
+QVector2D Tile::setRelativePosition(QVector2D relavtivePosition)
 {
-    Q_ASSERT(relavtivePosition.x() < 0.5
-             && relavtivePosition.x() > -0.5
-             && relavtivePosition.y() < 0.5
-             && relavtivePosition.y() > -0.5);
-
     if (mTileTemplate == nullptr) {
         mRelativePosition = QVector2D();
         emit tileChanged(mXPos, mYPos);
-        return;
+        return QVector2D();
     }
 
     float thickness = mRelativeThickness + mTileTemplate->thickness();
@@ -129,6 +128,8 @@ void Tile::setRelativePosition(QVector2D relavtivePosition)
     mRelativePosition = relavtivePosition;
 
     emit tileChanged(mXPos, mYPos);
+
+    return mRelativePosition;
 }
 
 void Tile::resetTile(TileTemplate *newTileTemplate)
