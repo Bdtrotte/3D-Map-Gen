@@ -136,9 +136,12 @@ void MeshView::cleanUp()
     // but it may not be bound here.
     makeCurrent();
 
-
-    if (!mRenderer.isNull())
+    if (!mRenderer.isNull()) {
+        // Calling useGL() is important to clear the renderer's OpenGL action queue.
+        // Otherwise, these actions could get called on the new context (or on a destroyed context!).
+        mRenderer->useGL();
         mRenderer->cleanUp();
+    }
 
 
     // Release the context.
