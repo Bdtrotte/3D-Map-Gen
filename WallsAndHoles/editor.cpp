@@ -75,32 +75,32 @@ Editor::Editor(QObject *parent)
     mToolBar->addAction(mTileMapToolManager->registerMapTool(
                             QSharedPointer<TileMapBrushTool>::create(mMapViewContainer->mapView()->previewItem())
                             , "Brush Tool"
-                            , QIcon("://icons/22x22/brush.png")
+                            , QIcon("://images/icons/22x22/brush.png")
                             , QKeySequence(Qt::Key_B)));
     mToolBar->addAction(mTileMapToolManager->registerMapTool(
                             QSharedPointer<FillTool>::create(mMapViewContainer->mapView()->previewItem())
                             , "Fill Tool"
-                            , QIcon("://icons/22x22/stock-tool-bucket-fill.png")
+                            , QIcon("://images/icons/22x22/stock-tool-bucket-fill.png")
                             , QKeySequence(Qt::Key_F)));
     mToolBar->addAction(mTileMapToolManager->registerMapTool(
                             QSharedPointer<LineBrushTool>::create(mMapViewContainer->mapView()->previewItem())
                             , "Line Tool"
-                            , QIcon("://icons/22x22/line.png")
+                            , QIcon("://images/icons/22x22/line.png")
                             , QKeySequence(Qt::Key_L)));
     mToolBar->addAction(mTileMapToolManager->registerMapTool(
                             QSharedPointer<RectBrushTool>::create(mMapViewContainer->mapView()->previewItem())
                             , "Rect Tool"
-                            , QIcon(":/icons/22x22/rectangle-fill.png")
+                            , QIcon("://images/icons/22x22/rectangle-fill.png")
                             , QKeySequence(Qt::Key_R)));
     mToolBar->addAction(mTileMapToolManager->registerMapTool(
                             QSharedPointer<EllipseBrushTool>::create(mMapViewContainer->mapView()->previewItem())
                             , "Ellipse Tool"
-                            , QIcon(":/icons/22x22/ellipse-fill.png")
+                            , QIcon("://images/icons/22x22/ellipse-fill.png")
                             , QKeySequence(Qt::Key_E)));
     mToolBar->addAction(mTileMapToolManager->registerMapTool(
                             QSharedPointer<TileMapSelectionTool>::create(mPropertyBrowser, mMapViewContainer->mapView()->previewItem())
                             , "Selection Tool"
-                            , QIcon("://icons/22x22/mouse.png")
+                            , QIcon("://images/icons/22x22/mouse.png")
                             , QKeySequence(Qt::Key_S)));
 
 

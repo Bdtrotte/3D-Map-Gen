@@ -173,4 +173,5 @@ RESOURCES += \
     textures.qrc \
     icons.qrc
 
-ICON = WAH.icns
+RC_FILE = wah.rc
+ICON = images/wahicon.icns
