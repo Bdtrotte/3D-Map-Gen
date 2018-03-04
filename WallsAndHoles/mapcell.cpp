@@ -41,9 +41,9 @@ void MapCell::tileChanged()
     mGraphics->update();
 }
 
-void MapCell::setGraphics(MapViewMode viewMode, bool enabled)
+void MapCell::setGraphicsMode(int viewMode)
 {
-    mGraphics->setViewMode(viewMode, enabled);
+    mGraphics->setViewMode(viewMode);
     mGraphics->update();
 }
 

@@ -28,6 +28,8 @@ public:
     void clear();
     void setMap(TileMap *tileMap);
 
+    void setViewMode(int viewMode);
+
     TileMapPreviewGraphicsItem *previewItem() { return mPreviewItem; }
 
 private slots:
@@ -109,6 +111,7 @@ private:
     const TileMap *mTileMap;
 
     Array2D<MapCell *> mMapCells;
+    int mViewMode;
 
     QGraphicsRectItem *mMouseHoverRect;
 

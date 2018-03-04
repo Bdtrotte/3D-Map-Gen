@@ -13,6 +13,7 @@ MapView::MapView(QWidget *parent)
     , mScale(15)
     , mTileMap(nullptr)
     , mMapCells(0, 0)
+    , mViewMode(1)
     , mMouseHoverRect(new QGraphicsRectItem(0, 0, 1, 1))
     , mPreviewItem(new TileMapPreviewGraphicsItem())
 {
@@ -77,6 +78,13 @@ void MapView::setMap(TileMap *tileMap)
 
     connect(mTileMap, &TileMap::resized,
             this, &MapView::mapSizeChanged);
+}
+
+void MapView::setViewMode(int viewMode)
+{
+    mViewMode = viewMode;
+    for (MapCell *mc : mMapCells)
+        mc->setGraphicsMode(mViewMode);
 }
 
 void MapView::mapSizeChanged()
@@ -165,6 +173,7 @@ void MapView::reMakeMap()
     for(int y = 0; y < mTileMap->mapSize().height(); ++y) {
         for(int x = 0; x < mTileMap->mapSize().width(); ++x) {
             mMapCells(x, y) = new MapCell(scene(), x, y, mTileMap->cTileAt(x, y));
+            mMapCells(x, y)->setGraphicsMode(mViewMode);
         }
     }
 
