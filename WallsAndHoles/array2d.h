@@ -6,6 +6,8 @@
 #include <QDebug>
 #include <QPoint>
 
+#include "array2d_private.h"
+
 
 // Iterator classes for Array2D.
 template< typename Type > class Array2DIterator;
@@ -32,6 +34,12 @@ template< typename Type > class Array2DCNeighborIterator;
 template< typename Type >
 class Array2D {
 public:
+
+
+    using IndexCollection = Array2D_Private::Array2DPointWrapper;
+    using IndexedConstDataCollection = Array2D_Private::Array2DPointAndConstDataWrapper<Type>;
+
+
     Array2D() {
         // 0x0 grid
     }
@@ -51,6 +59,10 @@ public:
 
     Type& operator()(int r, int c) {
         return data[r][c];
+    }
+
+    const Type &operator ()(QPoint p) const {
+        return (*this)(p.x(), p.y());
     }
 
     Type& operator()(QPoint p) {
@@ -75,6 +87,22 @@ public:
      */
     bool isInBounds(QPoint p) const { return p.x() >= 0 && p.x() < width() && p.y() >= 0 && p.y() < height(); }
 
+
+    /**
+     * @brief indices   Returns a lightweight object for iterating over all valid (x,y) pairs.
+     * @return          An object with begin() and end() methods that return iterators
+     *                  that loop over valid (x,y) pairs in this array, represented as QPoints.
+     */
+    IndexCollection indices() const { return IndexCollection(*this); }
+
+    /**
+     * @brief indexedData   Returns a lightweight object for iterating over all data in the grid
+     *                      that also provides indices.
+     *
+     * @return              An object with begin() and end() methods that return iterators that,
+     *                      when dereferenced, return QPair<int, const Type &>.
+     */
+    IndexedConstDataCollection indexedData() const { return IndexedConstDataCollection(*this); }
 
     /* Standard begin() and end() methods. */
 

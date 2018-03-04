@@ -52,11 +52,12 @@ void SimpleTexturedRenderer::objectRemoved(const SimpleTexturedObject &obj)
 
         // If the texture has no users, unload it.
         if (textureUsageSet.size() <= 0) {
-            // It is important to unlock and relock the mutex here, just in case
-            // callFunctionOnOpenGL() happens in this thread.
-            locker.unlock();
-            callFunctionOnOpenGL(&SimpleTexturedRenderer::removeImageTexture, this, &obj.getImage());
-            locker.relock();
+            callFunctionOnOpenGL([texturePtr] () {
+                texturePtr->destroy();
+            });
+
+            mTexturesToObjects.remove(texturePtr.data());
+            mImagesToTextures.remove(&obj.getImage());
         }
     }
 }
@@ -66,8 +67,6 @@ void SimpleTexturedRenderer::clearAll()
 {
     QMutexLocker locker(&mGLDataMutex);
 
-    // Destroying buffers does not require a valid OpenGL context. However,
-    // the same is not true for textures.
     mVAOs.clear();
     mObjectVertexPositions.clear();
     mObjectVertexNormals.clear();
@@ -75,8 +74,16 @@ void SimpleTexturedRenderer::clearAll()
     mObjectVertexTexCoords.clear();
     mNumVertices.clear();
 
-    // TODO: Is it possible that new images might be added before this happens?
-    callFunctionOnOpenGL(&SimpleTexturedRenderer::clearAllTextures, this);
+
+    // destroy() the textures on the OpenGL thread.
+    auto allTextures = mImagesToTextures.values();
+    callFunctionOnOpenGL([allTextures] () {
+        for (const auto &texture : allTextures)
+            texture->destroy();
+    });
+
+    mTexturesToObjects.clear();
+    mImagesToTextures.clear();
 }
 
 void SimpleTexturedRenderer::cleanUp()
@@ -133,6 +140,9 @@ void SimpleTexturedRenderer::paint(QMatrix4x4 mvpMatrix, QVector3D camPos)
 
         // Draw all objects that are using this texture.
         foreach (const SimpleTexturedObject *obj, objectsUsingTexture) {
+            Q_ASSERT(mVAOs.contains(obj));
+            Q_ASSERT(mNumVertices.contains(obj));
+
             auto vao = mVAOs[obj];
             int numVertices = mNumVertices[obj];
 
@@ -349,16 +359,4 @@ void SimpleTexturedRenderer::clearAllTextures()
         texture->destroy();
 
     mImagesToTextures.clear();
-}
-
-
-void SimpleTexturedRenderer::removeImageTexture(const QImage *image)
-{
-    QMutexLocker locker(&mGLDataMutex);
-
-    QSharedPointer<QOpenGLTexture> texture = mImagesToTextures[image];
-    texture->destroy();
-
-    mTexturesToObjects.remove(texture.data());
-    mImagesToTextures.remove(image);
 }
