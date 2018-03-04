@@ -3,6 +3,8 @@
 
 
 #include <QObject>
+#include <QSet>
+#include <QMutex>
 
 #include "simpletexturedscene.h"
 #include "simpletexturedobject.h"
@@ -50,10 +52,9 @@ public slots:
 
 protected:
     /**
-     * @brief Figures out mTileProperties for all tiles, and updates meshes when
-     * properties change.
+     * @brief Updates the scene for all tiles that need updates.
      */
-    void inferProperties();
+    void updateScene();
 
 
     /**
@@ -68,21 +69,43 @@ protected:
     SharedSimpleTexturedScene mScene;
 
 
-    /**
-     * @brief A mesh for every tile.
-     */
-    Array2D<QSharedPointer<SimpleTexturedObject>> mTileMeshes;
+    /// A grid containing lists of objects. A tile's "mesh" may consist of several
+    /// objects for texturing purposes.
+    using TileObjectGrid = Array2D<QVector<QSharedPointer<SimpleTexturedObject>>>;
+
+    /// A grid containing TileMeshers. These act like "tokens" to check whether
+    /// a tile's mesh *really* needs to be updated. In addition, they allow for
+    /// reuse---a TileMesher may keep some reference to its last output, and
+    /// then modify that instead of creating new output.
+    using TileMesherGrid = Array2D<QSharedPointer<M2M::AbstractTileMesher>>;
+
 
     /**
-     * @brief Inferred properties for every tile.
+     * @brief Mesh data for every tile.
      */
-    Array2D<M2MTileMesher::Input> mTileProperties;
+    TileObjectGrid mTileObjects;
+
+    /**
+     * @brief A mesher for every tile.
+     */
+    TileMesherGrid mTileMeshers;
 
 
     /**
-     * @brief Whether an inferProperties() call has been scheduled. Used in tileChanged().
+     * @brief Whether an updateScene() call has been scheduled. Used in tileChanged().
      */
-    bool mInferScheduled;
+    bool mSceneUpdateScheduled;
+
+    /**
+     * @brief Coordinates of tiles that need updating.
+     */
+    QSet<QPoint> mTilesToUpdate;
+
+    /**
+     * @brief Mutex for scene-update related operations.
+     */
+    QMutex mSceneUpdateMutex;
+
 
 public:
     struct Properties {

@@ -52,7 +52,7 @@ SharedImageAndSource TileMaterial::DefaultTexture = nullptr;
 SharedImageAndSource TileMaterial::getDefaultTexture()
 {
     if (DefaultTexture.isNull())
-        DefaultTexture = ImageAndSource::getSharedImageAndSource(":/textures/exampleTexture2.png");
+        DefaultTexture = ImageAndSource::getSharedImageAndSource("://images/textures/exampleTexture2.png");
 
     return DefaultTexture;
 }
