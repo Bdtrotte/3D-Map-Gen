@@ -1,14 +1,14 @@
 <RCC>
     <qresource prefix="/">
-        <file>icons/22x22/stock-tool-bucket-fill.png</file>
-        <file>icons/22x22/rectangle-fill.png</file>
-        <file>icons/22x22/ellipse-fill.png</file>
-        <file>icons/22x22/mouse.png</file>
-        <file>icons/22x22/brush.png</file>
-        <file>icons/22x22/line.png</file>
-        <file>icons/22x22/add.png</file>
-        <file>icons/22x22/remove.png</file>
-        <file>icons/22x22/save.png</file>
-        <file>icons/22x22/load.png</file>
+        <file>images/icons/22x22/stock-tool-bucket-fill.png</file>
+        <file>images/icons/22x22/rectangle-fill.png</file>
+        <file>images/icons/22x22/ellipse-fill.png</file>
+        <file>images/icons/22x22/mouse.png</file>
+        <file>images/icons/22x22/brush.png</file>
+        <file>images/icons/22x22/line.png</file>
+        <file>images/icons/22x22/add.png</file>
+        <file>images/icons/22x22/remove.png</file>
+        <file>images/icons/22x22/save.png</file>
+        <file>images/icons/22x22/load.png</file>
     </qresource>
 </RCC>
