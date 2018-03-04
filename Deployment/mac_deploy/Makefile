@@ -1,13 +1,11 @@
 DMGMaker = ./tools/create-dmg
-ICON = ./tools/WAH.icns
-DMG_Background = ./tools/WAH.png
+ICON = ../../WallsAndHoles/images/wahicon.icns
 DMGSource = ./release
 
 dmg: $(DMGSource)
 	cp ./tools/example.Info.plist $(DMGSource)/WallsAndHoles.app/Contents/Info.plist
 	$(DMGMaker) \
 	--volicon $(ICON) \
-	--background $(DMG_Background) \
 	--volname "WallsAndHoles Installer" \
 	--window-pos 200 120 \
 	--window-size 400 400 \

@@ -36,10 +36,10 @@ QVector<QVector<QVariant>> TileTemplatePropertyManager::properties()
         {"Name",       mTileTemplate->name(),         true              },
         {"Color",      mTileTemplate->color(),        true              },
         {"Height",     mTileTemplate->height(),       true,  -1000, 1000},
-        {"Thickness",  mTileTemplate->thickness(),    false,   0.1,    1},
-        {"X Position", mTileTemplate->position().x(), false, -0.49, 0.49},
-        {"Y Position", mTileTemplate->position().y(), false, -0.49, 0.49},
-        {"Material:", QVariant::fromValue<TemplateMaterialSelector *>(materialSelector),
+        {"Thickness",  mTileTemplate->thickness(),    true,    0.1,    1},
+        {"X Position", mTileTemplate->position().x(), true,    0.1,  0.9},
+        {"Y Position", mTileTemplate->position().y(), true,    0.1,  0.9},
+        {"Material", QVariant::fromValue<TemplateMaterialSelector *>(materialSelector),
                      true,
                      PropertyBrowser::BlockWidget}
     };

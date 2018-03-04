@@ -10,7 +10,7 @@
 
 #include <QImage>
 
-
+#include "imageandsource.h"
 #include "triplet.h"
 
 /**
@@ -84,7 +84,7 @@ public:
      * @param texCoords     Texture coordinates for each triangle.
      * @param image         The image (texture) for the object.
      */
-    void setTextureInfo(QVector<TriangleTexCoords> texCoords, QSharedPointer<QImage> image);
+    void setTextureInfo(QVector<TriangleTexCoords> texCoords, SharedImageAndSource image);
 
 
     bool isCommitted() const;
@@ -138,7 +138,7 @@ private:
 
     // Texture information.
     QVector<TriangleTexCoords> mTriangleTextureCoordinates; /// This array is parallel to mTriangles.
-    QSharedPointer<QImage> mImage;
+    SharedImageAndSource mImage;
 
 
     /// True if the getter methods may be used.

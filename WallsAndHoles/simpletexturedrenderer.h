@@ -86,12 +86,6 @@ private:
      */
     void clearAllTextures();
 
-    /**
-     * @brief Unloads the texture associated with the image. This must be run on the thread
-     * with a valid OpenGL context. Locks the mGLDataMutex.
-     */
-    void removeImageTexture(const QImage *image);
-
 
 
     SharedSimpleTexturedScene mScene;
