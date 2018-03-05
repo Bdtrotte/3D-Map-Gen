@@ -1,7 +1,6 @@
 #include <QVBoxLayout>
 
 #include "meshviewcontainer.h"
-#include "ui_meshviewcontainer.h"
 
 #include "meshview.h"
 #include "objtools.h"

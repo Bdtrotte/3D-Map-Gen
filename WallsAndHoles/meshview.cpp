@@ -3,7 +3,6 @@
 
 
 #include "meshview.h"
-#include "ui_meshview.h"
 #include "objtools.h"
 
 #include "meshviewcameralikeblender.h"
