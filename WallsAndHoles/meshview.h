@@ -24,8 +24,6 @@ public:
     explicit MeshView(QWidget *parent = 0);
     ~MeshView();
 
-//    void setScene(QSharedPointer<Scene> scene);
-
 public slots:
     void load(QString path);
     void save(QString path);
@@ -54,11 +52,6 @@ protected:
      * @param renderer  The Renderer that will be used to draw to the screen.
      */
     void setRenderer(QSharedPointer<AbstractRenderer> renderer);
-
-    QAction *addCamera(AbstractMeshViewCamera *camera,
-                   QString name,
-                   QIcon icon = QIcon(),
-                   QKeySequence ks = QKeySequence());
 
     void initializeGL() override;
     void paintGL() override;

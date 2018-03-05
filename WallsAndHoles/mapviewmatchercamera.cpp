@@ -23,7 +23,7 @@ QVector3D MapViewMatcherCamera::getPosition() const
 
 void MapViewMatcherCamera::mapViewChanged(QRectF viewRect)
 {
-    QPointF center = viewRect.center();
+    QPointF center = QPointF(viewRect.width(), viewRect.height())/2 + viewRect.topLeft();
 
     // TODO the height is based off the fov being 90 degrees, which is hard
     //      coded somewhere. If fov changes, actual formula is height / (tan(fov/2) * 2).

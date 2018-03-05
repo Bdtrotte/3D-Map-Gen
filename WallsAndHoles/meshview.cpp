@@ -3,7 +3,6 @@
 
 
 #include "meshview.h"
-#include "ui_meshview.h"
 #include "objtools.h"
 
 #include "meshviewcameralikeblender.h"
@@ -18,9 +17,6 @@ MeshView::MeshView(QWidget *parent) :
 {
     connect(mTools, &ToolManager::toolWasActivated,
             this, &MeshView::cameraActivated);
-
-    addCamera(new MeshViewCameraLikeBlender(), "Default");
-    mTools->activateTool("Default");
 }
 
 
@@ -48,14 +44,6 @@ void MeshView::setRenderer(QSharedPointer<AbstractRenderer> renderer) {
     connect(renderer.data(), &AbstractRenderer::repaintNeeded, this, &MeshView::scheduleRepaint);
     connect(renderer.data(), &AbstractRenderer::makeContextCurrent, this, &MeshView::makeContextCurrent);
     connect(renderer.data(), &AbstractRenderer::doneContextCurrent, this, &MeshView::doneContextCurrent);
-}
-
-QAction *MeshView::addCamera(AbstractMeshViewCamera *camera,
-                         QString name,
-                         QIcon icon,
-                         QKeySequence ks)
-{
-    return mTools->registerTool(camera, name, icon, ks);
 }
 
 void MeshView::mousePressEvent(QMouseEvent *event)

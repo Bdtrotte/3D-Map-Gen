@@ -1,9 +1,9 @@
 #include <QVBoxLayout>
 
 #include "meshviewcontainer.h"
-#include "ui_meshviewcontainer.h"
 
 #include "meshview.h"
+#include "meshviewcameralikeblender.h"
 #include "objtools.h"
 
 MeshViewContainer::MeshViewContainer(QWidget *parent)
@@ -12,7 +12,8 @@ MeshViewContainer::MeshViewContainer(QWidget *parent)
     , mToolBar(new QToolBar(this))
 {
     mMeshView->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    mToolBar->addAction(mMeshView->mTools->getAction("Default"));
+
+    addCamera(new MeshViewCameraLikeBlender(), "Default")->setChecked(true);
 
     QVBoxLayout *layout = new QVBoxLayout(this);
     layout->addWidget(mToolBar);
@@ -28,7 +29,11 @@ void MeshViewContainer::setRenderer(QSharedPointer<AbstractRenderer> renderer)
 
 QAction *MeshViewContainer::addCamera(AbstractMeshViewCamera *camera, QString name, QIcon icon, QKeySequence ks)
 {
-    mToolBar->addAction(mMeshView->addCamera(camera, name, icon, ks));
+    QAction *cam = mMeshView->mTools->registerTool(camera, name, icon, ks);
+
+    mToolBar->addAction(cam);
+
+    return cam;
 }
 
 void MeshViewContainer::saveMesh(QString path){
