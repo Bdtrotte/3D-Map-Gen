@@ -1,6 +1,8 @@
 #ifndef MAPVIEW_H
 #define MAPVIEW_H
 
+#define MAP_BUFFER 5 //Tiles kept around the map for the purpose of scrolling.
+
 #include "array2d.h"
 #include "mapcell.h"
 #include "tilemap.h"
@@ -9,9 +11,7 @@
 #include <QObject>
 #include <QGraphicsView>
 #include <QKeyEvent>
-#include <QWidget>
-#include <QRegion>
-#include <QToolBar>
+#include <QResizeEvent>
 
 /**
  * @brief The MapView class
@@ -26,14 +26,14 @@ public:
     ~MapView();
 
     void clear();
-    void createMap(TileMap *tileMap);
+    void setMap(TileMap *tileMap);
+
+    void setViewMode(int viewMode);
 
     TileMapPreviewGraphicsItem *previewItem() { return mPreviewItem; }
 
 private slots:
-    void setNoView(bool state);
-    void setDefaultView(bool state);
-    void setHeightMap(bool state);
+    void mapSizeChanged();
 
 protected:
     void wheelEvent(QWheelEvent *event) override;
@@ -97,13 +97,21 @@ signals:
     void mouseExitedMap(QMouseEvent *event);
 
 private:
-    void setupViewToolBar();
+    /**
+     * @brief reMakeMap
+     * Deletes the old map, and if mTileMap isn't null,
+     * makes the map.
+     */
+    void reMakeMap();
 
     float mScale;
     int mOldX;
     int mOldY;
 
+    const TileMap *mTileMap;
+
     Array2D<MapCell *> mMapCells;
+    int mViewMode;
 
     QGraphicsRectItem *mMouseHoverRect;
 
@@ -111,11 +119,6 @@ private:
     TileMapPreviewGraphicsItem *const mPreviewItem;
 
     QPoint mPreMousePoint;
-
-    QToolBar *mToolBar;
-    QAction *mNoView;
-    QAction *mDefaultView;
-    QAction *mHeightView;
 };
 
 #endif // MAPVIEW_H

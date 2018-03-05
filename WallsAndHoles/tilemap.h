@@ -50,7 +50,13 @@ public:
     bool isIndoor() const { return mIsIndoors; }
     bool hasCeiling() const { return mHasCeiling; }
 
-    //changes the size of the map. If the size is reduced, tiles will be lost (resizes around top left corner)
+    /**
+     * @brief resizeMap
+     *
+     * Changes the size of the map. If the size is reduced, tiles will be lost (resizes around top left corner)
+     *
+     * @param newSize
+     */
     void resizeMap(QSize newSize);
 
     const QString savePath() const { return mSavePath; }

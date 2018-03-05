@@ -53,7 +53,6 @@ void Map2Mesh::remakeAll()
     mTileMeshers = TileMesherGrid(mTileMap->mapSize());
     mScene->clear();
 
-
     // Update all points.
     QMutexLocker locker(&mSceneUpdateMutex);
     for (const QPoint &pt : mTileMap->getArray2D().indices())
