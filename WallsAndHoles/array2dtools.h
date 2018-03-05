@@ -40,7 +40,7 @@ QSet<QPoint> getValidNeighbors(int x, int y, int width, int height)
 
     for (int dx = -1; dx <= 1; ++dx)
         for (int dy = -1; dy <= 1; ++dy)
-            if (!(x == 1 && y == 1) && isPointInBounds(x+dx, y+dy, width, height))
+            if (!(dx == 0 && dy == 0) && isPointInBounds(x+dx, y+dy, width, height))
                 neighbors.insert({x+dx, y+dy});
 
     return neighbors;
