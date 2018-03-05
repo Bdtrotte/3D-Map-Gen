@@ -50,6 +50,18 @@ signals:
      * @param propertyId
      */
     void propertyChanged(QString propertyName, QVariant value);
+
+    /**
+     * @brief blankProperty
+     *
+     * Should be emited when a property should be blanked. Mainly used with spinboxs representing multiple differing things.
+     *
+     * Only supports:
+     *     Int, Float, Double, QString
+     *
+     * @param propertyName
+     */
+    void blankProperty(QString propertyName);
 };
 
 #endif // ABSTRACTPROPERTYMANAGER_H

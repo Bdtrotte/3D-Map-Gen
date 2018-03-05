@@ -354,7 +354,7 @@ SharedImageAndSource M2M::TileInfo::DefaultImage = nullptr;
 SharedImageAndSource M2M::TileInfo::getDefaultImage()
 {
     if (DefaultImage.isNull())
-        DefaultImage = ImageAndSource::getSharedImageAndSource(":/textures/grassTexture.jpg");
+        DefaultImage = ImageAndSource::getSharedImageAndSource("://images/textures/grassTexture.jpg");
 
     return DefaultImage;
 }

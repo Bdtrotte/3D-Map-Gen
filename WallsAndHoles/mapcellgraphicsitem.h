@@ -28,7 +28,8 @@ public:
                const QStyleOptionGraphicsItem *,
                QWidget *);
 
-    void setViewMode(MapViewMode viewMode, bool enabled);
+    int viewMode() const { return mViewMode; }
+    void setViewMode(int viewMode);
 private:
     const Tile &mTile;
 

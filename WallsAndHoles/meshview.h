@@ -29,12 +29,6 @@ public:
      */
     void setRenderer(QSharedPointer<AbstractRenderer> renderer);
 
-
-    /**
-     * @brief Calls mRenderer->useGL() if e->type() == QEvent::User.
-     */
-    bool event(QEvent *e) override;
-
 public slots:
     /**
      * @brief Activates the given tool in the tool manager.
@@ -48,10 +42,8 @@ public slots:
      */
     void scheduleRepaint();
 
-    /**
-     * @brief Schedules an AbstractRenderer::useGL() call on the OpenGL thread.
-     */
-    void scheduleUse();
+    void makeContextCurrent();
+    void doneContextCurrent();
 
 
     /**
@@ -110,13 +102,6 @@ protected:
 
     // The tool manager. This will send mouse events to the appropriate tool.
     ToolManagerP mTools;
-
-    /**
-     * @brief Used in scheduleUse() and event() to make scheduleUse() events unique.
-     */
-    bool mUseScheduled;
-
-    QMutex mUseScheduledMutex;
 
 
     /**

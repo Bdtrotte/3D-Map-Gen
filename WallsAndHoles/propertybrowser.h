@@ -48,6 +48,7 @@ private:
 
     void makeLine(QString propertyName, QVariant value, bool editable, QVector<QVariant> extra);
     void setLine(QString propertyName, QVariant value);
+    void blankLine(QString propertyName);
 
     AbstractPropertyManager *mPropertyManager;
 

@@ -24,7 +24,9 @@ void SimpleTexturedRenderer::objectAdded(const SimpleTexturedObject &obj)
 {
     // obj must be wrapped in a reference_wrapper because references are not
     // otherwise copy-constructible
-    callFunctionOnOpenGL(&SimpleTexturedRenderer::createObjectBuffers, this, std::reference_wrapper<const SimpleTexturedObject>(obj));
+    emit makeContextCurrent();
+    createObjectBuffers(obj);
+    emit doneContextCurrent();
 }
 
 
@@ -33,7 +35,7 @@ void SimpleTexturedRenderer::objectRemoved(const SimpleTexturedObject &obj)
     QMutexLocker locker(&mGLDataMutex);
 
     // It is safe to use QMap::remove() even if the key might not be in the map.
-    // Destroying buffers doesn't seem to require a valid OpenGL context.
+    emit makeContextCurrent();
     mVAOs.remove(&obj);
     mObjectVertexPositions.remove(&obj);
     mObjectVertexNormals.remove(&obj);
@@ -52,14 +54,14 @@ void SimpleTexturedRenderer::objectRemoved(const SimpleTexturedObject &obj)
 
         // If the texture has no users, unload it.
         if (textureUsageSet.size() <= 0) {
-            callFunctionOnOpenGL([texturePtr] () {
-                texturePtr->destroy();
-            });
+            texturePtr->destroy();
 
             mTexturesToObjects.remove(texturePtr.data());
             mImagesToTextures.remove(&obj.getImage());
         }
     }
+
+    emit doneContextCurrent();
 }
 
 
@@ -67,8 +69,7 @@ void SimpleTexturedRenderer::clearAll()
 {
     QMutexLocker locker(&mGLDataMutex);
 
-    // Destroying buffers does not require a valid OpenGL context. However,
-    // the same is not true for textures.
+    emit makeContextCurrent();
     mVAOs.clear();
     mObjectVertexPositions.clear();
     mObjectVertexNormals.clear();
@@ -76,8 +77,16 @@ void SimpleTexturedRenderer::clearAll()
     mObjectVertexTexCoords.clear();
     mNumVertices.clear();
 
-    // TODO: Is it possible that new images might be added before this happens?
-    callFunctionOnOpenGL(&SimpleTexturedRenderer::clearAllTextures, this);
+
+    // destroy() the textures on the OpenGL thread.
+    auto allTextures = mImagesToTextures.values();
+    for (const auto &texture : allTextures)
+        texture->destroy();
+
+    mTexturesToObjects.clear();
+    mImagesToTextures.clear();
+
+    emit doneContextCurrent();
 }
 
 void SimpleTexturedRenderer::cleanUp()
@@ -134,6 +143,9 @@ void SimpleTexturedRenderer::paint(QMatrix4x4 mvpMatrix, QVector3D camPos)
 
         // Draw all objects that are using this texture.
         foreach (const SimpleTexturedObject *obj, objectsUsingTexture) {
+            Q_ASSERT(mVAOs.contains(obj));
+            Q_ASSERT(mNumVertices.contains(obj));
+
             auto vao = mVAOs[obj];
             int numVertices = mNumVertices[obj];
 

@@ -32,7 +32,7 @@ Editor::Editor(QObject *parent)
     , mMap2Mesh(nullptr)
     , mTileMap(nullptr)
     , mTileTemplateSetManager(new TileTemplateSetsManager(nullptr, this))
-    , mMapView(new MapView(mMainWindow))
+    , mMapViewContainer(new MapViewContainer(mMainWindow))
     , mTileMapToolManager(new TileMapToolManager(this))
     , mToolBar(new QToolBar(mMainWindow))
 {
@@ -41,7 +41,7 @@ Editor::Editor(QObject *parent)
     QCoreApplication::setApplicationName("Walls and Holes");
 
     //Initiallize mMainWindow
-    mMainWindow->setCentralWidget(mMapView);
+    mMainWindow->setCentralWidget(mMapViewContainer);
     setUpMenuBar();
     mMainWindow->addToolBar(mToolBar);
 
@@ -73,34 +73,34 @@ Editor::Editor(QObject *parent)
 
     // Add tools.
     mToolBar->addAction(mTileMapToolManager->registerMapTool(
-                            QSharedPointer<TileMapBrushTool>::create(mMapView->previewItem())
+                            QSharedPointer<TileMapBrushTool>::create(mMapViewContainer->mapView()->previewItem())
                             , "Brush Tool"
-                            , QIcon("://icons/22x22/brush.png")
+                            , QIcon("://images/icons/22x22/brush.png")
                             , QKeySequence(Qt::Key_B)));
     mToolBar->addAction(mTileMapToolManager->registerMapTool(
-                            QSharedPointer<FillTool>::create(mMapView->previewItem())
+                            QSharedPointer<FillTool>::create(mMapViewContainer->mapView()->previewItem())
                             , "Fill Tool"
-                            , QIcon("://icons/22x22/stock-tool-bucket-fill.png")
+                            , QIcon("://images/icons/22x22/stock-tool-bucket-fill.png")
                             , QKeySequence(Qt::Key_F)));
     mToolBar->addAction(mTileMapToolManager->registerMapTool(
-                            QSharedPointer<LineBrushTool>::create(mMapView->previewItem())
+                            QSharedPointer<LineBrushTool>::create(mMapViewContainer->mapView()->previewItem())
                             , "Line Tool"
-                            , QIcon("://icons/22x22/line.png")
+                            , QIcon("://images/icons/22x22/line.png")
                             , QKeySequence(Qt::Key_L)));
     mToolBar->addAction(mTileMapToolManager->registerMapTool(
-                            QSharedPointer<RectBrushTool>::create(mMapView->previewItem())
+                            QSharedPointer<RectBrushTool>::create(mMapViewContainer->mapView()->previewItem())
                             , "Rect Tool"
-                            , QIcon(":/icons/22x22/rectangle-fill.png")
+                            , QIcon("://images/icons/22x22/rectangle-fill.png")
                             , QKeySequence(Qt::Key_R)));
     mToolBar->addAction(mTileMapToolManager->registerMapTool(
-                            QSharedPointer<EllipseBrushTool>::create(mMapView->previewItem())
+                            QSharedPointer<EllipseBrushTool>::create(mMapViewContainer->mapView()->previewItem())
                             , "Ellipse Tool"
-                            , QIcon(":/icons/22x22/ellipse-fill.png")
+                            , QIcon("://images/icons/22x22/ellipse-fill.png")
                             , QKeySequence(Qt::Key_E)));
     mToolBar->addAction(mTileMapToolManager->registerMapTool(
-                            QSharedPointer<TileMapSelectionTool>::create(mPropertyBrowser, mMapView->previewItem())
+                            QSharedPointer<TileMapSelectionTool>::create(mPropertyBrowser, mMapViewContainer->mapView()->previewItem())
                             , "Selection Tool"
-                            , QIcon("://icons/22x22/mouse.png")
+                            , QIcon("://images/icons/22x22/mouse.png")
                             , QKeySequence(Qt::Key_S)));
 
 
@@ -110,15 +110,15 @@ Editor::Editor(QObject *parent)
     mToolBar->setObjectName("Tool Bar");
 
     //Create widget connections
-    connect(mMapView, &MapView::cellActivated,
+    connect(mMapViewContainer->mapView(), &MapView::cellActivated,
             mTileMapToolManager, &TileMapToolManager::cellActivated);
-    connect(mMapView, &MapView::cellClicked,
+    connect(mMapViewContainer->mapView(), &MapView::cellClicked,
             mTileMapToolManager, &TileMapToolManager::cellClicked);
-    connect(mMapView, &MapView::cellReleased,
+    connect(mMapViewContainer->mapView(), &MapView::cellReleased,
             mTileMapToolManager, &TileMapToolManager::cellReleased);
-    connect(mMapView, &MapView::cellHovered,
+    connect(mMapViewContainer->mapView(), &MapView::cellHovered,
             mTileMapToolManager, &TileMapToolManager::cellHovered);
-    connect(mMapView, &MapView::mouseExitedMap,
+    connect(mMapViewContainer->mapView(), &MapView::mouseExitedMap,
             mTileMapToolManager, &TileMapToolManager::mouseExitedMap);
 
     connect(mTileTemplateSetsView, &TileTemplateSetsView::tileTemplateChanged,
@@ -280,7 +280,7 @@ void Editor::setTileMap(TileMap *tileMap)
     TileMap *pre = mTileMap;
     mTileMap = tileMap;
     mTileMapToolManager->setTileMap(mTileMap);
-    mMapView->createMap(mTileMap);
+    mMapViewContainer->mapView()->setMap(mTileMap);
     mTileTemplateSetManager->setTileMap(mTileMap);
     mPropertyBrowser->clear();
     setMapDependantActionsEnabled(mTileMap != nullptr);

@@ -40,12 +40,23 @@ public:
     float relativeHeight() const { return mRelativeHeight; }
     QVector2D relativePosition() const { return mRelativePosition; }
 
-    //will be clipped such that 0 < mTileTemplate.thickness() + relativeThickness <= 1
-    //and so walls don't leave tile bounds
-    void setRelativeThickness(float relativeThickness);
+    /**
+     * @brief setRelativeThickness
+     *
+     * Tries to set the relative thickness of this tile. Will be clipped such that
+     * relativeThickness + template->thickness will be in (0, 1].
+     *
+     * Will also ensure that the thickness doesn't cause the tile to go out of bounds due to the tiles grid position.
+     *
+     * Becuase of these, the ultimate value set may differ from that passed, so this returns the value that gets set.
+     *
+     * @param thickness
+     * @return
+     */
+    float setRelativeThickness(float relativeThickness);
     void setRelativeHeight(float relativeHeight);
     //will be clipped so that walls don't leave tilebounds
-    void setRelativePosition(QVector2D relativePosition);
+    QVector2D setRelativePosition(QVector2D relativePosition);
 
     /**
      * Sets all relative values to zero,

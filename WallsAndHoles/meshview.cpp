@@ -12,7 +12,6 @@
 MeshView::MeshView(QWidget *parent) :
     QOpenGLWidget(parent),
     mNextRenderer(nullptr),
-    mUseScheduled(false),
     mContext(nullptr)
 {
     mCamera = QSharedPointer<MeshViewCameraLikeBlender>::create();
@@ -46,36 +45,9 @@ void MeshView::setRenderer(QSharedPointer<AbstractRenderer> renderer) {
     mNextRenderer = renderer;
 
     connect(renderer.data(), &AbstractRenderer::repaintNeeded, this, &MeshView::scheduleRepaint);
-    connect(renderer.data(), &AbstractRenderer::openGLThreadNeeded, this, &MeshView::scheduleUse);
+    connect(renderer.data(), &AbstractRenderer::makeContextCurrent, this, &MeshView::makeContextCurrent);
+    connect(renderer.data(), &AbstractRenderer::doneContextCurrent, this, &MeshView::doneContextCurrent);
 }
-
-
-bool MeshView::event(QEvent *e)
-{
-    if (e->type() == QEvent::User) {
-
-        QMutexLocker useScheduledLocker(&mUseScheduledMutex);
-        mUseScheduled = false;
-        useScheduledLocker.unlock();
-
-        QMutexLocker rendererMutex(&mRendererMutex);
-
-        makeCurrent();
-        auto renderer = getCurrentRenderer();
-
-        if (!renderer.isNull())
-            renderer->useGL();
-        doneCurrent();
-
-        rendererMutex.unlock();
-
-        e->accept();
-        return true;
-    }
-
-    return QOpenGLWidget::event(e);
-}
-
 
 void MeshView::mousePressEvent(QMouseEvent *event) {
     mTools->mousePressEvent(event);
@@ -117,14 +89,14 @@ void MeshView::scheduleRepaint()
     update();
 }
 
-void MeshView::scheduleUse()
+void MeshView::makeContextCurrent()
 {
-    QMutexLocker useScheduledLocker(&mUseScheduledMutex);
+    makeCurrent();
+}
 
-    if (!mUseScheduled) {
-        mUseScheduled = true;
-        QCoreApplication::postEvent(this, new QEvent(QEvent::User));
-    }
+void MeshView::doneContextCurrent()
+{
+    doneCurrent();
 }
 
 
@@ -136,9 +108,11 @@ void MeshView::cleanUp()
     // but it may not be bound here.
     makeCurrent();
 
-
-    if (!mRenderer.isNull())
+    if (!mRenderer.isNull()) {
+        // Calling useGL() is important to clear the renderer's OpenGL action queue.
+        // Otherwise, these actions could get called on the new context (or on a destroyed context!).
         mRenderer->cleanUp();
+    }
 
 
     // Release the context.
