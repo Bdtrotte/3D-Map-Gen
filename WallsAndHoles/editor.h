@@ -4,7 +4,7 @@
 #include "tilemap.h"
 #include "tilemaptoolmanager.h"
 #include "tiletemplateset.h"
-#include "mapview.h"
+#include "mapviewcontainer.h"
 #include "xmltool.h"
 #include "map2mesh.h"
 #include "meshviewcontainer.h"
@@ -64,7 +64,7 @@ private:
     QRegion mTileMapSelectedRegion;
 
     //views
-    MapView *mMapView;
+    MapViewContainer *mMapViewContainer;
     MeshViewContainer *mMeshViewContainer;
     TileTemplateSetsView *mTileTemplateSetsView;
     PropertyBrowser *mPropertyBrowser;

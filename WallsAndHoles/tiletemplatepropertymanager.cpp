@@ -16,15 +16,18 @@ void TileTemplatePropertyManager::propertyEdited(QString propertyName, QVariant 
     } else if (propertyName == "Height") {
         mTileTemplate->setHeight(value.toFloat());
     } else if (propertyName == "Thickness") {
-        mTileTemplate->setThickness(value.toFloat());
+        if (value.toFloat() != mTileTemplate->setThickness(value.toFloat()))
+            emit propertyChanged(propertyName, mTileTemplate->thickness());
     } else if (propertyName == "X Position") {
         QVector2D pos = mTileTemplate->position();
         pos.setX(value.toFloat());
-        mTileTemplate->setPosition(pos);
+        if (pos != mTileTemplate->setPosition(pos))
+            emit propertyChanged(propertyName, mTileTemplate->position().x());
     } else if (propertyName == "Y Position") {
         QVector2D pos = mTileTemplate->position();
         pos.setY(value.toFloat());
-        mTileTemplate->setPosition(pos);
+        if (pos != mTileTemplate->setPosition(pos))
+            emit propertyChanged(propertyName, mTileTemplate->position().y());
     }
 }
 
@@ -36,9 +39,9 @@ QVector<QVector<QVariant>> TileTemplatePropertyManager::properties()
         {"Name",       mTileTemplate->name(),         true              },
         {"Color",      mTileTemplate->color(),        true              },
         {"Height",     mTileTemplate->height(),       true,  -1000, 1000},
-        {"Thickness",  mTileTemplate->thickness(),    true,    0.1,    1},
-        {"X Position", mTileTemplate->position().x(), true,    0.1,  0.9},
-        {"Y Position", mTileTemplate->position().y(), true,    0.1,  0.9},
+        {"Thickness",  mTileTemplate->thickness(),    true,  -1000, 1000},
+        {"X Position", mTileTemplate->position().x(), true,  -1000, 1000},
+        {"Y Position", mTileTemplate->position().y(), true,  -1000, 1000},
         {"Material", QVariant::fromValue<TemplateMaterialSelector *>(materialSelector),
                      true,
                      PropertyBrowser::BlockWidget}

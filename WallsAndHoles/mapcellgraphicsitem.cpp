@@ -5,16 +5,9 @@ MapCellGraphicsItem::MapCellGraphicsItem(int x, int y, qreal w, qreal h, const T
     , mViewMode(DefaultView)
     , mRect(QRectF(x, y, w, h)) {}
 
-void MapCellGraphicsItem::setViewMode(MapViewMode viewMode, bool enabled)
+void MapCellGraphicsItem::setViewMode(int viewMode)
 {
-    if (enabled) {
-        if (viewMode)
-            mViewMode |= viewMode;
-        else
-            mViewMode = 0;
-    } else {
-        mViewMode &= ~viewMode;
-    }
+    mViewMode = viewMode;
 }
 
 QRectF MapCellGraphicsItem::boundingRect() const

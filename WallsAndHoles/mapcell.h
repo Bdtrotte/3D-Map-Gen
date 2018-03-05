@@ -18,7 +18,8 @@ public:
     MapCell(QGraphicsScene *scene, int x, int y, const Tile &tile, QObject *parent = nullptr);
     ~MapCell();
 
-    void setGraphics(MapViewMode viewMode, bool enabled);
+    int graphicsMode() const { return mGraphics->viewMode(); }
+    void setGraphicsMode(int viewMode);
 
 public slots:
     void tileChanged();

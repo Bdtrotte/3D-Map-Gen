@@ -40,6 +40,12 @@ void PropertyBrowser::setPropertyManager(AbstractPropertyManager *propertyManage
     {
         setLine(property, value);
     });
+
+    connect(mPropertyManager, &AbstractPropertyManager::blankProperty,
+            this, [this](QString property)
+    {
+        blankLine(property);
+    });
 }
 
 void PropertyBrowser::clear()
@@ -244,6 +250,40 @@ void PropertyBrowser::setLine(QString propertyName, QVariant value)
         break;
     case QMetaType::Bool:
         static_cast<QCheckBox *>(widget)->setChecked(value.toBool());
+        break;
+    default:
+        //Must have a delt with type!
+        Q_ASSERT(false);
+    }
+
+    mPropertyManager->blockSignals(false);
+}
+
+void PropertyBrowser::blankLine(QString propertyName)
+{
+    //Prevents a signal loop
+    mPropertyManager->blockSignals(true);
+
+    QMetaType::Type type = mLineType[propertyName];
+
+    QWidget *widget = mLineWidget[propertyName];
+
+    switch(type) {
+    case QMetaType::Int: {
+        QSpinBox *w = static_cast<QSpinBox *>(widget);
+        w->setMinimum(w->minimum() - 1);
+        w->setValue(w->minimum());
+        w->setSpecialValueText("--");
+        break; }
+    case QMetaType::Float:
+    case QMetaType::Double: {
+        QDoubleSpinBox *w = static_cast<QDoubleSpinBox *>(widget);
+        w->setMinimum(w->minimum() - 1);
+        w->setValue(w->minimum());
+        w->setSpecialValueText("--");
+        break; }
+    case QMetaType::QString:
+        static_cast<QLineEdit *>(widget)->setText("");
         break;
     default:
         //Must have a delt with type!

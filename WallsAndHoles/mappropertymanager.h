@@ -11,7 +11,7 @@ class MapPropertyManager : public AbstractPropertyManager
 public:
     MapPropertyManager(TileMap *tileMap);
 
-    void propertyEdited(QString, QVariant) override;
+    void propertyEdited(QString name, QVariant value) override;
 
     QVector<QVector<QVariant>> properties() override;
 

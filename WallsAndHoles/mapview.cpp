@@ -1,6 +1,7 @@
 #include "mapview.h"
 #include "mapcell.h"
 
+#include <QtMath>
 #include <QGraphicsView>
 #include <QDebug>
 #include <QKeyEvent>
@@ -9,18 +10,20 @@
 
 MapView::MapView(QWidget *parent)
     : QGraphicsView(parent)
-    , mScale(0.5)
+    , mScale(15)
+    , mTileMap(nullptr)
     , mMapCells(0, 0)
-    , mMouseHoverRect(new QGraphicsRectItem(0, 0, 30, 30))
+    , mViewMode(1)
+    , mMouseHoverRect(new QGraphicsRectItem(0, 0, 1, 1))
     , mPreviewItem(new TileMapPreviewGraphicsItem())
-    , mToolBar(new QToolBar(this))
 {
+    setTransformationAnchor(QGraphicsView::AnchorUnderMouse);
+
     mMouseHoverRect->setPen(Qt::NoPen);
     mMouseHoverRect->setBrush(QColor(100, 100, 100, 50));
     mMouseHoverRect->setZValue(200);
     mMouseHoverRect->hide();
 
-    setupViewToolBar();
     setMouseTracking(true);
     QGraphicsScene *scene = new QGraphicsScene;
     scene->setBackgroundBrush(Qt::gray);
@@ -41,29 +44,14 @@ MapView::~MapView()
 
 void MapView::wheelEvent(QWheelEvent *event)
 {
-    // TODO: make this tied to
-    //the MapHeight and MapWidth numbers
-
-    float d = event->delta();
-
-    //on alt pan
-    if (event->modifiers() & Qt::AltModifier) horizontalScrollBar()->setValue(horizontalScrollBar()->value() + d);
-    //on ctrl zoom
-    else if (event->modifiers() & Qt::ControlModifier) mScale += (d/1000);
-    //otherwise normal scroll
+    float d = event->angleDelta().y();
+    if (event->modifiers() & Qt::ControlModifier) mScale += d / 1200;
     else QGraphicsView::wheelEvent(event);//else normal behavior
 
-    if (mScale < 0.2) {
-       //afformentioned basis changing code goes here
-       mScale = 0.2;
-    } else if (mScale > 5) {
-       //afforemention basis changing code goes here
-       mScale = 5;
-    }
-
-    QMatrix mat;
-    mat.scale(mScale,mScale);
-    setMatrix(mat);
+    QTransform t;
+    float s = qPow(M_E, mScale);
+    t.scale(s, s);
+    setTransform(t);
 }
 
 void MapView::clear()
@@ -77,27 +65,36 @@ void MapView::clear()
     mMapCells.resize(0, 0);
 }
 
-void MapView::createMap(TileMap *tileMap)
+void MapView::setMap(TileMap *tileMap)
 {
     clear();
 
-    if (!tileMap) return;
+    if (mTileMap)
+        disconnect(mTileMap);
 
-    QSize mapSize = tileMap->mapSize();
-    mMapCells.resize(mapSize.width(), mapSize.height());
+    mTileMap = tileMap;
 
-    for(int y = 0; y < tileMap->mapSize().height(); ++y) {
-        for(int x = 0; x < tileMap->mapSize().width(); ++x) {
-            mMapCells(x, y) = new MapCell(scene(), x, y, tileMap->cTileAt(x, y));
-        }
-    }
+    reMakeMap();
 
-    mPreviewItem->setClipRect(QRect(QPoint(0, 0), tileMap->mapSize()));
+    connect(mTileMap, &TileMap::resized,
+            this, &MapView::mapSizeChanged);
+}
+
+void MapView::setViewMode(int viewMode)
+{
+    mViewMode = viewMode;
+    for (MapCell *mc : mMapCells)
+        mc->setGraphicsMode(mViewMode);
+}
+
+void MapView::mapSizeChanged()
+{
+    reMakeMap();
 }
 
 void MapView::mouseMoveEvent(QMouseEvent *event)
 {
-    QPointF curMousePoint = mapToScene(event->pos()) / 30;
+    QPointF curMousePoint = mapToScene(event->pos());
     QPoint curMouseCell(curMousePoint.x(), curMousePoint.y());
 
     if (curMousePoint.x() < 0) curMouseCell.setX(curMousePoint.x() - 1);
@@ -111,7 +108,7 @@ void MapView::mouseMoveEvent(QMouseEvent *event)
 
         if (curMouseCell.x() >= 0 && curMouseCell.x() < mMapCells.size().width()
                 && curMouseCell.y() >= 0 && curMouseCell.y() < mMapCells.size().height()) {
-            mMouseHoverRect->setPos(curMouseCell.x() * 30, curMouseCell.y() * 30);
+            mMouseHoverRect->setPos(curMouseCell.x(), curMouseCell.y());
             mMouseHoverRect->show();
 
             // Emit a hovered signal for this cell.
@@ -164,66 +161,37 @@ void MapView::mouseReleaseEvent(QMouseEvent *event)
     }
 }
 
-void MapView::setupViewToolBar()
+void MapView::reMakeMap()
 {
-    mNoView = new QAction("No View", this);
-    mDefaultView = new QAction("Default View", this);
-    mHeightView = new QAction("Height Map", this);
+    clear();
 
-    mNoView->setCheckable(true);
-    mDefaultView->setCheckable(true);
-    mHeightView->setCheckable(true);
+    if (!mTileMap) return;
 
-    mDefaultView->setChecked(true);
+    QSize mapSize = mTileMap->mapSize();
+    mMapCells.resize(mapSize.width(), mapSize.height());
 
-    connect(mNoView, &QAction::toggled, this, &MapView::setNoView);
-    connect(mDefaultView, &QAction::toggled, this, &MapView::setDefaultView);
-    connect(mHeightView,  &QAction::toggled, this, &MapView::setHeightMap);
-
-    mToolBar->addAction(mNoView);
-    mToolBar->addAction(mDefaultView);
-    mToolBar->addAction(mHeightView);
-    mToolBar->setAutoFillBackground(true);
-    mToolBar->show();
-}
-
-void MapView::setNoView(bool state)
-{
-    if (state) {
-        if (mDefaultView->isChecked())
-            mDefaultView->setChecked(false);
-        if (mHeightView->isChecked())
-            mHeightView->setChecked(false);
-    } else {
-        if (!mHeightView->isChecked() && !mDefaultView->isChecked())
-            mDefaultView->setChecked(true);
-    }
-}
-
-void MapView::setDefaultView(bool state)
-{
-    if (state) {
-        mNoView->setChecked(false);
-    } else {
-        if (!mHeightView->isChecked())
-            mNoView->setChecked(true);
+    for(int y = 0; y < mTileMap->mapSize().height(); ++y) {
+        for(int x = 0; x < mTileMap->mapSize().width(); ++x) {
+            mMapCells(x, y) = new MapCell(scene(), x, y, mTileMap->cTileAt(x, y));
+            mMapCells(x, y)->setGraphicsMode(mViewMode);
+        }
     }
 
-    for(int x = 0; x<mMapCells.size().width(); ++x)
-        for(int y = 0; y<mMapCells.size().height(); ++y)
-            mMapCells(x,y)->setGraphics(DefaultView, state);
-}
+    mPreviewItem->setClipRect(QRect(QPoint(0, 0), mTileMap->mapSize()));
 
-void MapView::setHeightMap(bool state)
-{
-    if (state) {
-        mNoView->setChecked(false);
-    } else {
-        if (!mDefaultView->isChecked())
-            mNoView->setChecked(true);
-    }
+    setSceneRect(-MAP_BUFFER,
+                 -MAP_BUFFER,
+                 mTileMap->width() + MAP_BUFFER * 2,
+                 mTileMap->height() + MAP_BUFFER * 2);
 
-    for(int x = 0; x<mMapCells.size().width(); ++x)
-        for(int y = 0; y<mMapCells.size().height(); ++y)
-            mMapCells(x,y)->setGraphics(HeightMapView, state);
+    float vertScale = geometry().height() / sceneRect().height();
+    float horScale = geometry().width() / sceneRect().width();
+
+    float s = std::min(vertScale, horScale);
+
+    QTransform t;
+    t.scale(s, s);
+    setTransform(t);
+
+    mScale = qLn(s);
 }

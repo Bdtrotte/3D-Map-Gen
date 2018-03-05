@@ -4,7 +4,6 @@ TilePropertyManager::TilePropertyManager(QVector<Tile *> tiles)
     : AbstractPropertyManager()
     , mTiles(tiles)
 {
-    // TODO connect Tile changes to this
 }
 
 void TilePropertyManager::propertyEdited(QString propertyName, QVariant value)
@@ -14,18 +13,21 @@ void TilePropertyManager::propertyEdited(QString propertyName, QVariant value)
             t->setRelativeHeight(value.toFloat());
     } else if (propertyName == "Relative Thickness")  {
         for (Tile *t : mTiles)
-            t->setRelativeThickness(value.toFloat());
+            if (value.toFloat() != t->setRelativeThickness(value.toFloat()))
+                emit propertyChanged(propertyName, t->relativeThickness());
     } else if (propertyName == "Relative X Position") {
         for (Tile *t : mTiles) {
             QVector2D pos = t->relativePosition();
             pos.setX(value.toFloat());
-            t->setRelativePosition(pos);
+            if (pos != t->setRelativePosition(pos))
+                emit propertyChanged(propertyName, t->relativePosition().x());
         }
     } else if (propertyName == "Relative Y Position") {
         for (Tile *t : mTiles) {
             QVector2D pos = t->relativePosition();
             pos.setY(value.toFloat());
-            t->setRelativePosition(pos);
+            if (pos != t->setRelativePosition(pos))
+                emit propertyChanged(propertyName, t->relativePosition().y());
         }
     }
 }
@@ -48,10 +50,10 @@ QVector<QVector<QVariant>> TilePropertyManager::properties()
     }
 
     return {
-        {"Relative Height",     baseTile->relativeHeight(),       true, -999, 999, heightDiff},
-        {"Relative Thickness",  baseTile->relativeThickness(),    false,   0,   1, thicknessDiff},
-        {"Relative X Position", baseTile->relativePosition().x(), false,  -1,   1, xPosDiff},
-        {"Relative Y Position", baseTile->relativePosition().y(), false,  -1,   1, yPosDiff},
+        {"Relative Height",     baseTile->relativeHeight(),       true,  -1000, 1000, heightDiff},
+        {"Relative Thickness",  baseTile->relativeThickness(),    false, -1000, 1000, thicknessDiff},
+        {"Relative X Position", baseTile->relativePosition().x(), false, -1000, 1000, xPosDiff},
+        {"Relative Y Position", baseTile->relativePosition().y(), false, -1000, 1000, yPosDiff},
         {"Tile Template",       mTiles.size() > 1? "--" :
                                                   (baseTile->hasTileTemplate()? baseTile->tileTemplate()->name() : "No Template"), false}
     };
