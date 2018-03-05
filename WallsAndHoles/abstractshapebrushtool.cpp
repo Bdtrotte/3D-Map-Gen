@@ -1,7 +1,7 @@
 #include "abstractshapebrushtool.h"
 
-AbstractShapeBrushTool::AbstractShapeBrushTool(TileMapPreviewGraphicsItem *previewItem, QObject *parent)
-    : AbstractTileMapTool(previewItem, parent) {}
+AbstractShapeBrushTool::AbstractShapeBrushTool(TileMapPreviewGraphicsItem *previewItem)
+    : AbstractTileMapTool(previewItem) {}
 
 void AbstractShapeBrushTool::cellClicked(int x, int y, QMouseEvent *)
 {

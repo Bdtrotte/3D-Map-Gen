@@ -1,22 +1,37 @@
 #include "mapviewmatchercamera.h"
 
-MapViewMatcherCamera::MapViewMatcherCamera(MapViewContainer *mapViewContainer, QObject *parent)
-    : AbstractMeshViewCamera(parent)
+#include <QDebug>
+
+MapViewMatcherCamera::MapViewMatcherCamera(MapView *mapView)
+    : AbstractMeshViewCamera()
 {
     mTransformationMatrix.setToIdentity();
+
+    connect(mapView, &MapView::mapViewChanged,
+            this, &MapViewMatcherCamera::mapViewChanged);
 }
 
 QMatrix4x4 MapViewMatcherCamera::getTransformationMatrix() const
 {
-
+    return mTransformationMatrix;
 }
 
 QVector3D MapViewMatcherCamera::getPosition() const
 {
-
+    return mPosition;
 }
 
-void MapViewMatcherCamera::mapViewChanged(QRect viewRect)
+void MapViewMatcherCamera::mapViewChanged(QRectF viewRect)
 {
+    QPointF center = viewRect.center();
 
+    // TODO the height is based off the fov being 90 degrees, which is hard
+    //      coded somewhere. If fov changes, actual formula is height / (tan(fov/2) * 2).
+    mPosition = QVector3D(-center.x(), viewRect.height()/2, center.y());
+
+    mTransformationMatrix.setToIdentity();
+    mTransformationMatrix.rotate(90, 1, 0, 0);
+    mTransformationMatrix.translate(-mPosition);
+
+    changed();
 }

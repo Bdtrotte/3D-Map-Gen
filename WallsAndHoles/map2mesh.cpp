@@ -73,7 +73,7 @@ void Map2Mesh::updateScene()
     const Array2D<QSharedPointer<Tile>> &grid = mTileMap->getArray2D();
 
     // This point on the map should be at (0,y,0) in 3D space (for some appropriate y).
-    QVector2D mapCenter(-mTileMap->width() * 0.5, mTileMap->height() * 0.5);
+    QVector2D mapCenter(0, 0);
 
 
     // Update every point that needs updating.

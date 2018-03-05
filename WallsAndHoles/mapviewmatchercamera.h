@@ -9,7 +9,7 @@ class MapViewMatcherCamera : public AbstractMeshViewCamera
     Q_OBJECT
 
 public:
-    MapViewMatcherCamera(MapViewContainer *mapViewContainer, QObject *parent = nullptr);
+    MapViewMatcherCamera(MapView *mapView);
 
     QMatrix4x4 getTransformationMatrix() const override;
     QVector3D getPosition() const override;
@@ -38,7 +38,7 @@ private slots:
      * @param topLeft
      * @param botRight
      */
-    void mapViewChanged(QRect viewRect);
+    void mapViewChanged(QRectF viewRect);
 
 private:
     QMatrix4x4 mTransformationMatrix;

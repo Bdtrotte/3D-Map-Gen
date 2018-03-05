@@ -14,7 +14,9 @@ public:
 
     void setTileMap(TileMap *tileMap);
 
-    QAction *registerMapTool(QSharedPointer<AbstractTileMapTool> tool, QString name, QIcon icon = QIcon(),
+    QAction *registerMapTool(AbstractTileMapTool *tool,
+                             QString name,
+                             QIcon icon = QIcon(),
                              QKeySequence ks = QKeySequence());
 
 public slots:

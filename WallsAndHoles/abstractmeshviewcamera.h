@@ -17,9 +17,6 @@ class AbstractMeshViewCamera : public AbstractTool {
     Q_OBJECT
 
 public:
-    AbstractMeshViewCamera(QObject *parent = nullptr)
-        : AbstractTool(parent) {}
-
     virtual ~AbstractMeshViewCamera() {}
 
     /**

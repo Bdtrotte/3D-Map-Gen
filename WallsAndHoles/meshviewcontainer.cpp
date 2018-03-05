@@ -8,20 +8,27 @@
 
 MeshViewContainer::MeshViewContainer(QWidget *parent)
     : QWidget(parent)
+    , mMeshView(new MeshView(this))
+    , mToolBar(new QToolBar(this))
 {
-    QVBoxLayout *layout = new QVBoxLayout(this);
-    setLayout(layout);
-
-    // Create the MeshView.
-    mMeshView = new MeshView(this);
     mMeshView->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    mToolBar->addAction(mMeshView->mTools->getAction("Default"));
+
+    QVBoxLayout *layout = new QVBoxLayout(this);
+    layout->addWidget(mToolBar);
     layout->addWidget(mMeshView);
 
-    mMeshView->activateTool("camera");
+    setLayout(layout);
 }
 
-void MeshViewContainer::setRenderer(QSharedPointer<AbstractRenderer> renderer) {
+void MeshViewContainer::setRenderer(QSharedPointer<AbstractRenderer> renderer)
+{
     mMeshView->setRenderer(renderer);
+}
+
+QAction *MeshViewContainer::addCamera(AbstractMeshViewCamera *camera, QString name, QIcon icon, QKeySequence ks)
+{
+    mToolBar->addAction(mMeshView->addCamera(camera, name, icon, ks));
 }
 
 void MeshViewContainer::saveMesh(QString path){
