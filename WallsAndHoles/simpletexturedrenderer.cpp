@@ -24,8 +24,9 @@ void SimpleTexturedRenderer::objectAdded(const SimpleTexturedObject &obj)
 {
     // obj must be wrapped in a reference_wrapper because references are not
     // otherwise copy-constructible
-    emit openGLThreadNeeded();
+    emit makeContextCurrent();
     createObjectBuffers(obj);
+    emit doneContextCurrent();
 }
 
 
@@ -34,7 +35,7 @@ void SimpleTexturedRenderer::objectRemoved(const SimpleTexturedObject &obj)
     QMutexLocker locker(&mGLDataMutex);
 
     // It is safe to use QMap::remove() even if the key might not be in the map.
-    // Destroying buffers doesn't seem to require a valid OpenGL context.
+    emit makeContextCurrent();
     mVAOs.remove(&obj);
     mObjectVertexPositions.remove(&obj);
     mObjectVertexNormals.remove(&obj);
@@ -53,13 +54,14 @@ void SimpleTexturedRenderer::objectRemoved(const SimpleTexturedObject &obj)
 
         // If the texture has no users, unload it.
         if (textureUsageSet.size() <= 0) {
-            emit openGLThreadNeeded();
             texturePtr->destroy();
 
             mTexturesToObjects.remove(texturePtr.data());
             mImagesToTextures.remove(&obj.getImage());
         }
     }
+
+    emit doneContextCurrent();
 }
 
 
@@ -67,7 +69,7 @@ void SimpleTexturedRenderer::clearAll()
 {
     QMutexLocker locker(&mGLDataMutex);
 
-    emit openGLThreadNeeded();
+    emit makeContextCurrent();
     mVAOs.clear();
     mObjectVertexPositions.clear();
     mObjectVertexNormals.clear();
@@ -83,6 +85,8 @@ void SimpleTexturedRenderer::clearAll()
 
     mTexturesToObjects.clear();
     mImagesToTextures.clear();
+
+    emit doneContextCurrent();
 }
 
 void SimpleTexturedRenderer::cleanUp()

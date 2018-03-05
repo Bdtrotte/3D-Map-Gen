@@ -68,11 +68,8 @@ signals:
     void repaintNeeded();
 
 
-    /**
-     * @brief Emitted when the renderer needs the thread with the correct OpenGL context
-     * to do something.
-     */
-    void openGLThreadNeeded();
+    void makeContextCurrent();
+    void doneContextCurrent();
 
 protected:
     /**

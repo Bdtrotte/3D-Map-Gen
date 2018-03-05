@@ -12,7 +12,6 @@
 MeshView::MeshView(QWidget *parent) :
     QOpenGLWidget(parent),
     mNextRenderer(nullptr),
-    mUseScheduled(false),
     mContext(nullptr)
 {
     mCamera = QSharedPointer<MeshViewCameraLikeBlender>::create();
@@ -46,7 +45,8 @@ void MeshView::setRenderer(QSharedPointer<AbstractRenderer> renderer) {
     mNextRenderer = renderer;
 
     connect(renderer.data(), &AbstractRenderer::repaintNeeded, this, &MeshView::scheduleRepaint);
-    connect(renderer.data(), &AbstractRenderer::openGLThreadNeeded, this, &MeshView::scheduleUse);
+    connect(renderer.data(), &AbstractRenderer::makeContextCurrent, this, &MeshView::makeContextCurrent);
+    connect(renderer.data(), &AbstractRenderer::doneContextCurrent, this, &MeshView::doneContextCurrent);
 }
 
 void MeshView::mousePressEvent(QMouseEvent *event) {
@@ -89,9 +89,14 @@ void MeshView::scheduleRepaint()
     update();
 }
 
-void MeshView::scheduleUse()
+void MeshView::makeContextCurrent()
 {
     makeCurrent();
+}
+
+void MeshView::doneContextCurrent()
+{
+    doneCurrent();
 }
 
 
