@@ -245,7 +245,7 @@ void Editor::exportMapMesh()
 
     if(!fileName.isEmpty()){
         SharedOBJModel obj = scene->exportOBJ();
-        obj->saveOBJ(fileName);
+        obj->save(fileName);
     }
     mExportPath = fileName;
 }

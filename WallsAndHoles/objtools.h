@@ -3,7 +3,11 @@
 #include <QFile>
 #include <QTextStream>
 #include <cassert>
+#include <QMap>
+#include <QVector3D>
+#include <QDebug>
 
+#include "imageandsource.h"
 #include "simpletexturedobject.h"
 
 typedef QSharedPointer<SimpleTexturedObject> SharedSimpleTexturedObject;
@@ -293,14 +297,11 @@ namespace obj
 */
 class Material
 {
-    Material(QString _name, int _Ns, int _illum)
+public:
+    Material(QString _name, QVector3D _Ka, QVector3D _Kd, QVector3D _Ks, int _Ns, int _illum, QString KaImage, QString KdImage)
+        :name(_name), Ka(_Ka), Kd(_Kd), Ks(_Ks), Ns(_Ns), illum(_illum), Map_Ka(KaImage), Map_Kd(KdImage)
     {
-        name = _name;
-        Ns = _Ns;
-        illum = _illum;
     }
-
-private:
     // Material Name
     QString name;
     // Ambient Color
@@ -314,22 +315,43 @@ private:
     // Illumination
     int illum;
     // Name of Ambient Texture Map
-    QString map_Ka;
+    QString Map_Ka;
     // Name of Diffuse Texture Map
-    QString map_Kd;
+    QString Map_Kd;
+
+    /**
+     * @brief Serialize the material object into a string
+     * return a QString that can be directly write into .mtl
+     */
+    QString serialize();
 };
+
+typedef QSharedPointer<Material> SharedMaterial;
 
 class OBJModel
 {
 public:
+    OBJModel(QString _name="map"){
+        name = _name;
+        mSaveDirectory = '.';
+    }
     ~OBJModel(){
         mObjects.clear();
+        mMaterials.clear();
+        mImages.clear();
     }
+    QString name;
     void addSimpleTextured(SharedSimpleTexturedObject object);
     void saveOBJ(QString path);
+    void saveMTL(QString path);
+    void saveImages(QString path);
+    void save(QString path);
+    void setSaveDirectory(QString path){ mSaveDirectory = path; }
 
 private:
     QVector<SharedSimpleTexturedObject> mObjects;
+    QMap<QString, SharedMaterial> mMaterials;
+    QMap<QString, QSharedPointer<QImage>> mImages;
     QString mSaveDirectory;
 };
 
