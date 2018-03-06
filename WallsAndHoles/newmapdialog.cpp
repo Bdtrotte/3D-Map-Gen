@@ -54,10 +54,10 @@ NewMapDialog::NewMapDialog(QDialog *parent)
 
     //Main Layout
     QGridLayout *mainLayout = new QGridLayout(this);
-    mainLayout->addWidget(widthLabel, 0, 0);
-    mainLayout->addWidget(mWSpinBox, 0, 1);
-    mainLayout->addWidget(heightLabel, 0, 2);
-    mainLayout->addWidget(mHSpinBox, 0, 3);
+    mainLayout->addWidget(heightLabel, 0, 0);
+    mainLayout->addWidget(mHSpinBox, 0, 1);
+    mainLayout->addWidget(widthLabel, 0, 2);
+    mainLayout->addWidget(mWSpinBox, 0, 3);
     mainLayout->addWidget(propertiesGroupBox, 1, 0, 2, 0);
     mainLayout->addWidget(dialogBtnBox, 4, 0, 1, 0);
     mainLayout->setMargin(20);
