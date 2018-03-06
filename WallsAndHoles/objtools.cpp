@@ -42,7 +42,7 @@ void OBJModel::addSimpleTextured(SharedSimpleTexturedObject obj)
         int illum=2;
 
         QString imagePath = obj->getImageAndSource()->source();
-        QString imageName = imagePath.mid(imagePath.lastIndexOf('/'));
+        QString imageName = imagePath.mid(imagePath.lastIndexOf('/')+1);
 
         QString KaImage = imageName;
         QString KdImage = imageName;
