@@ -2,8 +2,8 @@
 
 #include "shaperegion.h"
 
-LineBrushTool::LineBrushTool(TileMapPreviewGraphicsItem *previewItem, QObject *parent)
-    : AbstractShapeBrushTool(previewItem, parent) {}
+LineBrushTool::LineBrushTool(TileMapPreviewGraphicsItem *previewItem, QUndoStack *undoStack, QObject *parent)
+    : AbstractShapeBrushTool(previewItem, undoStack, parent) {}
 
 QRegion LineBrushTool::getShape(QPoint start, QPoint end) const
 {

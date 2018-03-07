@@ -3,17 +3,19 @@
 
 #include <QVector>
 #include <QPoint>
+#include <QUndoStack>
 
 #include "array2d.h"
 #include "abstracttilemaptool.h"
 #include "tilemap.h"
 #include "tiletemplate.h"
 #include "mapview.h"
+#include "tiletemplatechangecommand.h"
 
 class AbstractShapeBrushTool : public AbstractTileMapTool
 {
 public:
-    AbstractShapeBrushTool(TileMapPreviewGraphicsItem *previewItem, QObject *parent = nullptr);
+    AbstractShapeBrushTool(TileMapPreviewGraphicsItem *previewItem, QUndoStack *undoStack, QObject *parent = nullptr);
 
     void cellClicked(int x, int y, QMouseEvent *) override;
     void cellActivated(int x, int y, QMouseEvent *) override;
@@ -41,6 +43,9 @@ private:
 
     /// The MapView on which an overlay will be drawn.
     MapView *mMapView;
+
+    /// The undo stack that should be used. Not owned by this object.
+    QUndoStack *mUndoStack;
 
     /// Draws an overlay previewing the shape that will be drawn.
     void drawOverlay(int endX, int endY);

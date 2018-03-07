@@ -19,6 +19,7 @@
 #include <QToolBar>
 #include <QSettings>
 #include <QMainWindow>
+#include <QUndoStack>
 
 /**
  * @brief The Editor class
@@ -54,6 +55,9 @@ private:
     void setUpMenuBar();
 
     QMainWindow *mMainWindow;
+
+    // Undo stack
+    QUndoStack *mUndoStack;
 
     // Map-to-Mesh Converter
     Map2Mesh *mMap2Mesh;

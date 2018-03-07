@@ -29,6 +29,7 @@
 Editor::Editor(QObject *parent)
     : QObject(parent)
     , mMainWindow(new QMainWindow())
+    , mUndoStack(new QUndoStack(this))
     , mMap2Mesh(nullptr)
     , mTileMap(nullptr)
     , mTileTemplateSetManager(new TileTemplateSetsManager(nullptr, this))
@@ -83,17 +84,17 @@ Editor::Editor(QObject *parent)
                             , QIcon("://images/icons/22x22/stock-tool-bucket-fill.png")
                             , QKeySequence(Qt::Key_F)));
     mToolBar->addAction(mTileMapToolManager->registerMapTool(
-                            QSharedPointer<LineBrushTool>::create(mMapViewContainer->mapView()->previewItem())
+                            QSharedPointer<LineBrushTool>::create(mMapViewContainer->mapView()->previewItem(), mUndoStack)
                             , "Line Tool"
                             , QIcon("://images/icons/22x22/line.png")
                             , QKeySequence(Qt::Key_L)));
     mToolBar->addAction(mTileMapToolManager->registerMapTool(
-                            QSharedPointer<RectBrushTool>::create(mMapViewContainer->mapView()->previewItem())
+                            QSharedPointer<RectBrushTool>::create(mMapViewContainer->mapView()->previewItem(), mUndoStack)
                             , "Rect Tool"
                             , QIcon("://images/icons/22x22/rectangle-fill.png")
                             , QKeySequence(Qt::Key_R)));
     mToolBar->addAction(mTileMapToolManager->registerMapTool(
-                            QSharedPointer<EllipseBrushTool>::create(mMapViewContainer->mapView()->previewItem())
+                            QSharedPointer<EllipseBrushTool>::create(mMapViewContainer->mapView()->previewItem(), mUndoStack)
                             , "Ellipse Tool"
                             , QIcon("://images/icons/22x22/ellipse-fill.png")
                             , QKeySequence(Qt::Key_E)));
@@ -318,8 +319,19 @@ void Editor::setUpMenuBar()
                                                     , Qt::CTRL + Qt::Key_E));
 
 
+    // Create undo and redo actions.
+    QAction *undoAction = mUndoStack->createUndoAction(this, tr("Undo"));
+    QAction *redoAction = mUndoStack->createRedoAction(this, tr("Redo"));
+    undoAction->setShortcut(QKeySequence::Undo);
+    redoAction->setShortcut(QKeySequence::Redo);
+
+    QMenu *editMenu = menuBar->addMenu(tr("Edit"));
+    editMenu->addAction(undoAction);
+    editMenu->addAction(redoAction);
+
     QMenu *mapMenu = menuBar->addMenu(tr("Map"));
     mMapDependantActions.append(mapMenu->addAction(tr("View Map Properties"), this, &Editor::viewMapProperties));
+
 
     setMapDependantActionsEnabled(false);
 }
