@@ -74,12 +74,12 @@ Editor::Editor(QObject *parent)
 
     // Add tools.
     mToolBar->addAction(mTileMapToolManager->registerMapTool(
-                            QSharedPointer<TileMapBrushTool>::create(mMapViewContainer->mapView()->previewItem())
+                            QSharedPointer<TileMapBrushTool>::create(mMapViewContainer->mapView()->previewItem(), mUndoStack)
                             , "Brush Tool"
                             , QIcon("://images/icons/22x22/brush.png")
                             , QKeySequence(Qt::Key_B)));
     mToolBar->addAction(mTileMapToolManager->registerMapTool(
-                            QSharedPointer<FillTool>::create(mMapViewContainer->mapView()->previewItem())
+                            QSharedPointer<FillTool>::create(mMapViewContainer->mapView()->previewItem(), mUndoStack)
                             , "Fill Tool"
                             , QIcon("://images/icons/22x22/stock-tool-bucket-fill.png")
                             , QKeySequence(Qt::Key_F)));

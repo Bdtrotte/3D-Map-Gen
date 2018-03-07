@@ -1,13 +1,15 @@
 #include "filltool.h"
 
 #include "tilemaphelpers.h"
+#include "tiletemplatechangecommand.h"
 
 #include <QQueue>
 #include <QPair>
 
 
-FillTool::FillTool(TileMapPreviewGraphicsItem *previewItem, QObject *parent)
-    : AbstractTileMapTool(previewItem, parent) {}
+FillTool::FillTool(TileMapPreviewGraphicsItem *previewItem, QUndoStack *undoStack, QObject *parent)
+    : AbstractTileMapTool(previewItem, parent)
+    , mUndoStack(undoStack) {}
 
 void FillTool::cellClicked(int x, int y, QMouseEvent *)
 {
@@ -22,9 +24,11 @@ void FillTool::cellClicked(int x, int y, QMouseEvent *)
     disconnect(getTileMap(), &TileMap::mapChanged, this, &FillTool::invalidateSelection);
 
     // Fill it in.
-    TileTemplate *drawMaterial = getTileTemplate();
-    for (QPoint point : mSelection)
-        getTileMap()->setTile(point.x(), point.y(), drawMaterial);
+    mUndoStack->push(TileTemplateChangeCommand::performCommand(
+                         getTileMap(),
+                         mSelection,
+                         getTileTemplate(),
+                         "'fill'"));
 
     // Stop blocking signals.
     connect(getTileMap(), &TileMap::mapChanged, this, &FillTool::invalidateSelection);

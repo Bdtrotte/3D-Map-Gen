@@ -28,6 +28,30 @@ public:
             const QString &text = "Changed templates for tiles.");
 
 
+    /**
+     * @brief performCommand    Creates and immediately performs the TileTemplateChangeCommand.
+     *                          This will automatically crop the given region so that it is within the bounds of the TileMap.
+     *
+     * @param tileMap           The tile map on which to change tiles.
+     * @param changedPoints     The positions of the tiles that should be changed.
+     * @param newTileTemplate   The new tile template for those tiles.
+     * @param text              Short description for the command.
+     * @return                  The command that was performed. Calling undo() will undo it.
+     */
+    template< typename QPointIterable >
+    static TileTemplateChangeCommand *performCommand(
+            TileMap *tileMap,
+            QPointIterable changedPoints,
+            TileTemplate *newTileTemplate,
+            const QString &text = "Changed templates for tiles.")
+    {
+        QRegion region;
+        for (const QPoint &pt : changedPoints)
+            region += QRect(pt.x(), pt.y(), 1, 1);
+        return performCommand(tileMap, region, newTileTemplate, text);
+    }
+
+
     void undo() override;
     void redo() override;
 

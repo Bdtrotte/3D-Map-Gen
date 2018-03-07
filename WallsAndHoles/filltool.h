@@ -3,6 +3,7 @@
 
 #include <QSet>
 #include <QPoint>
+#include <QUndoStack>
 
 #include "abstracttilemaptool.h"
 #include "mapview.h"
@@ -11,7 +12,7 @@ class FillTool : public AbstractTileMapTool {
     Q_OBJECT
 
 public:
-    FillTool(TileMapPreviewGraphicsItem *previewItem, QObject *parent = nullptr);
+    FillTool(TileMapPreviewGraphicsItem *previewItem, QUndoStack *undoStack, QObject *parent = nullptr);
 
     /**
      * @brief This will immediately fill an area.
@@ -48,6 +49,9 @@ protected:
 
     /// Clears the overlay.
     void clearOverlay();
+
+
+    QUndoStack *mUndoStack;
 };
 
 #endif // FILLTOOL_H

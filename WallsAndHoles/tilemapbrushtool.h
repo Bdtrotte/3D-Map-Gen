@@ -6,11 +6,12 @@
 #include "tiletemplate.h"
 
 #include <QWidgetAction>
+#include <QUndoStack>
 
 class TileMapBrushTool : public AbstractTileMapTool
 {
 public:
-    TileMapBrushTool(TileMapPreviewGraphicsItem *previewItem, QObject *parent = nullptr);
+    TileMapBrushTool(TileMapPreviewGraphicsItem *previewItem, QUndoStack *undoStack, QObject *parent = nullptr);
 
     void cellActivated(int x, int y, QMouseEvent *) override;
     void cellHovered(int x, int y, QMouseEvent *) override;
@@ -22,6 +23,8 @@ private:
     int mRadius;
 
     QWidgetAction *mRadiusSpinner;
+
+    QUndoStack *mUndoStack;
 };
 
 #endif // TILEMAPBRUSHTOOL_H
