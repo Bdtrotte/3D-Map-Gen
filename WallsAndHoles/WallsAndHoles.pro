@@ -80,6 +80,7 @@ SOURCES += \
     materialpropertymanager.cpp \
     imagefinderbar.cpp \
     tilematerialselectiondialog.cpp \
+    templatematerialselector.cpp \
     abstracttileselectiontool.cpp \
     tilemaphelpers.cpp \
     shaperegion.cpp \
@@ -152,6 +153,7 @@ HEADERS += \
     imagefinderbar.h \
     imageandsource.h \
     tilematerialselectiondialog.h \
+    templatematerialselector.h \
     abstracttileselectiontool.h \
     tilemaphelpers.h \
     shaperegion.h \

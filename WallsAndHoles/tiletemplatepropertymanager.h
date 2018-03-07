@@ -15,9 +15,6 @@ public:
 
     QVector<QVector<QVariant>> properties() override;
 
-private slots:
-    void materialChanged(TileMaterial *material);
-
 private:
     TileTemplate *mTileTemplate;
 };
