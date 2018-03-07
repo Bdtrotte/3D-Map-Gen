@@ -180,12 +180,12 @@ void OBJModel::save(QString path)
 {
     //parse path into directory and file name
     QStringList pathList = path.split('/');
-    QString objName = pathList[pathList.length()-1];
+    QString objName = pathList[pathList.length() - 1];
     name = objName.split('.')[0];
     pathList.removeLast();
-    mSaveDirectory = pathList.join('/');
+    QString saveDirectory = pathList.join('/') + "/";
 
     saveOBJ(path);
-    saveMTL(mSaveDirectory+"/"+name+".mtl");
-    saveImages(mSaveDirectory);
+    saveMTL(saveDirectory + name + ".mtl");
+    saveImages(saveDirectory);
 }
