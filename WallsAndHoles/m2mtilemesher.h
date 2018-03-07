@@ -177,24 +177,6 @@ public:
     QVector<QSharedPointer<SimpleTexturedObject>> makeMesh(QVector2D offset);
 };
 
-//class TileDiagonalMesher : public TileMesher {
-//public:
-//    TileDiagonalMesher(TileNeighborhoodInfo nbhd);
-
-//protected:
-//    /**
-//     * @brief makeDiagonalSideMesh  Creates the diagonal mesh for a side. May create part of the bridge.
-//     * @param meshData              Where to put the output.
-//     * @param sideDirection         Which side to do this for.
-//     * @param diagonalConnection    To which tile are we connecting diagonally? Should be in the square between (0,0) and (2,2).
-//     */
-//    void makeDiagonalSideMesh(PartialMeshData &meshData,
-//                              Direction sideDirection,
-//                              QPoint diagonalConnection);
-//};
-
-
-
 }
 
 #endif // M2MTILEMESHER_H

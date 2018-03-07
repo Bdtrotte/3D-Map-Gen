@@ -98,15 +98,34 @@ void PartialMeshData::addQuad(Quad q)
     auto itr = mTexturesToObjects.find(quadImage);
 
     // If the map contains the key...
-    if (itr != mTexturesToObjects.end())
+    if (itr != mTexturesToObjects.end()) {
         itr->addQuad(q);
 
     // If the map doesn't contain the key...
-    else {
+    } else {
         PreObject newObject(q.imageInfo());
         newObject.addQuad(q);
 
         mTexturesToObjects.insert(quadImage, newObject);
+    }
+}
+
+void PartialMeshData::addTrig(Trig t)
+{
+    const QImage *image = t.imageInfo().image()->image().data();
+
+    auto itr = mTexturesToObjects.find(image);
+
+    // If the map contains the key...
+    if (itr != mTexturesToObjects.end()) {
+        itr->addTrig(t);
+
+    // If the map doesn't contain the key...
+    } else {
+        PreObject newObject(t.imageInfo());
+        newObject.addTrig(t);
+
+        mTexturesToObjects.insert(image, newObject);
     }
 }
 
@@ -124,11 +143,11 @@ QVector<QSharedPointer<SimpleTexturedObject>> PartialMeshData::constructObjects(
 
 
 /* BEGIN PartialMeshData::PreObject */
-PartialMeshData::PreObject::PreObject(ImageInfo img)
+PreObject::PreObject(ImageInfo img)
     : mImage(img.image()) {}
 
 
-void PartialMeshData::PreObject::addQuad(Quad q)
+void PreObject::addQuad(const Quad &q)
 {
     // index of first vertex of quad in mVertexPositions
     unsigned int firstIdx = mVertexPositions.size();
@@ -155,8 +174,26 @@ void PartialMeshData::PreObject::addQuad(Quad q)
                                        });
 }
 
+void PreObject::addTrig(const Trig &t)
+{
+    unsigned int firstIdx = mVertexPositions.size();
 
-QSharedPointer<SimpleTexturedObject> PartialMeshData::PreObject::toObject() const
+    mVertexPositions.append(t.verts());
+    PhongInfo phongInfo = t.phongInfo();
+    mReflAmbient.append(QVector<float>(4, phongInfo.ambient));
+    mReflDiffuse.append(QVector<float>(4, phongInfo.diffuse));
+    mReflSpecular.append(QVector<float>(4, phongInfo.specular));
+    mShininess.append(QVector<float>(4, phongInfo.shininess));
+
+    mTriangleNormals.append(t.normal());
+    mTriangles.append({firstIdx, firstIdx + 1, firstIdx + 2});
+    mTriangleTextureCoordinates.append({t.textureCoords()[0],
+                                        t.textureCoords()[1],
+                                        t.textureCoords()[2]});
+}
+
+
+QSharedPointer<SimpleTexturedObject> PreObject::toObject() const
 {
     QSharedPointer<SimpleTexturedObject> obj = QSharedPointer<SimpleTexturedObject>::create();
 
@@ -169,3 +206,12 @@ QSharedPointer<SimpleTexturedObject> PartialMeshData::PreObject::toObject() cons
     return obj;
 }
 /* END PartialMeshData::PreObject */
+
+Trig::Trig(ImageInfo texture, PhongInfo material, QVector3D v1, QVector2D t1, QVector3D v2, QVector2D t2, QVector3D v3, QVector2D t3)
+    : mV1(v1), mV2(v2), mV3(v3)
+    , mT1(t1), mT2(t2), mT3(t3)
+    , mTexture(texture)
+    , mMaterial(material)
+{
+    mNormal = QVector3D::crossProduct(mV1 - mV2, mV3 - mV2).normalized();
+}

@@ -228,7 +228,6 @@ M2M::TileInfo::TileInfo(const Tile &tile)
     , mOffsetFromCenter(tile.position() - QVector2D(0.5, 0.5))
 {
     // TODO
-    //   Handle separate top / side textures.
     //   Get ground properties from somewhere.
 
 
