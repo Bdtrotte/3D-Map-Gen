@@ -12,7 +12,6 @@
 // For std::function
 #include <functional>
 
-
 /**
  * @brief Something that renders a 3D scene to the screen using OpenGL.
  */

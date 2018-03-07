@@ -167,22 +167,4 @@ void MeshView::resizeGL(int w, int h)
     update();
 }
 
-void MeshView::load(QString path){
-//    QSharedPointer<Scene> scene = QSharedPointer<Scene>::create();
-//    scene->addObject(loadOBJ(path));
-//    setScene(scene);
-
-    qDebug() << "MeshView::load() is deprecated. Nothing is done.";
-}
-
-void MeshView::save(QString path){
-//    QVector<QSharedPointer<RenderableObject>> object = mScene->getAllObjects();
-//    if(object.size()<1){
-//        qDebug() << "Fail to save mesh: scene is empty";
-//    }
-//    saveOBJ(path, object[0]);
-
-    qDebug() << "MeshView::save() is deprecated. Nothing is done.";
-}
-
 

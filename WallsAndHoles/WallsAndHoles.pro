@@ -67,6 +67,7 @@ SOURCES += \
     savabletiletemplateset.cpp \
     newmapdialog.cpp \
     tilemappreviewgraphicsitem.cpp \
+    objtools.cpp \
     propertybrowser.cpp \
     tilepropertymanager.cpp \
     mappropertymanager.cpp \

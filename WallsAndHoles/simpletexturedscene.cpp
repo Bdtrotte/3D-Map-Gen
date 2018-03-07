@@ -56,3 +56,12 @@ QSharedPointer<AbstractRenderer> SimpleTexturedScene::makeRenderer()
 
     return renderer;
 }
+
+SharedOBJModel SimpleTexturedScene::exportOBJ()
+{
+    SharedOBJModel objModel = SharedOBJModel::create();
+    foreach(QSharedPointer<SimpleTexturedObject> obj, mObjects){
+        objModel->addSimpleTextured(obj);
+    }
+    return objModel;
+}

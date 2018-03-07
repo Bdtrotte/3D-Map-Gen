@@ -22,12 +22,3 @@ MeshViewContainer::MeshViewContainer(QWidget *parent)
 void MeshViewContainer::setRenderer(QSharedPointer<AbstractRenderer> renderer) {
     mMeshView->setRenderer(renderer);
 }
-
-void MeshViewContainer::saveMesh(QString path){
-    mMeshView = findChild<MeshView *>();
-    mMeshView->save(path);
-}
-void MeshViewContainer::loadMesh(QString path){
-    mMeshView = findChild<MeshView *>();
-    mMeshView->load(path);
-}
