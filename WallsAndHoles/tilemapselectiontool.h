@@ -4,12 +4,14 @@
 #define MULTI_CLICK_TIME 200
 
 #include "abstracttileselectiontool.h"
+#include "changevaluecommand.h"
 
 class TileMapSelectionTool : public AbstractTileSelectionTool
 {
 public:
     TileMapSelectionTool(PropertyBrowser *propertyBrowser,
                          TileMapPreviewGraphicsItem *previewItem,
+                         QUndoStack *undoStack,
                          QObject *parent = nullptr);
 
     void cellClicked(int x, int y, QMouseEvent *) override;
@@ -25,6 +27,10 @@ private:
 
     int mClickCount;
     ulong mLastClickTime;
+
+    QUndoStack *mUndoStack;
+
+    using SelectionChangeCommand = ChangeValueCommand<QRegion>;
 };
 
 #endif // TILEMAPSELECTIONTOOL_H

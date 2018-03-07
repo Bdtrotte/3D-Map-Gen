@@ -99,7 +99,7 @@ Editor::Editor(QObject *parent)
                             , QIcon("://images/icons/22x22/ellipse-fill.png")
                             , QKeySequence(Qt::Key_E)));
     mToolBar->addAction(mTileMapToolManager->registerMapTool(
-                            QSharedPointer<TileMapSelectionTool>::create(mPropertyBrowser, mMapViewContainer->mapView()->previewItem())
+                            QSharedPointer<TileMapSelectionTool>::create(mPropertyBrowser, mMapViewContainer->mapView()->previewItem(), mUndoStack)
                             , "Selection Tool"
                             , QIcon("://images/icons/22x22/mouse.png")
                             , QKeySequence(Qt::Key_S)));

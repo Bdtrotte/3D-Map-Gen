@@ -160,7 +160,8 @@ HEADERS += \
     array2dtools.h \
     array2d_private.h \
     m2mtilemesher_private.h \
-    tiletemplatechangecommand.h
+    tiletemplatechangecommand.h \
+    changevaluecommand.h
 
 FORMS +=
 

@@ -4,6 +4,8 @@
 #include "abstracttilemaptool.h"
 #include "propertybrowser.h"
 
+#include <QUndoStack>
+
 class AbstractTileSelectionTool : public AbstractTileMapTool
 {
 public:
@@ -23,7 +25,7 @@ protected:
      * such as updating the graphics and property browser.
      */
     void activateSelection();
-    void drawPreview();
+    void drawPreview(QRegion previewRegion);
 
     //all selection tools should share the same selection region.
     static QRegion mSelection;
