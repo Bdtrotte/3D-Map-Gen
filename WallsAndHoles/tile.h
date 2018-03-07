@@ -71,8 +71,8 @@ signals:
 public slots:
     //by calling the respective set functions, it is ensured that the tile wont go out of bounds.
     //the signal tileChanged is also emited as expected
-    void templateThicknessChanged() { setRelativePosition(mRelativePosition); }
-    void templatePositionChanged() { setRelativeThickness(mRelativeThickness); }
+    void templateThicknessChanged() { setRelativeThickness(mRelativeThickness); }
+    void templatePositionChanged() { setRelativePosition(mRelativePosition); }
 
 private:
     void makeTemplateConnections();

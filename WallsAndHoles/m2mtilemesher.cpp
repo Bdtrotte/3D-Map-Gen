@@ -62,7 +62,7 @@ M2M::PartialMeshData M2M::AbstractTileMesher::makeTopMesh(QVector2D offset)
     float thickness = mTileNeighborhood.centerTile().thickness();
     float topHeight = mTileNeighborhood.centerTile().topHeight();
 
-    QVector3D center(offset.x() - offsetFromCenter.x(), topHeight, offset.y() + offsetFromCenter.y());
+    QVector3D center(offset.x() + offsetFromCenter.x(), topHeight, offset.y() + offsetFromCenter.y());
     QVector3D x(thickness*0.5, 0, 0);
     QVector3D z(0, 0, thickness*0.5);
 
@@ -142,7 +142,7 @@ M2M::PartialMeshData M2M::AbstractTileMesher::makeVerticalSideMesh(M2M_Private::
     QVector2D tileCenterOffset = thisTile.offsetFromCenter();
 
     // The center of the tile in XZ coordinates.
-    QVector2D xzTileCenter = offset + QVector2D(-tileCenterOffset.x(), tileCenterOffset.y());
+    QVector2D xzTileCenter = offset + QVector2D(tileCenterOffset.x(), tileCenterOffset.y());
 
 
     if (shouldOutputWall) {

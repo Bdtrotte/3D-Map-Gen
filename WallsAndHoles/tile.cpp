@@ -59,7 +59,10 @@ const TileMaterial *Tile::material() const
 
 float Tile::setRelativeThickness(float relativeThickness)
 {
-    if (relativeThickness == mRelativeThickness) return mRelativeThickness;
+    if (relativeThickness == mRelativeThickness) {
+        emit tileChanged(mXPos, mYPos);
+        return mRelativeThickness;
+    }
 
     if (mTileTemplate == nullptr) {
         mRelativeThickness = 0;
