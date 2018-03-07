@@ -57,9 +57,9 @@ Quad Quad::makeVerticalQuad(QVector3D center,
                             bool upsideDown)
 {
     QVector2D t1(0, 0);
-    QVector2D t2(1, 0);
-    QVector2D t3(1, 1);
-    QVector2D t4(0, 1);
+    QVector2D t2(width, 0);
+    QVector2D t3(width, height);
+    QVector2D t4(0, height);
 
 
     // "Left" direction when looking at the quad from the front.

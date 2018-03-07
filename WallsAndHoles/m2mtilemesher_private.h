@@ -18,9 +18,33 @@ enum SideDirection {
     NORTH, EAST, SOUTH, WEST
 };
 
-class SideTools {
-public:
+/**
+ * @brief polygonMesh
+ * @param polygon
+ * @param height
+ * @return
+ */
+M2M::PartialMeshData polygonMesh(const QPolygonF &polygon,
+                                 float height,
+                                 M2M::ImageInfo image,
+                                 M2M::PhongInfo material);
 
+/**
+ * @brief polygonSidesMesh
+ * @param polygon
+ * @param edgesToDrop
+ * @param topHeight
+ * @param bottomHeight
+ * @return
+ */
+M2M::PartialMeshData polygonSidesMesh(QPolygonF polygon,
+                                      QVector<bool> edgesToDrop,
+                                      QVector<float> bottomHeight,
+                                      float topHeight,
+                                      M2M::ImageInfo image,
+                                      M2M::PhongInfo material);
+
+namespace SideTools {
     /**
      * @brief neighborOffset Computes the offset for the coordinates of a neighbor of a tile.
      * @param side           The direction towards the neighbor.
@@ -29,7 +53,7 @@ public:
      *          SOUTH -> (0, -1)
      *          WEST  -> (-1, 0)
      */
-    static QPoint neighborOffset(SideDirection side);
+    QPoint neighborOffset(SideDirection side);
 
     /**
      * @brief awayDirection Computes the "away" direction for a side on a tile, in XZ coordinates.
@@ -40,7 +64,7 @@ public:
      *          SOUTH -> (0, 1)
      *          WEST  -> (-1, 0)
      */
-    static QVector2D awayDirection(SideDirection side);
+    QVector2D awayDirection(SideDirection side);
 
     /**
      * @brief normalDirection Computes the normal direction for a vertical side of a tile.
@@ -51,7 +75,7 @@ public:
      *          SOUTH -> (0, 0, 1)
      *          WEST  -> (-1, 0, 0)
      */
-    static QVector3D normalDirection(SideDirection side);
+    QVector3D normalDirection(SideDirection side);
 
 
     /**
@@ -66,14 +90,13 @@ public:
      *
      * TODO: Preconditions.
      */
-    static M2M::Quad makeTopQuadFragment(SideDirection side,
-                                         QVector2D quadCenter,
-                                         QVector2D minusQuadCenter,
-                                         float minusQuadSize,
-                                         M2M::ImageInfo quadImage,
-                                         M2M::PhongInfo quadMaterial);
-};
-
+    M2M::Quad makeTopQuadFragment(SideDirection side,
+                                  QVector2D quadCenter,
+                                  QVector2D minusQuadCenter,
+                                  float minusQuadSize,
+                                  M2M::ImageInfo quadImage,
+                                  M2M::PhongInfo quadMaterial);
+}
 }
 
 
