@@ -19,12 +19,12 @@ NewMapDialog::NewMapDialog(QDialog *parent)
     QLabel *heightLabel = new QLabel("Height:", this);
     QLabel *widthLabel = new QLabel("Width:", this);
 
-    mHSpinBox = new QSpinBox(this);
     mWSpinBox = new QSpinBox(this);
-    mHSpinBox->setMinimum(1);
+    mHSpinBox = new QSpinBox(this);
     mWSpinBox->setMinimum(1);
-    mHSpinBox->setMaximum(1000);
+    mHSpinBox->setMinimum(1);
     mWSpinBox->setMaximum(1000);
+    mHSpinBox->setMaximum(1000);
 
 
     //Properties setup
@@ -54,10 +54,10 @@ NewMapDialog::NewMapDialog(QDialog *parent)
 
     //Main Layout
     QGridLayout *mainLayout = new QGridLayout(this);
-    mainLayout->addWidget(heightLabel, 0, 0);
-    mainLayout->addWidget(mHSpinBox, 0, 1);
-    mainLayout->addWidget(widthLabel, 0, 2);
-    mainLayout->addWidget(mWSpinBox, 0, 3);
+    mainLayout->addWidget(widthLabel, 0, 0);
+    mainLayout->addWidget(mWSpinBox, 0, 1);
+    mainLayout->addWidget(heightLabel, 0, 2);
+    mainLayout->addWidget(mHSpinBox, 0, 3);
     mainLayout->addWidget(propertiesGroupBox, 1, 0, 2, 0);
     mainLayout->addWidget(dialogBtnBox, 4, 0, 1, 0);
     mainLayout->setMargin(20);
