@@ -156,7 +156,6 @@ private:
 class PreObject
 {
 public:
-
     /// Creates the PreObject with the given texture image.
     PreObject(ImageInfo img);
 
@@ -165,8 +164,12 @@ public:
 
     void addTrig(const Trig &t);
 
+    void addPreObject(const PreObject &o);
+
     /// Compiles this PreObject into a SimpleTexturedObject.
     QSharedPointer<SimpleTexturedObject> toObject() const;
+
+    ImageInfo imageInfo() const { return mImage; }
 
 private:
     // Face information.
@@ -198,20 +201,31 @@ public:
      */
     QVector<QSharedPointer<SimpleTexturedObject>> constructObjects();
 
-
-
     /**
      * @brief addQuad   Adds a quad to the mesh.
      * @param q         The quad.
      */
-    void addQuad(Quad q);
+    void addQuad(const Quad &q);
 
-    void addTrig(Trig t);
+    void addTrig(const Trig &t);
+
+    void addPartialMesh(const PartialMeshData &p);
+
+    PartialMeshData &operator +=(const PartialMeshData &other)
+    {
+        addPartialMesh(other);
+        return *this;
+    }
+
+    PartialMeshData &operator +(const PartialMeshData &other)
+    {
+        PartialMeshData p = *this;
+        return p += other;
+    }
 
 private:
     /// Keeps track of one PreObject per texture image.
     QMap<const QImage *, PreObject> mTexturesToObjects;
-
 };
 
 

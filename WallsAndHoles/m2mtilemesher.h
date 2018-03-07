@@ -154,8 +154,7 @@ protected:
      * @param meshData              The data will be put here.
      * @param offset                The offset of the tile.
      */
-    void makeTopMesh(PartialMeshData &meshData,
-                     QVector2D offset);
+    PartialMeshData makeTopMesh(QVector2D offset);
 
 
     /**
@@ -164,9 +163,8 @@ protected:
      * @param sideDirection         Which side should be made.
      * @param offset                The offset of the tile.
      */
-    void makeVerticalSideMesh(PartialMeshData &meshData,
-                              M2M_Private::SideDirection sideDirection,
-                              QVector2D offset);
+    PartialMeshData makeVerticalSideMesh(M2M_Private::SideDirection sideDirection,
+                                         QVector2D offset);
 };
 
 

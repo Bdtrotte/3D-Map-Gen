@@ -91,7 +91,7 @@ Quad Quad::makeVerticalQuad(QVector3D center,
 
 
 /* BEGIN PartialMeshData */
-void PartialMeshData::addQuad(Quad q)
+void PartialMeshData::addQuad(const Quad &q)
 {
     const QImage *quadImage = q.imageInfo().image()->image().data();
 
@@ -110,7 +110,7 @@ void PartialMeshData::addQuad(Quad q)
     }
 }
 
-void PartialMeshData::addTrig(Trig t)
+void PartialMeshData::addTrig(const Trig &t)
 {
     const QImage *image = t.imageInfo().image()->image().data();
 
@@ -126,6 +126,17 @@ void PartialMeshData::addTrig(Trig t)
         newObject.addTrig(t);
 
         mTexturesToObjects.insert(image, newObject);
+    }
+}
+
+void PartialMeshData::addPartialMesh(const PartialMeshData &p)
+{
+    for (auto i = p.mTexturesToObjects.cbegin(); i != p.mTexturesToObjects.cend(); ++i) {
+        auto itr = mTexturesToObjects.find(i.key());
+        if (itr != mTexturesToObjects.end())
+            itr->addPreObject(*i);
+        else
+            mTexturesToObjects.insert(i.key(), *i);
     }
 }
 
@@ -190,6 +201,27 @@ void PreObject::addTrig(const Trig &t)
     mTriangleTextureCoordinates.append({t.textureCoords()[0],
                                         t.textureCoords()[1],
                                         t.textureCoords()[2]});
+}
+
+void PreObject::addPreObject(const PreObject &o)
+{
+    unsigned firstIdx = mVertexPositions.size();
+
+    for (const SimpleTexturedObject::Triangle &t : o.mTriangles) {
+        mTriangles.append({
+                              firstIdx + t.getFirst(),
+                              firstIdx + t.getSecond(),
+                              firstIdx + t.getThird()
+                          });
+    }
+
+    mVertexPositions.append(o.mVertexPositions);
+    mTriangleNormals.append(o.mTriangleNormals);
+    mReflAmbient.append(o.mReflAmbient);
+    mReflDiffuse.append(o.mReflDiffuse);
+    mReflSpecular.append(o.mReflSpecular);
+    mShininess.append(o.mShininess);
+    mTriangleTextureCoordinates.append(o.mTriangleTextureCoordinates);
 }
 
 

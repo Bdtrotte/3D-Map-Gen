@@ -35,25 +35,23 @@ QVector<QSharedPointer<SimpleTexturedObject>> M2M::TileBlockyMesher::makeMesh(QV
 {
     PartialMeshData mesh;
 
-    makeTopMesh(mesh, offset);
+    mesh += makeTopMesh(offset);
 
-    makeVerticalSideMesh(mesh, M2M_Private::SideDirection::NORTH, offset);
-    makeVerticalSideMesh(mesh, M2M_Private::SideDirection::EAST, offset);
-    makeVerticalSideMesh(mesh, M2M_Private::SideDirection::SOUTH, offset);
-    makeVerticalSideMesh(mesh, M2M_Private::SideDirection::WEST, offset);
+    mesh += makeVerticalSideMesh(M2M_Private::SideDirection::NORTH, offset);
+    mesh += makeVerticalSideMesh(M2M_Private::SideDirection::EAST, offset);
+    mesh += makeVerticalSideMesh(M2M_Private::SideDirection::SOUTH, offset);
+    mesh += makeVerticalSideMesh(M2M_Private::SideDirection::WEST, offset);
 
     return mesh.constructObjects();
 }
 
 
-
-
-
-void M2M::AbstractTileMesher::makeTopMesh(PartialMeshData &meshData, QVector2D offset)
+M2M::PartialMeshData M2M::AbstractTileMesher::makeTopMesh(QVector2D offset)
 {
     /*
      * This method just creates a single textured quad for the mesher's center tile.
      * */
+    PartialMeshData meshData;
 
     QVector2D t1(1, 1);
     QVector2D t2(0, 1);
@@ -75,10 +73,12 @@ void M2M::AbstractTileMesher::makeTopMesh(PartialMeshData &meshData, QVector2D o
                           center + x + z, t2,
                           center + x - z, t3,
                           center - x - z, t4));
+
+    return meshData;
 }
 
 
-void M2M::AbstractTileMesher::makeVerticalSideMesh(PartialMeshData &meshData, M2M_Private::SideDirection sideDirection, QVector2D offset)
+M2M::PartialMeshData M2M::AbstractTileMesher::makeVerticalSideMesh(M2M_Private::SideDirection sideDirection, QVector2D offset)
 {
     using namespace M2M_Private;
 
@@ -94,6 +94,8 @@ void M2M::AbstractTileMesher::makeVerticalSideMesh(PartialMeshData &meshData, M2
      *              (since otherwise, it is the non-ground tile's responsibility to draw a wall upward)
      *
      * */
+
+    PartialMeshData meshData;
 
 
     const TileInfo &thisTile = mTileNeighborhood.centerTile();
@@ -186,10 +188,11 @@ void M2M::AbstractTileMesher::makeVerticalSideMesh(PartialMeshData &meshData, M2
         /*
           (Looking from above in 3D space)
 
-              ^ +Z
-              |
-          <---
-          +X
+           +X
+           --->
+          |
+       +Z |
+          V
 
            _ _ _ _ _ _
           |\    N    /|
@@ -212,6 +215,8 @@ void M2M::AbstractTileMesher::makeVerticalSideMesh(PartialMeshData &meshData, M2
                                                         groundImage,
                                                         groundMaterial));
     }
+
+    return meshData;
 }
 
 

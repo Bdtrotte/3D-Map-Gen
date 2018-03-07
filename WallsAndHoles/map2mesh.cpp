@@ -72,10 +72,6 @@ void Map2Mesh::updateScene()
     // Using the grid representation of mTileMap for convenience.
     const Array2D<QSharedPointer<Tile>> &grid = mTileMap->getArray2D();
 
-    // This point on the map should be at (0,y,0) in 3D space (for some appropriate y).
-    QVector2D mapCenter(-mTileMap->width() * 0.5, mTileMap->height() * 0.5);
-
-
     // Update every point that needs updating.
     for (const QPoint &point : mTilesToUpdate) {
         int x = point.x();
@@ -116,8 +112,7 @@ void Map2Mesh::updateScene()
             for (auto obj : oldObjects)
                 mScene->removeObject(obj);
 
-            // TODO: Add comment about -x.
-            auto newObjects = newMesher->makeMesh(QVector2D(-x, y) - mapCenter);
+            auto newObjects = newMesher->makeMesh(QVector2D(x, y));
 
             for (auto obj : newObjects)
                 mScene->addObject(obj);

@@ -24,7 +24,7 @@ public:
     /**
      * @brief neighborOffset Computes the offset for the coordinates of a neighbor of a tile.
      * @param side           The direction towards the neighbor.
-     * @return  NORTH -> (0, 1)
+     * @return  NORTH -> (0, -1)
      *          EAST  -> (1, 0)
      *          SOUTH -> (0, -1)
      *          WEST  -> (-1, 0)
@@ -35,10 +35,10 @@ public:
      * @brief awayDirection Computes the "away" direction for a side on a tile, in XZ coordinates.
      *
      * @param side  The direction a side is facing.
-     * @return  NORTH -> (0, 1)
-     *          EAST  -> (-1, 0)
-     *          SOUTH -> (0, -1)
-     *          WEST  -> (1, 0)
+     * @return  NORTH -> (0, -1)
+     *          EAST  -> (1, 0)
+     *          SOUTH -> (0, 1)
+     *          WEST  -> (-1, 0)
      */
     static QVector2D awayDirection(SideDirection side);
 
@@ -46,10 +46,10 @@ public:
      * @brief normalDirection Computes the normal direction for a vertical side of a tile.
      *
      * @param side  The direction a side is facing.
-     * @return  NORTH -> (0, 0, 1)
-     *          EAST  -> (-1, 0, 0)
-     *          SOUTH -> (0, 0, -1)
-     *          WEST  -> (1, 0, 0)
+     * @return  NORTH -> (0, 0, -1)
+     *          EAST  -> (1, 0, 0)
+     *          SOUTH -> (0, 0, 1)
+     *          WEST  -> (-1, 0, 0)
      */
     static QVector3D normalDirection(SideDirection side);
 
