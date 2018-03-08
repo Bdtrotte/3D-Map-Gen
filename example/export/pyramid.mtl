@@ -1,0 +1,54 @@
+newmtl 189133ee0163b5031b9d43acae95a3c1
+Ka 1 1 1
+Kd 1 1 1
+Ks 1 1 1
+Ns 1
+illum  2
+map_Ka /step.png
+map_Kd /step.png
+
+newmtl 5e6dbec5200e8f857daa619e8eb9b844
+Ka 1 1 1
+Kd 1 1 1
+Ks 1 1 1
+Ns 1
+illum  2
+map_Ka /wall.jpg
+map_Kd /wall.jpg
+
+newmtl 73f63f1de3686fb3fb08934ecaac7242
+Ka 1 1 1
+Kd 1 1 1
+Ks 1 1 1
+Ns 1
+illum  2
+map_Ka /grassTexture.jpg
+map_Kd /grassTexture.jpg
+
+newmtl 7910e801bdbaa1ccc1d0796009e3dea2
+Ka 1 1 1
+Kd 2 2 2
+Ks 2 2 2
+Ns 1
+illum  2
+map_Ka /marble.jpg
+map_Kd /marble.jpg
+
+newmtl 7fd15a9616204d23bb47691adcb55ad7
+Ka 1 1 1
+Kd 2 2 2
+Ks 2 2 2
+Ns 2
+illum  2
+map_Ka /templeWall.jpg
+map_Kd /templeWall.jpg
+
+newmtl d5022091b9ae009859bb97564a45a207
+Ka 1 1 1
+Kd 1 1 1
+Ks 1 1 1
+Ns 1
+illum  2
+map_Ka /road.jpg
+map_Kd /road.jpg
+

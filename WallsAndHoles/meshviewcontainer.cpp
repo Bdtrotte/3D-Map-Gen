@@ -35,12 +35,3 @@ QAction *MeshViewContainer::addCamera(AbstractMeshViewCamera *camera, QString na
 
     return cam;
 }
-
-void MeshViewContainer::saveMesh(QString path){
-    mMeshView = findChild<MeshView *>();
-    mMeshView->save(path);
-}
-void MeshViewContainer::loadMesh(QString path){
-    mMeshView = findChild<MeshView *>();
-    mMeshView->load(path);
-}

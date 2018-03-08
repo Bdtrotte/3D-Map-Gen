@@ -10,6 +10,9 @@
 
 #include <QImage>
 
+//To generate unique name for material
+#include <QCryptographicHash>
+
 #include "imageandsource.h"
 #include "triplet.h"
 
@@ -112,6 +115,13 @@ public:
 
     const QVector<TriangleTexCoords> &getFaceTexCoords() const;
     const QImage &getImage() const;
+
+    float getAmbient() const;
+    float getDiffuse() const;
+    float getSpecular() const;
+    float getShininess() const;
+    QString getMaterialName() const;
+    SharedImageAndSource getImageAndSource() const;
 
 
 

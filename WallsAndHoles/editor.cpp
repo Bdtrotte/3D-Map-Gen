@@ -228,9 +228,16 @@ void Editor::closeMap()
 
 void Editor::exportMapMesh()
 {
-    if (mMeshViewContainer == nullptr) {
+    if (mMap2Mesh == nullptr) {
         QMessageBox messageBox;
-        messageBox.critical(0,"Error","MeshView doesn't exist!");
+        messageBox.critical(0,"Error","Map2Mesh convertor doesn't exist!");
+        messageBox.setFixedSize(500,200);
+        return;
+    }
+    SharedSimpleTexturedScene scene = mMap2Mesh->getScene();
+    if (scene == nullptr) {
+        QMessageBox messageBox;
+        messageBox.critical(0,"Error","Scene doesn't exist!");
         messageBox.setFixedSize(500,200);
         return;
     }
@@ -240,8 +247,10 @@ void Editor::exportMapMesh()
                                                     mExportPath,
                                                     tr("Export Files (*.obj)"));
 
-    if(!fileName.isEmpty())
-        mMeshViewContainer->saveMesh(fileName);
+    if(!fileName.isEmpty()){
+        SharedOBJModel obj = scene->exportOBJ();
+        obj->save(fileName);
+    }
     mExportPath = fileName;
 }
 

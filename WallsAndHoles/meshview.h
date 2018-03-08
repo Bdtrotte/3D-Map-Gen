@@ -25,9 +25,11 @@ public:
     ~MeshView();
 
 public slots:
-    void load(QString path);
-    void save(QString path);
-
+    /**
+     * @brief Activates the given tool in the tool manager.
+     * @param name The name of the tool.
+     */
+    void activateTool(QString name);
 
     /**
      * @brief Schedules a paintGL() call on the OpenGL thread.

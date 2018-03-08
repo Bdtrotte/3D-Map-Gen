@@ -19,12 +19,12 @@ NewMapDialog::NewMapDialog(QDialog *parent)
     QLabel *heightLabel = new QLabel("Height:", this);
     QLabel *widthLabel = new QLabel("Width:", this);
 
-    mHSpinBox = new QSpinBox(this);
     mWSpinBox = new QSpinBox(this);
-    mHSpinBox->setMinimum(1);
+    mHSpinBox = new QSpinBox(this);
     mWSpinBox->setMinimum(1);
-    mHSpinBox->setMaximum(1000);
+    mHSpinBox->setMinimum(1);
     mWSpinBox->setMaximum(1000);
+    mHSpinBox->setMaximum(1000);
 
 
     //Properties setup

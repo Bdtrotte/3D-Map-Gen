@@ -157,3 +157,31 @@ const QImage &SimpleTexturedObject::getImage() const
     Q_ASSERT(!mImage.isNull());
     return *mImage->image();
 }
+
+float SimpleTexturedObject::getAmbient() const
+{
+    return getVertexAmbient()[0];
+}
+float SimpleTexturedObject::getDiffuse() const
+{
+    return getVertexDiffuse()[0];
+}
+float SimpleTexturedObject::getSpecular() const
+{
+    return getVertexSpecular()[0];
+}
+float SimpleTexturedObject::getShininess() const
+{
+    return getVertexShininess()[0];
+}
+
+SharedImageAndSource SimpleTexturedObject::getImageAndSource() const
+{
+    return mImage;
+}
+
+QString SimpleTexturedObject::getMaterialName() const
+{
+    QString feature = QString::number(getAmbient()+getDiffuse()+getSpecular()+getShininess())+getImageAndSource()->source();
+    return QString(QCryptographicHash::hash(feature.toUtf8(),QCryptographicHash::Md5).toHex());
+}

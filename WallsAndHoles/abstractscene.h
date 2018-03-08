@@ -7,7 +7,7 @@
 #include <QWeakPointer>
 
 #include "abstractrenderer.h"
-
+#include "objtools.h"
 
 class AbstractScene : public QObject
 {
@@ -43,6 +43,8 @@ public:
 
         return strongRef;
     }
+
+    virtual SharedOBJModel exportOBJ()=0;
 
 
 protected:
