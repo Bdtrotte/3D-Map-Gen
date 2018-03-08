@@ -21,11 +21,6 @@ inline int orientation(QPointF a, QPointF b, QPointF c)
     else              return 1;
 }
 
-inline QPointF intersectionPoint(QPointF x1, QPointF y1, QPointF x2, QPointF y2)
-{
-
-}
-
 }
 
 #endif // GEOMETRY_H

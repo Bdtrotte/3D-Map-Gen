@@ -37,35 +37,6 @@ QVector<QSharedPointer<SimpleTexturedObject>> M2M::TileBlockyMesher::makeMesh(QV
 
     TileInfo tile = mTileNeighborhood.centerTile();
 
-    QVector<QPointF> points = {
-        QPointF(0.5, 0.2),
-        QPointF(0.2, 0.8),
-        QPointF(0.8, 0.8)
-    };
-
-    if (!tile.isGround()) {
-        QPolygonF poly(points);
-        poly.translate(offset.toPointF());
-
-        /*mesh += M2M_Private::polygonMesh(poly,
-                                         tile.topHeight(),
-                                         tile.topImage(),
-                                         tile.topMaterial());*/
-
-        QPolygonF ground(QRectF(offset.toPointF(), QSize(1, 1)));
-        ground = ground.subtracted(poly);
-
-        mesh += M2M_Private::polygonMesh(ground,
-                                         0,
-                                         tile.groundInfo().groundImage,
-                                         tile.groundInfo().groundMaterial);
-    } else {
-        mesh += M2M_Private::polygonMesh(QRectF(offset.toPointF(), QSize(1, 1)),
-                                         0,
-                                         tile.groundInfo().groundImage,
-                                         tile.groundInfo().groundMaterial);
-    }
-
     return mesh.constructObjects();
 }
 

@@ -3,14 +3,27 @@
 
 #include <QVector2D>
 #include <QVector>
+#include <QLineF>
+#include <QRectF>
 
 #include "triplet.h"
 
+/**
+ * @brief The Polygon class
+ *
+ * Strict polygon class with floating point precision.
+ *
+ * Rules of this are:
+ *    All points must be unique
+ *    No edges may overlap
+ */
 class Polygon
 {
 public:
-    Polygon();
+    Polygon() {}
     Polygon(const QVector<QPointF> &points);
+
+    const QVector<QPointF> &points() { return mPoints; }
 
     /**
      * @brief chordIsClear
@@ -54,7 +67,14 @@ public:
      */
     QList<Triplet<QPointF, QPointF, QPointF>> triangulate() const;
 
+    QVector<QPointF> allIntersections(const QLineF &line) const;
+
+    bool contains(const QPointF &point) const;
+
+    QRectF boundingRect() const;
+
     QVector<Polygon> intersected(const Polygon &other) const;
+    QVector<Polygon> united(const Polygon &other) const;
 
     const QPointF &at(int i) const { return mPoints[i]; }
 
