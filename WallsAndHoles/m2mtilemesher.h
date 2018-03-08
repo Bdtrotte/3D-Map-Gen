@@ -148,23 +148,6 @@ protected:
      * @brief Information for each tile in the 3x3 neighborhood of the tile to which this mesher is associated.
      */
     TileNeighborhoodInfo mTileNeighborhood;
-
-    /**
-     * @brief makeTopMesh           Creates the top quad for a tile.
-     * @param meshData              The data will be put here.
-     * @param offset                The offset of the tile.
-     */
-    PartialMeshData makeTopMesh(QVector2D offset);
-
-
-    /**
-     * @brief makeVerticalSideMesh  Creates a vertical side for the tile.
-     * @param meshData              The mesh goes into this variable.
-     * @param sideDirection         Which side should be made.
-     * @param offset                The offset of the tile.
-     */
-    PartialMeshData makeVerticalSideMesh(M2M_Private::SideDirection sideDirection,
-                                         QVector2D offset);
 };
 
 

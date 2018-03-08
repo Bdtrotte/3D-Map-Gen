@@ -84,7 +84,8 @@ SOURCES += \
     shaperegion.cpp \
     mapviewcontainer.cpp\
     m2mpartialmesh.cpp \
-    m2mtilemesher_private.cpp
+    m2mtilemesher_private.cpp \
+    polygon.cpp
 
 HEADERS += \
     meshview.h \
@@ -158,7 +159,9 @@ HEADERS += \
     m2mpartialmesh.h \
     array2dtools.h \
     array2d_private.h \
-    m2mtilemesher_private.h
+    m2mtilemesher_private.h \
+    polygon.h \
+    geometry.h
 
 FORMS +=
 

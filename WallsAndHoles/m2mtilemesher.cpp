@@ -35,188 +35,38 @@ QVector<QSharedPointer<SimpleTexturedObject>> M2M::TileBlockyMesher::makeMesh(QV
 {
     PartialMeshData mesh;
 
-    mesh += makeTopMesh(offset);
+    TileInfo tile = mTileNeighborhood.centerTile();
 
-    mesh += makeVerticalSideMesh(M2M_Private::SideDirection::NORTH, offset);
-    mesh += makeVerticalSideMesh(M2M_Private::SideDirection::EAST, offset);
-    mesh += makeVerticalSideMesh(M2M_Private::SideDirection::SOUTH, offset);
-    mesh += makeVerticalSideMesh(M2M_Private::SideDirection::WEST, offset);
+    QVector<QPointF> points = {
+        QPointF(0.5, 0.2),
+        QPointF(0.2, 0.8),
+        QPointF(0.8, 0.8)
+    };
+
+    if (!tile.isGround()) {
+        QPolygonF poly(points);
+        poly.translate(offset.toPointF());
+
+        /*mesh += M2M_Private::polygonMesh(poly,
+                                         tile.topHeight(),
+                                         tile.topImage(),
+                                         tile.topMaterial());*/
+
+        QPolygonF ground(QRectF(offset.toPointF(), QSize(1, 1)));
+        ground = ground.subtracted(poly);
+
+        mesh += M2M_Private::polygonMesh(ground,
+                                         0,
+                                         tile.groundInfo().groundImage,
+                                         tile.groundInfo().groundMaterial);
+    } else {
+        mesh += M2M_Private::polygonMesh(QRectF(offset.toPointF(), QSize(1, 1)),
+                                         0,
+                                         tile.groundInfo().groundImage,
+                                         tile.groundInfo().groundMaterial);
+    }
 
     return mesh.constructObjects();
-}
-
-
-M2M::PartialMeshData M2M::AbstractTileMesher::makeTopMesh(QVector2D offset)
-{
-    /*
-     * This method just creates a single textured quad for the mesher's center tile.
-     * */
-    PartialMeshData meshData;
-
-    QVector2D t1(1, 1);
-    QVector2D t2(0, 1);
-    QVector2D t3(0, 0);
-    QVector2D t4(1, 0);
-
-    QVector2D offsetFromCenter = mTileNeighborhood.centerTile().offsetFromCenter();
-    float thickness = mTileNeighborhood.centerTile().thickness();
-    float topHeight = mTileNeighborhood.centerTile().topHeight();
-
-    QVector3D center(offset.x() + offsetFromCenter.x(), topHeight, offset.y() + offsetFromCenter.y());
-    QVector3D x(thickness*0.5, 0, 0);
-    QVector3D z(0, 0, thickness*0.5);
-
-    meshData.addQuad(Quad(QVector3D(0, 1, 0),
-                          mTileNeighborhood.centerTile().topImage(),
-                          mTileNeighborhood.centerTile().topMaterial(),
-                          center - x + z, t1,
-                          center + x + z, t2,
-                          center + x - z, t3,
-                          center - x - z, t4));
-
-    return meshData;
-}
-
-
-M2M::PartialMeshData M2M::AbstractTileMesher::makeVerticalSideMesh(M2M_Private::SideDirection sideDirection, QVector2D offset)
-{
-    using namespace M2M_Private;
-
-    /*
-     * This method creates a single textured quad for one of the sides of the mesher's center tile.
-     * There are several cases for the output:
-     *
-     *    If the tile is not full thickness, then both a piece of the ground mesh and a wall will be output.
-     *    If the tile is full thickness...
-     *       ... if this is NOT a ground tile, and if either the wall goes downward or goes upward and connects to the ground,
-     *              then output the wall
-     *       ... if this IS a ground tile, then only a downward wall will be drawn, and only if it goes down to another ground tile
-     *              (since otherwise, it is the non-ground tile's responsibility to draw a wall upward)
-     *
-     * */
-
-    PartialMeshData meshData;
-
-
-    const TileInfo &thisTile = mTileNeighborhood.centerTile();
-    const TileInfo &otherTile = mTileNeighborhood(QPoint(1, 1) + SideTools::neighborOffset(sideDirection));
-
-
-
-    bool isOtherNull = otherTile.isNull();                      // Is the other tile null? (Are we on the edge of the map?)
-
-    bool isThisFullThickness = thisTile.thickness() >= 1;       // Is this tile full thickness?
-    bool isOtherFullThickness = otherTile.thickness() >= 1;     // Is the other tile full thickness?
-
-    bool isThisGround = thisTile.isGround();                    // Is this a ground tile?
-    bool isEndAtGround;                                         // Is the end connected to ground?
-
-    float startHeight = thisTile.topHeight();                   // The wall's "start" is at the tile's top quad.
-    float endHeight;                                            // The end height of the wall (could be ground or otherTile).
-
-
-    if (!isThisFullThickness) {
-        isEndAtGround = true;
-        endHeight = thisTile.groundInfo().groundHeight;
-    } else {
-        if (!isOtherFullThickness) {
-            isEndAtGround = true;
-            endHeight = otherTile.groundInfo().groundHeight;
-        } else {
-            isEndAtGround = otherTile.isGround();
-            endHeight = otherTile.topHeight();
-        }
-    }
-
-
-
-    bool shouldOutputGround = !isThisFullThickness;
-    bool shouldOutputWall = (!isOtherNull || !isThisFullThickness) && (
-                    (!isThisGround && (endHeight < startHeight || isEndAtGround))
-                ||  (endHeight < startHeight && isEndAtGround)
-                );
-
-
-
-    // The offset of the tile from the center of its square, in tile coordinates.
-    QVector2D tileCenterOffset = thisTile.offsetFromCenter();
-
-    // The center of the tile in XZ coordinates.
-    QVector2D xzTileCenter = offset + QVector2D(tileCenterOffset.x(), tileCenterOffset.y());
-
-
-    if (shouldOutputWall) {
-
-        float halfThickness = thisTile.thickness() * 0.5;
-
-        // "Away" vector such that when added to the tile's center in XZ coordinates
-        // gives the wall's center in XZ coordinates.
-        QVector2D away = SideTools::awayDirection(sideDirection) * halfThickness;
-
-        // The point at the center of the wall in XZ coordinates.
-        QVector3D sideCenter = QVector3D(
-                                    xzTileCenter.x() + away.x(),
-                                    (startHeight + endHeight) * 0.5,
-                                    xzTileCenter.y() + away.y());
-
-        QVector2D direction = SideTools::awayDirection(sideDirection);
-        float height = startHeight - endHeight;
-        bool upsideDown = false;
-
-        if (height < 0) {
-            height = -height;
-            upsideDown = true;
-            direction = -direction;
-        }
-
-
-        meshData.addQuad(Quad::makeVerticalQuad(
-                             sideCenter,
-                             direction,
-                             thisTile.thickness(),
-                             height,
-                             thisTile.sideImage(),
-                             thisTile.sideMaterial(),
-                             upsideDown));
-    }
-
-
-    if (shouldOutputGround) {
-        // The tile is not full thickness, so this wall is responsible for outputting
-        // a piece of the ground beneath the tile. The specific piece it outputs depends
-        // on its orientation:
-        /*
-          (Looking from above in 3D space)
-
-           +X
-           --->
-          |
-       +Z |
-          V
-
-           _ _ _ _ _ _
-          |\    N    /|
-          | \ _ _ _ / |
-          |  |thin |  |
-          |W |tile | E|
-          |  |_ _ _|  |
-          | /       \ |
-          |/_ _ S _ _\|
-
-         */
-
-        auto groundImage = thisTile.groundInfo().groundImage;
-        auto groundMaterial = thisTile.groundInfo().groundMaterial;
-
-        meshData.addQuad(SideTools::makeTopQuadFragment(sideDirection,
-                                                        offset,                 // Center of ground tile in XZ coordinates.
-                                                        xzTileCenter,           // Center of tile in XZ coordinates.
-                                                        thisTile.thickness(),
-                                                        groundImage,
-                                                        groundMaterial));
-    }
-
-    return meshData;
 }
 
 

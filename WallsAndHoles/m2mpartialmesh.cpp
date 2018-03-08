@@ -191,10 +191,10 @@ void PreObject::addTrig(const Trig &t)
 
     mVertexPositions.append(t.verts());
     PhongInfo phongInfo = t.phongInfo();
-    mReflAmbient.append(QVector<float>(4, phongInfo.ambient));
-    mReflDiffuse.append(QVector<float>(4, phongInfo.diffuse));
-    mReflSpecular.append(QVector<float>(4, phongInfo.specular));
-    mShininess.append(QVector<float>(4, phongInfo.shininess));
+    mReflAmbient.append(QVector<float>(3, phongInfo.ambient));
+    mReflDiffuse.append(QVector<float>(3, phongInfo.diffuse));
+    mReflSpecular.append(QVector<float>(3, phongInfo.specular));
+    mShininess.append(QVector<float>(3, phongInfo.shininess));
 
     mTriangleNormals.append(t.normal());
     mTriangles.append({firstIdx, firstIdx + 1, firstIdx + 2});
