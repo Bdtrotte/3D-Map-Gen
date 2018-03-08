@@ -26,12 +26,6 @@ public:
 
 public slots:
     /**
-     * @brief Activates the given tool in the tool manager.
-     * @param name The name of the tool.
-     */
-    void activateTool(QString name);
-
-    /**
      * @brief Schedules a paintGL() call on the OpenGL thread.
      */
     void scheduleRepaint();
