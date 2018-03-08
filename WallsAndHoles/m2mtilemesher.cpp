@@ -97,17 +97,41 @@ M2M::TileInfo::TileInfo(const Tile &tile)
     if (tile.hasTileTemplate()) {
         mIsGround = false;
 
-        const auto &mat = *tile.material();
+        const auto &topMat = *tile.tileTemplate()->topMaterial();
 
-        if (!mat.texture().isNull())
-            mTopImage = mSideImage = ImageInfo(mat.texture());
+        if (!topMat.texture().isNull())
+            mTopImage = ImageInfo(topMat.texture());
         else
-            mTopImage = mSideImage = ImageInfo(getDefaultImage());
+            mTopImage = ImageInfo(getDefaultImage());
 
-        mTopMaterial.ambient = mSideMaterial.ambient = mat.ambient();
-        mTopMaterial.diffuse = mSideMaterial.diffuse = mat.diffuse();
-        mTopMaterial.specular = mSideMaterial.specular = mat.specular();
-        mTopMaterial.shininess = mSideMaterial.shininess = mat.shininess();
+        mTopMaterial.ambient = topMat.ambient();
+        mTopMaterial.diffuse = topMat.diffuse();
+        mTopMaterial.specular = topMat.specular();
+        mTopMaterial.shininess = topMat.shininess();
+
+        if (tile.tileTemplate()->hasSideMaterial()) {
+            const auto &sideMat = *tile.tileTemplate()->sideMaterial();
+
+            if (!topMat.texture().isNull())
+                mSideImage = ImageInfo(sideMat.texture());
+            else
+                mSideImage = ImageInfo(getDefaultImage());
+
+            mSideMaterial.ambient = sideMat.ambient();
+            mSideMaterial.diffuse = sideMat.diffuse();
+            mSideMaterial.specular = sideMat.specular();
+            mSideMaterial.shininess = topMat.shininess();
+        } else {
+            if (!topMat.texture().isNull())
+                mSideImage = ImageInfo(topMat.texture());
+            else
+                mSideImage = ImageInfo(getDefaultImage());
+
+            mSideMaterial.ambient = topMat.ambient();
+            mSideMaterial.diffuse = topMat.diffuse();
+            mSideMaterial.specular = topMat.specular();
+            mSideMaterial.shininess = topMat.shininess();
+        }
     } else {
         mIsGround = true;
 

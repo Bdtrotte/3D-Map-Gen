@@ -2,8 +2,8 @@
 
 #include "shaperegion.h"
 
-EllipseBrushTool::EllipseBrushTool(TileMapPreviewGraphicsItem *previewItem, QObject *parent)
-    : AbstractShapeBrushTool(previewItem, parent) {}
+EllipseBrushTool::EllipseBrushTool(TileMapPreviewGraphicsItem *previewItem)
+    : AbstractShapeBrushTool(previewItem) {}
 
 
 QRegion EllipseBrushTool::getShape(QPoint start, QPoint end) const

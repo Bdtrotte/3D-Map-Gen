@@ -6,8 +6,8 @@
 #include <QPair>
 
 
-FillTool::FillTool(TileMapPreviewGraphicsItem *previewItem, QObject *parent)
-    : AbstractTileMapTool(previewItem, parent) {}
+FillTool::FillTool(TileMapPreviewGraphicsItem *previewItem)
+    : AbstractTileMapTool(previewItem) {}
 
 void FillTool::cellClicked(int x, int y, QMouseEvent *)
 {

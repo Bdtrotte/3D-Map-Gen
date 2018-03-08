@@ -16,9 +16,12 @@ TileTemplate::TileTemplate(QColor color,
     , mThickness(thickness)
     , mPosition(position)
     , mColor(color)
-    , mMaterial(nullptr)
+    , mHasSideMaterial(false)
+    , mTopMaterial(nullptr)
+    , mSideMaterial(nullptr)
 {
-    setMaterial(material);
+    setTopMaterial(material);
+    setSideMaterial(nullptr);
 }
 
 
@@ -99,26 +102,62 @@ void TileTemplate::setColor(QColor color)
     emit changed();
 }
 
-void TileTemplate::setMaterial(TileMaterial *material)
+void TileTemplate::setHasSideMaterial(bool enabled)
+{
+    if (mHasSideMaterial == enabled) return;
+
+    mHasSideMaterial = enabled;
+
+    emit materialChanged();
+    emit changed();
+}
+
+void TileTemplate::setTopMaterial(TileMaterial *material)
 {
     // mMaterial should never be null--there is always some default
     // material information.
     if (material == nullptr)
         material = TileMaterial::getDefaultMaterial();
 
-    if (mMaterial)
-        disconnect(mMaterial);
+    if (mTopMaterial)
+        disconnect(mTopMaterial);
 
-    mMaterial = material;
+    mTopMaterial = material;
 
     // When the material's properties change, a materialChanged() signal will be emitted.
     // The changed() signal is currently only used for saving purposes, so it does not need to be emitted.
 
-    connect(mMaterial, &TileMaterial::textureChanged, this, &TileTemplate::materialChanged);
-    connect(mMaterial, &TileMaterial::phongParamsChanged, this, &TileTemplate::materialChanged);
-    connect(mMaterial, &TileMaterial::aboutToBeRemoved,
+    connect(mTopMaterial, &TileMaterial::textureChanged, this, &TileTemplate::materialChanged);
+    connect(mTopMaterial, &TileMaterial::phongParamsChanged, this, &TileTemplate::materialChanged);
+    connect(mTopMaterial, &TileMaterial::aboutToBeRemoved,
             this, [this]() {
-        setMaterial(TileMaterial::getDefaultMaterial());
+        setTopMaterial(TileMaterial::getDefaultMaterial());
+    });
+
+    emit materialChanged();
+    emit changed();
+}
+
+void TileTemplate::setSideMaterial(TileMaterial *material)
+{
+    // mMaterial should never be null--there is always some default
+    // material information.
+    if (material == nullptr)
+        material = TileMaterial::getDefaultMaterial();
+
+    if (mSideMaterial)
+        disconnect(mSideMaterial);
+
+    mSideMaterial = material;
+
+    // When the material's properties change, a materialChanged() signal will be emitted.
+    // The changed() signal is currently only used for saving purposes, so it does not need to be emitted.
+
+    connect(mSideMaterial, &TileMaterial::textureChanged, this, &TileTemplate::materialChanged);
+    connect(mSideMaterial, &TileMaterial::phongParamsChanged, this, &TileTemplate::materialChanged);
+    connect(mSideMaterial, &TileMaterial::aboutToBeRemoved,
+            this, [this]() {
+        setSideMaterial(TileMaterial::getDefaultMaterial());
     });
 
     emit materialChanged();

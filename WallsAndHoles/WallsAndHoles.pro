@@ -67,6 +67,7 @@ SOURCES += \
     savabletiletemplateset.cpp \
     newmapdialog.cpp \
     tilemappreviewgraphicsitem.cpp \
+    objtools.cpp \
     propertybrowser.cpp \
     tilepropertymanager.cpp \
     mappropertymanager.cpp \
@@ -79,13 +80,16 @@ SOURCES += \
     materialpropertymanager.cpp \
     imagefinderbar.cpp \
     tilematerialselectiondialog.cpp \
+    templatematerialselector.cpp \
     abstracttileselectiontool.cpp \
     tilemaphelpers.cpp \
     shaperegion.cpp \
     mapviewcontainer.cpp\
     m2mpartialmesh.cpp \
     m2mtilemesher_private.cpp \
-    polygon.cpp
+    polygon.cpp \
+    imageandsource.cpp\
+    mapviewmatchercamera.cpp
 
 HEADERS += \
     meshview.h \
@@ -152,6 +156,7 @@ HEADERS += \
     imagefinderbar.h \
     imageandsource.h \
     tilematerialselectiondialog.h \
+    templatematerialselector.h \
     abstracttileselectiontool.h \
     tilemaphelpers.h \
     shaperegion.h \
@@ -161,7 +166,8 @@ HEADERS += \
     array2d_private.h \
     m2mtilemesher_private.h \
     polygon.h \
-    geometry.h
+    geometry.h \
+    mapviewmatchercamera.h
 
 FORMS +=
 
