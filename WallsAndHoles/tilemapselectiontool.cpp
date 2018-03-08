@@ -7,9 +7,8 @@
 #include <QDebug>
 
 TileMapSelectionTool::TileMapSelectionTool(PropertyBrowser *propertyBrowser,
-                                           TileMapPreviewGraphicsItem *previewItem,
-                                           QObject *parent)
-    : AbstractTileSelectionTool(propertyBrowser, previewItem, parent)
+                                           TileMapPreviewGraphicsItem *previewItem)
+    : AbstractTileSelectionTool(propertyBrowser, previewItem)
     , mClickCount(0)
     , mLastClickTime(0) {}
 

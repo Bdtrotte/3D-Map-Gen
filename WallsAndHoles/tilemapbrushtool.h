@@ -10,7 +10,7 @@
 class TileMapBrushTool : public AbstractTileMapTool
 {
 public:
-    TileMapBrushTool(TileMapPreviewGraphicsItem *previewItem, QObject *parent = nullptr);
+    TileMapBrushTool(TileMapPreviewGraphicsItem *previewItem);
 
     void cellActivated(int x, int y, QMouseEvent *) override;
     void cellHovered(int x, int y, QMouseEvent *) override;

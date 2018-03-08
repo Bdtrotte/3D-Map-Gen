@@ -11,7 +11,7 @@ class FillTool : public AbstractTileMapTool {
     Q_OBJECT
 
 public:
-    FillTool(TileMapPreviewGraphicsItem *previewItem, QObject *parent = nullptr);
+    FillTool(TileMapPreviewGraphicsItem *previewItem);
 
     /**
      * @brief This will immediately fill an area.

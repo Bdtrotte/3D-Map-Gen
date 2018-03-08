@@ -4,8 +4,8 @@
 #include <QLabel>
 #include <QHBoxLayout>
 
-TileMapBrushTool::TileMapBrushTool(TileMapPreviewGraphicsItem *previewItem, QObject *parent)
-    : AbstractTileMapTool(previewItem, parent)
+TileMapBrushTool::TileMapBrushTool(TileMapPreviewGraphicsItem *previewItem)
+    : AbstractTileMapTool(previewItem)
     , mRadius(1)
     , mRadiusSpinner(new QWidgetAction(this))
 {
