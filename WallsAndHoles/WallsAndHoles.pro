@@ -86,7 +86,8 @@ SOURCES += \
     shaperegion.cpp \
     mapviewcontainer.cpp\
     m2mpartialmesh.cpp \
-    m2mtilemesher_private.cpp
+    m2mtilemesher_private.cpp \
+    imageandsource.cpp
 
 HEADERS += \
     meshview.h \

@@ -294,7 +294,7 @@ SavableTileTemplateSet *XMLTool::openTileTemplateSet(QString templateSetPath)
 
                 TileMaterial *m = new TileMaterial(name, ImageAndSource::getSharedImageAndSource(texturePath), ambient, diffuse, specular, shininess);
 
-                if (TileMaterial *tm = TileMaterialSet::getInstance()->materialInSet(m))
+                if (TileMaterial *tm = TileMaterialSet::getInstance()->materialInSet(*m))
                     m = tm;
                 else
                     TileMaterialSet::getInstance()->addMaterial(m);
