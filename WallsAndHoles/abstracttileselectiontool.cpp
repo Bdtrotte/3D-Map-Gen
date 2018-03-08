@@ -5,9 +5,8 @@
 QRegion AbstractTileSelectionTool::mSelection;
 
 AbstractTileSelectionTool::AbstractTileSelectionTool(PropertyBrowser *propertyBrowser,
-                                                     TileMapPreviewGraphicsItem *previewItem,
-                                                     QObject *parent)
-    : AbstractTileMapTool(previewItem, parent)
+                                                     TileMapPreviewGraphicsItem *previewItem)
+    : AbstractTileMapTool(previewItem)
     , mPropertyBrowser(propertyBrowser) {}
 
 void AbstractTileSelectionTool::deactivate()

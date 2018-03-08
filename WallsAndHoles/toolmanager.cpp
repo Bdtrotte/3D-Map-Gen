@@ -6,14 +6,15 @@
 
 ToolManager::ToolManager(QObject *parent)
     : QObject(parent)
-{
-    mActionGroup = new QActionGroup(this);
-    mContextToolBar = new QToolBar();
-}
+    , mActionGroup(new QActionGroup(this))
+    , mActiveTool(nullptr)
+    , mContextToolBar(new QToolBar()) {}
 
 
-QAction *ToolManager::registerTool(AbstractToolP tool, QString name, QIcon icon, QKeySequence ks)
+QAction *ToolManager::registerTool(AbstractTool *tool, QString name, QIcon icon, QKeySequence ks)
 {
+    tool->setParent(this);
+
     // This automatically adds action to mActionGroup.
     QAction *action = new QAction(name, mActionGroup);
 

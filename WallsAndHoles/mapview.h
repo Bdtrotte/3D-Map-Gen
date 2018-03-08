@@ -32,6 +32,16 @@ public:
 
     TileMapPreviewGraphicsItem *previewItem() { return mPreviewItem; }
 
+    /**
+     * @brief tilesInFrame
+     *
+     * The corners of the returned rect are the tile cords under the
+     * corners of the frame of this widget.
+     *
+     * @return
+     */
+    QRectF tilesInFrame() const;
+
 private slots:
     void mapSizeChanged();
 
@@ -40,6 +50,8 @@ protected:
     void mouseMoveEvent(QMouseEvent *event) override;
     void mousePressEvent(QMouseEvent *event) override;
     void mouseReleaseEvent(QMouseEvent *event) override;
+
+    void resizeEvent(QResizeEvent *) override;
 
 signals:
     /**
@@ -95,6 +107,18 @@ signals:
      * @brief Emitted when the mouse exits the map.
      */
     void mouseExitedMap(QMouseEvent *event);
+
+    /**
+     * @brief mapViewChanged
+     *
+     * emitted whenever the map changes position relative the the frame of this widget.
+     *
+     * @param rect
+     *
+     * The corners of this rect are the tile cords under the corners of the widget
+     * Wont necessarily be in the bounds of the map.
+     */
+    void mapViewChanged(QRectF rect);
 
 private:
     /**

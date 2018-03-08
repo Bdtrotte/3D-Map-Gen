@@ -11,14 +11,12 @@
 MeshView::MeshView(QWidget *parent) :
     QOpenGLWidget(parent),
     mNextRenderer(nullptr),
+    mCamera(nullptr),
+    mTools(new ToolManager(this)),
     mContext(nullptr)
 {
-    mCamera = QSharedPointer<MeshViewCameraLikeBlender>::create();
-
-    connect(mCamera.data(), &AbstractMeshViewCamera::changed, this, &MeshView::scheduleRepaint);
-
-    mTools = ToolManagerP::create();
-    mTools->registerTool(mCamera, "camera");
+    connect(mTools, &ToolManager::toolWasActivated,
+            this, &MeshView::cameraActivated);
 }
 
 
@@ -48,25 +46,24 @@ void MeshView::setRenderer(QSharedPointer<AbstractRenderer> renderer) {
     connect(renderer.data(), &AbstractRenderer::doneContextCurrent, this, &MeshView::doneContextCurrent);
 }
 
-void MeshView::mousePressEvent(QMouseEvent *event) {
+void MeshView::mousePressEvent(QMouseEvent *event)
+{
     mTools->mousePressEvent(event);
 }
 
-void MeshView::mouseMoveEvent(QMouseEvent *event) {
+void MeshView::mouseMoveEvent(QMouseEvent *event)
+{
     mTools->mouseMoveEvent(event);
 }
 
-void MeshView::mouseReleaseEvent(QMouseEvent *event) {
+void MeshView::mouseReleaseEvent(QMouseEvent *event)
+{
     mTools->mouseReleaseEvent(event);
 }
 
-void MeshView::wheelEvent(QWheelEvent *event) {
+void MeshView::wheelEvent(QWheelEvent *event)
+{
     mTools->wheelEvent(event);
-}
-
-
-void MeshView::activateTool(QString name) {
-    mTools->activateTool(name);
 }
 
 
@@ -121,6 +118,20 @@ void MeshView::cleanUp()
     mContext = nullptr;
 }
 
+void MeshView::cameraActivated(AbstractTool *tool, QString)
+{
+    if (mCamera)
+        disconnect(mCamera);
+
+    mCamera = dynamic_cast<AbstractMeshViewCamera *>(tool);
+
+    Q_ASSERT(mCamera);
+
+    connect(mCamera, &AbstractMeshViewCamera::changed,
+            this, &MeshView::scheduleRepaint);
+
+    update();
+}
 
 
 // This method is called whenever there is a new context. If there was an old context

@@ -8,8 +8,7 @@ class AbstractTileSelectionTool : public AbstractTileMapTool
 {
 public:
     AbstractTileSelectionTool(PropertyBrowser *propertyBrowser,
-                              TileMapPreviewGraphicsItem *previewItem,
-                              QObject *parent = nullptr);
+                              TileMapPreviewGraphicsItem *previewItem);
 
     static const QRegion &selection() { return mSelection; }
 

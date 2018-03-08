@@ -24,8 +24,6 @@
 class AbstractTool : public QObject
 {
 public:
-    AbstractTool(QObject *parent = nullptr) : QObject(parent) {}
-
     virtual ~AbstractTool() {}
 
 

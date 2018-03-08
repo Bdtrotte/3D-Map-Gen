@@ -86,7 +86,8 @@ SOURCES += \
     shaperegion.cpp \
     mapviewcontainer.cpp\
     m2mpartialmesh.cpp \
-    m2mtilemesher_private.cpp
+    m2mtilemesher_private.cpp \
+    mapviewmatchercamera.cpp
 
 HEADERS += \
     meshview.h \
@@ -161,7 +162,8 @@ HEADERS += \
     m2mpartialmesh.h \
     array2dtools.h \
     array2d_private.h \
-    m2mtilemesher_private.h
+    m2mtilemesher_private.h \
+    mapviewmatchercamera.h
 
 FORMS +=
 
