@@ -100,7 +100,6 @@ public:
      *                          when looking at the quad. Otherwise, the vertices are output in the order
      *                              2 1
      *                              4 3
-     *                          Texture coordinates are always (0,0), (1,0), (1,1), (0,1).
      * @return                  The specified quad.
      */
     static Quad makeVerticalQuad(QVector3D center,

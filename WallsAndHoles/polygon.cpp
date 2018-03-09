@@ -3,6 +3,7 @@
 #include "geometry.h"
 
 #include <QSet>
+#include <QDebug>
 
 uint qHash(const QPointF &key)
 {
@@ -12,11 +13,23 @@ uint qHash(const QPointF &key)
 BetterPolygon::BetterPolygon(const QVector<QPointF> &points)
 {
     mPolygon = points;
+
+    if (mPolygon.isClosed()) mPolygon.removeLast();
+
+    if (!isValid()) {
+        qDebug() << "INVALID POLYGON SET";
+    }
 }
 
 BetterPolygon::BetterPolygon(const QPolygonF &polygon)
 {
     mPolygon = polygon;
+
+    if (mPolygon.isClosed()) mPolygon.removeLast();
+
+    if (!isValid()) {
+        qDebug() << "INVALID POLYGON SET";
+    }
 }
 
 bool BetterPolygon::isValid() const
@@ -66,7 +79,7 @@ bool BetterPolygon::chordIsClear(int ind1, int ind2) const
     for (int i = 0; i < mPolygon.size(); ++i) {
         int j = (i + 1) % mPolygon.size();
 
-        if ((j == ind1 && i == ind2) || (i == ind1 && j == ind2)) continue;
+        if (i == ind1 || i == ind2 || j == ind1 || j == ind2) continue;
 
         if (line.intersect(QLineF(mPolygon[i], mPolygon[j]), nullptr) == QLineF::BoundedIntersection)
             return false;

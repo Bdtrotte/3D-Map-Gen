@@ -4,7 +4,7 @@
 
 using namespace M2M_Private;
 
-M2M::PartialMeshData polygonMesh(const BetterPolygon &polygon,
+M2M::PartialMeshData M2M_Private::polygonMesh(const BetterPolygon &polygon,
                                  float height,
                                  M2M::ImageInfo image,
                                  M2M::PhongInfo material)
@@ -27,14 +27,44 @@ M2M::PartialMeshData polygonMesh(const BetterPolygon &polygon,
     return mesh;
 }
 
-M2M::PartialMeshData polygonSidesMesh(BetterPolygon polygon,
-                                                   QVector<bool> edgesToDrop,
-                                                   QVector<float> bottomHeight,
-                                                   float topHeight,
-                                                   M2M::ImageInfo image,
-                                                   M2M::PhongInfo material)
+M2M::PartialMeshData M2M_Private::polygonSidesMesh(const BetterPolygon &polygon,
+                                      QVector<bool> edgesToDrop,
+                                      QVector<float> bottomHeight,
+                                      float topHeight,
+                                      M2M::ImageInfo image,
+                                      M2M::PhongInfo material)
 {
     M2M::PartialMeshData mesh;
+
+    for (int i = 0; i < polygon.points().size(); ++i) {
+        if (!edgesToDrop[i]) continue;
+        int j = (i + 1) % polygon.points().size();
+
+        QPointF a = polygon.points()[i];
+        QPointF b = polygon.points()[j];
+        QPointF xzCenter = (a + b) / 2;
+
+        QVector2D dir(b - a);
+        QVector2D normal(-dir.y(), dir.x());
+        normal.normalize();
+        QVector3D center(xzCenter.x(), (topHeight + bottomHeight[i]) / 2, xzCenter.y());
+
+        float height = topHeight - bottomHeight[i];
+        bool upsideDown = false;
+        if (height == 0) continue;
+        if (height < 0) {
+            height = -height;
+            upsideDown = true;
+        }
+
+        mesh.addQuad(M2M::Quad::makeVerticalQuad(center,
+                                                 normal,
+                                                 dir.length(),
+                                                 height,
+                                                 image,
+                                                 material,
+                                                 upsideDown));
+    }
 
     return mesh;
 }

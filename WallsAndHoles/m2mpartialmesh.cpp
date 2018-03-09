@@ -61,6 +61,7 @@ Quad Quad::makeVerticalQuad(QVector3D center,
     QVector2D t3(width, height);
     QVector2D t4(0, height);
 
+    if (upsideDown) xzDirection = -xzDirection;
 
     // "Left" direction when looking at the quad from the front.
     // Magnitude is such that center + left is on the left edge of the quad.

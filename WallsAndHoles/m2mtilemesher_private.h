@@ -12,6 +12,12 @@
 /*
  * Various helper functions for the M2M tile mesher process.
  * */
+namespace M2M_Private {
+
+enum SideDirection {
+    NORTH, EAST, SOUTH, WEST
+};
+
 /**
  * @brief polygonMesh
  * @param polygon
@@ -31,18 +37,12 @@ M2M::PartialMeshData polygonMesh(const BetterPolygon &polygon,
  * @param bottomHeight
  * @return
  */
-M2M::PartialMeshData polygonSidesMesh(BetterPolygon polygon,
+M2M::PartialMeshData polygonSidesMesh(const BetterPolygon &polygon,
                                       QVector<bool> edgesToDrop,
                                       QVector<float> bottomHeight,
                                       float topHeight,
                                       M2M::ImageInfo image,
                                       M2M::PhongInfo material);
-
-namespace M2M_Private {
-
-enum SideDirection {
-    NORTH, EAST, SOUTH, WEST
-};
 
 namespace SideTools {
 
