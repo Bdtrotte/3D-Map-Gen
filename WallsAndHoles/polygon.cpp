@@ -15,6 +15,8 @@ bool Polygon::chordIsClear(int ind1, int ind2) const
 
     QLineF line(mPoints[ind1], mPoints[ind2]);
 
+    if (!contains(line.center())) return false;
+
     for (int i = 0; i < mPoints.size(); ++i) {
         int j = (i + 1) % mPoints.size();
 
@@ -140,7 +142,39 @@ QRectF Polygon::boundingRect() const
     return QRectF(topLeft, bottomRight);
 }
 
-QVector<QPointF> Polygon::allIntersections(QLineF line) const
+QPair<QPointF, QPair<int, int>> Polygon::firstIntersectionPoint(const Polygon &other, int startingPoint, int direction) const
+{
+    int end, inc;
+    if (direction == 1) {
+        end = (startingPoint - 1 + mPoints.size()) % mPoints.size();
+        inc = 1;
+    } else if (direction == 2) {
+        end = (startingPoint + 1) % mPoints.size();
+        inc = -1;
+    } else {
+        Q_ASSERT(false);
+    }
+
+    for (int i = 0; i != end;) {
+        int j = (i + inc + mPoints.size()) % mPoints.size();
+
+        QLineF line(mPoints[i], mPoints[j]);
+
+        for (int a = 0; a < other.points().size(); ++a) {
+            int b = (a + 1) % other.points().size();
+
+            QPointF intPoint;
+            if (line.intersect(QLineF(other[a], other[b]), &intPoint) == QLineF::BoundedIntersection)
+                return QPair<QPointF, QPair<int, int>>(intPoint, QPair<int, int>(i, j));
+        }
+
+        i = j;
+    }
+
+    return QPair<QPointF, QPair<int, int>>(QPointF(), QPair<int, int>(-1, -1));
+}
+
+QVector<QPointF> Polygon::allIntersections(const QLineF &line) const
 {
     if (mPoints.isEmpty()) return {};
 
@@ -156,12 +190,27 @@ QVector<QPointF> Polygon::allIntersections(QLineF line) const
     return points;
 }
 
-QVector<Polygon> Polygon::intersected(const Polygon &other) const
+QVector<Polygon> Polygon::subtracted(const Polygon &other) const
 {
+    if (other.points().isEmpty()) return { *this };
 
+    bool firstPointContained = contains(other[0]);
+    bool noOverlap = true;
+
+    for (const QPointF &p : other.points()) {
+        if (contains(p) != firstPointContained) {
+            noOverlap = false;
+            break;
+        }
+    }
+
+    //The cases that the polygons go not intersect at all.
+    if (noOverlap && !firstPointContained) {
+        return {};
+    }
 }
 
-QVector<Polygon> Polygon::united(const Polygon &other) const
+void Polygon::insertPointOnEdge(const QPointF &point, int before)
 {
-
+    mPoints.insert(before + 1, point);
 }

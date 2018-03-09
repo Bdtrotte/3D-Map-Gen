@@ -16,6 +16,7 @@
  * Rules of this are:
  *    All points must be unique
  *    No edges may overlap
+ *    Points must be counter clockwise
  */
 class Polygon
 {
@@ -73,10 +74,29 @@ public:
 
     QRectF boundingRect() const;
 
-    QVector<Polygon> intersected(const Polygon &other) const;
-    QVector<Polygon> united(const Polygon &other) const;
+    /**
+     * @brief firstIntersectionPoint
+     *
+     * finds the first edge that intersects the other polygon
+     * The point of intersection, and the edge of this polygon is returned
+     * If there is no intersection, the point will be null, and the edge will be -1, -1
+     *
+     * @param other
+     * @param startingPoint
+     * @param direction
+     *
+     * 1 - clockwise
+     * 2 - counter clockwise
+     *
+     * @return
+     */
+    QPair<QPointF, QPair<int, int>> firstIntersectionPoint(const Polygon &other, int startingPoint, int direction) const;
+
+    QVector<Polygon> subtracted(const Polygon &other) const;
 
     const QPointF &at(int i) const { return mPoints[i]; }
+
+    void insertPointOnEdge(const QPointF &point, int before);
 
 private:
     QVector<QPointF> mPoints;
