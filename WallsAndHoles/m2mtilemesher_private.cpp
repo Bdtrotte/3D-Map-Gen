@@ -4,7 +4,7 @@
 
 using namespace M2M_Private;
 
-M2M::PartialMeshData M2M_Private::polygonMesh(const Polygon &polygon,
+M2M::PartialMeshData polygonMesh(const BetterPolygon &polygon,
                                  float height,
                                  M2M::ImageInfo image,
                                  M2M::PhongInfo material)
@@ -27,15 +27,13 @@ M2M::PartialMeshData M2M_Private::polygonMesh(const Polygon &polygon,
     return mesh;
 }
 
-M2M::PartialMeshData M2M_Private::polygonSidesMesh(Polygon polygon,
+M2M::PartialMeshData polygonSidesMesh(BetterPolygon polygon,
                                                    QVector<bool> edgesToDrop,
                                                    QVector<float> bottomHeight,
                                                    float topHeight,
                                                    M2M::ImageInfo image,
                                                    M2M::PhongInfo material)
 {
-    if (!polygon.isClosed()) polygon.append(polygon.first());
-
     M2M::PartialMeshData mesh;
 
     return mesh;

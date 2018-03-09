@@ -5,6 +5,7 @@
 #include <QVector>
 #include <QLineF>
 #include <QRectF>
+#include <QPolygonF>
 
 #include "triplet.h"
 
@@ -18,13 +19,14 @@
  *    No edges may overlap
  *    Points must be counter clockwise
  */
-class Polygon
+class BetterPolygon
 {
 public:
-    Polygon() {}
-    Polygon(const QVector<QPointF> &points);
+    BetterPolygon() {}
+    BetterPolygon(const QVector<QPointF> &points);
+    BetterPolygon(const QPolygonF &polygon);
 
-    const QVector<QPointF> &points() { return mPoints; }
+    bool isValid() const;
 
     /**
      * @brief chordIsClear
@@ -37,6 +39,10 @@ public:
      */
     bool chordIsClear(int ind1, int ind2) const;
 
+    bool connectionIsClear(const BetterPolygon &other, int pointOnThis, int pointOnOther) const;
+
+    bool overlaps(const BetterPolygon &other) const;
+
     /**
      * @brief splitPolygon
      *
@@ -45,7 +51,7 @@ public:
      *
      * @return
      */
-    QPair<Polygon, Polygon> splitPolygon() const;
+    QPair<BetterPolygon, BetterPolygon> splitPolygon() const;
 
     /**
      * @brief splitPolygon
@@ -57,7 +63,7 @@ public:
      * @param chord
      * @return
      */
-    QPair<Polygon, Polygon> splitPolygon(QPair<int, int> chord) const;
+    QPair<BetterPolygon, BetterPolygon> splitPolygon(QPair<int, int> chord) const;
 
     /**
      * @brief triangulate
@@ -68,38 +74,14 @@ public:
      */
     QList<Triplet<QPointF, QPointF, QPointF>> triangulate() const;
 
-    QVector<QPointF> allIntersections(const QLineF &line) const;
+    QVector<BetterPolygon> subtract(const BetterPolygon &other) const;
+    QVector<BetterPolygon> intersect(const BetterPolygon &other) const;
 
-    bool contains(const QPointF &point) const;
-
-    QRectF boundingRect() const;
-
-    /**
-     * @brief firstIntersectionPoint
-     *
-     * finds the first edge that intersects the other polygon
-     * The point of intersection, and the edge of this polygon is returned
-     * If there is no intersection, the point will be null, and the edge will be -1, -1
-     *
-     * @param other
-     * @param startingPoint
-     * @param direction
-     *
-     * 1 - clockwise
-     * 2 - counter clockwise
-     *
-     * @return
-     */
-    QPair<QPointF, QPair<int, int>> firstIntersectionPoint(const Polygon &other, int startingPoint, int direction) const;
-
-    QVector<Polygon> subtracted(const Polygon &other) const;
-
-    const QPointF &at(int i) const { return mPoints[i]; }
-
-    void insertPointOnEdge(const QPointF &point, int before);
+    const QVector<QPointF> &points() const { return mPolygon; }
+    QVector<QPointF> &points() { return mPolygon; }
 
 private:
-    QVector<QPointF> mPoints;
+    QPolygonF mPolygon;
 };
 
 #endif // POLYGON_H

@@ -8,24 +8,17 @@
 #include "m2mpartialmesh.h"
 #include "polygon.h"
 
+
 /*
  * Various helper functions for the M2M tile mesher process.
  * */
-
-
-namespace M2M_Private {
-
-enum SideDirection {
-    NORTH, EAST, SOUTH, WEST
-};
-
 /**
  * @brief polygonMesh
  * @param polygon
  * @param height
  * @return
  */
-M2M::PartialMeshData polygonMesh(const Polygon &polygon,
+M2M::PartialMeshData polygonMesh(const BetterPolygon &polygon,
                                  float height,
                                  M2M::ImageInfo image,
                                  M2M::PhongInfo material);
@@ -38,12 +31,18 @@ M2M::PartialMeshData polygonMesh(const Polygon &polygon,
  * @param bottomHeight
  * @return
  */
-M2M::PartialMeshData polygonSidesMesh(Polygon polygon,
+M2M::PartialMeshData polygonSidesMesh(BetterPolygon polygon,
                                       QVector<bool> edgesToDrop,
                                       QVector<float> bottomHeight,
                                       float topHeight,
                                       M2M::ImageInfo image,
                                       M2M::PhongInfo material);
+
+namespace M2M_Private {
+
+enum SideDirection {
+    NORTH, EAST, SOUTH, WEST
+};
 
 namespace SideTools {
 

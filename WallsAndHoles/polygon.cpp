@@ -2,215 +2,343 @@
 
 #include "geometry.h"
 
-Polygon::Polygon(const QVector<QPointF> &points)
-{
+#include <QSet>
 
+uint qHash(const QPointF &key)
+{
+    return qHash(QPair<float, float>(key.x(), key.y()));
 }
 
-bool Polygon::chordIsClear(int ind1, int ind2) const
+BetterPolygon::BetterPolygon(const QVector<QPointF> &points)
 {
-    if (ind2 == ((ind1 + 1) % mPoints.size())
-            || ind1 == ((ind2 + 1) % mPoints.size()))
+    mPolygon = points;
+}
+
+BetterPolygon::BetterPolygon(const QPolygonF &polygon)
+{
+    mPolygon = polygon;
+}
+
+bool BetterPolygon::isValid() const
+{
+    if (mPolygon.size() < 3) return false;
+
+    QSet<QPointF> points;
+
+    //Check to see if any points are the same
+    for (QPointF p : mPolygon) {
+        if (points.contains(p))
+            return false;
+        points.insert(p);
+    }
+
+    //Check to see if any edges cross
+    for (int i = 0; i < mPolygon.size(); ++i) {
+        int j = (i + 1) % mPolygon.size();
+
+        QLineF lineA(mPolygon[i], mPolygon[j]);
+
+        for (int a = 0; a < mPolygon.size(); ++a) {
+            int b = (a + 1) % mPolygon.size();
+
+            if (i == a || i == b || j == a || j == b) continue;
+
+            if (lineA.intersect(QLineF(mPolygon[a], mPolygon[b]), nullptr) == QLineF::BoundedIntersection)
+                return false;
+        }
+    }
+
+    // TODO need to ensure it's counter clockwise
+
+    return true;
+}
+
+bool BetterPolygon::chordIsClear(int ind1, int ind2) const
+{
+    if (ind2 == ((ind1 + 1) % mPolygon.size())
+            || ind1 == ((ind2 + 1) % mPolygon.size()))
         return false;
 
-    QLineF line(mPoints[ind1], mPoints[ind2]);
+    QLineF line(mPolygon[ind1], mPolygon[ind2]);
 
-    if (!contains(line.center())) return false;
+    if (!mPolygon.containsPoint(line.center(), Qt::OddEvenFill)) return false;
 
-    for (int i = 0; i < mPoints.size(); ++i) {
-        int j = (i + 1) % mPoints.size();
+    for (int i = 0; i < mPolygon.size(); ++i) {
+        int j = (i + 1) % mPolygon.size();
 
         if ((j == ind1 && i == ind2) || (i == ind1 && j == ind2)) continue;
 
-        if (line.intersect(QLineF(mPoints[i], mPoints[j]), nullptr) == QLineF::BoundedIntersection)
+        if (line.intersect(QLineF(mPolygon[i], mPolygon[j]), nullptr) == QLineF::BoundedIntersection)
             return false;
     }
 
     return true;
 }
 
-QPair<Polygon, Polygon> Polygon::splitPolygon() const
+bool BetterPolygon::connectionIsClear(const BetterPolygon &other, int pointOnThis, int pointOnOther) const
+{
+    QLineF line(mPolygon[pointOnThis], other.mPolygon[pointOnOther]);
+
+    for (int i = 0; i < mPolygon.size(); ++i) {
+        int j = (i + 1) % mPolygon.size();
+
+        if (j == pointOnThis || i == pointOnThis) continue;
+
+        if (line.intersect(QLineF(mPolygon[i], mPolygon[j]), nullptr) == QLineF::BoundedIntersection)
+            return false;
+    }
+
+    for (int i = 0; i < other.mPolygon.size(); ++i) {
+        int j = (i + 1) % other.mPolygon.size();
+
+        if (j == pointOnOther || i == pointOnOther) continue;
+
+        if (line.intersect(QLineF(other.mPolygon[i], other.mPolygon[j]), nullptr) == QLineF::BoundedIntersection)
+            return false;
+    }
+
+    return true;
+}
+
+bool BetterPolygon::overlaps(const BetterPolygon &other) const
+{
+    for (int i = 0; i < mPolygon.size(); ++i) {
+        int j = (i + 1) % mPolygon.size();
+        QLineF line(mPolygon[i], mPolygon[j]);
+
+        for (int a = 0; a < other.mPolygon.size(); ++a) {
+            int b = (a + 1) % other.mPolygon.size();
+
+            if (line.intersect(QLineF(other.mPolygon[a], other.mPolygon[b]), nullptr) == QLineF::BoundedIntersection)
+                return true;
+        }
+    }
+
+    return false;
+}
+
+QPair<BetterPolygon, BetterPolygon> BetterPolygon::splitPolygon() const
 {
     //go through all chords, and choose the first that is clear
 
-    for (int i = 0; i < mPoints.size(); ++i) {
-        for (int j = i + 2; j < mPoints.size(); ++j) {
+    for (int i = 0; i < mPolygon.size(); ++i) {
+        for (int j = i + 2; j < mPolygon.size(); ++j) {
             if (chordIsClear(i, j)) {
                 QVector<QPointF> p1, p2;
 
                 int progress = i;
                 while (true) {
                     if (progress == j) {
-                        p1.append(mPoints[progress]);
+                        p1.append(mPolygon[progress]);
                         break;
                     }
 
-                    p1.append(mPoints[progress]);
-                    progress = (progress + 1) % mPoints.size();
+                    p1.append(mPolygon[progress]);
+                    progress = (progress + 1) % mPolygon.size();
                 }
                 while (true) {
                     if (progress == i) {
-                        p2.append(mPoints[progress]);
+                        p2.append(mPolygon[progress]);
                         break;
                     }
 
-                    p2.append(mPoints[progress]);
-                    progress = (progress + 1) % mPoints.size();
+                    p2.append(mPolygon[progress]);
+                    progress = (progress + 1) % mPolygon.size();
                 }
 
-                return QPair<Polygon, Polygon>(p1, p2);
+                return QPair<BetterPolygon, BetterPolygon>(p1, p2);
             }
         }
     }
 
-    return QPair<Polygon, Polygon>(*this, QPolygon());
+    return QPair<BetterPolygon, BetterPolygon>(*this, BetterPolygon());
 }
 
-QPair<Polygon, Polygon> Polygon::splitPolygon(QPair<int, int> chord) const
+QPair<BetterPolygon, BetterPolygon> BetterPolygon::splitPolygon(QPair<int, int> chord) const
 {
     int i = chord.first, j = chord.second;
 
     if (!chordIsClear(i, j))
-        return QPair<Polygon, Polygon>(*this, QPolygon());
+        return QPair<BetterPolygon, BetterPolygon>(*this, BetterPolygon());
 
     QVector<QPointF> p1, p2;
 
     int progress = i;
     while (true) {
         if (progress == j) {
-            p1.append(mPoints[progress]);
+            p1.append(mPolygon[progress]);
             break;
         }
 
-        p1.append(mPoints[progress]);
-        progress = (progress + 1) % mPoints.size();
+        p1.append(mPolygon[progress]);
+        progress = (progress + 1) % mPolygon.size();
     }
     while (true) {
         if (progress == i) {
-            p2.append(mPoints[progress]);
+            p2.append(mPolygon[progress]);
             break;
         }
 
-        p2.append(mPoints[progress]);
-        progress = (progress + 1) % mPoints.size();
+        p2.append(mPolygon[progress]);
+        progress = (progress + 1) % mPolygon.size();
     }
 
-    return QPair<Polygon, Polygon>(p1, p2);
+    return QPair<BetterPolygon, BetterPolygon>(p1, p2);
 }
 
-QList<Triplet<QPointF, QPointF, QPointF>> Polygon::triangulate() const
+QList<Triplet<QPointF, QPointF, QPointF>> BetterPolygon::triangulate() const
 {
-    if (mPoints.size() == 3) {
-        if (Geometry::orientation(mPoints[0], mPoints[1], mPoints[2]) == 2)
-            return { {mPoints[0], mPoints[1], mPoints[2]} };
+    if (mPolygon.size() == 3) {
+        if (Geometry::orientation(mPolygon[0], mPolygon[1], mPolygon[2]) == 2)
+            return { {mPolygon[0], mPolygon[1], mPolygon[2]} };
         else
-            return { {mPoints[0], mPoints[2], mPoints[1]} };
+            return { {mPolygon[0], mPolygon[2], mPolygon[1]} };
     }
 
-    QPair<Polygon, Polygon> split = splitPolygon();
+    QPair<BetterPolygon, BetterPolygon> split = splitPolygon();
     QList<Triplet<QPointF, QPointF, QPointF>> trigs = split.first.triangulate();
     trigs.append(split.second.triangulate());
 
     return trigs;
 }
 
-bool Polygon::contains(const QPointF &point) const
+QVector<BetterPolygon> BetterPolygon::subtract(const BetterPolygon &other) const
 {
-    QPointF outPoint = QPointF(point.x(), boundingRect().top() + 1);
+    bool firstPointContained = mPolygon.containsPoint(other.mPolygon.first(), Qt::OddEvenFill);
 
-    //odd even fill
-    return (allIntersections(QLineF(outPoint, point)).size() % 2) == 1;
-}
+    if (!overlaps(other)) {
+        if (firstPointContained) {
+            //Special case, polygon to subtract is contained within this
+            auto findConnection = [this, other](int &i, int &j) {
+                while(true) {
+                    bool shouldBreak = false;
+                    while(true) {
+                        if (connectionIsClear(other, i, j)) {
+                            shouldBreak = true;
+                            break;
+                        }
 
-QRectF Polygon::boundingRect() const
-{
-    if (mPoints.isEmpty()) return QRectF();
+                        j = (j + 1) % other.mPolygon.size();
+                    }
+                    if (shouldBreak) break;
 
-    QPointF topLeft, bottomRight;
-    topLeft = bottomRight = mPoints.first();
+                    i = (i + 1) % mPolygon.size();
+                }
+            };
 
-    for (auto i = mPoints.begin() + 1; i != mPoints.end(); ++i) {
-        const QPointF &p = *i;
+            QPair<int, int> cA, cB;
+            findConnection(cA.first = 0,
+                           cA.second = 0);
+            findConnection(cB.first = (cA.first + 1) % mPolygon.size(),
+                           cB.second = (cA.second + 1) % other.mPolygon.size());
 
-        if (p.x() < topLeft.x()) topLeft.setX(p.x());
-        else if (p.x() > bottomRight.x()) bottomRight.setX(p.x());
+            //Construct the two new polygons.
+            QPolygonF polyA;
+            polyA.append(mPolygon[cA.first]);
+            polyA.append(other.mPolygon[cA.second]);
 
-        if (p.y() < topLeft.y()) topLeft.setY(p.y());
-        else if (p.y() > bottomRight.y()) bottomRight.setY(p.y());
-    }
+            int prog = (cA.second + 1) % other.mPolygon.size();
+            while (prog != cB.second) {
+                polyA.append(other.mPolygon[prog]);
+                prog = (prog + 1) % other.mPolygon.size();
+            }
 
-    return QRectF(topLeft, bottomRight);
-}
+            polyA.append(other.mPolygon[cB.second]);
+            polyA.append(mPolygon[cB.first]);
 
-QPair<QPointF, QPair<int, int>> Polygon::firstIntersectionPoint(const Polygon &other, int startingPoint, int direction) const
-{
-    int end, inc;
-    if (direction == 1) {
-        end = (startingPoint - 1 + mPoints.size()) % mPoints.size();
-        inc = 1;
-    } else if (direction == 2) {
-        end = (startingPoint + 1) % mPoints.size();
-        inc = -1;
-    } else {
-        Q_ASSERT(false);
-    }
+            prog = (cB.first - 1 + mPolygon.size()) % mPolygon.size();
+            while (prog != cA.first) {
+                polyA.append(mPolygon[prog]);
+                prog = (prog - 1 + mPolygon.size()) % mPolygon.size();
+            }
 
-    for (int i = 0; i != end;) {
-        int j = (i + inc + mPoints.size()) % mPoints.size();
+            QPolygonF polyB;
+            polyB.append(mPolygon[cA.first]);
+            polyB.append(other.mPolygon[cA.second]);
 
-        QLineF line(mPoints[i], mPoints[j]);
+            prog = (cA.second - 1 + other.mPolygon.size()) % other.mPolygon.size();
+            while (prog != cB.second) {
+                polyB.append(other.mPolygon[prog]);
+                prog = (prog - 1 + other.mPolygon.size()) % other.mPolygon.size();
+            }
 
-        for (int a = 0; a < other.points().size(); ++a) {
-            int b = (a + 1) % other.points().size();
+            polyB.append(other.mPolygon[cB.second]);
+            polyB.append(mPolygon[cB.first]);
 
-            QPointF intPoint;
-            if (line.intersect(QLineF(other[a], other[b]), &intPoint) == QLineF::BoundedIntersection)
-                return QPair<QPointF, QPair<int, int>>(intPoint, QPair<int, int>(i, j));
-        }
+            prog = (cB.first + 1) % mPolygon.size();
+            while (prog != cA.first) {
+                polyB.append(mPolygon[prog]);
+                prog = (prog + 1) % mPolygon.size();
+            }
 
-        i = j;
-    }
+            return { polyA, polyB };
 
-    return QPair<QPointF, QPair<int, int>>(QPointF(), QPair<int, int>(-1, -1));
-}
-
-QVector<QPointF> Polygon::allIntersections(const QLineF &line) const
-{
-    if (mPoints.isEmpty()) return {};
-
-    QVector<QPointF> points;
-
-    for (int i = 0; i <= mPoints.size(); ++i) {
-        int j = (i + 1) % mPoints.size();
-        QPointF p;
-        if (line.intersect(QLineF(mPoints[i], mPoints[j]), &p) == QLineF::BoundedIntersection)
-            points.append(p);
-    }
-
-    return points;
-}
-
-QVector<Polygon> Polygon::subtracted(const Polygon &other) const
-{
-    if (other.points().isEmpty()) return { *this };
-
-    bool firstPointContained = contains(other[0]);
-    bool noOverlap = true;
-
-    for (const QPointF &p : other.points()) {
-        if (contains(p) != firstPointContained) {
-            noOverlap = false;
-            break;
+        } else {
+            if (other.mPolygon.containsPoint(mPolygon.first(), Qt::OddEvenFill))
+                return {};
+            else
+                return { *this };
         }
     }
 
-    //The cases that the polygons go not intersect at all.
-    if (noOverlap && !firstPointContained) {
-        return {};
+    //The base subraction of the two polygons. Output might not be
+    //valid by the rules of BetterPolygon
+    BetterPolygon base = mPolygon.subtracted(other.mPolygon);
+    base.mPolygon.removeLast();
+
+    if (base.isValid()) return { base };
+
+    //The following is very specific to how QPolygonF seems to output TODO add details about how this works.
+
+    QVector<BetterPolygon> polygons;
+
+    QPointF startPoint = base.mPolygon.first();
+    QPolygonF currentPoly;
+    currentPoly.append(startPoint);
+
+    //parse the first polygon
+    auto i = base.mPolygon.begin() + 1;
+    while (*i != startPoint) {
+        currentPoly.append(*i);
+        ++i;
     }
+
+    polygons.append(currentPoly);
+    currentPoly = QPolygonF();
+    if (++i == base.mPolygon.end()) return polygons;
+    currentPoly.append(startPoint = *(i++));
+    while(i != base.mPolygon.end()) {
+        if (*i == startPoint) {
+            polygons.append(currentPoly);
+            currentPoly = QPolygonF();
+            if (++i == base.mPolygon.end()) return polygons;
+            if (++i == base.mPolygon.end()) return polygons;
+            startPoint = *i;
+        }
+
+        currentPoly.append(*(i++));
+    }
+
+    return polygons;
 }
 
-void Polygon::insertPointOnEdge(const QPointF &point, int before)
+QVector<BetterPolygon> BetterPolygon::intersect(const BetterPolygon &other) const
 {
-    mPoints.insert(before + 1, point);
+    auto sub = subtract(other);
+
+    if (sub.size() == 0) return { *this };
+    if (sub.size() == 1) return subtract(sub.first());
+
+    QVector<BetterPolygon> ret  = subtract(sub.first());
+
+    for (auto i = sub.cbegin() + 1; i != sub.cend(); ++i) {
+        QVector<BetterPolygon> tmp;
+
+        for (const BetterPolygon &p : ret)
+            tmp.append(p.subtract(*i));
+
+        ret.swap(tmp);
+    }
+
+    return ret;
 }
