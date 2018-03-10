@@ -306,9 +306,9 @@ SavableTileTemplateSet *XMLTool::openTileTemplateSet(QString templateSetPath)
                 float height;
                 QVector2D position;
                 QColor color;
-                int topMaterialId;
-                int sideMaterialId;
-                bool hasSideMaterial;
+                int topMaterialId=-1;
+                int sideMaterialId=-1;
+                bool hasSideMaterial=false;
                 foreach (const QXmlStreamAttribute &attr, xmlReader.attributes()) {
                     if (attr.name() == "name")
                         name = attr.value().toString();
