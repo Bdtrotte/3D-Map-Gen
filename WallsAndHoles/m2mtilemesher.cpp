@@ -4,6 +4,7 @@
 #include "polygon.h"
 
 #include "m2mtilemesher_private.h"
+#include "blockypolygontilemesher.h"
 
 
 QSharedPointer<M2M::AbstractTileMesher> M2M::AbstractTileMesher::getMesherForTile(
@@ -25,70 +26,6 @@ QSharedPointer<M2M::AbstractTileMesher> M2M::AbstractTileMesher::getMesherForTil
 
 M2M::AbstractTileMesher::AbstractTileMesher(TileNeighborhoodInfo nbhd)
     : mTileNeighborhood(nbhd) {}
-
-
-
-
-M2M::TileBlockyMesher::TileBlockyMesher(TileNeighborhoodInfo nbhd)
-    : M2M::AbstractTileMesher(nbhd) {}
-
-
-QVector<QSharedPointer<SimpleTexturedObject>> M2M::TileBlockyMesher::makeMesh(QVector2D offset)
-{
-    PartialMeshData mesh;
-
-    TileInfo tile = mTileNeighborhood.centerTile();
-
-    BetterPolygon groundPoly;
-    groundPoly.points().append(QPointF(offset.x(), offset.y()));
-    groundPoly.points().append(QPointF(offset.x(), offset.y() + 1));
-    groundPoly.points().append(QPointF(offset.x() + 1, offset.y() + 1));
-    groundPoly.points().append(QPointF(offset.x() + 1, offset.y()));
-
-    if (!tile.isGround()) {
-        QVector<QPointF> p = {
-            QPointF(0.5, 0.2),
-            QPointF(0.2, 0.8),
-            QPointF(0.8, 0.8),
-            QPointF(0.8, 0.5)
-        };
-
-        QPolygonF po(p);
-        po.translate(offset.x(), offset.y());
-        BetterPolygon topPoly(po);
-        mesh += M2M_Private::polygonMesh(topPoly,
-                                         tile.topHeight(),
-                                         tile.topImage(),
-                                         tile.topMaterial());
-
-        QVector<float> groundHeight(p.size(), 0);
-        QVector<bool> shouldDrop(p.size(), true);
-
-        mesh += M2M_Private::polygonSidesMesh(topPoly,
-                                              shouldDrop,
-                                              groundHeight,
-                                              tile.topHeight(),
-                                              tile.topImage(),
-                                              tile.topMaterial());
-
-        auto bottom = groundPoly.subtract(topPoly);
-        for (BetterPolygon b : bottom) {
-            mesh += M2M_Private::polygonMesh(b,
-                                             0,
-                                             tile.groundInfo().groundImage,
-                                             tile.groundInfo().groundMaterial);
-        }
-    } else {
-        mesh += M2M_Private::polygonMesh(groundPoly,
-                                         0,
-                                         tile.groundInfo().groundImage,
-                                         tile.groundInfo().groundMaterial);
-    }
-
-    return mesh.constructObjects();
-}
-
-
 
 /* BEGIN TileInfo */
 
@@ -239,7 +176,7 @@ QSharedPointer<M2M::AbstractTileMesher> M2M::TileNeighborhoodInfo::makeMesher() 
     // TODO: Analyze neighborhood and return appropriate mesher.
     // TODO: For now, return an instance of the blocky mesher.
 
-    return QSharedPointer<M2M::TileBlockyMesher>::create(*this);
+    return QSharedPointer<M2M::AbstractTileMesher>(new BlockyPolygonTileMesher(*this));
 }
 
 /* END TileNeighborhoodInfo */

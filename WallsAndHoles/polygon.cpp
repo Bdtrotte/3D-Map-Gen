@@ -215,6 +215,45 @@ QList<Triplet<QPointF, QPointF, QPointF>> BetterPolygon::triangulate() const
     return trigs;
 }
 
+QVector<BetterPolygon> parseQPolygonF(QPolygonF base)
+{
+    if (base.isClosed()) base.removeLast();
+    if (BetterPolygon(base).isValid()) return { BetterPolygon(base) };
+
+    //The following is very specific to how QPolygonF seems to output TODO add details about how this works.
+
+    QVector<BetterPolygon> polygons;
+
+    QPointF startPoint = base.first();
+    QPolygonF currentPoly;
+    currentPoly.append(startPoint);
+
+    //parse the first polygon
+    auto i = base.begin() + 1;
+    while (*i != startPoint) {
+        currentPoly.append(*i);
+        ++i;
+    }
+
+    polygons.append(currentPoly);
+    currentPoly = QPolygonF();
+    if (++i == base.end()) return polygons;
+    currentPoly.append(startPoint = *(i++));
+    while(i != base.end()) {
+        if (*i == startPoint) {
+            polygons.append(currentPoly);
+            currentPoly = QPolygonF();
+            if (++i == base.end()) return polygons;
+            if (++i == base.end()) return polygons;
+            startPoint = *i;
+        }
+
+        currentPoly.append(*(i++));
+    }
+
+    return polygons;
+}
+
 QVector<BetterPolygon> BetterPolygon::subtract(const BetterPolygon &other) const
 {
     bool firstPointContained = mPolygon.containsPoint(other.mPolygon.first(), Qt::OddEvenFill);
@@ -296,43 +335,9 @@ QVector<BetterPolygon> BetterPolygon::subtract(const BetterPolygon &other) const
 
     //The base subraction of the two polygons. Output might not be
     //valid by the rules of BetterPolygon
-    BetterPolygon base = mPolygon.subtracted(other.mPolygon);
-    base.mPolygon.removeLast();
+    QPolygonF base = mPolygon.subtracted(other.mPolygon);
 
-    if (base.isValid()) return { base };
-
-    //The following is very specific to how QPolygonF seems to output TODO add details about how this works.
-
-    QVector<BetterPolygon> polygons;
-
-    QPointF startPoint = base.mPolygon.first();
-    QPolygonF currentPoly;
-    currentPoly.append(startPoint);
-
-    //parse the first polygon
-    auto i = base.mPolygon.begin() + 1;
-    while (*i != startPoint) {
-        currentPoly.append(*i);
-        ++i;
-    }
-
-    polygons.append(currentPoly);
-    currentPoly = QPolygonF();
-    if (++i == base.mPolygon.end()) return polygons;
-    currentPoly.append(startPoint = *(i++));
-    while(i != base.mPolygon.end()) {
-        if (*i == startPoint) {
-            polygons.append(currentPoly);
-            currentPoly = QPolygonF();
-            if (++i == base.mPolygon.end()) return polygons;
-            if (++i == base.mPolygon.end()) return polygons;
-            startPoint = *i;
-        }
-
-        currentPoly.append(*(i++));
-    }
-
-    return polygons;
+    return parseQPolygonF(base);
 }
 
 QVector<BetterPolygon> BetterPolygon::intersect(const BetterPolygon &other) const
@@ -354,4 +359,11 @@ QVector<BetterPolygon> BetterPolygon::intersect(const BetterPolygon &other) cons
     }
 
     return ret;
+}
+
+QVector<BetterPolygon> BetterPolygon::united(const BetterPolygon &other) const
+{
+    QPolygonF base = mPolygon.united(other.mPolygon);
+
+    return parseQPolygonF(base);
 }

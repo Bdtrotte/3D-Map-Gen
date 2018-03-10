@@ -18,32 +18,6 @@ enum SideDirection {
     NORTH, EAST, SOUTH, WEST
 };
 
-/**
- * @brief polygonMesh
- * @param polygon
- * @param height
- * @return
- */
-M2M::PartialMeshData polygonMesh(const BetterPolygon &polygon,
-                                 float height,
-                                 M2M::ImageInfo image,
-                                 M2M::PhongInfo material);
-
-/**
- * @brief polygonSidesMesh
- * @param polygon
- * @param edgesToDrop
- * @param topHeight
- * @param bottomHeight
- * @return
- */
-M2M::PartialMeshData polygonSidesMesh(const BetterPolygon &polygon,
-                                      QVector<bool> edgesToDrop,
-                                      QVector<float> bottomHeight,
-                                      float topHeight,
-                                      M2M::ImageInfo image,
-                                      M2M::PhongInfo material);
-
 namespace SideTools {
 
 /**

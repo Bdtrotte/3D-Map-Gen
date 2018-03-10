@@ -1,7 +1,6 @@
 #ifndef M2MTILEMESHER_H
 #define M2MTILEMESHER_H
 
-
 #include <QVector2D>
 #include <QVector3D>
 #include <QSharedPointer>
@@ -12,13 +11,13 @@
 #include "m2mtilemesher_private.h"
 #include "m2mpartialmesh.h"
 
+#include "triplet.h"
 #include "tile.h"
 #include "simpletexturedobject.h"
 
 namespace M2M {
 
 class AbstractTileMesher;
-
 
 struct GroundInfo {
     float groundHeight;
@@ -148,14 +147,6 @@ protected:
      * @brief Information for each tile in the 3x3 neighborhood of the tile to which this mesher is associated.
      */
     TileNeighborhoodInfo mTileNeighborhood;
-};
-
-
-class TileBlockyMesher : public AbstractTileMesher {
-public:
-    TileBlockyMesher(TileNeighborhoodInfo nbhd);
-
-    QVector<QSharedPointer<SimpleTexturedObject>> makeMesh(QVector2D offset);
 };
 
 }

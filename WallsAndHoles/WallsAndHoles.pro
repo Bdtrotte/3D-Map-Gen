@@ -89,7 +89,9 @@ SOURCES += \
     m2mtilemesher_private.cpp \
     polygon.cpp \
     imageandsource.cpp\
-    mapviewmatchercamera.cpp
+    mapviewmatchercamera.cpp \
+    abstractpolygontilemesher.cpp \
+    blockypolygontilemesher.cpp
 
 HEADERS += \
     meshview.h \
@@ -167,7 +169,9 @@ HEADERS += \
     m2mtilemesher_private.h \
     polygon.h \
     geometry.h \
-    mapviewmatchercamera.h
+    mapviewmatchercamera.h \
+    abstractpolygontilemesher.h \
+    blockypolygontilemesher.h
 
 FORMS +=
 

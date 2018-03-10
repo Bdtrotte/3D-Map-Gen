@@ -76,6 +76,7 @@ public:
 
     QVector<BetterPolygon> subtract(const BetterPolygon &other) const;
     QVector<BetterPolygon> intersect(const BetterPolygon &other) const;
+    QVector<BetterPolygon> united(const BetterPolygon &other) const;
 
     const QVector<QPointF> &points() const { return mPolygon; }
     QVector<QPointF> &points() { return mPolygon; }
