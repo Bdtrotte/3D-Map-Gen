@@ -28,12 +28,15 @@ public:
     }
 
 
-    First getFirst() const { return first; }
-    Second getSecond() const { return second; }
-    Third getThird() const { return third; }
+    const First &getFirst() const { return first; }
+    const Second &getSecond() const { return second; }
+    const Third &getThird() const { return third; }
+
+    First &getFirst() { return first; }
+    Second &getSecond() { return second; }
+    Third &getThird() { return third; }
 
 private:
-
     First first;
     Second second;
     Third third;

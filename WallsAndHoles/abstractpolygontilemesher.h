@@ -15,11 +15,11 @@ public:
     QVector<QSharedPointer<SimpleTexturedObject>> makeMesh(QVector2D offset);
 
 protected:
-    virtual QVector<BetterPolygon> topPolygon() = 0;
+    virtual QVector<Triplet<BetterPolygon, QVector<float>, QVector<bool>>> topPolygons() = 0;
 
 private:
     PartialMeshData makeTop(const BetterPolygon &polygon, float height, bool ground = false) const;
-    PartialMeshData makeSide(const BetterPolygon &polygon, float height, const QPointF &offset) const;
+    PartialMeshData makeSide(const BetterPolygon &polygon, float startHegiht, const QVector<float> endHeight, const QVector<bool> dropWall) const;
 };
 
 }
