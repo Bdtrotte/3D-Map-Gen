@@ -81,6 +81,9 @@ public:
     const QVector<QPointF> &points() const { return mPolygon; }
     QVector<QPointF> &points() { return mPolygon; }
 
+    void translate(const QPointF &p) { mPolygon.translate(p); }
+    void translate(float x, float y) { mPolygon.translate(x, y); }
+
 private:
     QPolygonF mPolygon;
 };

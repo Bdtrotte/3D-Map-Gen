@@ -36,7 +36,7 @@ M2M::TileInfo::TileInfo(const Tile &tile)
     : mIsNull(false)
     , mTopHeight(tile.height())
     , mThickness(tile.thickness())
-    , mOffsetFromCenter(tile.position() - QVector2D(0.5, 0.5))
+    , mCenter(tile.position())
 {
     // TODO
     //   Get ground properties from somewhere.
@@ -108,7 +108,7 @@ bool M2M::TileInfo::operator ==(const TileInfo &other) const
 
     return topHeight() == other.topHeight()
             && thickness() == other.thickness()
-            && offsetFromCenter() == other.offsetFromCenter()
+            && center() == other.center()
             && groundInfo() == other.groundInfo()
             && topImage() == other.topImage()
             && sideImage() == other.sideImage()

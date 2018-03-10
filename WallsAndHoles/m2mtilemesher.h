@@ -50,7 +50,7 @@ public:
     float topHeight() const { return mTopHeight; }
     float thickness() const { return mThickness;}
 
-    QVector2D offsetFromCenter() const { return mOffsetFromCenter; }
+    QVector2D center() const { return mCenter; }
 
     GroundInfo groundInfo() const { return mGround; }
 
@@ -75,7 +75,7 @@ private:
 
     float mTopHeight;
     float mThickness;
-    QVector2D mOffsetFromCenter;
+    QVector2D mCenter;
 
     GroundInfo mGround;
 

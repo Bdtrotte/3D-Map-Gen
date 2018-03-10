@@ -217,6 +217,8 @@ QList<Triplet<QPointF, QPointF, QPointF>> BetterPolygon::triangulate() const
 
 QVector<BetterPolygon> parseQPolygonF(QPolygonF base)
 {
+    if (base.isEmpty()) return {};
+
     if (base.isClosed()) base.removeLast();
     if (BetterPolygon(base).isValid()) return { BetterPolygon(base) };
 

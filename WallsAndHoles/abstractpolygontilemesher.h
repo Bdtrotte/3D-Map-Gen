@@ -19,7 +19,7 @@ protected:
 
 private:
     PartialMeshData makeTop(const BetterPolygon &polygon, float height, bool ground = false) const;
-    PartialMeshData makeSide(const BetterPolygon &polygon, float height) const;
+    PartialMeshData makeSide(const BetterPolygon &polygon, float height, const QPointF &offset) const;
 };
 
 }

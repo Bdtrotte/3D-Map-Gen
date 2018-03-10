@@ -18,6 +18,8 @@ QVector<QSharedPointer<SimpleTexturedObject>> AbstractPolygonTileMesher::makeMes
 
     BetterPolygon groundBase(tp);
     QVector<BetterPolygon> topPoly = topPolygon();
+    for (BetterPolygon &p : topPoly)
+        p.translate(offset.toPointF());
 
     QVector<BetterPolygon> toBuild;
     for (const BetterPolygon &t : topPoly)
@@ -43,7 +45,7 @@ QVector<QSharedPointer<SimpleTexturedObject>> AbstractPolygonTileMesher::makeMes
         mesh += makeTop(p, 0, true);
     for (const BetterPolygon &p : toBuild) {
         mesh += makeTop(p, tile.topHeight());
-        mesh += makeSide(p, tile.topHeight());
+        mesh += makeSide(p, tile.topHeight(), offset.toPointF());
     }
 
     return mesh.constructObjects();
@@ -79,8 +81,31 @@ PartialMeshData AbstractPolygonTileMesher::makeTop(const BetterPolygon &polygon,
     return mesh;
 }
 
-// TODO this needs to do a bunch more
-PartialMeshData AbstractPolygonTileMesher::makeSide(const BetterPolygon &polygon, float height) const
+//0 Not on a side
+//1 North (-Y)
+//2 East  (+X)
+//3 South (+Y)
+//4 West  (-X)
+int edgeSide(QPointF a, QPointF b, const QPointF &offset)
+{
+    if (a.x() == b.x()) {
+        if (a.x() - offset.x() == 0) {
+            return 4;
+        } else if (a.x() - offset.x() == 1) {
+            return 2;
+        }
+    } else if (a.y() == b.y()) {
+        if (a.y() - offset.y() == 0) {
+            return 1;
+        } else if (a.y() - offset.y() == 1) {
+            return 3;
+        }
+    }
+
+    return 0;
+}
+
+PartialMeshData AbstractPolygonTileMesher::makeSide(const BetterPolygon &polygon, float height, const QPointF &offset) const
 {
     PartialMeshData mesh;
 
@@ -89,16 +114,41 @@ PartialMeshData AbstractPolygonTileMesher::makeSide(const BetterPolygon &polygon
 
         QPointF a = polygon.points()[i];
         QPointF b = polygon.points()[j];
-        QPointF xzCenter = (a + b) / 2;
 
-        float lowerHeight = 0;
+        float otherHeight = 0;
+        TileInfo other;
+        switch (edgeSide(a, b, offset)) {
+        case 1:
+            other = mTileNeighborhood(1, 0);
+            break;
+        case 2:
+            other = mTileNeighborhood(2, 1);
+            break;
+        case 3:
+            other = mTileNeighborhood(1, 2);
+            break;
+        case 4:
+            other = mTileNeighborhood(0, 1);
+            break;
+        }
+
+        // TODO anyalize other better to determin if wall should be dropped.
+        //      currently some bad behavior can occure in edge cases
+        if (!other.isNull()) {
+            if (other.isGround())
+                otherHeight = other.groundInfo().groundHeight;
+            else
+                otherHeight = other.topHeight();
+        }
+
+        QPointF xzCenter = (a + b) / 2;
 
         QVector2D dir(b - a);
         QVector2D normal(-dir.y(), dir.x());
         normal.normalize();
-        QVector3D center(xzCenter.x(), (height + lowerHeight) / 2, xzCenter.y());
+        QVector3D center(xzCenter.x(), (height + otherHeight) / 2, xzCenter.y());
 
-        float h = height - lowerHeight;
+        float h = height - otherHeight;
         bool upsideDown = false;
         if (h == 0) continue;
         if (h < 0) {
