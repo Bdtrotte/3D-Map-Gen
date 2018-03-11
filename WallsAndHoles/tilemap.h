@@ -103,6 +103,13 @@ public:
      */
     QVector<QPoint> tilePositionsUsingTemplate(TileTemplate *tileTemplate);
 
+    /**
+     * @brief tilePositionsUsingTemplateSet Finds the positions of all the tiles using a given TileTemplateSet.
+     * @param tileTemplateSet               The tile template set.
+     * @return                              The positions of the tiles that use tileTemplateSet.
+     */
+    QVector<QPoint> tilePositionsUsingTemplateSet(TileTemplateSet *tileTemplateSet);
+
     TileTemplateSet *defaultTileTemplateSet() { return mDefaultTileTemplateSet; }
 
 public slots:

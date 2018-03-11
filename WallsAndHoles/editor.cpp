@@ -274,9 +274,6 @@ void Editor::setTileMap(TileMap *tileMap)
         }
     }
 
-    // Clear the TileMap undo stack since the actions in this stack are now invalid.
-    mTileMapUndoStack->clear();
-
     TileMap *pre = mTileMap;
     mTileMap = tileMap;
     mTileMapToolManager->setTileMap(mTileMap);

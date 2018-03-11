@@ -222,6 +222,28 @@ QVector<QPoint> TileMap::tilePositionsUsingTemplate(TileTemplate *tileTemplate)
     return positions;
 }
 
+QVector<QPoint> TileMap::tilePositionsUsingTemplateSet(TileTemplateSet *tileTemplateSet)
+{
+    QMutexLocker locker(&mPingingMutex);
+
+    mTilePingReceiveMode = Collect;
+    mPingedTiles.clear();
+    mPingedTilePositions.clear();
+
+    for (TileTemplate *t : tileTemplateSet->cTileTemplates())
+        if (t)
+            t->emitTilePing();
+
+    QVector<QPoint> positions = mPingedTilePositions;
+
+    mPingedTiles.clear();
+    mPingedTilePositions.clear();
+    mTilePingReceiveMode = None;
+
+    return positions;
+}
+
+
 void TileMap::tilePinged(int x, int y)
 {
     switch(mTilePingReceiveMode) {

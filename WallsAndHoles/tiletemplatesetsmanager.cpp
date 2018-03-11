@@ -6,6 +6,7 @@
 #include "undocommandfromfunctions.h"
 #include "dependentundocommand.h"
 #include "tiletemplatechangecommand.h"
+#include "emptyparentcommand.h"
 
 #include <QFileDialog>
 #include <QMessageBox>
@@ -40,11 +41,29 @@ void TileTemplateSetsManager::newTileTemplateSet()
 
 void TileTemplateSetsManager::addTileTemplateSet(SavableTileTemplateSet *tileTemplateSet)
 {
-    tileTemplateSet->setParent(this);
 
-    mTileTemplateSets.append(tileTemplateSet);
+    auto redo = [this, tileTemplateSet] () {
+        tileTemplateSet->setParent(this);
+        mTileTemplateSets.append(tileTemplateSet);
+        emit tileTemplateSetAdded(tileTemplateSet);
+    };
 
-    emit tileTemplateSetAdded(tileTemplateSet);
+    auto undo = [this, tileTemplateSet] () {
+        // Do essentially the same thing as in removeTileTemplateSet()
+        // under the assumption that no tiles are using this set.
+        int index = mTileTemplateSets.indexOf(tileTemplateSet);
+
+        Q_ASSERT( index != -1 );
+
+        emit tileTemplateSetAboutToBeRemoved(tileTemplateSet);
+        mTileTemplateSets.removeAt(index);
+    };
+
+    QUndoCommand *command = DependentUndoCommand::make({this, tileTemplateSet}, "'add tile template set'");
+
+    UndoCommandFromFunctions::make(redo, undo, "", command);
+
+    mUndoStack->push(command);
 }
 
 bool TileTemplateSetsManager::removeTileTemplateSet(SavableTileTemplateSet *tileTemplateSet)
@@ -103,12 +122,48 @@ bool TileTemplateSetsManager::removeTileTemplateSet(int index)
         }
     }
 
-    emit tileTemplateSetAboutToBeRemoved(tileTemplateSet);
 
-    if (removeFromMap)
-        mTileMap->removingTileTemplateSet(tileTemplateSet);
+    QUndoCommand *command = EmptyParentCommand::make("'remove tile template set'");
 
-    delete mTileTemplateSets.takeAt(index);
+
+    // When the command is redone, it should emit this signal.
+    UndoCommandFromFunctions::make([this, tileTemplateSet] () {
+        emit tileTemplateSetAboutToBeRemoved(tileTemplateSet);
+    }, [](){}, "", DependentUndoCommand::make({this, tileTemplateSet}, "", command));
+
+
+    if (removeFromMap) {
+        // Create the command to clear the tiles.
+
+        QVector<QPoint> allPoints = mTileMap->tilePositionsUsingTemplateSet(tileTemplateSet);
+
+        TileTemplateChangeCommand::make(mTileMap, allPoints, nullptr, "'clear tiles that use template set'", command);
+    }
+
+
+    // Create the command to remove tileTemplateSet from the list.
+    auto removeRedo = [this, tileTemplateSet] () {
+
+        // This will work even if the sets are rearranged for some reason.
+        int index = mTileTemplateSets.indexOf(tileTemplateSet);
+
+        Q_ASSERT( index != -1 );
+
+        mTileTemplateSets.removeAt(index);
+    };
+
+    auto removeUndo = [this, tileTemplateSet] () {
+        // Do essentially the same thing as in addTileTemplateSet()
+        tileTemplateSet->setParent(this);
+        mTileTemplateSets.append(tileTemplateSet);
+        emit tileTemplateSetAdded(tileTemplateSet);
+    };
+
+    UndoCommandFromFunctions::make(removeRedo, removeUndo, "",
+                                   DependentUndoCommand::make({this, tileTemplateSet}, "'remove tile template set'", command));
+
+    // Push and perform the command.
+    mUndoStack->push(command);
 
     return true;
 }
@@ -122,7 +177,7 @@ bool TileTemplateSetsManager::removeTileTemplate(int templateSetIndex, int templ
 
     TileTemplate *t = tileTemplateSet->tileTemplateAt(templateIndex);
 
-    QUndoCommand *command = new QUndoCommand("'remove tile template'");
+    QUndoCommand *command = EmptyParentCommand::make("'remove tile template'");
 
     if (mTileMap && mTileMap->isTileTemplateUsed(t)) {
         QMessageBox mb;
@@ -139,7 +194,7 @@ bool TileTemplateSetsManager::removeTileTemplate(int templateSetIndex, int templ
         QVector<QPoint> tilePositions = mTileMap->tilePositionsUsingTemplate(t);
 
         // Command to clear tiles.
-        TileTemplateChangeCommand::make(mTileMap, tilePositions, nullptr, "", command);
+        TileTemplateChangeCommand::make(mTileMap, tilePositions, nullptr, "'clear tiles that use template'", command);
     }
 
 
