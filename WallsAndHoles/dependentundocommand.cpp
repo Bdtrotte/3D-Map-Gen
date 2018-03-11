@@ -32,3 +32,25 @@ DependentUndoCommand::DependentUndoCommand(QVector<QObject *> dependencies, cons
         }
     }
 }
+
+
+void DependentUndoCommand::redo()
+{
+    // If this command is the child of another command, then setObsolete()
+    // doesn't prevent this command from running.
+    if (isObsolete())
+        return;
+
+    QUndoCommand::redo();
+}
+
+
+void DependentUndoCommand::undo()
+{
+    // If this command is the child of another command, then setObsolete()
+    // doesn't prevent this command from running.
+    if (isObsolete())
+        return;
+
+    QUndoCommand::undo();
+}

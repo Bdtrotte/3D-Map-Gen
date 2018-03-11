@@ -80,6 +80,11 @@ TileTemplateChangeCommand::TileTemplateChangeCommand(
 
 void TileTemplateChangeCommand::undo()
 {
+    // If this command is the child of another command, then setObsolete()
+    // doesn't prevent this command from running.
+    if (isObsolete())
+        return;
+
     for (int idx = 0; idx < mChangedTilePositions.size(); ++idx) {
         QPoint pos = mChangedTilePositions[idx];
         TileTemplate *oldTemplate = mOldTemplatePointers[idx];
@@ -91,6 +96,11 @@ void TileTemplateChangeCommand::undo()
 
 void TileTemplateChangeCommand::redo()
 {
+    // If this command is the child of another command, then setObsolete()
+    // doesn't prevent this command from running.
+    if (isObsolete())
+        return;
+
     for (const QPoint &pos : mChangedTilePositions)
         mTileMap->setTile(pos.x(), pos.y(), mNewTemplatePointer);
 }

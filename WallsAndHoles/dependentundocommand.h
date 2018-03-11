@@ -21,6 +21,9 @@ public:
 
     static DependentUndoCommand *make(QVector<QObject *> dependencies, const QString &text = "", QUndoCommand *parent = nullptr);
 
+    void redo() override;
+    void undo() override;
+
 private:
 
     DependentUndoCommand(QVector<QObject *> dependencies, const QString &text = "", QUndoCommand *parent = nullptr);

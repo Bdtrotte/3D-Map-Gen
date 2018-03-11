@@ -86,7 +86,8 @@ SOURCES += \
     m2mpartialmesh.cpp \
     m2mtilemesher_private.cpp \
     tiletemplatechangecommand.cpp \
-    dependentundocommand.cpp
+    dependentundocommand.cpp \
+    emptyparentcommand.cpp
 
 HEADERS += \
     meshview.h \
@@ -164,7 +165,8 @@ HEADERS += \
     tiletemplatechangecommand.h \
     changevaluecommand.h \
     undocommandfromfunctions.h \
-    dependentundocommand.h
+    dependentundocommand.h \
+    emptyparentcommand.h
 
 FORMS +=
 
