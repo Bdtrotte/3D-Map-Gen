@@ -6,49 +6,57 @@
 
 #include <QUndoCommand>
 #include <QRegion>
+#include <QObject>
 
-class TileTemplateChangeCommand : public QUndoCommand
+class TileTemplateChangeCommand : public QObject, public QUndoCommand
 {
+
+    Q_OBJECT
+
 public:
 
     /**
-     * @brief performCommand    Creates and immediately performs the TileTemplateChangeCommand.
+     * @brief make              Creates the TileTemplateChangeCommand.
      *                          This will automatically crop the given region so that it is within the bounds of the TileMap.
      *
      * @param tileMap           The tile map on which to change tiles.
      * @param changedPoints     The positions of the tiles that should be changed.
      * @param newTileTemplate   The new tile template for those tiles.
      * @param text              Short description for the command.
+     * @param parent            The parent command.
      * @return                  The command that was performed. Calling undo() will undo it.
      */
-    static TileTemplateChangeCommand *performCommand(
+    static TileTemplateChangeCommand *make(
             TileMap *tileMap,
             QRegion changedPoints,
             TileTemplate *newTileTemplate,
-            const QString &text = "Changed templates for tiles.");
+            const QString &text = "Changed templates for tiles.",
+            QUndoCommand *parent = nullptr);
 
 
     /**
-     * @brief performCommand    Creates and immediately performs the TileTemplateChangeCommand.
+     * @brief make              Creates the TileTemplateChangeCommand.
      *                          This will automatically crop the given region so that it is within the bounds of the TileMap.
      *
      * @param tileMap           The tile map on which to change tiles.
      * @param changedPoints     The positions of the tiles that should be changed.
      * @param newTileTemplate   The new tile template for those tiles.
      * @param text              Short description for the command.
+     * @param parent            The parent command.
      * @return                  The command that was performed. Calling undo() will undo it.
      */
     template< typename QPointIterable >
-    static TileTemplateChangeCommand *performCommand(
+    static TileTemplateChangeCommand *make(
             TileMap *tileMap,
             QPointIterable changedPoints,
             TileTemplate *newTileTemplate,
-            const QString &text = "Changed templates for tiles.")
+            const QString &text = "Changed templates for tiles.",
+            QUndoCommand *parent = nullptr)
     {
         QRegion region;
         for (const QPoint &pt : changedPoints)
             region += QRect(pt.x(), pt.y(), 1, 1);
-        return performCommand(tileMap, region, newTileTemplate, text);
+        return make(tileMap, region, newTileTemplate, text, parent);
     }
 
 
@@ -61,9 +69,10 @@ private:
                               QVector<QPoint> changedPositions,
                               QVector<TileTemplate *> oldTemplates,
                               TileTemplate *newTemplate,
-                              const QString &text);
+                              const QString &text,
+                              QUndoCommand *parent);
 
-    TileMap *mTileMap;
+    TileMap *mTileMap;                              // If mTileMap becomes invalid, the TileMap undo stack will be cleared.
 
     QVector<QPoint> mChangedTilePositions;
     QVector<TileTemplate *> mOldTemplatePointers;

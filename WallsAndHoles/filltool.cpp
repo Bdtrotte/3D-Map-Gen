@@ -24,7 +24,7 @@ void FillTool::cellClicked(int x, int y, QMouseEvent *)
     disconnect(getTileMap(), &TileMap::mapChanged, this, &FillTool::invalidateSelection);
 
     // Fill it in.
-    mUndoStack->push(TileTemplateChangeCommand::performCommand(
+    mUndoStack->push(TileTemplateChangeCommand::make(
                          getTileMap(),
                          mSelection,
                          getTileTemplate(),

@@ -74,11 +74,11 @@ void TileMapSelectionTool::cellReleased(int, int, QMouseEvent *event)
     }
 
     QRegion originalSelection = mOriginalSelection;
-    mUndoStack->push(SelectionChangeCommand::performCommand(
-                         &mSelection,
-                         newSelectionValue,
-                         "'changed selection'",
-                         [this, originalSelection] () {
+    mUndoStack->push(SelectionChangeCommand::make(
+                             &mSelection,
+                             newSelectionValue,
+                             "'changed selection'",
+                             [this, originalSelection] () {
         // This makes the behavior more intuitive if the user does an undo in the middle of selecting.
         // (note: the user's current preview of the in-progress selection will disappear until the user
         //  moves their cursor---I couldn't find a neat way of avoiding this, but it doesn't cause

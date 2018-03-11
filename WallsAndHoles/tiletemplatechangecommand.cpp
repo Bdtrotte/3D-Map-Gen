@@ -1,10 +1,13 @@
 #include "tiletemplatechangecommand.h"
 
-TileTemplateChangeCommand *TileTemplateChangeCommand::performCommand(
+#include <QSet>
+
+TileTemplateChangeCommand *TileTemplateChangeCommand::make(
         TileMap *tileMap,
         QRegion changedPoints,
         TileTemplate *newTileTemplate,
-        const QString &text)
+        const QString &text,
+        QUndoCommand *parent)
 {
     // Compute which points need to be changed. Make sure all points are within bounds.
     QVector<QPoint> pointsToChange;
@@ -20,12 +23,7 @@ TileTemplateChangeCommand *TileTemplateChangeCommand::performCommand(
         oldTemplates.append(tileMap->tileAt(pt.x(), pt.y()).tileTemplate());
 
     // Create the command.
-    TileTemplateChangeCommand *command = new TileTemplateChangeCommand(tileMap, pointsToChange, oldTemplates, newTileTemplate, text);
-
-    // Perform the command.
-    command->redo();
-
-    return command;
+    return new TileTemplateChangeCommand(tileMap, pointsToChange, oldTemplates, newTileTemplate, text, parent);
 }
 
 
@@ -34,12 +32,50 @@ TileTemplateChangeCommand::TileTemplateChangeCommand(
         QVector<QPoint> changedPositions,
         QVector<TileTemplate *> oldTemplates,
         TileTemplate *newTemplate,
-        const QString &text)
-    : QUndoCommand(text)
+        const QString &text,
+        QUndoCommand *parent)
+    : QUndoCommand(text, parent)
     , mTileMap(tileMap)
     , mChangedTilePositions(changedPositions)
     , mOldTemplatePointers(oldTemplates)
-    , mNewTemplatePointer(newTemplate) {}
+    , mNewTemplatePointer(newTemplate)
+{
+    auto makeObsolete = [this] () {
+        if (isObsolete())
+            return;
+
+        setObsolete(true);
+        qDebug() << "The command " << this->text() << " is obsolete because a pointer it referenced is no longer valid.";
+
+        /*
+         * Note that this lambda gets invoked whenever mTileMap or any of the tile template objects are destroyed.
+         * When the application closes, these objects may be destroyed before the undo commands, so if you see
+         * 'The command ... is obsolete ...' messages when you close the program, do not worry.
+         * */
+    };
+
+
+    // If the TileMap pointer is invalid, this command should not be performable.
+    connect(mTileMap, &TileMap::destroyed, this, makeObsolete);
+
+
+    // If a TileTemplate pointer is invalid, this command should not be performable.
+    // To avoid connecting several times to the same template, all the TileTemplate*
+    // are first collected into a set.
+    QSet<TileTemplate *> allTemplatePointers;
+
+    for (TileTemplate *p : oldTemplates) {
+        if (p != nullptr)
+            allTemplatePointers.insert(p);
+    }
+
+    if (newTemplate != nullptr)
+        allTemplatePointers.insert(newTemplate);
+
+
+    for (TileTemplate *p : allTemplatePointers)
+        connect(p, &TileTemplate::destroyed, this, makeObsolete);
+}
 
 
 void TileTemplateChangeCommand::undo()

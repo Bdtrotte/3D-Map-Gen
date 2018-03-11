@@ -37,7 +37,7 @@ void TileMapBrushTool::cellActivated(int x, int y, QMouseEvent *)
     QRegion region(x - r, y - r, d, d, QRegion::Ellipse);
     region &= QRect(QPoint(0, 0), tileMap->mapSize());
 
-    mUndoStack->push(TileTemplateChangeCommand::performCommand(
+    mUndoStack->push(TileTemplateChangeCommand::make(
                          tileMap,
                          region,
                          getTileTemplate(),

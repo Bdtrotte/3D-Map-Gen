@@ -51,7 +51,7 @@ void AbstractShapeBrushTool::clearOverlay() {
 void AbstractShapeBrushTool::placeShape(int endX, int endY) {
     QRegion region = getShape(QPoint(mStartX, mStartY), QPoint(endX, endY));
 
-    mUndoStack->push(TileTemplateChangeCommand::performCommand(
+    mUndoStack->push(TileTemplateChangeCommand::make(
                          getTileMap(),
                          region,
                          getTileTemplate(),
