@@ -18,7 +18,7 @@ protected:
     virtual QVector<Triplet<BetterPolygon, QVector<float>, QVector<bool>>> topPolygons() = 0;
 
 private:
-    PartialMeshData makeTop(const BetterPolygon &polygon, float height, bool ground = false) const;
+    PartialMeshData makeTop(const BetterPolygon &polygon, float height, bool isGround) const;
     PartialMeshData makeSide(const BetterPolygon &polygon, float startHegiht, const QVector<float> endHeight, const QVector<bool> dropWall) const;
 };
 

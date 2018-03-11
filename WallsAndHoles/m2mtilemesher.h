@@ -2,124 +2,39 @@
 #define M2MTILEMESHER_H
 
 #include <QVector2D>
-#include <QVector3D>
 #include <QSharedPointer>
-#include <QImage>
 
-#include "array2d.h"
-
-#include "m2mtilemesher_private.h"
-#include "m2mpartialmesh.h"
-
-#include "triplet.h"
-#include "tile.h"
+#include "tilemap.h"
 #include "simpletexturedobject.h"
 
 namespace M2M {
 
 class AbstractTileMesher;
 
-struct GroundInfo {
-    float groundHeight;
-    ImageInfo groundImage;
-    PhongInfo groundMaterial;
-
-    bool operator ==(const GroundInfo &other) const
-    {
-        return groundHeight == other.groundHeight
-                && groundImage == other.groundImage
-                && groundMaterial == other.groundMaterial;
-    }
-
-    bool operator !=(const GroundInfo &other) const
-    {
-        return !(*this == other);
-    }
-};
-
-
-class TileInfo {
+class TileNeighborhoodInfo
+{
 public:
-    TileInfo();                     /// Creates a null tile info.
-    TileInfo(const Tile &tile);     /// Creates a tile info for the given tile.
+    TileNeighborhoodInfo(const TileMap *tileMap, QPoint centerTilePos);
 
+    const Tile *operator ()(int x, int y) const;
+    const Tile *operator ()(QPoint pt) const;
 
-    bool isNull() const { return mIsNull; }
-    bool isGround() const { return mIsGround; }
-
-    float topHeight() const { return mTopHeight; }
-    float thickness() const { return mThickness;}
-
-    QVector2D center() const { return mCenter; }
-
-    GroundInfo groundInfo() const { return mGround; }
-
-    ImageInfo topImage() const { return mTopImage; }
-    ImageInfo sideImage() const { return mSideImage; }
-
-    PhongInfo topMaterial() const { return mTopMaterial; }
-    PhongInfo sideMaterial() const { return mSideMaterial; }
-
-
-    bool operator ==(const TileInfo &other) const;
-    bool operator !=(const TileInfo &other) const;
-
-private:
-
-
-    /// If this is true, the TileInfo object does not represent any tile.
-    bool mIsNull;
-
-    /// If this is true, then this is a ground tile.
-    bool mIsGround;
-
-    float mTopHeight;
-    float mThickness;
-    QVector2D mCenter;
-
-    GroundInfo mGround;
-
-    ImageInfo mTopImage;
-    ImageInfo mSideImage;
-
-    PhongInfo mTopMaterial;
-    PhongInfo mSideMaterial;
-
-
-
-
-    static SharedImageAndSource getDefaultImage();
-    static SharedImageAndSource DefaultImage;
-};
-
-
-
-class TileNeighborhoodInfo {
-public:
-
-    TileNeighborhoodInfo(Array2D<const Tile *> nbhd);
-
-    bool operator ==(const TileNeighborhoodInfo &other) const;
-    bool operator !=(const TileNeighborhoodInfo &other) const;
-
-    const TileInfo &operator ()(int x, int y) const;
-    const TileInfo &operator ()(QPoint pt) const;
-
-    const TileInfo &centerTile() const;
+    const Tile *centerTile() const;
 
     QSharedPointer<AbstractTileMesher> makeMesher() const;
 
-
 private:
-    Array2D<TileInfo> mTileInfos;        /// Mesh-relevant information for every tile.
+    const TileMap *mTileMap;
 
+    QPoint mCenterTilePos;
 };
 
 
 /**
  * @brief A collection of methods for generating tile mesh data.
  */
-class AbstractTileMesher {
+class AbstractTileMesher
+{
 public:
 
     virtual ~AbstractTileMesher() {}
@@ -128,9 +43,7 @@ public:
      * @brief Returns a TileMesher instance that will create the mesh for the given tile,
      * or, if the tile has not changed (determined by oldMesher), returns nullptr.
      */
-    static QSharedPointer<AbstractTileMesher> getMesherForTile(
-            Array2D<const Tile*> neighborhood,
-            const AbstractTileMesher *oldMesher = nullptr);
+    static QSharedPointer<AbstractTileMesher> getMesherForTile(const TileMap *tileMap, QPoint tilePoint);
 
 
     /**

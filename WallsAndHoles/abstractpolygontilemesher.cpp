@@ -7,7 +7,7 @@ AbstractPolygonTileMesher::AbstractPolygonTileMesher(TileNeighborhoodInfo nbhd)
 
 QVector<QSharedPointer<SimpleTexturedObject>> AbstractPolygonTileMesher::makeMesh(QVector2D offset)
 {
-    const TileInfo &tile = mTileNeighborhood.centerTile();
+    const Tile *tile = mTileNeighborhood.centerTile();
 
     QVector<QPointF> tp = {
         QPointF(offset.x()    , offset.y()),
@@ -39,14 +39,14 @@ QVector<QSharedPointer<SimpleTexturedObject>> AbstractPolygonTileMesher::makeMes
     for (const BetterPolygon &p : ground)
         mesh += makeTop(p, 0, true);
     for (const Triplet<BetterPolygon, QVector<float>, QVector<bool>> &p : topPolys) {
-        mesh += makeTop(p.getFirst(), tile.topHeight());
-        mesh += makeSide(p.getFirst(), tile.topHeight(), p.getSecond(), p.getThird());
+        mesh += makeTop(p.getFirst(), tile->height(), false);
+        mesh += makeSide(p.getFirst(), tile->height(), p.getSecond(), p.getThird());
     }
 
     return mesh.constructObjects();
 }
 
-PartialMeshData AbstractPolygonTileMesher::makeTop(const BetterPolygon &polygon, float height, bool ground) const
+PartialMeshData AbstractPolygonTileMesher::makeTop(const BetterPolygon &polygon, float height, bool isGround) const
 {
     QList<Triplet<QPointF, QPointF, QPointF>> triangles = polygon.triangulate();
 
@@ -60,14 +60,14 @@ PartialMeshData AbstractPolygonTileMesher::makeTop(const BetterPolygon &polygon,
         QVector2D t2(t.getSecond());
         QVector2D t3(t.getThird());
 
-        ImageInfo imageInfo = ground? mTileNeighborhood.centerTile().groundInfo().groundImage
-                                    : mTileNeighborhood.centerTile().topImage();
+        const TileMaterial *m;
+        if (isGround)
+            m = TileMaterial::getDefaultGroundMaterial();
+        else
+            m = mTileNeighborhood.centerTile()->topMaterial();
 
-        PhongInfo phongInfo = ground? mTileNeighborhood.centerTile().groundInfo().groundMaterial
-                                    : mTileNeighborhood.centerTile().topMaterial();
-
-        mesh.addTrig(M2M::Trig(imageInfo,
-                               phongInfo,
+        mesh.addTrig(M2M::Trig(m,
+                               m,
                                v1, t1,
                                v2, t2,
                                v3, t3));
@@ -111,8 +111,8 @@ PartialMeshData AbstractPolygonTileMesher::makeSide(const BetterPolygon &polygon
                                                  normal,
                                                  dir.length(),
                                                  h,
-                                                 mTileNeighborhood.centerTile().sideImage(),
-                                                 mTileNeighborhood.centerTile().sideMaterial(),
+                                                 mTileNeighborhood.centerTile()->sideMaterial(),
+                                                 mTileNeighborhood.centerTile()->sideMaterial(),
                                                  upsideDown));
     }
 

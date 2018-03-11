@@ -41,6 +41,26 @@ QVector2D Tile::position() const
         return mRelativePosition + mTileTemplate->position();
 }
 
+const TileMaterial *Tile::topMaterial() const
+{
+    if (mTileTemplate)
+        return mTileTemplate->topMaterial();
+    else
+        return TileMaterial::getDefaultGroundMaterial();
+}
+
+const TileMaterial *Tile::sideMaterial() const
+{
+    if (mTileTemplate) {
+        if (mTileTemplate->hasSideMaterial())
+            return mTileTemplate->sideMaterial();
+        else
+            return mTileTemplate->topMaterial();
+    } else {
+        return TileMaterial::getDefaultGroundMaterial();
+    }
+}
+
 float Tile::setRelativeThickness(float relativeThickness)
 {
     if (relativeThickness == mRelativeThickness) {

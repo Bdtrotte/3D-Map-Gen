@@ -15,10 +15,6 @@ BetterPolygon::BetterPolygon(const QVector<QPointF> &points)
     mPolygon = points;
 
     if (mPolygon.isClosed()) mPolygon.removeLast();
-
-    if (!isValid()) {
-        qDebug() << "INVALID POLYGON SET";
-    }
 }
 
 BetterPolygon::BetterPolygon(const QPolygonF &polygon)
@@ -26,10 +22,6 @@ BetterPolygon::BetterPolygon(const QPolygonF &polygon)
     mPolygon = polygon;
 
     if (mPolygon.isClosed()) mPolygon.removeLast();
-
-    if (!isValid()) {
-        qDebug() << "INVALID POLYGON SET";
-    }
 }
 
 bool BetterPolygon::isValid() const

@@ -32,47 +32,47 @@ void BlockyPolygonTileMesher::determinIfWallShouldDrop(QPointF a, QPointF b, flo
 
     if (edge == -1) return;
 
-    TileInfo other;
+    const Tile *other;
     switch (edge) {
-    case 0:
-        other = mTileNeighborhood(1, 0);
+    case 0: //NORTH
+        other = mTileNeighborhood(0, -1);
         break;
-    case 1:
+    case 1: //WEST
+        other = mTileNeighborhood(-1, 0);
+        break;
+    case 2: //SOUTH
         other = mTileNeighborhood(0, 1);
         break;
-    case 2:
-        other = mTileNeighborhood(1, 2);
-        break;
-    case 3:
-        other = mTileNeighborhood(2, 1);
+    case 3: //EAST
+        other = mTileNeighborhood(1, 0);
         break;
     }
 
-    if (mTileNeighborhood.centerTile().thickness() == 1) {
-        if (other.isNull()) {
+    if (mTileNeighborhood.centerTile()->thickness() == 1) {
+        if (other == nullptr) {
             shouldDrop = false;
             return;
         }
-        if (other.isGround())
+        if (!other->hasTileTemplate())
             return;
 
-        if (other.thickness() == 1) {
-            if (other.topHeight() >= mTileNeighborhood.centerTile().topHeight()) {
+        if (other->thickness() == 1) {
+            if (other->height() >= mTileNeighborhood.centerTile()->height()) {
                 shouldDrop = false;
                 return;
             }
 
-            height = other.topHeight();
+            height = other->height();
         }
     }
 }
 
 QVector<Triplet<BetterPolygon, QVector<float>, QVector<bool>>> BlockyPolygonTileMesher::topPolygons()
 {
-    if (mTileNeighborhood.centerTile().isGround()) return {};
+    if (!mTileNeighborhood.centerTile()->hasTileTemplate()) return {};
 
-    QPointF center = mTileNeighborhood.centerTile().center().toPointF();
-    float halfThickness = mTileNeighborhood.centerTile().thickness() / 2;
+    QPointF center = mTileNeighborhood.centerTile()->position().toPointF();
+    float halfThickness = mTileNeighborhood.centerTile()->thickness() / 2;
 
     QVector<QPointF> topPoints = {
         center + QPointF(halfThickness, -halfThickness),
@@ -89,7 +89,8 @@ QVector<Triplet<BetterPolygon, QVector<float>, QVector<bool>>> BlockyPolygonTile
         //Bridging
 
         //North
-        if (mTileNeighborhood.centerTile() == mTileNeighborhood(1, 0)) {
+        if (mTileNeighborhood(0, -1) != nullptr
+                && mTileNeighborhood.centerTile()->tileTemplate() == mTileNeighborhood(0, -1)->tileTemplate()) {
             QVector<QPointF> bridge = {
                 center + QPointF(-halfThickness, -halfThickness),
                 center + QPointF(halfThickness, -halfThickness),
@@ -102,7 +103,8 @@ QVector<Triplet<BetterPolygon, QVector<float>, QVector<bool>>> BlockyPolygonTile
         }
 
         //East
-        if (mTileNeighborhood.centerTile() == mTileNeighborhood(2, 1)) {
+        if (mTileNeighborhood(1, 0) != nullptr
+                && mTileNeighborhood.centerTile()->tileTemplate() == mTileNeighborhood(1, 0)->tileTemplate()) {
             QVector<QPointF> bridge = {
                 center + QPointF(halfThickness, -halfThickness),
                 center + QPointF(halfThickness, halfThickness),
@@ -115,7 +117,8 @@ QVector<Triplet<BetterPolygon, QVector<float>, QVector<bool>>> BlockyPolygonTile
         }
 
         //South
-        if (mTileNeighborhood.centerTile() == mTileNeighborhood(1, 2)) {
+        if (mTileNeighborhood(0, 1) != nullptr
+                && mTileNeighborhood.centerTile()->tileTemplate() == mTileNeighborhood(0, 1)->tileTemplate()) {
             QVector<QPointF> bridge = {
                 center + QPointF(halfThickness, halfThickness),
                 center + QPointF(-halfThickness, halfThickness),
@@ -128,7 +131,8 @@ QVector<Triplet<BetterPolygon, QVector<float>, QVector<bool>>> BlockyPolygonTile
         }
 
         //West
-        if (mTileNeighborhood.centerTile() == mTileNeighborhood(0, 1)) {
+        if (mTileNeighborhood(-1, 0) != nullptr
+                && mTileNeighborhood.centerTile()->tileTemplate() == mTileNeighborhood(-1, 0)->tileTemplate()) {
             QVector<QPointF> bridge = {
                 center + QPointF(-halfThickness, halfThickness),
                 center + QPointF(-halfThickness, -halfThickness),

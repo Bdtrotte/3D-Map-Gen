@@ -6,9 +6,9 @@
 #include <QSharedPointer>
 #include <QMap>
 
-
 #include "imageandsource.h"
 #include "simpletexturedobject.h"
+#include "tilematerial.h"
 
 namespace M2M {
 
@@ -19,6 +19,8 @@ public:
     ImageInfo() : mImage(nullptr) {}
     ImageInfo(const ImageInfo &other) = default;
     ImageInfo(SharedImageAndSource img) : mImage(img) {}
+    ImageInfo(const TileMaterial *material)
+        : mImage(material->texture()) {}
 
     SharedImageAndSource image() const { return mImage; }
 
@@ -38,6 +40,12 @@ private:
 
 /// Class to wrap Phong reflection info.
 struct PhongInfo {
+    PhongInfo(const TileMaterial *material)
+        : ambient(material->ambient())
+        , diffuse(material->diffuse())
+        , specular(material->specular())
+        , shininess(material->shininess()) {}
+
     float ambient;
     float diffuse;
     float specular;

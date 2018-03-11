@@ -2,6 +2,7 @@
 #define TILE_H
 
 #include "tiletemplate.h"
+#include "tilematerial.h"
 
 #include <QObject>
 #include <QVector2D>
@@ -29,6 +30,9 @@ public:
     float relativeThickness() const { return mRelativeThickness; }
     float relativeHeight() const { return mRelativeHeight; }
     QVector2D relativePosition() const { return mRelativePosition; }
+
+    const TileMaterial *topMaterial() const;
+    const TileMaterial *sideMaterial() const;
 
     /**
      * @brief setRelativeThickness
