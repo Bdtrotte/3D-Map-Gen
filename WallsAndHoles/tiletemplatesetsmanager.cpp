@@ -3,14 +3,22 @@
 #include "newtiletemplatesetdialog.h"
 #include "xmltool.h"
 
+#include "undocommandfromfunctions.h"
+#include "dependentundocommand.h"
+#include "tiletemplatechangecommand.h"
+
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QDebug>
+#include <QRegion>
+#include <QRect>
 
-TileTemplateSetsManager::TileTemplateSetsManager(TileMap *tileMap,
+TileTemplateSetsManager::TileTemplateSetsManager(QUndoStack *undoStack,
+                                                 TileMap *tileMap,
                                                  QObject *parent)
     : QObject(parent)
-    , mTileMap(tileMap) {}
+    , mTileMap(tileMap)
+    , mUndoStack(undoStack) {}
 
 void TileTemplateSetsManager::newTileTemplateSet()
 {
@@ -100,7 +108,7 @@ bool TileTemplateSetsManager::removeTileTemplateSet(int index)
     if (removeFromMap)
         mTileMap->removingTileTemplateSet(tileTemplateSet);
 
-    mTileTemplateSets.removeAt(index);
+    delete mTileTemplateSets.takeAt(index);
 
     return true;
 }
@@ -110,7 +118,11 @@ bool TileTemplateSetsManager::removeTileTemplate(int templateSetIndex, int templ
     Q_ASSERT(templateSetIndex >= 0 && templateSetIndex < mTileTemplateSets.size());
     Q_ASSERT(templateIndex >= 0 && templateIndex < mTileTemplateSets[templateSetIndex]->size());
 
-    TileTemplate *t = mTileTemplateSets[templateSetIndex]->tileTemplateAt(templateIndex);
+    auto tileTemplateSet = mTileTemplateSets[templateSetIndex];
+
+    TileTemplate *t = tileTemplateSet->tileTemplateAt(templateIndex);
+
+    QUndoCommand *command = new QUndoCommand("'remove tile template'");
 
     if (mTileMap && mTileMap->isTileTemplateUsed(t)) {
         QMessageBox mb;
@@ -123,12 +135,64 @@ bool TileTemplateSetsManager::removeTileTemplate(int templateSetIndex, int templ
 
         if (mb.exec() == 1) return false;
 
-        mTileMap->removingTileTemplate(t);
+
+        QVector<QPoint> tilePositions = mTileMap->tilePositionsUsingTemplate(t);
+
+        // Command to clear tiles.
+        TileTemplateChangeCommand::make(mTileMap, tilePositions, nullptr, "", command);
     }
 
-    mTileTemplateSets[templateSetIndex]->removeTileTemplate(templateIndex);
+
+    // Command to remove the tile template.
+
+    auto removeRedo = [this, tileTemplateSet, templateIndex] () {
+        tileTemplateSet->removeTileTemplate(templateIndex);
+    };
+
+    auto removeUndo = [this, tileTemplateSet, t] () {
+        tileTemplateSet->addTileTemplate(t);
+    };
+
+    UndoCommandFromFunctions::make(removeRedo, removeUndo, "", DependentUndoCommand::make({this, tileTemplateSet, t}, "", command));
+
+
+    mUndoStack->push(command);
 
     return true;
+}
+
+void TileTemplateSetsManager::addTileTemplate(int templateSetIndex, TileTemplate *newTemplate)
+{
+    Q_ASSERT(templateSetIndex >= 0 && templateSetIndex < mTileTemplateSets.size());
+
+    /*
+     * It is assumed that when a template is added, it is added to the end of the TileTemplateSet's list.
+     * Therefore, the undo command simply removes the element at the end.
+     *
+     * If newTemplate is destroyed, the command becomes obsolete: this is ensured by the DependentUndoCommand.
+     * */
+
+    auto tileTemplateSet = tileTemplateSetAt(templateSetIndex);
+
+    auto redo = [this, tileTemplateSet, newTemplate] () {
+        tileTemplateSet->addTileTemplate(newTemplate);
+    };
+
+    auto undo = [this, tileTemplateSet] () {
+        tileTemplateSet->removeTileTemplate(tileTemplateSet->size() - 1);
+    };
+
+    QString name = tr("'add tile template'");
+
+    auto command = DependentUndoCommand::make({this, newTemplate, tileTemplateSet}, name);
+
+    UndoCommandFromFunctions::make(
+                     redo,
+                     undo,
+                     name,
+                     command);
+
+    mUndoStack->push(command);
 }
 
 void TileTemplateSetsManager::saveAllTileTemplateSets()
