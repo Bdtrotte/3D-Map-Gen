@@ -7,8 +7,6 @@ AbstractPolygonTileMesher::AbstractPolygonTileMesher(TileNeighborhoodInfo nbhd)
 
 QVector<QSharedPointer<SimpleTexturedObject>> AbstractPolygonTileMesher::makeMesh(QVector2D offset)
 {
-    const Tile *tile = mTileNeighborhood.centerTile();
-
     QVector<QPointF> tp = {
         QPointF(offset.x()    , offset.y()),
         QPointF(offset.x()    , offset.y() + 1),
@@ -16,7 +14,9 @@ QVector<QSharedPointer<SimpleTexturedObject>> AbstractPolygonTileMesher::makeMes
         QPointF(offset.x() + 1, offset.y())
     };
 
-    QVector<Triplet<BetterPolygon, QVector<float>, QVector<bool>>> topPolys = topPolygons();
+    QVector<const Tile *> heightAndMaterialInfo;
+
+    QVector<Triplet<BetterPolygon, QVector<float>, QVector<bool>>> topPolys = topPolygons(&heightAndMaterialInfo);
     for (Triplet<BetterPolygon, QVector<float>, QVector<bool>> &p : topPolys)
         p.getFirst().translate(offset.toPointF());
 
@@ -35,18 +35,26 @@ QVector<QSharedPointer<SimpleTexturedObject>> AbstractPolygonTileMesher::makeMes
         }
     }
 
+    const Tile *tile = mTileNeighborhood.centerTile();
+
     PartialMeshData mesh;
     for (const BetterPolygon &p : ground)
-        mesh += makeTop(p, 0, true);
-    for (const Triplet<BetterPolygon, QVector<float>, QVector<bool>> &p : topPolys) {
-        mesh += makeTop(p.getFirst(), tile->height(), false);
-        mesh += makeSide(p.getFirst(), tile->height(), p.getSecond(), p.getThird());
+        mesh += makeTop(p, 0, TileMaterial::getDefaultGroundMaterial());
+    for (int i = 0; i < topPolys.size(); ++i) {
+        const Triplet<BetterPolygon, QVector<float>, QVector<bool>> &p = topPolys[i];
+        if (!heightAndMaterialInfo.isEmpty())
+            tile = heightAndMaterialInfo[i];
+
+        mesh += makeTop(p.getFirst(), tile->height(), tile->topMaterial());
+        mesh += makeSide(p.getFirst(), tile->height(), p.getSecond(), p.getThird(), tile->sideMaterial());
     }
 
     return mesh.constructObjects();
 }
 
-PartialMeshData AbstractPolygonTileMesher::makeTop(const BetterPolygon &polygon, float height, bool isGround) const
+PartialMeshData AbstractPolygonTileMesher::makeTop(const BetterPolygon &polygon,
+                                                   float height,
+                                                   const TileMaterial *material) const
 {
     QList<Triplet<QPointF, QPointF, QPointF>> triangles = polygon.triangulate();
 
@@ -60,14 +68,8 @@ PartialMeshData AbstractPolygonTileMesher::makeTop(const BetterPolygon &polygon,
         QVector2D t2(t.getSecond());
         QVector2D t3(t.getThird());
 
-        const TileMaterial *m;
-        if (isGround)
-            m = TileMaterial::getDefaultGroundMaterial();
-        else
-            m = mTileNeighborhood.centerTile()->topMaterial();
-
-        mesh.addTrig(M2M::Trig(m,
-                               m,
+        mesh.addTrig(M2M::Trig(material,
+                               material,
                                v1, t1,
                                v2, t2,
                                v3, t3));
@@ -79,7 +81,8 @@ PartialMeshData AbstractPolygonTileMesher::makeTop(const BetterPolygon &polygon,
 PartialMeshData AbstractPolygonTileMesher::makeSide(const BetterPolygon &polygon,
                                                     float startHegiht,
                                                     const QVector<float> endHeight,
-                                                    const QVector<bool> dropWall) const
+                                                    const QVector<bool> dropWall,
+                                                    const TileMaterial *material) const
 {
     PartialMeshData mesh;
 
@@ -111,8 +114,8 @@ PartialMeshData AbstractPolygonTileMesher::makeSide(const BetterPolygon &polygon
                                                  normal,
                                                  dir.length(),
                                                  h,
-                                                 mTileNeighborhood.centerTile()->sideMaterial(),
-                                                 mTileNeighborhood.centerTile()->sideMaterial(),
+                                                 material,
+                                                 material,
                                                  upsideDown));
     }
 

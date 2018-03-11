@@ -91,7 +91,8 @@ SOURCES += \
     imageandsource.cpp\
     mapviewmatchercamera.cpp \
     abstractpolygontilemesher.cpp \
-    blockypolygontilemesher.cpp
+    blockypolygontilemesher.cpp \
+    groundblockypolygontilemesher.cpp
 
 HEADERS += \
     meshview.h \
@@ -171,7 +172,8 @@ HEADERS += \
     geometry.h \
     mapviewmatchercamera.h \
     abstractpolygontilemesher.h \
-    blockypolygontilemesher.h
+    blockypolygontilemesher.h \
+    groundblockypolygontilemesher.h
 
 FORMS +=
 

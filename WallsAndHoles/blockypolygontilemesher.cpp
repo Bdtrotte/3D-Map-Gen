@@ -3,7 +3,11 @@
 using namespace M2M;
 
 BlockyPolygonTileMesher::BlockyPolygonTileMesher(TileNeighborhoodInfo nbhd)
-    : AbstractPolygonTileMesher(nbhd) {}
+    : AbstractPolygonTileMesher(nbhd)
+{
+    //THIS MESHER SHOULD NOT BE GIVEN TO GROUND TILES
+    Q_ASSERT(mTileNeighborhood.centerTile()->hasTileTemplate());
+}
 
 void BlockyPolygonTileMesher::determinIfWallShouldDrop(QPointF a, QPointF b, float &height, bool &shouldDrop)
 {
@@ -109,7 +113,7 @@ QPointF lineHitsEdgeAt(const QLineF &line)
     return line.p2();
 }
 
-Triplet<BetterPolygon, QVector<float>, QVector<bool>> makeDiagonal(QPointF meA, QPointF meB, QPointF otherA, QPointF otherB)
+Triplet<BetterPolygon, QVector<float>, QVector<bool>> makeDiagonal(QPointF meA, QPointF meB, QPointF otherA, QPointF otherB, QVector<bool> dropWalls)
 {
     QVector<QPointF> points = {
         meA,
@@ -118,16 +122,13 @@ Triplet<BetterPolygon, QVector<float>, QVector<bool>> makeDiagonal(QPointF meA, 
         lineHitsEdgeAt(QLineF(meA, otherB))
     };
 
-    return {points, QVector<float>(4, 0), {false, true, false, true}};
+    return {points, QVector<float>(4, 0), dropWalls};
+
 }
 
-QVector<Triplet<BetterPolygon, QVector<float>, QVector<bool>>> BlockyPolygonTileMesher::topPolygons()
+QVector<Triplet<BetterPolygon, QVector<float>, QVector<bool>>> BlockyPolygonTileMesher::topPolygons(QVector<const Tile *> *)
 {
     const Tile *me = mTileNeighborhood.centerTile();
-
-    if (me == nullptr
-            || !me->hasTileTemplate())
-        return {};
 
     QPointF center = me->position().toPointF();
     float halfThickness = me->thickness() / 2;
@@ -205,146 +206,71 @@ QVector<Triplet<BetterPolygon, QVector<float>, QVector<bool>>> BlockyPolygonTile
     }
 
 //DIAGONALS======================================================================================================
-    //Go through each side manually, and check if a diagonal should be made. This should be changed in the future
-    //to be one funtion which can be use on every side. For now:
+    //Start by gathering how each side should "diagonal" (left right, or not at all)
+    const Tile *far[4];
+    const Tile *left[4];
+    const Tile *right[4];
+    int shouldDia[4];
 
-    //NORTH :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+    //NORTH
+    far[0] = mTileNeighborhood(0, -2);
+    left[0] = mTileNeighborhood(-1, -1);
+    right[0] = mTileNeighborhood(1, -1);
+    shouldDia[0] = topWallDrops[0]? shouldDiagonal(me, far[0], left[0], right[0]) : 0;
 
-    if (topWallDrops[0]) {
-        //This will be false if a bridge has already been made
+    //WEST
+    far[1] = mTileNeighborhood(-2, 0);
+    left[1] = mTileNeighborhood(-1, 1);
+    right[1] = mTileNeighborhood(-1, -1);
+    shouldDia[1] = topWallDrops[1]? shouldDiagonal(me, far[1], left[1], right[1]) : 0;
 
-        const Tile *far = mTileNeighborhood(0, -2);
-        const Tile *left = mTileNeighborhood(-1, -1);
-        const Tile *right = mTileNeighborhood(1, -1);
+    //SOUTH
+    far[2] = mTileNeighborhood(0, 2);
+    left[2] = mTileNeighborhood(1, 1);
+    right[2] = mTileNeighborhood(-1, 1);
+    shouldDia[2] = topWallDrops[2]? shouldDiagonal(me, far[2], left[2], right[2]) : 0;
 
-        QPointF meA = center + QPointF(-halfThickness, -halfThickness);
-        QPointF meB = center + QPointF(halfThickness, -halfThickness);
+    //EAST
+    far[3] = mTileNeighborhood(2, 0);
+    left[3] = mTileNeighborhood(1, -1);
+    right[3] = mTileNeighborhood(1, 1);
+    shouldDia[3] = topWallDrops[3]? shouldDiagonal(me, far[3], left[3], right[3]) : 0;
 
-        int dia = shouldDiagonal(me, far, left, right);
-        if (dia) {
-            topWallDrops[0] = false;
+    QPoint corners[4] = {
+        QPoint(-1, -1),
+        QPoint(-1, 1),
+        QPoint(1, 1),
+        QPoint(1, -1)
+    };
 
-            QPointF meA = center + QPointF(halfThickness, -halfThickness);
-            QPointF meB = center + QPointF(halfThickness, halfThickness);
+    //Now go through and use the info to buid diagonals
 
-            switch(dia) {
-            case 1: {
-                QPointF otherA = QPointF(-1, -1) + left->position().toPointF() + QPointF(left->thickness() / 2, -left->thickness() / 2);
-                QPointF otherB = QPointF(-1, -1) + left->position().toPointF() + QPointF(left->thickness() / 2, left->thickness() / 2);
+    for (int i = 0; i < 4; ++i) {
+        if (shouldDia[i]) {
+            topWallDrops[i] = false;
 
-                ret.append(makeDiagonal(meA, meB, otherA, otherB));
-            } break;
-            case 2: {
-                QPointF otherA = QPointF(1, -1) + right->position().toPointF() + QPointF(-right->thickness() / 2, right->thickness() / 2);
-                QPointF otherB = QPointF(1, -1) + right->position().toPointF() + QPointF(-right->thickness() / 2, -right->thickness() / 2);
+            if (halfThickness < 0.5) {
+                QPointF meA = center + QPointF(corners[i].x() * halfThickness, corners[i].y() * halfThickness);
+                QPointF meB = center + QPointF(corners[(i + 3) % 4].x() * halfThickness, corners[(i + 3) % 4].y() * halfThickness);
 
-                ret.append(makeDiagonal(meA, meB, otherA, otherB));
-            } break;
+                switch(shouldDia[i]) {
+                case 1: {
+                    QPointF otherA = corners[i] + left[i]->position().toPointF() + QPointF(corners[(i + 3) % 4].x() * left[i]->thickness() / 2, corners[(i + 3) % 4].y() * left[i]->thickness() / 2);
+                    QPointF otherB = corners[i] + left[i]->position().toPointF() + QPointF(corners[(i + 2) % 4].x() * left[i]->thickness() / 2, corners[(i + 2) % 4].y() * left[i]->thickness() / 2);
+
+                    ret.append(makeDiagonal(meA, meB, otherA, otherB, {false, true, false, shouldDia[(i + 1) % 4] != 2}));
+                } break;
+                case 2: {
+                    QPointF otherA = corners[(i + 3) % 4] + right[i]->position().toPointF() + QPointF(corners[(i + 1) % 4].x() * right[i]->thickness() / 2, corners[(i + 1) % 4].y() * right[i]->thickness() / 2);
+                    QPointF otherB = corners[(i + 3) % 4] + right[i]->position().toPointF() + QPointF(corners[i].x() * right[i]->thickness() / 2, corners[i].y() * right[i]->thickness() / 2);
+
+                    ret.append(makeDiagonal(meA, meB, otherA, otherB, {false, shouldDia[(i + 3) % 4] != 1, false, true}));
+                } break;
+                }
             }
         }
     }
 
-
-    //WEST :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-
-    if (topWallDrops[1]) {
-        //This will be false if a bridge has already been made
-
-        const Tile *far = mTileNeighborhood(-2, 0);
-        const Tile *left = mTileNeighborhood(-1, 1);
-        const Tile *right = mTileNeighborhood(-1, -1);
-
-        int dia = shouldDiagonal(me, far, left, right);
-        if (dia) {
-            topWallDrops[1] = false;
-
-            QPointF meA = center + QPointF(halfThickness, -halfThickness);
-            QPointF meB = center + QPointF(halfThickness, halfThickness);
-
-            switch(dia) {
-            case 1: {
-                QPointF otherA = QPointF(-1, 1) + left->position().toPointF() + QPointF(-left->thickness() / 2, -left->thickness() / 2);
-                QPointF otherB = QPointF(-1, 1) + left->position().toPointF() + QPointF(left->thickness() / 2, -left->thickness() / 2);
-
-                ret.append(makeDiagonal(meA, meB, otherA, otherB));
-            } break;
-            case 2: {
-                QPointF otherA = QPointF(-1, -1) + right->position().toPointF() + QPointF(right->thickness() / 2, right->thickness() / 2);
-                QPointF otherB = QPointF(-1, -1) + right->position().toPointF() + QPointF(-right->thickness() / 2, right->thickness() / 2);
-
-                ret.append(makeDiagonal(meA, meB, otherA, otherB));
-            } break;
-            }
-        }
-    }
-
-
-    //SOUTH :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-
-    if (topWallDrops[2]) {
-        //This will be false if a bridge has already been made
-
-        const Tile *far = mTileNeighborhood(0, 2);
-        const Tile *left = mTileNeighborhood(1, 1);
-        const Tile *right = mTileNeighborhood(-1, 1);
-
-        int dia = shouldDiagonal(me, far, left, right);
-        if (dia) {
-            topWallDrops[2] = false;
-
-            QPointF meA = center + QPointF(halfThickness, -halfThickness);
-            QPointF meB = center + QPointF(halfThickness, halfThickness);
-
-            switch(dia) {
-            case 1: {
-                QPointF otherA = QPointF(1, 1) + left->position().toPointF() + QPointF(-left->thickness() / 2, left->thickness() / 2);
-                QPointF otherB = QPointF(1, 1) + left->position().toPointF() + QPointF(-left->thickness() / 2, -left->thickness() / 2);
-
-                ret.append(makeDiagonal(meA, meB, otherA, otherB));
-            } break;
-            case 2: {
-                QPointF otherA = QPointF(-1, 1) + right->position().toPointF() + QPointF(right->thickness() / 2, -right->thickness() / 2);
-                QPointF otherB = QPointF(-1, 1) + right->position().toPointF() + QPointF(right->thickness() / 2, right->thickness() / 2);
-
-                ret.append(makeDiagonal(meA, meB, otherA, otherB));
-            } break;
-            }
-        }
-    }
-
-
-    //EAST :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-
-    if (topWallDrops[3]) {
-        //This will be false if a bridge has already been made
-
-        const Tile *far = mTileNeighborhood(0, -2);
-        const Tile *left = mTileNeighborhood(1, -1);
-        const Tile *right = mTileNeighborhood(1, 1);
-
-        int dia = shouldDiagonal(me, far, left, right);
-        if (dia) {
-            topWallDrops[3] = false;
-
-            QPointF meA = center + QPointF(halfThickness, -halfThickness);
-            QPointF meB = center + QPointF(halfThickness, halfThickness);
-
-            switch(dia) {
-            case 1: {
-                QPointF otherA = QPointF(1, -1) + left->position().toPointF() + QPointF(left->thickness() / 2, left->thickness() / 2);
-                QPointF otherB = QPointF(1, -1) + left->position().toPointF() + QPointF(-left->thickness() / 2, left->thickness() / 2);
-
-                ret.append(makeDiagonal(meA, meB, otherA, otherB));
-            } break;
-            case 2: {
-                QPointF otherA = QPointF(1, 1) + right->position().toPointF() + QPointF(-right->thickness() / 2, -right->thickness() / 2);
-                QPointF otherB = QPointF(1, 1) + right->position().toPointF() + QPointF(right->thickness() / 2, -right->thickness() / 2);
-
-                ret.append(makeDiagonal(meA, meB, otherA, otherB));
-            } break;
-            }
-        }
-    }
 
     QVector<float> topWalEndHeight(4, 0);
     //Now check unhandled edges to see if a wall really needs to drop, and if so, to what height.

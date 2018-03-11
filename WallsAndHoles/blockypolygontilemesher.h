@@ -11,7 +11,7 @@ public:
     BlockyPolygonTileMesher(TileNeighborhoodInfo nbhd);
 
 protected:
-    QVector<Triplet<BetterPolygon, QVector<float>, QVector<bool>>> topPolygons();
+    QVector<Triplet<BetterPolygon, QVector<float>, QVector<bool>>> topPolygons(QVector<const Tile *> *);
 
 private:
     void determinIfWallShouldDrop(QPointF a, QPointF b, float &height, bool &shouldDrop);

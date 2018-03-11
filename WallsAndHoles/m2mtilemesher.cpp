@@ -5,6 +5,7 @@
 
 #include "m2mtilemesher_private.h"
 #include "blockypolygontilemesher.h"
+#include "groundblockypolygontilemesher.h"
 
 M2M::TileNeighborhoodInfo::TileNeighborhoodInfo(const TileMap *tileMap, QPoint centerTilePos)
     : mTileMap(tileMap)
@@ -43,7 +44,10 @@ const Tile *M2M::TileNeighborhoodInfo::centerTile() const
 
 QSharedPointer<M2M::AbstractTileMesher> M2M::TileNeighborhoodInfo::makeMesher() const
 {
-    return QSharedPointer<M2M::AbstractTileMesher>(new BlockyPolygonTileMesher(*this));
+    if (centerTile()->hasTileTemplate())
+        return QSharedPointer<M2M::AbstractTileMesher>(new BlockyPolygonTileMesher(*this));
+    else
+        return QSharedPointer<M2M::AbstractTileMesher>(new GroundBlockyPolygonTileMesher(*this));
 }
 
 QSharedPointer<M2M::AbstractTileMesher> M2M::AbstractTileMesher::getMesherForTile(const TileMap *tileMap, QPoint tilePoint)
