@@ -11,8 +11,7 @@ class TileMapSelectionTool : public AbstractTileSelectionTool
 public:
     TileMapSelectionTool(PropertyBrowser *propertyBrowser,
                          TileMapPreviewGraphicsItem *previewItem,
-                         QUndoStack *undoStack,
-                         QObject *parent = nullptr);
+                         QUndoStack *undoStack);
 
     void cellClicked(int x, int y, QMouseEvent *) override;
     void cellActivated(int x, int y, QMouseEvent *) override;

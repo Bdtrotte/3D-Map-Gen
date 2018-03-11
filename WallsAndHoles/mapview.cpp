@@ -52,6 +52,8 @@ void MapView::wheelEvent(QWheelEvent *event)
     float s = qPow(M_E, mScale);
     t.scale(s, s);
     setTransform(t);
+
+    emit mapViewChanged(tilesInFrame());
 }
 
 void MapView::clear()
@@ -85,6 +87,14 @@ void MapView::setViewMode(int viewMode)
     mViewMode = viewMode;
     for (MapCell *mc : mMapCells)
         mc->setGraphicsMode(mViewMode);
+}
+
+QRectF MapView::tilesInFrame() const
+{
+    QPointF topLeft = mapToScene(0, 0);
+    QPointF bottomRight = mapToScene(geometry().width(), geometry().height());
+
+    return QRectF(topLeft, bottomRight);
 }
 
 void MapView::mapSizeChanged()
@@ -134,6 +144,8 @@ void MapView::mouseMoveEvent(QMouseEvent *event)
         hsb->setValue(hsb->value() + dx);
         QScrollBar* const vsb = verticalScrollBar();
         vsb->setValue(vsb->value() + dy);
+
+        emit mapViewChanged(tilesInFrame());
     } else {
         QGraphicsView::mouseMoveEvent(event);
         mOldX = event->x();
@@ -159,6 +171,11 @@ void MapView::mouseReleaseEvent(QMouseEvent *event)
     } else {
         QGraphicsView::mouseReleaseEvent(event);
     }
+}
+
+void MapView::resizeEvent(QResizeEvent *)
+{
+    emit mapViewChanged(tilesInFrame());
 }
 
 void MapView::reMakeMap()
@@ -194,4 +211,6 @@ void MapView::reMakeMap()
     setTransform(t);
 
     mScale = qLn(s);
+
+    emit mapViewChanged(tilesInFrame());
 }

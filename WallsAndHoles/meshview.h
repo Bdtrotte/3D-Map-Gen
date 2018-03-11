@@ -10,6 +10,7 @@
 #include "toolmanager.h"
 #include "objtools.h"
 
+#include "meshviewcontainer.h"
 #include "abstractrenderer.h"
 
 
@@ -17,28 +18,13 @@ class MeshView : public QOpenGLWidget, public QOpenGLFunctions
 {
     Q_OBJECT
 
+    friend class MeshViewContainer;
+
 public:
     explicit MeshView(QWidget *parent = 0);
     ~MeshView();
 
-//    void setScene(QSharedPointer<Scene> scene);
-
-    /**
-     * @brief Makes the MeshView use a new Renderer.
-     * @param renderer  The Renderer that will be used to draw to the screen.
-     */
-    void setRenderer(QSharedPointer<AbstractRenderer> renderer);
-
 public slots:
-    /**
-     * @brief Activates the given tool in the tool manager.
-     * @param name The name of the tool.
-     */
-    void activateTool(QString name);
-    void load(QString path);
-    void save(QString path);
-
-
     /**
      * @brief Schedules a paintGL() call on the OpenGL thread.
      */
@@ -53,7 +39,16 @@ public slots:
      */
     void cleanUp();
 
+private slots:
+    void cameraActivated(AbstractTool *tool, QString);
+
 protected:
+    /**
+     * @brief Makes the MeshView use a new Renderer.
+     * @param renderer  The Renderer that will be used to draw to the screen.
+     */
+    void setRenderer(QSharedPointer<AbstractRenderer> renderer);
+
     void initializeGL() override;
     void paintGL() override;
     void resizeGL(int w, int h) override;
@@ -100,10 +95,10 @@ protected:
 
 
     // Controller for the camera.
-    QSharedPointer<AbstractMeshViewCamera> mCamera;
+    AbstractMeshViewCamera *mCamera;
 
     // The tool manager. This will send mouse events to the appropriate tool.
-    ToolManagerP mTools;
+    ToolManager *mTools;
 
 
     /**

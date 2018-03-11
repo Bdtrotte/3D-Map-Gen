@@ -14,6 +14,8 @@
 
 #include "simpletexturedobject.h"
 
+#include "objtools.h"
+
 
 class SimpleTexturedScene : public AbstractScene, public std::enable_shared_from_this<SimpleTexturedScene>
 {
@@ -82,6 +84,11 @@ public:
         auto itr = mObjects.end();
         return DereferencingConstIterator<SimpleTexturedObject, decltype(itr)>(itr);
     }
+
+    /**
+     * @brief export all renderable object as a single OBJModel
+     */
+    SharedOBJModel exportOBJ() override;
 
 signals:
     /**

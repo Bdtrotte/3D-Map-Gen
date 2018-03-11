@@ -30,8 +30,6 @@ class ToolManager : public QObject {
     Q_OBJECT
 
 public:
-    using AbstractToolP = QSharedPointer<AbstractTool>;
-
     ToolManager(QObject *parent = nullptr);
 
     /**
@@ -42,7 +40,7 @@ public:
      * @param Key Sequence for the tool, not necessary
      * @return A QAction that, when toggled, will call either activateTool(name) or deactivateTool(name).
      */
-    QAction *registerTool(AbstractToolP tool, QString name, QIcon icon = QIcon(), QKeySequence ks = QKeySequence());
+    QAction *registerTool(AbstractTool *tool, QString name, QIcon icon = QIcon(), QKeySequence ks = QKeySequence());
 
     /**
      * @brief Finds the action associated with the name.
@@ -85,19 +83,17 @@ signals:
      * @param tool The tool that was activated.
      * @param name The name of the tool.
      */
-    void toolWasActivated(AbstractToolP tool, QString name);
+    void toolWasActivated(AbstractTool *tool, QString name);
 
 protected:
-    QMap<QString, AbstractToolP> mTools;  /// A map from tool names to tool objects.
-    QMap<QString, QAction*> mToolActions; /// The actions associated to each tool. All pointers delete selves when the ToolManager is destructed.
+    QMap<QString, AbstractTool *> mTools;  /// A map from tool names to tool objects.
+    QMap<QString, QAction *> mToolActions; /// The actions associated to each tool. All pointers delete selves when the ToolManager is destructed.
 
     QActionGroup *mActionGroup; /// The action group containing all of the ToolManager's actions.
 
-    AbstractToolP mActiveTool; /// The active tool.
+    AbstractTool *mActiveTool; /// The active tool.
 
     QToolBar *mContextToolBar;
 };
-
-typedef QSharedPointer<ToolManager> ToolManagerP;
 
 #endif // TOOLMANAGER_H

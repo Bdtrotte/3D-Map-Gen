@@ -3,31 +3,35 @@
 #include "meshviewcontainer.h"
 
 #include "meshview.h"
+#include "meshviewcameralikeblender.h"
 #include "objtools.h"
 
 MeshViewContainer::MeshViewContainer(QWidget *parent)
     : QWidget(parent)
+    , mMeshView(new MeshView(this))
+    , mToolBar(new QToolBar(this))
 {
-    QVBoxLayout *layout = new QVBoxLayout(this);
-    setLayout(layout);
-
-    // Create the MeshView.
-    mMeshView = new MeshView(this);
     mMeshView->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+
+    addCamera(new MeshViewCameraLikeBlender(), "Default")->setChecked(true);
+
+    QVBoxLayout *layout = new QVBoxLayout(this);
+    layout->addWidget(mToolBar);
     layout->addWidget(mMeshView);
 
-    mMeshView->activateTool("camera");
+    setLayout(layout);
 }
 
-void MeshViewContainer::setRenderer(QSharedPointer<AbstractRenderer> renderer) {
+void MeshViewContainer::setRenderer(QSharedPointer<AbstractRenderer> renderer)
+{
     mMeshView->setRenderer(renderer);
 }
 
-void MeshViewContainer::saveMesh(QString path){
-    mMeshView = findChild<MeshView *>();
-    mMeshView->save(path);
-}
-void MeshViewContainer::loadMesh(QString path){
-    mMeshView = findChild<MeshView *>();
-    mMeshView->load(path);
+QAction *MeshViewContainer::addCamera(AbstractMeshViewCamera *camera, QString name, QIcon icon, QKeySequence ks)
+{
+    QAction *cam = mMeshView->mTools->registerTool(camera, name, icon, ks);
+
+    mToolBar->addAction(cam);
+
+    return cam;
 }

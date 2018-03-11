@@ -9,8 +9,8 @@
 class AbstractTileMapTool : public AbstractTool
 {
 public:
-    AbstractTileMapTool(TileMapPreviewGraphicsItem *previewItem, QObject *parent = nullptr)
-        : AbstractTool(parent)
+    AbstractTileMapTool(TileMapPreviewGraphicsItem *previewItem)
+        : AbstractTool()
         , mPreviewItem(previewItem)
         , mTileMap(nullptr)
         , mTileTemplate(nullptr)

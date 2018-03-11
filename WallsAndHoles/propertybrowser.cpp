@@ -98,14 +98,14 @@ void PropertyBrowser::makeLine(QString propertyName, QVariant value, bool editab
         if (w->specialValueText().isEmpty())
             w->setValue(value.toInt());
         line->addWidget(w);
-        connect(w, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged),
-                this, [this, propertyName, w](int i) {
+        connect(w, &QSpinBox::editingFinished,
+                this, [this, propertyName, w]() {
             if (!w->specialValueText().isEmpty()) {
                 w->setMinimum(w->minimum() + 1);
                 w->setSpecialValueText("");
             }
 
-            mPropertyManager->propertyEdited(propertyName, i);
+            mPropertyManager->propertyEdited(propertyName, w->value());
         });
 
         mLineWidget[propertyName] = w;
@@ -133,14 +133,14 @@ void PropertyBrowser::makeLine(QString propertyName, QVariant value, bool editab
         if (!blank)
             w->setValue(value.toDouble());
         line->addWidget(w);
-        connect(w, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged),
-                this, [this, propertyName, w](double i) {
+        connect(w, &QDoubleSpinBox::editingFinished,
+                this, [this, propertyName, w]() {
             if (!w->specialValueText().isEmpty()) {
                 w->setMinimum(w->minimum() + 1);
                 w->setSpecialValueText("");
             }
 
-            mPropertyManager->propertyEdited(propertyName, i);
+            mPropertyManager->propertyEdited(propertyName, w->value());
         });
 
         mLineWidget[propertyName] = w;

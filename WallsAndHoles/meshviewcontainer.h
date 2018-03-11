@@ -2,8 +2,12 @@
 #define MESHVIEWCONTAINER_H
 
 #include <QWidget>
+#include <QToolBar>
 
-#include "meshview.h"
+#include "abstractrenderer.h"
+
+class MeshView;
+class AbstractMeshViewCamera;
 
 class MeshViewContainer : public QWidget
 {
@@ -12,18 +16,20 @@ class MeshViewContainer : public QWidget
 public:
     explicit MeshViewContainer(QWidget *parent = 0);
 
-    void saveMesh(QString path);
-    void loadMesh(QString path);
-
     /**
      * @brief Calls setRenderer(renderer) on the mesh view.
      */
     void setRenderer(QSharedPointer<AbstractRenderer> renderer);
 
+    QAction *addCamera(AbstractMeshViewCamera *camera,
+                   QString name,
+                   QIcon icon = QIcon(),
+                   QKeySequence ks = QKeySequence());
 
-protected:
-
+private:
     MeshView *mMeshView;
+
+    QToolBar *mToolBar;
 };
 
 #endif // MESHVIEWCONTAINER_H

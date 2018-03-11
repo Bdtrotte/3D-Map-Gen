@@ -2,8 +2,8 @@
 
 #include "shaperegion.h"
 
-RectBrushTool::RectBrushTool(TileMapPreviewGraphicsItem *previewItem, QUndoStack *undoStack, QObject *parent)
-    : AbstractShapeBrushTool(previewItem, undoStack, parent) {}
+RectBrushTool::RectBrushTool(TileMapPreviewGraphicsItem *previewItem, QUndoStack *undoStack)
+    : AbstractShapeBrushTool(previewItem, undoStack) {}
 
 QRegion RectBrushTool::getShape(QPoint start, QPoint end) const
 {

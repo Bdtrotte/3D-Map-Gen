@@ -67,6 +67,7 @@ SOURCES += \
     savabletiletemplateset.cpp \
     newmapdialog.cpp \
     tilemappreviewgraphicsitem.cpp \
+    objtools.cpp \
     propertybrowser.cpp \
     tilepropertymanager.cpp \
     mappropertymanager.cpp \
@@ -79,12 +80,15 @@ SOURCES += \
     materialpropertymanager.cpp \
     imagefinderbar.cpp \
     tilematerialselectiondialog.cpp \
+    templatematerialselector.cpp \
     abstracttileselectiontool.cpp \
     tilemaphelpers.cpp \
     shaperegion.cpp \
     mapviewcontainer.cpp\
     m2mpartialmesh.cpp \
     m2mtilemesher_private.cpp \
+    imageandsource.cpp \
+    mapviewmatchercamera.cpp \
     tiletemplatechangecommand.cpp \
     dependentundocommand.cpp \
     emptyparentcommand.cpp
@@ -154,6 +158,7 @@ HEADERS += \
     imagefinderbar.h \
     imageandsource.h \
     tilematerialselectiondialog.h \
+    templatematerialselector.h \
     abstracttileselectiontool.h \
     tilemaphelpers.h \
     shaperegion.h \
@@ -162,6 +167,7 @@ HEADERS += \
     array2dtools.h \
     array2d_private.h \
     m2mtilemesher_private.h \
+    mapviewmatchercamera.h \
     tiletemplatechangecommand.h \
     changevaluecommand.h \
     undocommandfromfunctions.h \

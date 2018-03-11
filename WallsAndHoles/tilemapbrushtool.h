@@ -11,7 +11,7 @@
 class TileMapBrushTool : public AbstractTileMapTool
 {
 public:
-    TileMapBrushTool(TileMapPreviewGraphicsItem *previewItem, QUndoStack *undoStack, QObject *parent = nullptr);
+    TileMapBrushTool(TileMapPreviewGraphicsItem *previewItem, QUndoStack *undoStack);
 
     void cellActivated(int x, int y, QMouseEvent *) override;
     void cellHovered(int x, int y, QMouseEvent *) override;

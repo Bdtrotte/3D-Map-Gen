@@ -8,9 +8,8 @@
 
 TileMapSelectionTool::TileMapSelectionTool(PropertyBrowser *propertyBrowser,
                                            TileMapPreviewGraphicsItem *previewItem,
-                                           QUndoStack *undoStack,
-                                           QObject *parent)
-    : AbstractTileSelectionTool(propertyBrowser, previewItem, parent)
+                                           QUndoStack *undoStack)
+    : AbstractTileSelectionTool(propertyBrowser, previewItem)
     , mClickCount(0)
     , mLastClickTime(0)
     , mUndoStack(undoStack) {}

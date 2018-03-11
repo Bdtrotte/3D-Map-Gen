@@ -7,8 +7,8 @@
 #include <QPair>
 
 
-FillTool::FillTool(TileMapPreviewGraphicsItem *previewItem, QUndoStack *undoStack, QObject *parent)
-    : AbstractTileMapTool(previewItem, parent)
+FillTool::FillTool(TileMapPreviewGraphicsItem *previewItem, QUndoStack *undoStack)
+    : AbstractTileMapTool(previewItem)
     , mUndoStack(undoStack) {}
 
 void FillTool::cellClicked(int x, int y, QMouseEvent *)

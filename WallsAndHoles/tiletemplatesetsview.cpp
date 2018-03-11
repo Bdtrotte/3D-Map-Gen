@@ -41,19 +41,29 @@ TileTemplateSetsView::TileTemplateSetsView(TileTemplateSetsManager *tileTemplate
     QToolBar *actionBar = new QToolBar(this);
     actionBar->setFloatable(false);
     actionBar->setMovable(false);
-    actionBar->addAction("Add Template Set", this, &TileTemplateSetsView::addTemplateSet);
-    mRemoveTemplateSet = actionBar->addAction("Remove Template Set", this, &TileTemplateSetsView::removeTemplateSet);
-    mSaveTemplateSet = actionBar->addAction("Save Template Set", this, &TileTemplateSetsView::saveTemplateSet);
-    actionBar->addAction("Load Template Set", this, &TileTemplateSetsView::loadTemplateSet);
+    actionBar->addAction("Add", this, &TileTemplateSetsView::addTemplateSet);
+    mRemoveTemplateSet = actionBar->addAction("Remove", this, &TileTemplateSetsView::removeTemplateSet);
+    mSaveTemplateSet = actionBar->addAction("Save", this, &TileTemplateSetsView::saveTemplateSet);
+    actionBar->addAction("Load", this, &TileTemplateSetsView::loadTemplateSet);
     mRemoveTemplateSet->setEnabled(false);
     mSaveTemplateSet->setEnabled(false);
     mRemoveTemplate->setEnabled(false);
+
+    actionBar->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
+
+    //Setting tooltips for actions
+    actionBar->actions().at(0)->setToolTip("Add Template Set");
+    actionBar->actions().at(1)->setToolTip("Remove Template Set");
+    actionBar->actions().at(2)->setToolTip("Save Template Set");
+    actionBar->actions().at(3)->setToolTip("Load Template Set");
 
     //Sets icons for the action bar
     actionBar->actions().at(0)->setIcon(QIcon("://images/icons/22x22/add.png"));
     actionBar->actions().at(1)->setIcon(QIcon("://images/icons/22x22/remove.png"));
     actionBar->actions().at(2)->setIcon(QIcon("://images/icons/22x22/save.png"));
     actionBar->actions().at(3)->setIcon(QIcon("://images/icons/22x22/load.png"));
+
+
 
     //Set up default template set view
     mDefaultTemplateView = new QListView(this);

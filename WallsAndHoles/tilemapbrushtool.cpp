@@ -5,8 +5,8 @@
 #include <QLabel>
 #include <QHBoxLayout>
 
-TileMapBrushTool::TileMapBrushTool(TileMapPreviewGraphicsItem *previewItem, QUndoStack *undoStack, QObject *parent)
-    : AbstractTileMapTool(previewItem, parent)
+TileMapBrushTool::TileMapBrushTool(TileMapPreviewGraphicsItem *previewItem, QUndoStack *undoStack)
+    : AbstractTileMapTool(previewItem)
     , mRadius(1)
     , mRadiusSpinner(new QWidgetAction(this))
     , mUndoStack(undoStack)

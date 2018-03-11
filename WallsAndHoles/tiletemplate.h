@@ -19,7 +19,7 @@ public:
                           QString name = "New Tile Template",
                           float height = 0,
                           float thickness = 1,
-                          TileMaterial *material = nullptr,
+                          TileMaterial *topMaterial = nullptr,
                           QVector2D position = QVector2D(0.5, 0.5),
                           QObject *parent = nullptr);
 
@@ -59,11 +59,19 @@ public:
 
     void setColor(QColor color);
 
+    void setHasSideMaterial(bool enabled);
+
     /**
-     * @brief Updates the material for the tile template.
+     * @brief Updates the top material for the tile template.
      * @param material  A pointer to the new material.
      */
-    void setMaterial(TileMaterial *material);
+    void setTopMaterial(TileMaterial *material);
+
+    /**
+     * @brief Updates the side material for the tile template.
+     * @param material  A pointer to the new material.
+     */
+    void setSideMaterial(TileMaterial *material);
 
 
     QString name() const { return mName; }
@@ -75,9 +83,13 @@ public:
 
     QColor color() const { return mColor; }
 
+    bool hasSideMaterial() { return mHasSideMaterial; }
 
-    const TileMaterial *material() const { return mMaterial; }
-    TileMaterial *material() { return mMaterial; }
+    const TileMaterial *topMaterial() const { return mTopMaterial; }
+    TileMaterial *topMaterial() { return mTopMaterial; }
+
+    const TileMaterial *sideMaterial() const { return mSideMaterial; }
+    TileMaterial *sideMaterial() { return mSideMaterial; }
 
     /**
      * @brief emitTilePing
@@ -115,8 +127,9 @@ private:
     //Has no affect on evental output mesh
     QColor mColor;
 
-
-    TileMaterial *mMaterial;
+    bool mHasSideMaterial;
+    TileMaterial *mTopMaterial;
+    TileMaterial *mSideMaterial;
 };
 
 #endif // TILETEMPLATE_H

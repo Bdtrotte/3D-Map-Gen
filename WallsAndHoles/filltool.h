@@ -12,7 +12,7 @@ class FillTool : public AbstractTileMapTool {
     Q_OBJECT
 
 public:
-    FillTool(TileMapPreviewGraphicsItem *previewItem, QUndoStack *undoStack, QObject *parent = nullptr);
+    FillTool(TileMapPreviewGraphicsItem *previewItem, QUndoStack *undoStack);
 
     /**
      * @brief This will immediately fill an area.

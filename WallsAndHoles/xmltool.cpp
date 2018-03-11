@@ -83,9 +83,14 @@ QDomElement tileTemplateSetElement(TileTemplateSet *templateSet, QDomDocument &d
 
     QList<TileMaterial *> usedMaterials;
     for (TileTemplate *t : templateList) {
-        TileMaterial *m = t->material();
+        TileMaterial *m = t->topMaterial();
         if (m != TileMaterial::getDefaultMaterial() && usedMaterials.indexOf(m) == -1)
             usedMaterials.append(m);
+        if (t->hasSideMaterial()) {
+            m = t->sideMaterial();
+            if (m != TileMaterial::getDefaultMaterial() && usedMaterials.indexOf(m) == -1)
+                usedMaterials.append(m);
+        }
     }
 
     for (TileMaterial *m : usedMaterials)
@@ -101,7 +106,13 @@ QDomElement tileTemplateSetElement(TileTemplateSet *templateSet, QDomDocument &d
                                QString::number(t->position()[0]),
                                QString::number(t->position()[1])));
         templateE.setAttribute("color", t->color().name());
-        templateE.setAttribute("material", usedMaterials.indexOf(t->material()));
+        templateE.setAttribute("hassidemtrl", t->hasSideMaterial());
+
+        templateE.setAttribute("topmaterial", usedMaterials.indexOf(t->topMaterial()));
+        if (t->hasSideMaterial())
+            templateE.setAttribute("sidematerial", usedMaterials.indexOf(t->sideMaterial()));
+        else
+            templateE.setAttribute("sidematerial", -1);
 
         root.appendChild(templateE);
     }
@@ -283,7 +294,7 @@ SavableTileTemplateSet *XMLTool::openTileTemplateSet(QString templateSetPath)
 
                 TileMaterial *m = new TileMaterial(name, ImageAndSource::getSharedImageAndSource(texturePath), ambient, diffuse, specular, shininess);
 
-                if (TileMaterial *tm = TileMaterialSet::getInstance()->materialInSet(m))
+                if (TileMaterial *tm = TileMaterialSet::getInstance()->materialInSet(*m))
                     m = tm;
                 else
                     TileMaterialSet::getInstance()->addMaterial(m);
@@ -295,7 +306,9 @@ SavableTileTemplateSet *XMLTool::openTileTemplateSet(QString templateSetPath)
                 float height;
                 QVector2D position;
                 QColor color;
-                int materialId;
+                int topMaterialId=-1;
+                int sideMaterialId=-1;
+                bool hasSideMaterial=false;
                 foreach (const QXmlStreamAttribute &attr, xmlReader.attributes()) {
                     if (attr.name() == "name")
                         name = attr.value().toString();
@@ -309,17 +322,26 @@ SavableTileTemplateSet *XMLTool::openTileTemplateSet(QString templateSetPath)
                         position[1] = pos[1].toFloat();
                     } else if (attr.name() == "color")
                         color = QColor(attr.value().toString());
-                    else if (attr.name() == "material")
-                        materialId = attr.value().toInt();
+                    else if (attr.name() == "topmaterial")
+                        topMaterialId = attr.value().toInt();
+                    else if (attr.name() == "sidematerial")
+                        sideMaterialId = attr.value().toInt();
+                    else if (attr.name() == "hassidemtrl")
+                        hasSideMaterial = attr.value().toInt();
                 }
 
-                TileMaterial *m;
-                if (materialId == -1)
-                    m = TileMaterial::getDefaultMaterial();
+                TileMaterial *topM;
+                if (topMaterialId == -1)
+                    topM = TileMaterial::getDefaultMaterial();
                 else
-                    m = materials[materialId];
+                    topM = materials[topMaterialId];
 
-                TileTemplate *tileTemplate = new TileTemplate(color, name, height, thickness, m, position, templateSet);
+                TileTemplate *tileTemplate = new TileTemplate(color, name, height, thickness, topM, position, templateSet);
+
+                tileTemplate->setHasSideMaterial(hasSideMaterial);
+                if (sideMaterialId != -1)
+                    tileTemplate->setSideMaterial(materials[sideMaterialId]);
+
                 templateSet->addTileTemplate(tileTemplate, true);
             }
         }

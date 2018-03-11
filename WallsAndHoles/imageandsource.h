@@ -3,6 +3,7 @@
 
 #include <QSharedPointer>
 #include <QImage>
+#include <QMap>
 
 class ImageAndSource;
 
@@ -11,10 +12,7 @@ typedef QSharedPointer<ImageAndSource> SharedImageAndSource;
 class ImageAndSource
 {
 public:
-    static SharedImageAndSource getSharedImageAndSource(QString filePath)
-    {
-        return SharedImageAndSource(new ImageAndSource(filePath));
-    }
+    static SharedImageAndSource getSharedImageAndSource(QString filePath);
 
     // TODO: This should probably return a const ref instead
     QSharedPointer<QImage> image() { return mImage; }
@@ -31,6 +29,8 @@ private:
 
     QString mSource;
     QSharedPointer<QImage> mImage;
+
+    static QMap<QString, SharedImageAndSource> mLoadedImages;
 };
 
 #endif // IMAGEANDSOURCE_H
