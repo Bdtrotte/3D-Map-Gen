@@ -67,29 +67,25 @@ void Map2Mesh::updateScene()
 {
     QMutexLocker locker(&mSceneUpdateMutex);
 
-    // Update every point that needs updating.
-    for (const QPoint &point : mTilesToUpdate) {
-        int x = point.x();
-        int y = point.y();
+    for (int x = 0; x < mTileMap->width(); ++x) {
+        for (int y = 0; y < mTileMap->height(); ++y) {
+            // Get a new mesher for the tile. If this is nullptr,
+            // that means that the tile's mesh does not need an update.
+            auto newMesher = M2M::AbstractTileMesher::getMesherForTile(mTileMap, QPoint(x, y));
 
+            auto oldObjects = mTileObjects(x, y);
 
-        // Get a new mesher for the tile. If this is nullptr,
-        // that means that the tile's mesh does not need an update.
-        auto newMesher = M2M::AbstractTileMesher::getMesherForTile(mTileMap, point);
+            for (auto obj : oldObjects)
+                mScene->removeObject(obj);
 
-        auto oldObjects = mTileObjects(x, y);
+            auto newObjects = newMesher->makeMesh(QVector2D(x, y));
 
-        for (auto obj : oldObjects)
-            mScene->removeObject(obj);
+            for (auto obj : newObjects)
+                mScene->addObject(obj);
 
-        auto newObjects = newMesher->makeMesh(QVector2D(x, y));
-
-        for (auto obj : newObjects)
-            mScene->addObject(obj);
-
-        mTileObjects(x, y) = newObjects;
+            mTileObjects(x, y) = newObjects;
+        }
     }
-
 
     mTilesToUpdate.clear();
 
