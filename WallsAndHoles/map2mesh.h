@@ -73,22 +73,11 @@ protected:
     /// objects for texturing purposes.
     using TileObjectGrid = Array2D<QVector<QSharedPointer<SimpleTexturedObject>>>;
 
-    /// A grid containing TileMeshers. These act like "tokens" to check whether
-    /// a tile's mesh *really* needs to be updated. In addition, they allow for
-    /// reuse---a TileMesher may keep some reference to its last output, and
-    /// then modify that instead of creating new output.
-    using TileMesherGrid = Array2D<QSharedPointer<M2M::AbstractTileMesher>>;
-
 
     /**
      * @brief Mesh data for every tile.
      */
     TileObjectGrid mTileObjects;
-
-    /**
-     * @brief A mesher for every tile.
-     */
-    TileMesherGrid mTileMeshers;
 
 
     /**

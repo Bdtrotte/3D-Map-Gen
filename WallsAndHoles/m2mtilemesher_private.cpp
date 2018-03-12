@@ -1,14 +1,16 @@
 #include "m2mtilemesher_private.h"
 
+#include "triplet.h"
+
 using namespace M2M_Private;
 
 
 QPoint SideTools::neighborOffset(SideDirection side)
 {
     switch (side) {
-    case NORTH: return QPoint(0, 1);
+    case NORTH: return QPoint(0, -1);
     case EAST:  return QPoint(1, 0);
-    case SOUTH: return QPoint(0, -1);
+    case SOUTH: return QPoint(0, 1);
     case WEST:  return QPoint(-1, 0);
     default:
         Q_ASSERT( false ); // there should only be 4 side directions
@@ -18,10 +20,10 @@ QPoint SideTools::neighborOffset(SideDirection side)
 QVector2D SideTools::awayDirection(SideDirection side)
 {
     switch (side) {
-    case NORTH: return QVector2D(0, 1);
-    case EAST:  return QVector2D(-1, 0);
-    case SOUTH: return QVector2D(0, -1);
-    case WEST:  return QVector2D(1, 0);
+    case NORTH: return QVector2D(0, -1);
+    case EAST:  return QVector2D(1, 0);
+    case SOUTH: return QVector2D(0, 1);
+    case WEST:  return QVector2D(-1, 0);
     default:
         Q_ASSERT( false ); // there should only be 4 side directions
     }

@@ -50,7 +50,6 @@ void Map2Mesh::tileChanged(int x, int y)
 void Map2Mesh::remakeAll()
 {
     mTileObjects = TileObjectGrid(mTileMap->mapSize());
-    mTileMeshers = TileMesherGrid(mTileMap->mapSize());
     mScene->clear();
 
     // Update all points.
@@ -68,65 +67,25 @@ void Map2Mesh::updateScene()
 {
     QMutexLocker locker(&mSceneUpdateMutex);
 
-
-    // Using the grid representation of mTileMap for convenience.
-    const Array2D<QSharedPointer<Tile>> &grid = mTileMap->getArray2D();
-
-    // This point on the map should be at (0,y,0) in 3D space (for some appropriate y).
-    QVector2D mapCenter(0, 0);
-
-
-    // Update every point that needs updating.
-    for (const QPoint &point : mTilesToUpdate) {
-        int x = point.x();
-        int y = point.y();
-
-
-        /*
-         * Compute the 3x3 neighborhood of the point.
-         * The point should be at (1, 1), and nonexistent neighbors should be nullptr.
-         * */
-        Array2D<const Tile *> neighborhood(3, 3, nullptr);
-
-        neighborhood(1, 1) = grid(x, y).data();
-        for (const QPoint &neighbor : getValidNeighbors(point, mTileMap->mapSize()))
-            neighborhood(neighbor - point + QPoint(1, 1)) = grid(neighbor).data();
-
-
-        // Get a new mesher for the tile. If this is nullptr,
-        // that means that the tile's mesh does not need an update.
-        auto newMesher = M2M::AbstractTileMesher::getMesherForTile(
-                    neighborhood,
-                    mTileMeshers(x, y).data());
-
-
-        // If the tile's mesh should be updated, update it.
-        if (newMesher != nullptr) {
-
-            /*
-             * NOTE: The way this is currently set up, a TileMesher will not be
-             * able to keep and modify a reference to an object. This part of
-             * the code may be subject to change later (although currently, it
-             * is sufficiently efficient).
-             * */
-
+    for (int x = 0; x < mTileMap->width(); ++x) {
+        for (int y = 0; y < mTileMap->height(); ++y) {
+            // Get a new mesher for the tile. If this is nullptr,
+            // that means that the tile's mesh does not need an update.
+            auto newMesher = M2M::AbstractTileMesher::getMesherForTile(mTileMap, QPoint(x, y));
 
             auto oldObjects = mTileObjects(x, y);
 
             for (auto obj : oldObjects)
                 mScene->removeObject(obj);
 
-            // TODO: Add comment about -x.
-            auto newObjects = newMesher->makeMesh(QVector2D(-x, y) - mapCenter);
+            auto newObjects = newMesher->makeMesh(QVector2D(x, y));
 
             for (auto obj : newObjects)
                 mScene->addObject(obj);
 
             mTileObjects(x, y) = newObjects;
-            mTileMeshers(x, y) = newMesher;
         }
     }
-
 
     mTilesToUpdate.clear();
 

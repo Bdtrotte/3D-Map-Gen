@@ -10,7 +10,6 @@ class TileMaterial : public QObject
     Q_OBJECT
 
 public:
-
     /**
      * @brief Creates a TileMaterial with a default material.
      */
@@ -43,6 +42,7 @@ public:
     void setShininess(float shininess);
 
     static TileMaterial *getDefaultMaterial();
+    static TileMaterial *getDefaultGroundMaterial();
 
     bool operator ==(const TileMaterial &other)
     {
@@ -72,10 +72,13 @@ private:
 
     /* Singleton for the default material. */
     static TileMaterial *defaultMaterial;
+    static TileMaterial *defaultGroundMaterial;
 
     /* Singleton for the default texture. */
     static SharedImageAndSource getDefaultTexture();
+    static SharedImageAndSource getDefaultGroundTexture();
     static SharedImageAndSource DefaultTexture;
+    static SharedImageAndSource DefaultGroundTexture;
 };
 
 #endif // TILEMATERIAL_H

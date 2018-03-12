@@ -47,6 +47,15 @@ TileMaterial *TileMaterial::getDefaultMaterial()
     return defaultMaterial;
 }
 
+TileMaterial *TileMaterial::defaultGroundMaterial = nullptr;
+TileMaterial *TileMaterial::getDefaultGroundMaterial()
+{
+    if (defaultGroundMaterial == nullptr)
+        defaultGroundMaterial = new TileMaterial("Default Ground", getDefaultGroundTexture(), 1, 1, 1, 1, nullptr);
+
+    return defaultGroundMaterial;
+}
+
 
 SharedImageAndSource TileMaterial::DefaultTexture = nullptr;
 SharedImageAndSource TileMaterial::getDefaultTexture()
@@ -55,4 +64,13 @@ SharedImageAndSource TileMaterial::getDefaultTexture()
         DefaultTexture = ImageAndSource::getSharedImageAndSource("://images/textures/exampleTexture2.png");
 
     return DefaultTexture;
+}
+
+SharedImageAndSource TileMaterial::DefaultGroundTexture = nullptr;
+SharedImageAndSource TileMaterial::getDefaultGroundTexture()
+{
+    if (DefaultGroundTexture.isNull())
+        DefaultGroundTexture = ImageAndSource::getSharedImageAndSource("://images/textures/grassTexture.jpg");
+
+    return DefaultGroundTexture;
 }

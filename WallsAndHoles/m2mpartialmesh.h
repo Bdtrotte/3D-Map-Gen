@@ -6,9 +6,9 @@
 #include <QSharedPointer>
 #include <QMap>
 
-
 #include "imageandsource.h"
 #include "simpletexturedobject.h"
+#include "tilematerial.h"
 
 namespace M2M {
 
@@ -19,6 +19,8 @@ public:
     ImageInfo() : mImage(nullptr) {}
     ImageInfo(const ImageInfo &other) = default;
     ImageInfo(SharedImageAndSource img) : mImage(img) {}
+    ImageInfo(const TileMaterial *material)
+        : mImage(material->texture()) {}
 
     SharedImageAndSource image() const { return mImage; }
 
@@ -38,6 +40,12 @@ private:
 
 /// Class to wrap Phong reflection info.
 struct PhongInfo {
+    PhongInfo(const TileMaterial *material)
+        : ambient(material->ambient())
+        , diffuse(material->diffuse())
+        , specular(material->specular())
+        , shininess(material->shininess()) {}
+
     float ambient;
     float diffuse;
     float specular;
@@ -61,9 +69,9 @@ struct PhongInfo {
 /**
  * @brief Represents and helps construct a quadrilateral with one texture and a Phong material.
  */
-class Quad {
+class Quad
+{
 public:
-
     /**
      * @brief Creates a quad with the given vertices. Vertices must be specified
      * in counterclockwise order.
@@ -100,7 +108,6 @@ public:
      *                          when looking at the quad. Otherwise, the vertices are output in the order
      *                              2 1
      *                              4 3
-     *                          Texture coordinates are always (0,0), (1,0), (1,1), (0,1).
      * @return                  The specified quad.
      */
     static Quad makeVerticalQuad(QVector3D center,
@@ -123,10 +130,76 @@ private:
 };
 
 
+class Trig
+{
+public:
+    Trig(ImageInfo texture,
+         PhongInfo material,
+         QVector3D v1, QVector2D t1,
+         QVector3D v2, QVector2D t2,
+         QVector3D v3, QVector2D t3);
+
+    QVector<QVector3D> verts() const { return {mV1, mV2, mV3}; }
+    QVector<QVector2D> textureCoords() const { return {mT1, mT2, mT3}; }
+
+    QVector3D normal() const { return mNormal; }
+
+    ImageInfo imageInfo() const { return mTexture; }
+    PhongInfo phongInfo() const { return mMaterial; }
+
+private:
+    QVector3D mV1, mV2, mV3;
+    QVector2D mT1, mT2, mT3;
+
+    ImageInfo mTexture;
+    PhongInfo mMaterial;
+
+    QVector3D mNormal;
+};
+
+
+/// Struct that holds SimpleTexturedObject information.
+/// This exists because SimpleTexturedObject is not made for partial construction.
+class PreObject
+{
+public:
+    /// Creates the PreObject with the given texture image.
+    PreObject(ImageInfo img);
+
+    /// Adds the quad to this object, but does not change this object's texture image.
+    void addQuad(const Quad &q);
+
+    void addTrig(const Trig &t);
+
+    void addPreObject(const PreObject &o);
+
+    /// Compiles this PreObject into a SimpleTexturedObject.
+    QSharedPointer<SimpleTexturedObject> toObject() const;
+
+    ImageInfo imageInfo() const { return mImage; }
+
+private:
+    // Face information.
+    QVector<QVector3D> mVertexPositions;
+    QVector<QVector3D> mTriangleNormals;
+    QVector<SimpleTexturedObject::Triangle> mTriangles;
+
+    // Material information.
+    QVector<float> mReflAmbient;
+    QVector<float> mReflDiffuse;
+    QVector<float> mReflSpecular;
+    QVector<float> mShininess;
+
+    // Texture information.
+    QVector<SimpleTexturedObject::TriangleTexCoords> mTriangleTextureCoordinates;
+    SharedImageAndSource mImage;
+};
+
 /**
  * @brief Class to allow piece-by-piece mesh construction.
  */
-class PartialMeshData {
+class PartialMeshData
+{
 public:
 
     /**
@@ -135,52 +208,31 @@ public:
      */
     QVector<QSharedPointer<SimpleTexturedObject>> constructObjects();
 
-
-
     /**
      * @brief addQuad   Adds a quad to the mesh.
      * @param q         The quad.
      */
-    void addQuad(Quad q);
+    void addQuad(const Quad &q);
 
+    void addTrig(const Trig &t);
+
+    void addPartialMesh(const PartialMeshData &p);
+
+    PartialMeshData &operator +=(const PartialMeshData &other)
+    {
+        addPartialMesh(other);
+        return *this;
+    }
+
+    PartialMeshData &operator +(const PartialMeshData &other)
+    {
+        PartialMeshData p = *this;
+        return p += other;
+    }
 
 private:
-
-    /// Struct that holds SimpleTexturedObject information.
-    /// This exists because SimpleTexturedObject is not made for partial construction.
-    class PreObject {
-    public:
-
-        /// Creates the PreObject with the given texture image.
-        PreObject(ImageInfo img);
-
-        /// Adds the quad to this object, but does not change this object's texture image.
-        void addQuad(Quad q);
-
-        /// Compiles this PreObject into a SimpleTexturedObject.
-        QSharedPointer<SimpleTexturedObject> toObject() const;
-
-    private:
-        // Face information.
-        QVector<QVector3D> mVertexPositions;
-        QVector<QVector3D> mTriangleNormals;
-        QVector<SimpleTexturedObject::Triangle> mTriangles;
-
-        // Material information.
-        QVector<float> mReflAmbient;
-        QVector<float> mReflDiffuse;
-        QVector<float> mReflSpecular;
-        QVector<float> mShininess;
-
-        // Texture information.
-        QVector<SimpleTexturedObject::TriangleTexCoords> mTriangleTextureCoordinates;
-        SharedImageAndSource mImage;
-    };
-
-
     /// Keeps track of one PreObject per texture image.
     QMap<const QImage *, PreObject> mTexturesToObjects;
-
 };
 
 

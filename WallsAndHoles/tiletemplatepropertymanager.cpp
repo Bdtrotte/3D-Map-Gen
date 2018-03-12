@@ -28,6 +28,10 @@ void TileTemplatePropertyManager::propertyEdited(QString propertyName, QVariant 
         pos.setY(value.toFloat());
         if (pos != mTileTemplate->setPosition(pos))
             emit propertyChanged(propertyName, mTileTemplate->position().y());
+    } else if (propertyName == "Bridge Tiles") {
+        mTileTemplate->setBridgeTiles(value.toBool());
+    } else if (propertyName == "Connect Diagonals") {
+        mTileTemplate->setConnectDiagonals(value.toBool());
     }
 }
 
@@ -40,8 +44,10 @@ QVector<QVector<QVariant>> TileTemplatePropertyManager::properties()
         {"Color",      mTileTemplate->color(),        true              },
         {"Height",     mTileTemplate->height(),       true,  -1000, 1000},
         {"Thickness",  mTileTemplate->thickness(),    true,  -1000, 1000},
-        {"X Position", mTileTemplate->position().x(), true,  -1000, 1000},
-        {"Y Position", mTileTemplate->position().y(), true,  -1000, 1000},
+        {"Bridge Tiles", mTileTemplate->bridgeTiles(),true},
+        {"Connect Diagonals", mTileTemplate->connectDiagonals(),true},
+        //{"X Position", mTileTemplate->position().x(), true,  -1000, 1000},
+        //{"Y Position", mTileTemplate->position().y(), true,  -1000, 1000},
         {"Material", QVariant::fromValue<TemplateMaterialSelector *>(materialSelector),
                      true,
                      PropertyBrowser::BlockWidget}

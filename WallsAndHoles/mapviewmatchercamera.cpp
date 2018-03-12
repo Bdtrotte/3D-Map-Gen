@@ -27,7 +27,7 @@ void MapViewMatcherCamera::mapViewChanged(QRectF viewRect)
 
     // TODO the height is based off the fov being 90 degrees, which is hard
     //      coded somewhere. If fov changes, actual formula is height / (tan(fov/2) * 2).
-    mPosition = QVector3D(-center.x() + 0.5, viewRect.height()/2, center.y() - 0.5);
+    mPosition = QVector3D(center.x(), viewRect.height()/2, center.y());
 
     QMatrix4x4 translate;
     QMatrix4x4 rotate;

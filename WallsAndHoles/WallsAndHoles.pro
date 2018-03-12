@@ -87,6 +87,10 @@ SOURCES += \
     mapviewcontainer.cpp\
     m2mpartialmesh.cpp \
     m2mtilemesher_private.cpp \
+    polygon.cpp \
+    abstractpolygontilemesher.cpp \
+    blockypolygontilemesher.cpp \
+    groundblockypolygontilemesher.cpp \
     imageandsource.cpp \
     mapviewmatchercamera.cpp \
     tiletemplatechangecommand.cpp \
@@ -167,6 +171,11 @@ HEADERS += \
     array2dtools.h \
     array2d_private.h \
     m2mtilemesher_private.h \
+    polygon.h \
+    geometry.h \
+    abstractpolygontilemesher.h \
+    blockypolygontilemesher.h \
+    groundblockypolygontilemesher.h \
     mapviewmatchercamera.h \
     tiletemplatechangecommand.h \
     changevaluecommand.h \
