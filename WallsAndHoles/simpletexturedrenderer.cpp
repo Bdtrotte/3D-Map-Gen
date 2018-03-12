@@ -125,7 +125,7 @@ void SimpleTexturedRenderer::paint(QMatrix4x4 mvpMatrix, QVector3D camPos)
     mShaderProgram.setUniformMVP(mvpMatrix);
 
     // Set the lighting uniforms.
-    mShaderProgram.setUniformPointToLight(QVector3D(1, 1, 0).normalized());
+    mShaderProgram.setUniformPointToLight(QVector3D(1, -1, 1).normalized());
     mShaderProgram.setUniformCameraPosition(camPos);
     mShaderProgram.setUniformAmbientColor(QVector3D(0.1, 0.1, 0.2));
     mShaderProgram.setUniformSourceDiffuseColor(QVector3D(0.3, 0.3, 0.2));
