@@ -48,3 +48,8 @@ WallsAndHoles/WallsAndHoles.pro.user
 release
 
 *.orig
+
+# Depolyment builds
+
+Deployment/win_deploy/*.exe
+Deployment/win_deploy/packages/com.wah.product/data/*
