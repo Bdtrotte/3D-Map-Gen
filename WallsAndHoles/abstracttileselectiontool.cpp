@@ -18,7 +18,7 @@ void AbstractTileSelectionTool::deactivate()
 
 void AbstractTileSelectionTool::activateSelection()
 {
-    drawPreview();
+    drawPreview(mSelection);
 
     if (!mSelection.isEmpty()) {
         QVector<Tile *> tiles;
@@ -46,8 +46,8 @@ void AbstractTileSelectionTool::activateSelection()
     }
 }
 
-void AbstractTileSelectionTool::drawPreview()
+void AbstractTileSelectionTool::drawPreview(QRegion previewRegion)
 {
-    mPreviewItem->setRegion(mSelection);
+    mPreviewItem->setRegion(previewRegion);
     mPreviewItem->setColor(QColor(200, 200, 255, 100));
 }

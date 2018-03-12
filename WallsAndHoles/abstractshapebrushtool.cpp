@@ -1,7 +1,8 @@
 #include "abstractshapebrushtool.h"
 
-AbstractShapeBrushTool::AbstractShapeBrushTool(TileMapPreviewGraphicsItem *previewItem)
-    : AbstractTileMapTool(previewItem) {}
+AbstractShapeBrushTool::AbstractShapeBrushTool(TileMapPreviewGraphicsItem *previewItem, QUndoStack *undoStack)
+    : AbstractTileMapTool(previewItem)
+    , mUndoStack(undoStack) {}
 
 void AbstractShapeBrushTool::cellClicked(int x, int y, QMouseEvent *)
 {
@@ -50,9 +51,9 @@ void AbstractShapeBrushTool::clearOverlay() {
 void AbstractShapeBrushTool::placeShape(int endX, int endY) {
     QRegion region = getShape(QPoint(mStartX, mStartY), QPoint(endX, endY));
 
-    for (const QRect &r : region)
-        for (int x = r.left(); x <= r.right(); ++x)
-            for (int y = r.top(); y <= r.bottom(); ++y)
-                if (getTileMap()->contains(x, y))
-                    getTileMap()->setTile(x, y, getTileTemplate());
+    mUndoStack->push(TileTemplateChangeCommand::make(
+                         getTileMap(),
+                         region,
+                         getTileTemplate(),
+                         "'draw shape'"));
 }

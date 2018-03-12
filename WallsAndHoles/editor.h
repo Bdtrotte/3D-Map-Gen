@@ -19,6 +19,8 @@
 #include <QToolBar>
 #include <QSettings>
 #include <QMainWindow>
+#include <QUndoGroup>
+#include <QUndoStack>
 
 /**
  * @brief The Editor class
@@ -54,6 +56,19 @@ private:
     void setUpMenuBar();
 
     QMainWindow *mMainWindow;
+
+    // Undo system.
+
+    /**
+     * @brief The undo group. The undo and redo actions come from here.
+     */
+    QUndoGroup *mUndoGroup;
+
+    /**
+     * @brief The TileMap undo stack. This keeps track of actions done on the tile map.
+     * When the tile map changes, this stack is cleared.
+     */
+    QUndoStack *mTileMapUndoStack;
 
     // Map-to-Mesh Converter
     Map2Mesh *mMap2Mesh;

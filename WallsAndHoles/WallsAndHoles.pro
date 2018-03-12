@@ -92,7 +92,10 @@ SOURCES += \
     mapviewmatchercamera.cpp \
     abstractpolygontilemesher.cpp \
     blockypolygontilemesher.cpp \
-    groundblockypolygontilemesher.cpp
+    groundblockypolygontilemesher.cpp \
+    tiletemplatechangecommand.cpp \
+    dependentundocommand.cpp \
+    emptyparentcommand.cpp
 
 HEADERS += \
     meshview.h \
@@ -173,7 +176,12 @@ HEADERS += \
     mapviewmatchercamera.h \
     abstractpolygontilemesher.h \
     blockypolygontilemesher.h \
-    groundblockypolygontilemesher.h
+    groundblockypolygontilemesher.h \
+    tiletemplatechangecommand.h \
+    changevaluecommand.h \
+    undocommandfromfunctions.h \
+    dependentundocommand.h \
+    emptyparentcommand.h
 
 FORMS +=
 

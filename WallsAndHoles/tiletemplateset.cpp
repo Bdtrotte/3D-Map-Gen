@@ -32,8 +32,12 @@ void TileTemplateSet::removeTileTemplate(int index)
     changed();
 
     beginRemoveRows(QModelIndex(), index, index);
-    mTileTemplates.removeAt(index);
+    mTileTemplates.removeAt(index); // see note
     endRemoveRows();
+
+    /*
+     * Note: the tile template is NOT deleted. This is so that an undo command can be created for it.
+     * */
 }
 
 QModelIndex TileTemplateSet::index(int row, int, const QModelIndex &parent) const
