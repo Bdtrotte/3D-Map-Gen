@@ -88,11 +88,11 @@ SOURCES += \
     m2mpartialmesh.cpp \
     m2mtilemesher_private.cpp \
     polygon.cpp \
-    imageandsource.cpp\
-    mapviewmatchercamera.cpp \
     abstractpolygontilemesher.cpp \
     blockypolygontilemesher.cpp \
     groundblockypolygontilemesher.cpp \
+    imageandsource.cpp \
+    mapviewmatchercamera.cpp \
     tiletemplatechangecommand.cpp \
     dependentundocommand.cpp \
     emptyparentcommand.cpp
@@ -173,10 +173,10 @@ HEADERS += \
     m2mtilemesher_private.h \
     polygon.h \
     geometry.h \
-    mapviewmatchercamera.h \
     abstractpolygontilemesher.h \
     blockypolygontilemesher.h \
     groundblockypolygontilemesher.h \
+    mapviewmatchercamera.h \
     tiletemplatechangecommand.h \
     changevaluecommand.h \
     undocommandfromfunctions.h \
