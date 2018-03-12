@@ -41,7 +41,10 @@ void TileMapBrushTool::cellActivated(int x, int y, QMouseEvent *)
                          tileMap,
                          region,
                          getTileTemplate(),
-                         "'brush tool'"));
+                         "'brush tool'",
+                         nullptr,
+                         1,
+                         true));
 }
 
 void TileMapBrushTool::cellHovered(int x, int y, QMouseEvent *)
@@ -57,6 +60,18 @@ void TileMapBrushTool::cellHovered(int x, int y, QMouseEvent *)
     } else {
         mPreviewItem->setRegion(QRegion());
     }
+}
+
+void TileMapBrushTool::cellReleased(int, int, QMouseEvent *)
+{
+    mUndoStack->push(TileTemplateChangeCommand::make(
+                         getTileMap(),
+                         QRegion(),
+                         getTileTemplate(),
+                         "'brush tool'",
+                         nullptr,
+                         1,
+                         false));
 }
 
 void TileMapBrushTool::mouseExitedMap(QMouseEvent *)

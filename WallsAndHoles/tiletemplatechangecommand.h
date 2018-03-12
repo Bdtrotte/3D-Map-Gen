@@ -26,12 +26,13 @@ public:
      * @param parent            The parent command.
      * @return                  The command that was performed. Calling undo() will undo it.
      */
-    static TileTemplateChangeCommand *make(
-            TileMap *tileMap,
+    static TileTemplateChangeCommand *make(TileMap *tileMap,
             QRegion changedPoints,
             TileTemplate *newTileTemplate,
             const QString &text = "Changed templates for tiles.",
-            QUndoCommand *parent = nullptr);
+            QUndoCommand *parent = nullptr,
+            int id = -1,
+            bool canMerge = false);
 
 
     /**
@@ -63,6 +64,10 @@ public:
     void undo() override;
     void redo() override;
 
+    int id() const override { return mId; }
+
+    bool mergeWith(const QUndoCommand *other);
+
 private:
 
     TileTemplateChangeCommand(TileMap *tileMap,
@@ -70,13 +75,18 @@ private:
                               QVector<TileTemplate *> oldTemplates,
                               TileTemplate *newTemplate,
                               const QString &text,
-                              QUndoCommand *parent);
+                              QUndoCommand *parent,
+                              int id = -1,
+                              bool canMerge = false);
 
     TileMap *mTileMap;                              // If mTileMap becomes invalid, the TileMap undo stack will be cleared.
 
     QVector<QPoint> mChangedTilePositions;
     QVector<TileTemplate *> mOldTemplatePointers;
     TileTemplate *mNewTemplatePointer;
+
+    int mId;
+    bool mCanMerge;
 };
 
 #endif // TILEMAPUNDOCOMMAND_H

@@ -2,12 +2,13 @@
 
 #include <QSet>
 
-TileTemplateChangeCommand *TileTemplateChangeCommand::make(
-        TileMap *tileMap,
+TileTemplateChangeCommand *TileTemplateChangeCommand::make(TileMap *tileMap,
         QRegion changedPoints,
         TileTemplate *newTileTemplate,
         const QString &text,
-        QUndoCommand *parent)
+        QUndoCommand *parent,
+        int id,
+        bool canMerge)
 {
     // Compute which points need to be changed. Make sure all points are within bounds.
     QVector<QPoint> pointsToChange;
@@ -23,22 +24,25 @@ TileTemplateChangeCommand *TileTemplateChangeCommand::make(
         oldTemplates.append(tileMap->tileAt(pt.x(), pt.y()).tileTemplate());
 
     // Create the command.
-    return new TileTemplateChangeCommand(tileMap, pointsToChange, oldTemplates, newTileTemplate, text, parent);
+    return new TileTemplateChangeCommand(tileMap, pointsToChange, oldTemplates, newTileTemplate, text, parent, id, canMerge);
 }
 
 
-TileTemplateChangeCommand::TileTemplateChangeCommand(
-        TileMap *tileMap,
+TileTemplateChangeCommand::TileTemplateChangeCommand(TileMap *tileMap,
         QVector<QPoint> changedPositions,
         QVector<TileTemplate *> oldTemplates,
         TileTemplate *newTemplate,
         const QString &text,
-        QUndoCommand *parent)
+        QUndoCommand *parent,
+        int id,
+        bool canMerge)
     : QUndoCommand(text, parent)
     , mTileMap(tileMap)
     , mChangedTilePositions(changedPositions)
     , mOldTemplatePointers(oldTemplates)
     , mNewTemplatePointer(newTemplate)
+    , mId(id)
+    , mCanMerge(canMerge)
 {
     auto makeObsolete = [this] () {
         if (isObsolete())
@@ -103,4 +107,18 @@ void TileTemplateChangeCommand::redo()
 
     for (const QPoint &pos : mChangedTilePositions)
         mTileMap->setTile(pos.x(), pos.y(), mNewTemplatePointer);
+}
+
+bool TileTemplateChangeCommand::mergeWith(const QUndoCommand *other)
+{
+    if (!mCanMerge || other->id() != id()) return false;
+
+    const TileTemplateChangeCommand *o = dynamic_cast<const TileTemplateChangeCommand *>(other);
+    if (o == nullptr) return false;
+
+    mChangedTilePositions.append(o->mChangedTilePositions);
+    mOldTemplatePointers.append(o->mOldTemplatePointers);
+    mCanMerge = o->mCanMerge;
+
+    return true;
 }

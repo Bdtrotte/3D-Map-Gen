@@ -15,6 +15,7 @@ public:
 
     void cellActivated(int x, int y, QMouseEvent *) override;
     void cellHovered(int x, int y, QMouseEvent *) override;
+    void cellReleased(int, int, QMouseEvent *) override;
     void mouseExitedMap(QMouseEvent *);
 
     QList<QAction *> contextActions() override { return {mRadiusSpinner}; }
