@@ -9,6 +9,8 @@ TileTemplate::TileTemplate(QColor color,
                            float thickness,
                            TileMaterial *material,
                            QVector2D position,
+                           bool bridgeTiles,
+                           bool connectDiagonals,
                            QObject *parent)
     : QObject(parent)
     , mName(name)
@@ -19,6 +21,8 @@ TileTemplate::TileTemplate(QColor color,
     , mHasSideMaterial(false)
     , mTopMaterial(nullptr)
     , mSideMaterial(nullptr)
+    , mBridgeTiles(bridgeTiles)
+    , mConnectDiagonals(connectDiagonals)
 {
     setTopMaterial(material);
     setSideMaterial(nullptr);
@@ -161,5 +165,25 @@ void TileTemplate::setSideMaterial(TileMaterial *material)
     });
 
     emit materialChanged();
+    emit changed();
+}
+
+void TileTemplate::setBridgeTiles(bool enabled)
+{
+    if (mBridgeTiles == enabled) return;
+
+    mBridgeTiles = enabled;
+
+    emit exclusivePropertyChanged();
+    emit changed();
+}
+
+void TileTemplate::setConnectDiagonals(bool enabled)
+{
+    if (mConnectDiagonals == enabled) return;
+
+    mConnectDiagonals = enabled;
+
+    emit exclusivePropertyChanged();
     emit changed();
 }

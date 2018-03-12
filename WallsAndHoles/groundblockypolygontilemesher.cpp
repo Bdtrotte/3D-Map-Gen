@@ -71,7 +71,8 @@ QVector<Triplet<BetterPolygon, QVector<float>, QVector<bool>>> GroundBlockyPolyg
     //LEFT ::::::::::::::::::::::::::::::::::::::::::::::
 
     if (mTileNeighborhood(-1, 0) != nullptr
-            && mTileNeighborhood(-1, 0)->hasTileTemplate()) {
+            && mTileNeighborhood(-1, 0)->hasTileTemplate()
+            && mTileNeighborhood(-1, 0)->tileTemplate()->connectDiagonals()) {
         if (mTileNeighborhood(0, -1) != nullptr
                 && mTileNeighborhood(0, -1)->tileTemplate() == mTileNeighborhood(-1, 0)->tileTemplate()) {
             //Left and Top have the same tile template
@@ -129,7 +130,8 @@ QVector<Triplet<BetterPolygon, QVector<float>, QVector<bool>>> GroundBlockyPolyg
     //RIGHT :::::::::::::::::::::::::::::::::::::::::::::
 
     if (mTileNeighborhood(1, 0) != nullptr
-            && mTileNeighborhood(1, 0)->hasTileTemplate()) {
+            && mTileNeighborhood(1, 0)->hasTileTemplate()
+            && mTileNeighborhood(1, 0)->tileTemplate()->connectDiagonals()) {
         if (!topLeft.first && !topLeft.second
                 && mTileNeighborhood(0, -1) != nullptr
                 && mTileNeighborhood(0, -1)->tileTemplate() == mTileNeighborhood(1, 0)->tileTemplate()) {
@@ -253,7 +255,7 @@ QVector<Triplet<BetterPolygon, QVector<float>, QVector<bool>>> GroundBlockyPolyg
                     rightCenter + QPointF(-rightHalfThickness, -rightHalfThickness),
                     rightCenter + QPointF(rightHalfThickness, -rightHalfThickness),
                     topCenter + QPointF(topHalfThickness, -topHalfThickness),
-                    topCenter + QPointF(-topHalfThickness, topHalfThickness));
+                    topCenter + QPointF(topHalfThickness, topHalfThickness));
 
         ret.append(dia);
         heightAndMaterial->append(QVector<const Tile *>(dia.size(), right));

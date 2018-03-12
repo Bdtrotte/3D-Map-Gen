@@ -146,7 +146,7 @@ QVector<Triplet<BetterPolygon, QVector<float>, QVector<bool>>> BlockyPolygonTile
 
     QVector<Triplet<BetterPolygon, QVector<float>, QVector<bool>>> ret;
 
-    if (halfThickness < 0.5) {
+    if (me->tileTemplate()->bridgeTiles() && halfThickness < 0.5) {
 
 //BRIDGING======================================================================================================
 
@@ -211,77 +211,79 @@ QVector<Triplet<BetterPolygon, QVector<float>, QVector<bool>>> BlockyPolygonTile
         }
     }
 
+    if (me->tileTemplate()->connectDiagonals()) {
 //DIAGONALS======================================================================================================
-    //Start by gathering how each side should "diagonal" (left right, or not at all)
-    const Tile *left[4];
-    const Tile *right[4];
-    int shouldDia[4];
+        //Start by gathering how each side should "diagonal" (left right, or not at all)
+        const Tile *left[4];
+        const Tile *right[4];
+        int shouldDia[4];
 
-    const Tile *far;
-    const Tile *cent;
+        const Tile *far;
+        const Tile *cent;
 
-    //NORTH
-    far = mTileNeighborhood(0, -2);
-    cent = mTileNeighborhood(0, -1);
-    left[0] = mTileNeighborhood(-1, -1);
-    right[0] = mTileNeighborhood(1, -1);
-    shouldDia[0] = topWallDrops[0]? shouldDiagonal(me, cent, far, left[0], right[0]) : 0;
+        //NORTH
+        far = mTileNeighborhood(0, -2);
+        cent = mTileNeighborhood(0, -1);
+        left[0] = mTileNeighborhood(-1, -1);
+        right[0] = mTileNeighborhood(1, -1);
+        shouldDia[0] = topWallDrops[0]? shouldDiagonal(me, cent, far, left[0], right[0]) : 0;
 
-    //WEST
-    far = mTileNeighborhood(-2, 0);
-    cent = mTileNeighborhood(-1, 0);
-    left[1] = mTileNeighborhood(-1, 1);
-    right[1] = mTileNeighborhood(-1, -1);
-    shouldDia[1] = topWallDrops[1]? shouldDiagonal(me, cent, far, left[1], right[1]) : 0;
+        //WEST
+        far = mTileNeighborhood(-2, 0);
+        cent = mTileNeighborhood(-1, 0);
+        left[1] = mTileNeighborhood(-1, 1);
+        right[1] = mTileNeighborhood(-1, -1);
+        shouldDia[1] = topWallDrops[1]? shouldDiagonal(me, cent, far, left[1], right[1]) : 0;
 
-    //SOUTH
-    far = mTileNeighborhood(0, 2);
-    cent = mTileNeighborhood(0, 1);
-    left[2] = mTileNeighborhood(1, 1);
-    right[2] = mTileNeighborhood(-1, 1);
-    shouldDia[2] = topWallDrops[2]? shouldDiagonal(me, cent, far, left[2], right[2]) : 0;
+        //SOUTH
+        far = mTileNeighborhood(0, 2);
+        cent = mTileNeighborhood(0, 1);
+        left[2] = mTileNeighborhood(1, 1);
+        right[2] = mTileNeighborhood(-1, 1);
+        shouldDia[2] = topWallDrops[2]? shouldDiagonal(me, cent, far, left[2], right[2]) : 0;
 
-    //EAST
-    far = mTileNeighborhood(2, 0);
-    cent = mTileNeighborhood(1, 0);
-    left[3] = mTileNeighborhood(1, -1);
-    right[3] = mTileNeighborhood(1, 1);
-    shouldDia[3] = topWallDrops[3]? shouldDiagonal(me, cent, far, left[3], right[3]) : 0;
+        //EAST
+        far = mTileNeighborhood(2, 0);
+        cent = mTileNeighborhood(1, 0);
+        left[3] = mTileNeighborhood(1, -1);
+        right[3] = mTileNeighborhood(1, 1);
+        shouldDia[3] = topWallDrops[3]? shouldDiagonal(me, cent, far, left[3], right[3]) : 0;
 
-    QPoint corners[4] = {
-        QPoint(-1, -1),
-        QPoint(-1, 1),
-        QPoint(1, 1),
-        QPoint(1, -1)
-    };
+        QPoint corners[4] = {
+            QPoint(-1, -1),
+            QPoint(-1, 1),
+            QPoint(1, 1),
+            QPoint(1, -1)
+        };
 
-    //Now go through and use the info to buid diagonals
+        //Now go through and use the info to buid diagonals
 
-    for (int i = 0; i < 4; ++i) {
-        if (shouldDia[i]) {
-            topWallDrops[i] = false;
+        for (int i = 0; i < 4; ++i) {
+            if (shouldDia[i]) {
+                topWallDrops[i] = false;
 
-            if (halfThickness < 0.5) {
-                QPointF meA = center + QPointF(corners[i].x() * halfThickness, corners[i].y() * halfThickness);
-                QPointF meB = center + QPointF(corners[(i + 3) % 4].x() * halfThickness, corners[(i + 3) % 4].y() * halfThickness);
+                if (halfThickness < 0.5) {
+                    QPointF meA = center + QPointF(corners[i].x() * halfThickness, corners[i].y() * halfThickness);
+                    QPointF meB = center + QPointF(corners[(i + 3) % 4].x() * halfThickness, corners[(i + 3) % 4].y() * halfThickness);
 
-                switch(shouldDia[i]) {
-                case 1: {
-                    QPointF otherA = corners[i] + left[i]->position().toPointF() + QPointF(corners[(i + 3) % 4].x() * left[i]->thickness() / 2, corners[(i + 3) % 4].y() * left[i]->thickness() / 2);
-                    QPointF otherB = corners[i] + left[i]->position().toPointF() + QPointF(corners[(i + 2) % 4].x() * left[i]->thickness() / 2, corners[(i + 2) % 4].y() * left[i]->thickness() / 2);
+                    switch(shouldDia[i]) {
+                    case 1: {
+                        QPointF otherA = corners[i] + left[i]->position().toPointF() + QPointF(corners[(i + 3) % 4].x() * left[i]->thickness() / 2, corners[(i + 3) % 4].y() * left[i]->thickness() / 2);
+                        QPointF otherB = corners[i] + left[i]->position().toPointF() + QPointF(corners[(i + 2) % 4].x() * left[i]->thickness() / 2, corners[(i + 2) % 4].y() * left[i]->thickness() / 2);
 
-                    ret.append(makeDiagonal(meA, meB, otherA, otherB, {false, true, false, shouldDia[(i + 1) % 4] != 2}));
-                } break;
-                case 2: {
-                    QPointF otherA = corners[(i + 3) % 4] + right[i]->position().toPointF() + QPointF(corners[(i + 1) % 4].x() * right[i]->thickness() / 2, corners[(i + 1) % 4].y() * right[i]->thickness() / 2);
-                    QPointF otherB = corners[(i + 3) % 4] + right[i]->position().toPointF() + QPointF(corners[i].x() * right[i]->thickness() / 2, corners[i].y() * right[i]->thickness() / 2);
+                        ret.append(makeDiagonal(meA, meB, otherA, otherB, {false, true, false, shouldDia[(i + 1) % 4] != 2}));
+                    } break;
+                    case 2: {
+                        QPointF otherA = corners[(i + 3) % 4] + right[i]->position().toPointF() + QPointF(corners[(i + 1) % 4].x() * right[i]->thickness() / 2, corners[(i + 1) % 4].y() * right[i]->thickness() / 2);
+                        QPointF otherB = corners[(i + 3) % 4] + right[i]->position().toPointF() + QPointF(corners[i].x() * right[i]->thickness() / 2, corners[i].y() * right[i]->thickness() / 2);
 
-                    ret.append(makeDiagonal(meA, meB, otherA, otherB, {false, shouldDia[(i + 3) % 4] != 1, false, true}));
-                } break;
+                        ret.append(makeDiagonal(meA, meB, otherA, otherB, {false, shouldDia[(i + 3) % 4] != 1, false, true}));
+                    } break;
+                    }
                 }
             }
         }
-    }
+    }//end diagonals
 
 
     QVector<float> topWalEndHeight(4, 0);

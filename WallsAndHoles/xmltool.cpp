@@ -102,6 +102,8 @@ QDomElement tileTemplateSetElement(TileTemplateSet *templateSet, QDomDocument &d
         templateE.setAttribute("name", t->name());
         templateE.setAttribute("height", t->height());
         templateE.setAttribute("thickness", t->thickness());
+        templateE.setAttribute("bridge", t->bridgeTiles());
+        templateE.setAttribute("diagonal", t->connectDiagonals());
         templateE.setAttribute("position", QString("%1,%2").arg(
                                QString::number(t->position()[0]),
                                QString::number(t->position()[1])));
@@ -309,6 +311,8 @@ SavableTileTemplateSet *XMLTool::openTileTemplateSet(QString templateSetPath)
                 int topMaterialId;
                 int sideMaterialId;
                 bool hasSideMaterial;
+                bool bridge = false;
+                bool diagonal = false;
                 foreach (const QXmlStreamAttribute &attr, xmlReader.attributes()) {
                     if (attr.name() == "name")
                         name = attr.value().toString();
@@ -328,6 +332,10 @@ SavableTileTemplateSet *XMLTool::openTileTemplateSet(QString templateSetPath)
                         sideMaterialId = attr.value().toInt();
                     else if (attr.name() == "hassidemtrl")
                         hasSideMaterial = attr.value().toInt();
+                    else if (attr.name() == "bridge")
+                        bridge = attr.value().toInt();
+                    else if (attr.name() == "diagonal")
+                        diagonal = attr.value().toInt();
                 }
 
                 TileMaterial *topM;
@@ -336,7 +344,7 @@ SavableTileTemplateSet *XMLTool::openTileTemplateSet(QString templateSetPath)
                 else
                     topM = materials[topMaterialId];
 
-                TileTemplate *tileTemplate = new TileTemplate(color, name, height, thickness, topM, position, templateSet);
+                TileTemplate *tileTemplate = new TileTemplate(color, name, height, thickness, topM, position, bridge, diagonal, templateSet);
 
                 tileTemplate->setHasSideMaterial(hasSideMaterial);
                 if (sideMaterialId != -1)

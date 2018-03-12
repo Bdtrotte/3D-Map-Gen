@@ -21,6 +21,8 @@ public:
                           float thickness = 1,
                           TileMaterial *topMaterial = nullptr,
                           QVector2D position = QVector2D(0.5, 0.5),
+                          bool bridgeTiles = false,
+                          bool connectDiagonals = false,
                           QObject *parent = nullptr);
 
 
@@ -91,6 +93,12 @@ public:
     const TileMaterial *sideMaterial() const { return mSideMaterial; }
     TileMaterial *sideMaterial() { return mSideMaterial; }
 
+    bool bridgeTiles() const { return mBridgeTiles; }
+    void setBridgeTiles(bool enabled);
+
+    bool connectDiagonals() const { return mConnectDiagonals; }
+    void setConnectDiagonals(bool enabled);
+
     /**
      * @brief emitTilePing
      * Sends a signal to all tiles using this template, which will
@@ -130,6 +138,9 @@ private:
     bool mHasSideMaterial;
     TileMaterial *mTopMaterial;
     TileMaterial *mSideMaterial;
+
+    bool mBridgeTiles;
+    bool mConnectDiagonals;
 };
 
 #endif // TILETEMPLATE_H
