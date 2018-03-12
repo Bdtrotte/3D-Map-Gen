@@ -7,13 +7,17 @@
 #include <QWidget>
 #include <QListView>
 #include <QPushButton>
+#include <QSplitter>
 
 class TileMaterialView : public QWidget
 {
     Q_OBJECT
 
 public:
-    explicit TileMaterialView(QWidget *parent = nullptr);
+    explicit TileMaterialView(QWidget *parent = nullptr);\
+
+    void saveState();
+    void restoreState();
 
 private slots:
     void addMaterial();
@@ -28,6 +32,8 @@ private:
     QPushButton *mRemoveMaterialButton;
 
     PropertyBrowser *mPropertyBrowser;
+
+    QSplitter *mSplitter;
 };
 
 #endif // TILEMATERIALVIEW_H

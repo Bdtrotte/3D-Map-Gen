@@ -360,7 +360,16 @@ void Editor::loadSettings()
 {
     QSettings settings;
 
+    mMainWindow->restoreGeometry(settings.value("geometry").toByteArray());
     mMainWindow->restoreState(settings.value("windowState").toByteArray());
+
+    if (mTileTemplateSetsView != nullptr) {
+        mTileTemplateSetsView->restoreState();
+    }
+
+    if (mMaterialView != nullptr) {
+        mMaterialView->restoreState();
+    }
 
     if(!settings.value("tileMap").toString().isNull())
         setTileMap(XMLTool::openTileMap(settings.value("tileMap").toString(), mTileTemplateSetManager));
@@ -378,8 +387,18 @@ void Editor::saveSettings()
     QSettings settings;
 
     //Saves the windowstate
-    if(mMainWindow != nullptr)
+    if (mMainWindow != nullptr) {
+        settings.setValue("geometry", mMainWindow->saveGeometry());
         settings.setValue("windowState", mMainWindow->saveState());
+    }
+
+    if (mTileTemplateSetsView != nullptr) {
+        mTileTemplateSetsView->saveState();
+    }
+
+    if (mMaterialView != nullptr) {
+        mMaterialView->saveState();
+    }
 
     //Saves the open Tilemap
     if(mTileMap)

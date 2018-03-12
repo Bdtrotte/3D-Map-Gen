@@ -9,6 +9,7 @@
 #include <QWidget>
 #include <QTabWidget>
 #include <QListView>
+#include <QSplitter>
 
 /**
  * @brief The TileTemplateSetsView class
@@ -25,6 +26,9 @@ public:
                                   QWidget *parent = nullptr);
 
     void setDefaultTileTemplateSet(TileTemplateSet *tileTemplateSet);
+
+    void saveState();
+    void restoreState();
 
 signals:
     void tileTemplateChanged(TileTemplate *tileTemplate);
@@ -62,6 +66,8 @@ private:
 
     QAction *mRemoveTemplateSet;
     QAction *mSaveTemplateSet;
+
+    QSplitter *mSplitter;
 };
 
 #endif // TILETEMPLATESETSVIEW_H

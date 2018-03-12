@@ -7,7 +7,7 @@
 #include <QVBoxLayout>
 #include <QToolBar>
 #include <QToolButton>
-#include <QSplitter>
+#include <QSettings>
 
 TileTemplateSetsView::TileTemplateSetsView(TileTemplateSetsManager *tileTemplateSetsManager,
                                            QWidget *parent)
@@ -70,14 +70,14 @@ TileTemplateSetsView::TileTemplateSetsView(TileTemplateSetsManager *tileTemplate
     mDefaultTemplateView->setSizePolicy(QSizePolicy(QSizePolicy::Preferred, QSizePolicy::Minimum));
     mDefaultTemplateView->hide();
 
-    QSplitter *splitter = new QSplitter(this);
-    splitter->setOrientation(Qt::Vertical);
-    splitter->addWidget(mDefaultTemplateView);
-    splitter->addWidget(mTabs);
-    splitter->addWidget(mTemplatePropertyBrowser);
+    mSplitter = new QSplitter(this);
+    mSplitter->setOrientation(Qt::Vertical);
+    mSplitter->addWidget(mDefaultTemplateView);
+    mSplitter->addWidget(mTabs);
+    mSplitter->addWidget(mTemplatePropertyBrowser);
 
     QVBoxLayout *layout = new QVBoxLayout;
-    layout->addWidget(splitter);
+    layout->addWidget(mSplitter);
     layout->addWidget(actionBar);
     setLayout(layout);
 }
@@ -100,6 +100,20 @@ void TileTemplateSetsView::setDefaultTileTemplateSet(TileTemplateSet *tileTempla
         connect(m, &QItemSelectionModel::currentRowChanged,
                 this, &TileTemplateSetsView::defaultTileTemplateSelected);
     }
+}
+
+void TileTemplateSetsView::saveState()
+{
+    QSettings settings;
+
+    settings.setValue("templatesetview/splitter", mSplitter->saveState());
+}
+
+void TileTemplateSetsView::restoreState()
+{
+    QSettings settings;
+
+    mSplitter->restoreState(settings.value("templatesetview/splitter").toByteArray());
 }
 
 void TileTemplateSetsView::tileTemplateSetAdded(SavableTileTemplateSet *tileTemplateSet)

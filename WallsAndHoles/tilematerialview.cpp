@@ -4,7 +4,7 @@
 
 #include <QVBoxLayout>
 #include <QHBoxLayout>
-#include <QSplitter>
+#include <QSettings>
 
 TileMaterialView::TileMaterialView(QWidget *parent)
     : QWidget(parent)
@@ -32,13 +32,13 @@ TileMaterialView::TileMaterialView(QWidget *parent)
 
     w->setLayout(layout);
 
-    QSplitter *s = new QSplitter(this);
-    s->setOrientation(Qt::Vertical);
-    s->addWidget(w);
-    s->addWidget(mPropertyBrowser);
+    mSplitter = new QSplitter(this);
+    mSplitter->setOrientation(Qt::Vertical);
+    mSplitter->addWidget(w);
+    mSplitter->addWidget(mPropertyBrowser);
 
     layout = new QVBoxLayout;
-    layout->addWidget(s);
+    layout->addWidget(mSplitter);
 
     setLayout(layout);
 
@@ -49,6 +49,20 @@ TileMaterialView::TileMaterialView(QWidget *parent)
 
     connect(mMaterialList->selectionModel(), &QItemSelectionModel::currentChanged,
             this, &TileMaterialView::materialSelected);
+}
+
+void TileMaterialView::saveState()
+{
+    QSettings settings;
+
+    settings.setValue("tilematerialview/splitter", mSplitter->saveState());
+}
+
+void TileMaterialView::restoreState()
+{
+    QSettings settings;
+
+    mSplitter->restoreState(settings.value("tilematerialview/splitter").toByteArray());
 }
 
 void TileMaterialView::addMaterial()
