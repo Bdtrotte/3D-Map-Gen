@@ -1,13 +1,13 @@
 <?xml version = '1.0' encoding='UTF-8'?>
 <TileTemplateSet name="ItzaSet">
-    <TileMaterial diffuse="1" name="Wall" ambient="1" shininess="1" texture="/Users/Bright/Documents/OneDrive/Documents/ucsc/cmps115/project/example/wall.jpg" specular="1"/>
-    <TileMaterial diffuse="1" name="road" ambient="1" shininess="1" texture="/Users/Bright/Documents/OneDrive/Documents/ucsc/cmps115/project/example/road.jpg" specular="1"/>
-    <TileMaterial diffuse="2" name="marble" ambient="1" shininess="1" texture="/Users/Bright/Documents/OneDrive/Documents/ucsc/cmps115/project/example/marble.jpg" specular="2"/>
-    <TileMaterial diffuse="1" name="step" ambient="1" shininess="1" texture="/Users/Bright/Documents/OneDrive/Documents/ucsc/cmps115/project/example/step.png" specular="1"/>
-    <TileMaterial diffuse="2" name="TempleWall" ambient="1" shininess="2" texture="/Users/Bright/Documents/OneDrive/Documents/ucsc/cmps115/project/example/templeWall.jpg" specular="2"/>
-    <TileTemplate name="ItzaWall" color="#58595a" material="0" position="0.5,0.5" height="1" thickness="1"/>
-    <TileTemplate name="ItzaRoad" color="#d5d8b2" material="1" position="0.5,0.5" height="0" thickness="1"/>
-    <TileTemplate name="ItzaBrick" color="#fae111" material="2" position="0.5,0.5" height="0.75" thickness="1"/>
-    <TileTemplate name="ItzaStep" color="#afb9d8" material="3" position="0.5,0.5" height="0.5" thickness="1"/>
-    <TileTemplate name="ItzaTemple" color="#f9000d" material="4" position="0.5,0.5" height="1" thickness="1"/>
+    <TileMaterial ambient="1" specular="1" diffuse="1" texture="/Users/Bright/Documents/OneDrive/Documents/ucsc/cmps115/project/example/wall.jpg" shininess="1" name="Wall"/>
+    <TileMaterial ambient="1" specular="1" diffuse="1" texture="/Users/Bright/Documents/OneDrive/Documents/ucsc/cmps115/project/example/road.jpg" shininess="1" name="road"/>
+    <TileMaterial ambient="1" specular="2" diffuse="2" texture="/Users/Bright/Documents/OneDrive/Documents/ucsc/cmps115/project/example/marble.jpg" shininess="1" name="marble"/>
+    <TileMaterial ambient="1" specular="1" diffuse="1" texture="/Users/Bright/Documents/OneDrive/Documents/ucsc/cmps115/project/example/step.png" shininess="1" name="step"/>
+    <TileMaterial ambient="1" specular="2" diffuse="2" texture="/Users/Bright/Documents/OneDrive/Documents/ucsc/cmps115/project/example/templeWall.jpg" shininess="2" name="TempleWall"/>
+    <TileTemplate sidematerial="-1" color="#58595a" position="0.5,0.5" topmaterial="0" height="1" thickness="1" hassidemtrl="0" name="ItzaWall"/>
+    <TileTemplate sidematerial="-1" color="#d5d8b2" position="0.5,0.5" topmaterial="1" height="0" thickness="1" hassidemtrl="0" name="ItzaRoad"/>
+    <TileTemplate sidematerial="-1" color="#fae111" position="0.5,0.5" topmaterial="2" height="0.75" thickness="1" hassidemtrl="0" name="ItzaBrick"/>
+    <TileTemplate sidematerial="-1" color="#afb9d8" position="0.5,0.5" topmaterial="3" height="0.5" thickness="1" hassidemtrl="0" name="ItzaStep"/>
+    <TileTemplate sidematerial="-1" color="#f9000d" position="0.5,0.5" topmaterial="4" height="1" thickness="1" hassidemtrl="0" name="ItzaTemple"/>
 </TileTemplateSet>
