@@ -3,6 +3,7 @@
 
 #include <QPointF>
 #include <QVector3D>
+#include <QtMath>
 
 namespace Geometry {
 
@@ -16,7 +17,7 @@ inline int orientation(QPointF a, QPointF b, QPointF c)
 
     QVector3D AxB = QVector3D::crossProduct(A, B);
 
-    if (std::abs(AxB.y()) <= 0.01) return 0;
+    if (qAbs(AxB.y()) <= 0.01) return 0;
     if (AxB.y() > 0)  return 2;
     else              return 1;
 }
