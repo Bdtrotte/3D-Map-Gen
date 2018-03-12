@@ -29,6 +29,7 @@ public:
 
     void paint(QMatrix4x4 mvpMatrix, QVector3D camPos) override;
 
+    void create() override;
 
 public slots:
     /**

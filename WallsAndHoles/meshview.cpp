@@ -41,6 +41,10 @@ void MeshView::setRenderer(QSharedPointer<AbstractRenderer> renderer) {
     // on the OpenGL thread.
     mNextRenderer = renderer;
 
+    makeCurrent();
+    mNextRenderer->create();
+    doneCurrent();
+
     connect(renderer.data(), &AbstractRenderer::repaintNeeded, this, &MeshView::scheduleRepaint);
     connect(renderer.data(), &AbstractRenderer::makeContextCurrent, this, &MeshView::makeContextCurrent);
     connect(renderer.data(), &AbstractRenderer::doneContextCurrent, this, &MeshView::doneContextCurrent);

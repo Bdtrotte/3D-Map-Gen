@@ -36,6 +36,14 @@ public:
      */
     virtual void paint(QMatrix4x4 mvpMatrix, QVector3D camPos) = 0;
 
+    /**
+     * @brief This is (should be) called on an OpenGL thread before this object is used.
+     * Allows the renderer to initialize its OpenGL-dependent objects.
+     *
+     * The difference between this and initializeGL() is that this should only include
+     * lightweight initialization.
+     */
+    virtual void create() {}
 
     /**
      * @brief Initializes OpenGL-related details.

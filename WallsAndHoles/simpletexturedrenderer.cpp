@@ -177,6 +177,10 @@ void SimpleTexturedRenderer::paint(QMatrix4x4 mvpMatrix, QVector3D camPos)
     checkGLErrors();
 }
 
+void SimpleTexturedRenderer::create()
+{
+    mShaderProgram.create();
+}
 
 void SimpleTexturedRenderer::initializeRenderer()
 {
