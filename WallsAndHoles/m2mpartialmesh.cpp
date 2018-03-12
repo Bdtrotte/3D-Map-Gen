@@ -246,5 +246,5 @@ Trig::Trig(ImageInfo texture, PhongInfo material, QVector3D v1, QVector2D t1, QV
     , mTexture(texture)
     , mMaterial(material)
 {
-    mNormal = QVector3D::crossProduct(mV1 - mV2, mV3 - mV2).normalized();
+    mNormal = QVector3D::crossProduct(mV3 - mV2, mV1 - mV2).normalized();
 }
