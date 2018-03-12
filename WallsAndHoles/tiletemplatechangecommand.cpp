@@ -89,7 +89,7 @@ void TileTemplateChangeCommand::undo()
     if (isObsolete())
         return;
 
-    for (int idx = 0; idx < mChangedTilePositions.size(); ++idx) {
+    for (int idx = mChangedTilePositions.size() - 1; idx >= 0; --idx) {
         QPoint pos = mChangedTilePositions[idx];
         TileTemplate *oldTemplate = mOldTemplatePointers[idx];
 

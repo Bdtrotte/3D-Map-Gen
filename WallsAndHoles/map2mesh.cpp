@@ -9,6 +9,7 @@ Map2Mesh::Map2Mesh(TileMap *tileMap, QObject *parent)
     : QObject(parent)
     , mTileMap(tileMap)
     , mScene(SimpleTexturedScene::makeScene())
+    , mSceneUpdateScheduled(false)
 {
     if (mTileMap) {
         // This will set up and initialize all output-related variables.
@@ -31,6 +32,7 @@ void Map2Mesh::tileChanged(int x, int y)
 {
     // Update this tile and its neighboring tiles.
     QMutexLocker sceneLocker(&mSceneUpdateMutex);
+
     mTilesToUpdate += {x, y};
     mTilesToUpdate += getValidNeighbors(x, y, mTileMap->mapSize());
     sceneLocker.unlock();
