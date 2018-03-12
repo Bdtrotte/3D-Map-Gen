@@ -5,7 +5,7 @@
 
 class EllipseBrushTool : public AbstractShapeBrushTool {
 public:
-    EllipseBrushTool(TileMapPreviewGraphicsItem *previewItem);
+    EllipseBrushTool(TileMapPreviewGraphicsItem *previewItem, QUndoStack *undoStack);
 
     /// Draws an ellipse.
     QRegion getShape(QPoint start, QPoint end) const override;

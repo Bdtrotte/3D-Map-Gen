@@ -165,6 +165,7 @@ void TileMap::removingTileTemplateSet(TileTemplateSet *tileTemplateSet)
 
     mTilePingReceiveMode = Collect;
     mPingedTiles.clear();
+    mPingedTilePositions.clear();
 
     for (TileTemplate *t : tileTemplateSet->cTileTemplates())
         if (t)
@@ -174,6 +175,7 @@ void TileMap::removingTileTemplateSet(TileTemplateSet *tileTemplateSet)
         t->resetTile(nullptr);
 
     mPingedTiles.clear();
+    mPingedTilePositions.clear();
     mTilePingReceiveMode = None;
 
     mPingingMutex.unlock();
@@ -187,6 +189,7 @@ void TileMap::removingTileTemplate(TileTemplate *tileTemplate)
 
     mTilePingReceiveMode = Collect;
     mPingedTiles.clear();
+    mPingedTilePositions.clear();
 
     tileTemplate->emitTilePing();
 
@@ -194,10 +197,52 @@ void TileMap::removingTileTemplate(TileTemplate *tileTemplate)
         t->resetTile(nullptr);
 
     mPingedTiles.clear();
+    mPingedTilePositions.clear();
     mTilePingReceiveMode = None;
 
     mPingingMutex.unlock();
 }
+
+QVector<QPoint> TileMap::tilePositionsUsingTemplate(TileTemplate *tileTemplate)
+{
+    QMutexLocker locker(&mPingingMutex);
+
+    mTilePingReceiveMode = Collect;
+    mPingedTiles.clear();
+    mPingedTilePositions.clear();
+
+    tileTemplate->emitTilePing();
+
+    QVector<QPoint> positions = mPingedTilePositions;
+
+    mPingedTiles.clear();
+    mPingedTilePositions.clear();
+    mTilePingReceiveMode = None;
+
+    return positions;
+}
+
+QVector<QPoint> TileMap::tilePositionsUsingTemplateSet(TileTemplateSet *tileTemplateSet)
+{
+    QMutexLocker locker(&mPingingMutex);
+
+    mTilePingReceiveMode = Collect;
+    mPingedTiles.clear();
+    mPingedTilePositions.clear();
+
+    for (TileTemplate *t : tileTemplateSet->cTileTemplates())
+        if (t)
+            t->emitTilePing();
+
+    QVector<QPoint> positions = mPingedTilePositions;
+
+    mPingedTiles.clear();
+    mPingedTilePositions.clear();
+    mTilePingReceiveMode = None;
+
+    return positions;
+}
+
 
 void TileMap::tilePinged(int x, int y)
 {
@@ -207,6 +252,7 @@ void TileMap::tilePinged(int x, int y)
         break;
     case Collect:
         mPingedTiles.append(mMap(x, y));
+        mPingedTilePositions.append(QPoint(x, y));
         break;
     default: break;
     }

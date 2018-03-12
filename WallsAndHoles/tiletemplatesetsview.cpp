@@ -213,7 +213,7 @@ void TileTemplateSetsView::addTemplate()
                                                  nullptr,                // Default material.
                                                  QVector2D(0.5, 0.5));
 
-    mTileTemplateSetsManager->tileTemplateSetAt(curTab)->addTileTemplate(newTemplate);
+    mTileTemplateSetsManager->addTileTemplate(curTab, newTemplate);
     mListViews[curTab]->selectionModel()->setCurrentIndex(mTileTemplateSetsManager->tileTemplateSetAt(curTab)->index(mTileTemplateSetsManager->tileTemplateSetAt(curTab)->size() - 1, 0),
                                                           QItemSelectionModel::ClearAndSelect);
 

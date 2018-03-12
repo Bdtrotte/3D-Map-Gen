@@ -87,8 +87,11 @@ SOURCES += \
     mapviewcontainer.cpp\
     m2mpartialmesh.cpp \
     m2mtilemesher_private.cpp \
-    imageandsource.cpp\
-    mapviewmatchercamera.cpp
+    imageandsource.cpp \
+    mapviewmatchercamera.cpp \
+    tiletemplatechangecommand.cpp \
+    dependentundocommand.cpp \
+    emptyparentcommand.cpp
 
 HEADERS += \
     meshview.h \
@@ -164,7 +167,12 @@ HEADERS += \
     array2dtools.h \
     array2d_private.h \
     m2mtilemesher_private.h \
-    mapviewmatchercamera.h
+    mapviewmatchercamera.h \
+    tiletemplatechangecommand.h \
+    changevaluecommand.h \
+    undocommandfromfunctions.h \
+    dependentundocommand.h \
+    emptyparentcommand.h
 
 FORMS +=
 

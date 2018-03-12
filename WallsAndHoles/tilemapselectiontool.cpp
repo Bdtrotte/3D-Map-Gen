@@ -7,10 +7,12 @@
 #include <QDebug>
 
 TileMapSelectionTool::TileMapSelectionTool(PropertyBrowser *propertyBrowser,
-                                           TileMapPreviewGraphicsItem *previewItem)
+                                           TileMapPreviewGraphicsItem *previewItem,
+                                           QUndoStack *undoStack)
     : AbstractTileSelectionTool(propertyBrowser, previewItem)
     , mClickCount(0)
-    , mLastClickTime(0) {}
+    , mLastClickTime(0)
+    , mUndoStack(undoStack) {}
 
 void TileMapSelectionTool::cellClicked(int x, int y, QMouseEvent *)
 {
@@ -54,28 +56,40 @@ void TileMapSelectionTool::cellReleased(int, int, QMouseEvent *event)
         break;
     }
 
+    QRegion newSelectionValue;
     switch (event->modifiers()) {
     case Qt::ShiftModifier:
-        mSelection = mOriginalSelection + newSelectionRegion;
+        newSelectionValue = mOriginalSelection + newSelectionRegion;
         break;
     case Qt::ControlModifier:
-        mSelection = mOriginalSelection - newSelectionRegion;
+        newSelectionValue = mOriginalSelection - newSelectionRegion;
         break;
     case Qt::ShiftModifier | Qt::ControlModifier:
-        mSelection = mOriginalSelection & newSelectionRegion;
+        newSelectionValue = mOriginalSelection & newSelectionRegion;
         break;
     case Qt::NoModifier:
-        mSelection = newSelectionRegion;
+        newSelectionValue = newSelectionRegion;
         break;
     }
 
-    activateSelection();
+    QRegion originalSelection = mOriginalSelection;
+    mUndoStack->push(SelectionChangeCommand::make(
+                             &mSelection,
+                             newSelectionValue,
+                             "'changed selection'",
+                             [this, originalSelection] () {
+        // This makes the behavior more intuitive if the user does an undo in the middle of selecting.
+        // (note: the user's current preview of the in-progress selection will disappear until the user
+        //  moves their cursor---I couldn't find a neat way of avoiding this, but it doesn't cause
+        //  too much trouble)
+        mOriginalSelection = originalSelection;
+        activateSelection();
+    }));
 }
 
 void TileMapSelectionTool::updatePreview(QPoint end)
 {
     mCurrentRect = ShapeRegion::rect(mStartPoint, end) & QRect(QPoint(0, 0), getTileMap()->mapSize());
-    mSelection = mOriginalSelection + mCurrentRect;
 
-    drawPreview();
+    drawPreview(mOriginalSelection + mCurrentRect);
 }

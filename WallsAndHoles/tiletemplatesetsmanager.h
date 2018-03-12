@@ -5,6 +5,7 @@
 #include "savabletiletemplateset.h"
 
 #include <QObject>
+#include <QUndoStack>
 
 /**
  * @brief The TileTemplateSetsManager class
@@ -17,7 +18,7 @@ class TileTemplateSetsManager : public QObject
     Q_OBJECT
 
 public:
-    explicit TileTemplateSetsManager(TileMap *tileMap = nullptr, QObject *parent = nullptr);
+    explicit TileTemplateSetsManager(QUndoStack *undoStack, TileMap *tileMap = nullptr, QObject *parent = nullptr);
 
     /**
      * @brief newTileTemplateSet
@@ -66,6 +67,13 @@ public:
     bool removeTileTemplate(int templateSetIndex, int templateIndex);
 
     /**
+     * @brief addTileTemplate   Adds a new tile template to the given template set.
+     * @param templateSetIndex  The index of the template set that should be modified.
+     * @param newTemplate       The TileTemplate that should be added.
+     */
+    void addTileTemplate(int templateSetIndex, TileTemplate *newTemplate);
+
+    /**
      * @brief saveAllTileTemplateSets
      * Saves all unsaved tileTemplateSets
      */
@@ -112,6 +120,8 @@ private:
     TileMap *mTileMap;
 
     QList<SavableTileTemplateSet *> mTileTemplateSets;
+
+    QUndoStack *mUndoStack;
 };
 
 #endif // TILETEMPLATESETSMANAGER_H
