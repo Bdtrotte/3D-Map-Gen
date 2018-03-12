@@ -152,7 +152,8 @@ QVector<Triplet<BetterPolygon, QVector<float>, QVector<bool>>> BlockyPolygonTile
 
         //North
         if (mTileNeighborhood(0, -1) != nullptr
-                && me->tileTemplate() == mTileNeighborhood(0, -1)->tileTemplate()) {
+                && me->tileTemplate() == mTileNeighborhood(0, -1)->tileTemplate()
+                && center.y() - halfThickness > 0) {
             QVector<QPointF> bridge = {
                 center + QPointF(-halfThickness, -halfThickness),
                 center + QPointF(halfThickness, -halfThickness),
@@ -166,7 +167,8 @@ QVector<Triplet<BetterPolygon, QVector<float>, QVector<bool>>> BlockyPolygonTile
 
         //East
         if (mTileNeighborhood(1, 0) != nullptr
-                && me->tileTemplate() == mTileNeighborhood(1, 0)->tileTemplate()) {
+                && me->tileTemplate() == mTileNeighborhood(1, 0)->tileTemplate()
+                && center.x() + halfThickness < 1) {
             QVector<QPointF> bridge = {
                 center + QPointF(halfThickness, -halfThickness),
                 center + QPointF(halfThickness, halfThickness),
@@ -180,7 +182,8 @@ QVector<Triplet<BetterPolygon, QVector<float>, QVector<bool>>> BlockyPolygonTile
 
         //South
         if (mTileNeighborhood(0, 1) != nullptr
-                && me->tileTemplate() == mTileNeighborhood(0, 1)->tileTemplate()) {
+                && me->tileTemplate() == mTileNeighborhood(0, 1)->tileTemplate()
+                && center.y() + halfThickness < 1) {
             QVector<QPointF> bridge = {
                 center + QPointF(halfThickness, halfThickness),
                 center + QPointF(-halfThickness, halfThickness),
@@ -194,7 +197,8 @@ QVector<Triplet<BetterPolygon, QVector<float>, QVector<bool>>> BlockyPolygonTile
 
         //West
         if (mTileNeighborhood(-1, 0) != nullptr
-                && me->tileTemplate() == mTileNeighborhood(-1, 0)->tileTemplate()) {
+                && me->tileTemplate() == mTileNeighborhood(-1, 0)->tileTemplate()
+                && center.x() - halfThickness > 0) {
             QVector<QPointF> bridge = {
                 center + QPointF(-halfThickness, halfThickness),
                 center + QPointF(-halfThickness, -halfThickness),

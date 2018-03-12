@@ -62,8 +62,6 @@ QVector<Triplet<BetterPolygon, QVector<float>, QVector<bool>>> makeDiagonal(QPoi
 
 QVector<Triplet<BetterPolygon, QVector<float>, QVector<bool>>> GroundBlockyPolygonTileMesher::topPolygons(QVector<const Tile *> *heightAndMaterial)
 {
-    return {};
-
     //first is the inner diagonal, second is the outer diagonal
     QPair<bool, bool> topLeft(false, false);
     QPair<bool, bool> topRight(false, false);
@@ -188,6 +186,7 @@ QVector<Triplet<BetterPolygon, QVector<float>, QVector<bool>>> GroundBlockyPolyg
     }
 
     //We now have all the info on which diagonals exist, and need to be constructed
+    //TODO This just manually runs through all 8 possible diagonals, could probably be made to run on a loop
 
     QVector<Triplet<BetterPolygon, QVector<float>, QVector<bool>>> ret;
 

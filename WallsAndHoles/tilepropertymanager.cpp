@@ -51,9 +51,9 @@ QVector<QVector<QVariant>> TilePropertyManager::properties()
 
     return {
         {"Relative Height",     baseTile->relativeHeight(),       true,  -1000, 1000, heightDiff},
-        {"Relative Thickness",  baseTile->relativeThickness(),    false, -1000, 1000, thicknessDiff},
-        {"Relative X Position", baseTile->relativePosition().x(), false, -1000, 1000, xPosDiff},
-        {"Relative Y Position", baseTile->relativePosition().y(), false, -1000, 1000, yPosDiff},
+        {"Relative Thickness",  baseTile->relativeThickness(),    true, -1000, 1000, thicknessDiff},
+        //{"Relative X Position", baseTile->relativePosition().x(), false, -1000, 1000, xPosDiff},
+        //{"Relative Y Position", baseTile->relativePosition().y(), false, -1000, 1000, yPosDiff},
         {"Tile Template",       mTiles.size() > 1? "--" :
                                                   (baseTile->hasTileTemplate()? baseTile->tileTemplate()->name() : "No Template"), false}
     };
