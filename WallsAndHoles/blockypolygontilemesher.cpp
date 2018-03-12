@@ -74,19 +74,21 @@ void BlockyPolygonTileMesher::determinIfWallShouldDrop(QPointF a, QPointF b, flo
 //0 NO
 //1 Left
 //2 Right
-int shouldDiagonal(const Tile *center, const Tile *far, const Tile *left, const Tile *right)
+int shouldDiagonal(const Tile *me, const Tile *center, const Tile *far, const Tile *left, const Tile *right)
 {
-    if (far == nullptr || far->tileTemplate() != center->tileTemplate()) {
+    if (center != nullptr && center->hasTileTemplate()) return false;
+
+    if (far == nullptr || far->tileTemplate() != me->tileTemplate()) {
         //If the tile two cells in front of this is on the same template type, a diagonal wont be made
 
         if (left != nullptr
-                && left->tileTemplate() == center->tileTemplate()
-                && (right == nullptr || right->tileTemplate() != center->tileTemplate()))
+                && left->tileTemplate() == me->tileTemplate()
+                && (right == nullptr || right->tileTemplate() != me->tileTemplate()))
             return 1;
 
         if (right != nullptr
-                && right->tileTemplate() == center->tileTemplate()
-                && (left == nullptr || left->tileTemplate() != center->tileTemplate()))
+                && right->tileTemplate() == me->tileTemplate()
+                && (left == nullptr || left->tileTemplate() != me->tileTemplate()))
             return 2;
     }
 
@@ -207,34 +209,40 @@ QVector<Triplet<BetterPolygon, QVector<float>, QVector<bool>>> BlockyPolygonTile
 
 //DIAGONALS======================================================================================================
     //Start by gathering how each side should "diagonal" (left right, or not at all)
-    const Tile *far[4];
     const Tile *left[4];
     const Tile *right[4];
     int shouldDia[4];
 
+    const Tile *far;
+    const Tile *cent;
+
     //NORTH
-    far[0] = mTileNeighborhood(0, -2);
+    far = mTileNeighborhood(0, -2);
+    cent = mTileNeighborhood(0, -1);
     left[0] = mTileNeighborhood(-1, -1);
     right[0] = mTileNeighborhood(1, -1);
-    shouldDia[0] = topWallDrops[0]? shouldDiagonal(me, far[0], left[0], right[0]) : 0;
+    shouldDia[0] = topWallDrops[0]? shouldDiagonal(me, cent, far, left[0], right[0]) : 0;
 
     //WEST
-    far[1] = mTileNeighborhood(-2, 0);
+    far = mTileNeighborhood(-2, 0);
+    cent = mTileNeighborhood(-1, 0);
     left[1] = mTileNeighborhood(-1, 1);
     right[1] = mTileNeighborhood(-1, -1);
-    shouldDia[1] = topWallDrops[1]? shouldDiagonal(me, far[1], left[1], right[1]) : 0;
+    shouldDia[1] = topWallDrops[1]? shouldDiagonal(me, cent, far, left[1], right[1]) : 0;
 
     //SOUTH
-    far[2] = mTileNeighborhood(0, 2);
+    far = mTileNeighborhood(0, 2);
+    cent = mTileNeighborhood(0, 1);
     left[2] = mTileNeighborhood(1, 1);
     right[2] = mTileNeighborhood(-1, 1);
-    shouldDia[2] = topWallDrops[2]? shouldDiagonal(me, far[2], left[2], right[2]) : 0;
+    shouldDia[2] = topWallDrops[2]? shouldDiagonal(me, cent, far, left[2], right[2]) : 0;
 
     //EAST
-    far[3] = mTileNeighborhood(2, 0);
+    far = mTileNeighborhood(2, 0);
+    cent = mTileNeighborhood(1, 0);
     left[3] = mTileNeighborhood(1, -1);
     right[3] = mTileNeighborhood(1, 1);
-    shouldDia[3] = topWallDrops[3]? shouldDiagonal(me, far[3], left[3], right[3]) : 0;
+    shouldDia[3] = topWallDrops[3]? shouldDiagonal(me, cent, far, left[3], right[3]) : 0;
 
     QPoint corners[4] = {
         QPoint(-1, -1),

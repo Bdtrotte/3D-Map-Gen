@@ -62,6 +62,8 @@ QVector<Triplet<BetterPolygon, QVector<float>, QVector<bool>>> makeDiagonal(QPoi
 
 QVector<Triplet<BetterPolygon, QVector<float>, QVector<bool>>> GroundBlockyPolygonTileMesher::topPolygons(QVector<const Tile *> *heightAndMaterial)
 {
+    return {};
+
     //first is the inner diagonal, second is the outer diagonal
     QPair<bool, bool> topLeft(false, false);
     QPair<bool, bool> topRight(false, false);
@@ -91,8 +93,10 @@ QVector<Triplet<BetterPolygon, QVector<float>, QVector<bool>>> GroundBlockyPolyg
                     || mTileNeighborhood(-1, -2)->tileTemplate() != mTileNeighborhood(-1, 0)->tileTemplate();
             bool farLeftDiff = mTileNeighborhood(-2, -1) == nullptr
                     || mTileNeighborhood(-2, -1)->tileTemplate() != mTileNeighborhood(-1, 0)->tileTemplate();
+            bool centerClear = mTileNeighborhood(-1, -1) == nullptr
+                    || !mTileNeighborhood(-1, -1)->hasTileTemplate();
 
-            if (farTopDiff && farLeftDiff)
+            if (farTopDiff && farLeftDiff && centerClear)
                 topLeft.second = true;
         }
 
@@ -116,8 +120,10 @@ QVector<Triplet<BetterPolygon, QVector<float>, QVector<bool>>> GroundBlockyPolyg
                     || mTileNeighborhood(-1, 2)->tileTemplate() != mTileNeighborhood(-1, 0)->tileTemplate();
             bool farLeftDiff = mTileNeighborhood(-2, 1) == nullptr
                     || mTileNeighborhood(-2, 1)->tileTemplate() != mTileNeighborhood(-1, 0)->tileTemplate();
+            bool centerClear = mTileNeighborhood(-1, 1) == nullptr
+                    || !mTileNeighborhood(-1, 1)->hasTileTemplate();
 
-            if (farBottomDiff && farLeftDiff)
+            if (farBottomDiff && farLeftDiff && centerClear)
                 bottomLeft.second = true;
         }
     }
@@ -146,8 +152,10 @@ QVector<Triplet<BetterPolygon, QVector<float>, QVector<bool>>> GroundBlockyPolyg
                     || mTileNeighborhood(1, -2)->tileTemplate() != mTileNeighborhood(1, 0)->tileTemplate();
             bool farRightDiff = mTileNeighborhood(2, -1) == nullptr
                     || mTileNeighborhood(2, -1)->tileTemplate() != mTileNeighborhood(1, 0)->tileTemplate();
+            bool centerClear = mTileNeighborhood(1, -1) == nullptr
+                    || !mTileNeighborhood(1, -1)->hasTileTemplate();
 
-            if (farTopDiff && farRightDiff)
+            if (farTopDiff && farRightDiff && centerClear)
                 topRight.second = true;
         }
 
@@ -171,8 +179,10 @@ QVector<Triplet<BetterPolygon, QVector<float>, QVector<bool>>> GroundBlockyPolyg
                     || mTileNeighborhood(1, 2)->tileTemplate() != mTileNeighborhood(1, 0)->tileTemplate();
             bool farLeftDiff = mTileNeighborhood(2, 1) == nullptr
                     || mTileNeighborhood(2, 1)->tileTemplate() != mTileNeighborhood(1, 0)->tileTemplate();
+            bool centerClear = mTileNeighborhood(1, 1) == nullptr
+                    || !mTileNeighborhood(1, 1)->hasTileTemplate();
 
-            if (farBottomDiff && farLeftDiff)
+            if (farBottomDiff && farLeftDiff && centerClear)
                 bottomRight.second = true;
         }
     }
@@ -218,5 +228,100 @@ QVector<Triplet<BetterPolygon, QVector<float>, QVector<bool>>> GroundBlockyPolyg
         heightAndMaterial->append(QVector<const Tile *>(dia.size(), left));
     }
 
+    if (topRight.first) {
+        QPointF topCenter = top->position().toPointF() + QPointF(0, -1);
+        QPointF rightCenter = right->position().toPointF() + QPointF(1, 0);
+        float topHalfThickness = top->thickness() / 2;
+        float rightHalfThickness = right->thickness() / 2;
+
+        auto dia = makeDiagonal(
+                    rightCenter + QPointF(-rightHalfThickness, rightHalfThickness),
+                    rightCenter + QPointF(-rightHalfThickness, -rightHalfThickness),
+                    topCenter + QPointF(topHalfThickness, topHalfThickness),
+                    topCenter + QPointF(-topHalfThickness, topHalfThickness));
+
+        ret.append(dia);
+        heightAndMaterial->append(QVector<const Tile *>(dia.size(), right));
+    }
+
+    if (topRight.second) {
+        QPointF topCenter = top->position().toPointF() + QPointF(0, -1);
+        QPointF rightCenter = right->position().toPointF() + QPointF(1, 0);
+        float topHalfThickness = top->thickness() / 2;
+        float rightHalfThickness = right->thickness() / 2;
+
+        auto dia = makeDiagonal(
+                    rightCenter + QPointF(-rightHalfThickness, -rightHalfThickness),
+                    rightCenter + QPointF(rightHalfThickness, -rightHalfThickness),
+                    topCenter + QPointF(topHalfThickness, -topHalfThickness),
+                    topCenter + QPointF(-topHalfThickness, topHalfThickness));
+
+        ret.append(dia);
+        heightAndMaterial->append(QVector<const Tile *>(dia.size(), right));
+    }
+
+    if (bottomLeft.first) {
+        QPointF bottomCenter = bottom->position().toPointF() + QPointF(0, 1);
+        QPointF leftCenter = left->position().toPointF() + QPointF(-1, 0);
+        float bottomHalfThickness = bottom->thickness() / 2;
+        float leftHalfThickness = left->thickness() / 2;
+
+        auto dia = makeDiagonal(
+                    leftCenter + QPointF(leftHalfThickness, -leftHalfThickness),
+                    leftCenter + QPointF(leftHalfThickness, leftHalfThickness),
+                    bottomCenter + QPointF(-bottomHalfThickness, -bottomHalfThickness),
+                    bottomCenter + QPointF(bottomHalfThickness, -bottomHalfThickness));
+
+        ret.append(dia);
+        heightAndMaterial->append(QVector<const Tile *>(dia.size(), left));
+    }
+
+    if (bottomLeft.second) {
+        QPointF bottomCenter = bottom->position().toPointF() + QPointF(0, 1);
+        QPointF leftCenter = left->position().toPointF() + QPointF(-1, 0);
+        float bottomHalfThickness = bottom->thickness() / 2;
+        float leftHalfThickness = left->thickness() / 2;
+
+        auto dia = makeDiagonal(
+                    leftCenter + QPointF(leftHalfThickness, leftHalfThickness),
+                    leftCenter + QPointF(-leftHalfThickness, leftHalfThickness),
+                    bottomCenter + QPointF(-bottomHalfThickness, bottomHalfThickness),
+                    bottomCenter + QPointF(-bottomHalfThickness, -bottomHalfThickness));
+
+        ret.append(dia);
+        heightAndMaterial->append(QVector<const Tile *>(dia.size(), left));
+    }
+
+    if (bottomRight.first) {
+        QPointF bottomCenter = bottom->position().toPointF() + QPointF(0, 1);
+        QPointF rightCenter = right->position().toPointF() + QPointF(1, 0);
+        float bottomHalfThickness = bottom->thickness() / 2;
+        float rightHalfThickness = right->thickness() / 2;
+
+        auto dia = makeDiagonal(
+                    rightCenter + QPointF(-rightHalfThickness, rightHalfThickness),
+                    rightCenter + QPointF(-rightHalfThickness, -rightHalfThickness),
+                    bottomCenter + QPointF(-bottomHalfThickness, -bottomHalfThickness),
+                    bottomCenter + QPointF(bottomHalfThickness, -bottomHalfThickness));
+
+        ret.append(dia);
+        heightAndMaterial->append(QVector<const Tile *>(dia.size(), right));
+    }
+
+    if (bottomRight.second) {
+        QPointF bottomCenter = bottom->position().toPointF() + QPointF(0, 1);
+        QPointF rightCenter = right->position().toPointF() + QPointF(1, 0);
+        float bottomHalfThickness = bottom->thickness() / 2;
+        float rightHalfThickness = right->thickness() / 2;
+
+        auto dia = makeDiagonal(
+                    rightCenter + QPointF(rightHalfThickness, rightHalfThickness),
+                    rightCenter + QPointF(-rightHalfThickness, rightHalfThickness),
+                    bottomCenter + QPointF(bottomHalfThickness, -bottomHalfThickness),
+                    bottomCenter + QPointF(bottomHalfThickness, bottomHalfThickness));
+
+        ret.append(dia);
+        heightAndMaterial->append(QVector<const Tile *>(dia.size(), right));
+    }
     return ret;
 }

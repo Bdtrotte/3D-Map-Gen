@@ -193,6 +193,8 @@ QPair<BetterPolygon, BetterPolygon> BetterPolygon::splitPolygon(QPair<int, int> 
 
 QList<Triplet<QPointF, QPointF, QPointF>> BetterPolygon::triangulate() const
 {
+    Q_ASSERT(mPolygon.size() >= 3);
+
     if (mPolygon.size() == 3) {
         if (Geometry::orientation(mPolygon[0], mPolygon[1], mPolygon[2]) == 2)
             return { {mPolygon[0], mPolygon[1], mPolygon[2]} };
