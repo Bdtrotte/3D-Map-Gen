@@ -13,9 +13,9 @@ Installing the program
 **Windows/Mac Installation:**
 	* :download:`Windows installer v1.0 <downloads/WAH_1_0_Win64_installer.exe>`
 
-	* :download:`Mac installer v1.0 <downloads/WallsAndHoles_1_0.dmg>`
+	* :download:`Mac installer v1.0 <downloads/WAH_1_0.dmg>`
 
-To see the source code and files of the and the lastest release of the program go: `here`_.
+To view the source code and latest release of the application go: `here`_.
 
 .. _here: https://github.com/Bdtrotte/3D-Map-Gen/releases
 
