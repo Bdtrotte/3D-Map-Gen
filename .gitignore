@@ -56,3 +56,5 @@ Deployment/win_deploy/packages/com.wah.product/data/*
 
 Docs/UserManual/src/_build/
 Docs/UserManual/src/downloads/
+
+Doxyfile
