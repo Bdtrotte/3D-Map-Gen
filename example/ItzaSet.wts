@@ -1,10 +1,10 @@
 <?xml version = '1.0' encoding='UTF-8'?>
 <TileTemplateSet name="ItzaSet">
-    <TileMaterial ambient="1" specular="1" diffuse="1" texture="/Users/Bright/Documents/OneDrive/Documents/ucsc/cmps115/project/example/wall.jpg" shininess="1" name="Wall"/>
-    <TileMaterial ambient="1" specular="1" diffuse="1" texture="/Users/Bright/Documents/OneDrive/Documents/ucsc/cmps115/project/example/road.jpg" shininess="1" name="road"/>
-    <TileMaterial ambient="1" specular="2" diffuse="2" texture="/Users/Bright/Documents/OneDrive/Documents/ucsc/cmps115/project/example/marble.jpg" shininess="1" name="marble"/>
-    <TileMaterial ambient="1" specular="1" diffuse="1" texture="/Users/Bright/Documents/OneDrive/Documents/ucsc/cmps115/project/example/step.png" shininess="1" name="step"/>
-    <TileMaterial ambient="1" specular="2" diffuse="2" texture="/Users/Bright/Documents/OneDrive/Documents/ucsc/cmps115/project/example/templeWall.jpg" shininess="2" name="TempleWall"/>
+    <TileMaterial ambient="1" specular="1" diffuse="1" texture="./wall.jpg" shininess="1" name="Wall"/>
+    <TileMaterial ambient="1" specular="1" diffuse="1" texture="./road.jpg" shininess="1" name="road"/>
+    <TileMaterial ambient="1" specular="2" diffuse="2" texture="./marble.jpg" shininess="1" name="marble"/>
+    <TileMaterial ambient="1" specular="1" diffuse="1" texture="./step.png" shininess="1" name="step"/>
+    <TileMaterial ambient="1" specular="2" diffuse="2" texture="./templeWall.jpg" shininess="2" name="TempleWall"/>
     <TileTemplate sidematerial="-1" color="#58595a" position="0.5,0.5" topmaterial="0" height="1" thickness="1" hassidemtrl="0" name="ItzaWall"/>
     <TileTemplate sidematerial="-1" color="#d5d8b2" position="0.5,0.5" topmaterial="1" height="0" thickness="1" hassidemtrl="0" name="ItzaRoad"/>
     <TileTemplate sidematerial="-1" color="#fae111" position="0.5,0.5" topmaterial="2" height="0.75" thickness="1" hassidemtrl="0" name="ItzaBrick"/>
