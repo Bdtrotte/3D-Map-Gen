@@ -1,6 +1,6 @@
 <?xml version = '1.0' encoding='UTF-8'?>
 <TileMap width="25" hasCeiling="0" isIndoor="0" height="25">
-    <TileTemplateSet savePath="/Users/Bright/Documents/OneDrive/Documents/ucsc/cmps115/project/example/ItzaSet.wts"/>
+    <TileTemplateSet savePath="./ItzaSet.wts"/>
     <Tile x="11" relativeHeight="0" templateSetId="0" y="0" relativePosition="0,0" relativeThickness="0" templateId="1"/>
     <Tile x="12" relativeHeight="0" templateSetId="0" y="0" relativePosition="0,0" relativeThickness="0" templateId="1"/>
     <Tile x="13" relativeHeight="0" templateSetId="0" y="0" relativePosition="0,0" relativeThickness="0" templateId="1"/>
