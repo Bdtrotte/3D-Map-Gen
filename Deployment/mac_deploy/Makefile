@@ -1,4 +1,5 @@
 DMGMaker = ./tools/create-dmg
+DEPLOYFIX = ./tools/macdeployqt
 ICON = ../../WallsAndHoles/images/wahicon.icns
 DMGSource = ./release
 

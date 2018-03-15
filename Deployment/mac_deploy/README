@@ -1,5 +1,6 @@
 To make WallsAndHoles.dmg
 1. build WallsAndHoles.app using Qt.
+2. Warp framworks using "macdeployqt WallsAndHoles.app"
 2. move the app into ./release/WallsAndHoles.app (create release folder if not present)
 3. make dmg
 Note: Info.plist in app are replaced by ./tools/example.Info.plist
