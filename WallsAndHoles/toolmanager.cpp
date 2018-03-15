@@ -8,7 +8,11 @@ ToolManager::ToolManager(QObject *parent)
     : QObject(parent)
     , mActionGroup(new QActionGroup(this))
     , mActiveTool(nullptr)
-    , mContextToolBar(new QToolBar()) {}
+    , mContextToolBar(new QToolBar())
+    , mNoTool(new QAction(mActionGroup))
+{
+    mNoTool->setCheckable(true);
+}
 
 
 QAction *ToolManager::registerTool(AbstractTool *tool, QString name, QIcon icon, QKeySequence ks)

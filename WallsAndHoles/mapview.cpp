@@ -78,8 +78,12 @@ void MapView::setMap(TileMap *tileMap)
 
     reMakeMap();
 
-    connect(mTileMap, &TileMap::resized,
-            this, &MapView::mapSizeChanged);
+    if (mTileMap) {
+        connect(mTileMap, &TileMap::resized,
+                this, &MapView::mapSizeChanged);
+    } else {
+        mMouseHoverRect->hide();
+    }
 }
 
 void MapView::setViewMode(int viewMode)

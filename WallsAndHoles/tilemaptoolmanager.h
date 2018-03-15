@@ -29,6 +29,8 @@ public slots:
     void tileTemplateChanged(TileTemplate *tileTemplate);
 
 private:
+    TileMap *mTileMap;
+
     using ToolManager::registerTool;
     using ToolManager::mousePressEvent;
     using ToolManager::mouseMoveEvent;

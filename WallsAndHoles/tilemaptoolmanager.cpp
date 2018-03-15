@@ -6,7 +6,8 @@ inline AbstractTileMapTool *tool2TileMapTool(AbstractTool *tool)
 }
 
 TileMapToolManager::TileMapToolManager(QObject *parent)
-    : ToolManager(parent) {}
+    : ToolManager(parent)
+    , mTileMap(nullptr) {}
 
 
 QAction *TileMapToolManager::registerMapTool(AbstractTileMapTool *tool,
@@ -14,13 +15,32 @@ QAction *TileMapToolManager::registerMapTool(AbstractTileMapTool *tool,
                                              QIcon icon,
                                              QKeySequence ks)
 {
-    return ToolManager::registerTool(tool, name, icon, ks);
+    tool->setTileMap(mTileMap);
+    auto t = ToolManager::registerTool(tool, name, icon, ks);
+    if (!mTileMap)
+        t->setEnabled(false);
+    return t;
 }
 
 void TileMapToolManager::setTileMap(TileMap *tileMap)
 {
     for (AbstractTool *tool : mTools)
         tool2TileMapTool(tool)->setTileMap(tileMap);
+
+    if (tileMap == nullptr) {
+        mNoTool->activate(QAction::Trigger);
+
+        for (QAction *a : mToolActions)
+            a->setEnabled(false);
+    } else {
+        for (QAction *a : mToolActions)
+            a->setEnabled(true);
+
+        if (!mTools.isEmpty())
+            mToolActions.first()->setChecked(true);
+    }
+
+    mTileMap = tileMap;
 }
 
 void TileMapToolManager::cellActivated(int x, int y, QMouseEvent *event)

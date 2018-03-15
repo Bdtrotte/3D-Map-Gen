@@ -94,6 +94,8 @@ protected:
     AbstractTool *mActiveTool; /// The active tool.
 
     QToolBar *mContextToolBar;
+
+    QAction *mNoTool;
 };
 
 #endif // TOOLMANAGER_H

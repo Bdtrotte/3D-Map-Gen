@@ -25,6 +25,8 @@ public:
         toolTileMapChanged(prev);
     }
 
+    void deactivate() override { mPreviewItem->setRegion(QRegion()); }
+
     void setTileTemplate(TileTemplate *tileTemplate) { mTileTemplate = tileTemplate; }
 
 
